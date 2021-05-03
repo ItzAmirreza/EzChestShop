@@ -1,0 +1,20 @@
+name: EzChestShop
+version: ${project.version}
+main: me.deadlight.ezchestshop.EzChestShop
+api-version: 1.14
+depend: [Vault]
+softdepend:
+  - ProtocolLib
+  - WildChests
+authors: [ Dead_Light ]
+description: Easy Chest Shop that any server owner wants that for his players
+commands:
+  ecs:
+    description: create or delete a shop
+    aliases:
+      - cs
+      - cshop
+      - chestshop
+      - ezchestshop
+  ecsadmin:
+    description: commands designed for admins to moderate
