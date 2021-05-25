@@ -127,6 +127,66 @@ public class LanguageManager {
 
         return colorify(languages.getString("message-selftransaction"));
     }
+    //update 1.2.8 new messages
+
+    public String negativePrice() {
+
+        return colorify(languages.getString("commandmsg-negativeprice"));
+    }
+    public String notenoughARGS() {
+
+        return colorify(languages.getString("commandmsg-notenoughargs"));
+    }
+    public String consoleNotAllowed() {
+
+        return colorify(languages.getString("commandmsg-consolenotallowed"));
+    }
+    public String cmdHelp() {
+
+        return colorify(languages.getString("commandmsg-help"));
+    }
+    public String alreadyAShop() {
+
+        return colorify(languages.getString("commandmsg-alreadyashop"));
+    }
+    public String shopCreated() {
+
+        return colorify(languages.getString("commandmsg-shopcreated"));
+    }
+    public String holdSomething() {
+
+        return colorify(languages.getString("commandmsg-holdsomething"));
+    }
+    public String notAllowedToCreateOrRemove() {
+
+        return colorify(languages.getString("commandmsg-notallowdtocreate"));
+    }
+    public String noChest() {
+
+        return colorify(languages.getString("commandmsg-notchest"));
+    }
+    public String lookAtChest() {
+
+        return colorify(languages.getString("commandmsg-lookatchest"));
+    }
+    public String chestShopRemoved() {
+
+        return colorify(languages.getString("commandmsg-csremoved"));
+    }
+    public String notOwner() {
+
+        return colorify(languages.getString("commandmsg-notowner"));
+    }
+    public String notAChestOrChestShop() {
+
+        return colorify(languages.getString("commandmsg-notachestorcs"));
+    }
+
+
+
+
+
+
 
 
 

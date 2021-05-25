@@ -1,7 +1,7 @@
 package me.deadlight.ezchestshop.Commands;
 import com.bgsoftware.wildchests.api.handlers.ChestsManager;
-import com.bgsoftware.wildchests.api.objects.chests.Chest;
 import me.deadlight.ezchestshop.EzChestShop;
+import me.deadlight.ezchestshop.LanguageManager;
 import me.deadlight.ezchestshop.Utils;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -12,17 +12,20 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockCanBuildEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
-
 import java.io.IOException;
-import java.util.List;
 
 public class MainCommands implements CommandExecutor {
 
     private EzChestShop plugin = EzChestShop.getPlugin();
+
+    private static LanguageManager lm = new LanguageManager();
+    public static void setLanguageManager(LanguageManager lm) {
+        MainCommands.lm = lm;
+    }
+
 
 
     @Override
@@ -48,13 +51,12 @@ public class MainCommands implements CommandExecutor {
                                     e.printStackTrace();
                                 }
                             } else {
-                                player.sendMessage(Utils.color("&cNegative price? but you have to use positive price..."));
+                                player.sendMessage(lm.negativePrice());
                             }
 
 
                     } else {
-                        player.sendMessage(Utils.color("&cYou haven't provided enough arguments! \n" +
-                                "&cCorrect usage: /ecs create (Buy price) (Sell price)"));
+                        player.sendMessage(lm.notenoughARGS());
                     }
 
                 } else if (mainarg.equalsIgnoreCase("remove")) {
@@ -72,7 +74,7 @@ public class MainCommands implements CommandExecutor {
 
 
         } else {
-            plugin.logConsole("&cYou are not allowed to execute any command from console.");
+            plugin.logConsole(lm.consoleNotAllowed());
         }
 
 
@@ -84,9 +86,7 @@ public class MainCommands implements CommandExecutor {
 
     private void sendHelp(Player player) {
         String help = "&bEz&cChestShop &7Plugin By Dead_Light© \n" +
-                "&7- &c/ecs create (Buy Price) (Sell Price) &7| Create a chest shop by looking at a chest and having the item that you want to sell in your hand. \n" +
-                "&7- &c/ecs remove &7| Removes the chest shop that you are looking at \n " +
-                "&7Eazy right? :)";
+                lm.cmdHelp();
         player.sendMessage(Utils.color(help));
         if (player.hasPermission("admin")) {
             String ahelp = "&cAdmin Help: \n " +
@@ -121,7 +121,7 @@ public class MainCommands implements CommandExecutor {
                     //already a shop
                     if (container.has(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING)) {
 
-                        player.sendMessage(Utils.color("&cThis chest is already a shop!"));
+                        player.sendMessage(lm.alreadyAShop());
 
 
                     } else {
@@ -140,12 +140,12 @@ public class MainCommands implements CommandExecutor {
                             container.set(new NamespacedKey(EzChestShop.getPlugin(), "sell"), PersistentDataType.DOUBLE, sellprice);
                             Utils.storeItem(thatItem, container);
                             state.update();
-                            player.sendMessage(Utils.color("&aYou have successfully created a chest shop!"));
+                            player.sendMessage(lm.shopCreated());
 
 
                         } else {
 
-                            player.sendMessage(Utils.color("&cPlease hold something in your main hand!"));
+                            player.sendMessage(lm.holdSomething());
 
                         }
 
@@ -154,11 +154,11 @@ public class MainCommands implements CommandExecutor {
 
                 }
                     else {
-                        player.sendMessage(Utils.color("You are not allowed to create/remove a chest shop in this location."));
+                        player.sendMessage(lm.notAllowedToCreateOrRemove());
                     }
                 } else {
 
-                    player.sendMessage(Utils.color("&cThe block that you are looking at is not supported type of chest/is not a chest."));
+                    player.sendMessage(lm.noChest());
 
                 }
 
@@ -166,7 +166,7 @@ public class MainCommands implements CommandExecutor {
 
 
         } else {
-            player.sendMessage(Utils.color("&cPlease look at a chest."));
+            player.sendMessage(lm.lookAtChest());
         }
 
     }
@@ -201,36 +201,36 @@ public class MainCommands implements CommandExecutor {
                             container.remove(new NamespacedKey(EzChestShop.getPlugin(), "sell"));
                             container.remove(new NamespacedKey(EzChestShop.getPlugin(), "item"));
                             state.update();
-                            player.sendMessage(Utils.color("&eThis chest shop successfully removed."));
+                            player.sendMessage(lm.chestShopRemoved());
 
                         } else {
 
-                            player.sendMessage(Utils.color("&aYou are not the owner of this chest shop!"));
+                            player.sendMessage(lm.notOwner());
 
                         }
 
 
                     } else {
 
-                        player.sendMessage(Utils.color("&cThe block that you are looking at is not a chest/or this is not a chest shop."));
+                        player.sendMessage(lm.notAChestOrChestShop());
 
                     }
                 } else {
-                        player.sendMessage(Utils.color("You are not allowed to create/remove a chest shop in this location."));
+                        player.sendMessage(lm.notAllowedToCreateOrRemove());
                     }
                 } else {
-                    player.sendMessage(Utils.color("&cThe block that you are looking at is not a chest/or this is not a chest shop."));
+                    player.sendMessage(lm.notAChestOrChestShop());
                 }
 
             } else {
 
-                player.sendMessage(Utils.color("&cThe block that you are looking at is not a chest/or this is not a chest shop."));
+                player.sendMessage(lm.notAChestOrChestShop());
             }
 
 
         } else {
 
-            player.sendMessage(Utils.color("&cThe block that you are looking at is not a chest/or this is not a chest shop."));
+            player.sendMessage(lm.notAChestOrChestShop());
 
         }
 
@@ -246,16 +246,18 @@ public class MainCommands implements CommandExecutor {
         if (plugin.integrationWildChests) { // Start of WildChests integration
             ChestsManager cm = plugin.wchests;
             if (cm.getChest(location) != null) {
-                Chest schest = cm.getChest(location);
-                if (schest.getPlacer().equals(player.getUniqueId())) {
-                    return true;
-
-                } else {
-                    player.sendMessage(Utils.color("&cYou are not owner of this chest!"));
-                    return false;
-                }
+                player.sendMessage(Utils.color("&cSorry, but we don't support WildChests yet..."));
+                return false;
+//                Chest schest = cm.getChest(location);
+//                if (schest.getPlacer().equals(player.getUniqueId())) {
+//                    return true;
+//
+//                } else {
+//                    player.sendMessage(Utils.color("&cYou are not owner of this chest!"));
+//                    return false;
+//                }
             }
-        } // End of WildChests integration
+        } // End of WildChests integration (future integration)
 
         Block exactBlock = player.getTargetBlockExact(6);
         if (exactBlock == null || exactBlock.getType() == Material.AIR || exactBlock.getType() != Material.CHEST) {

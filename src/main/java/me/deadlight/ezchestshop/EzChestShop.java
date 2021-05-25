@@ -1,5 +1,4 @@
 package me.deadlight.ezchestshop;
-import com.bgsoftware.wildchests.api.WildChests;
 import com.bgsoftware.wildchests.api.WildChestsAPI;
 import com.bgsoftware.wildchests.api.handlers.ChestsManager;
 import me.deadlight.ezchestshop.Commands.Ecsadmin;
@@ -36,7 +35,7 @@ public final class EzChestShop extends JavaPlugin {
         // Plugin startup logic
         if (!setupEconomy() ) {
 
-            logConsole("&c[&eEzChestShop&c] &4Cannot find vault and economy plugin. Self disabling... &ePlease note that you need vault and at least one economy plugin installed.");
+            logConsole("&c[&eEzChestShop&c] &4Cannot find vault or economy plugin. Self disabling... &ePlease note that you need vault and at least one economy plugin installed.");
             Bukkit.getPluginManager().disablePlugin(this);
         }
 
@@ -48,13 +47,16 @@ public final class EzChestShop extends JavaPlugin {
         }
 
         registerListeners();
-        registerCommands();
+
         try {
             Utils.checkForConfigYMLupdate();
+            Utils.checkForLanguagesYMLupdate();
         } catch (IOException e) {
             e.printStackTrace();
         }
         loadLanguages();
+
+        registerCommands();
         //metrics
         Metrics metrics = new Metrics(this, 10756);
 
@@ -82,16 +84,16 @@ public final class EzChestShop extends JavaPlugin {
         LanguageManager lm = new LanguageManager();
         File customConfigFile = new File(getDataFolder(), "languages.yml");
         if (!customConfigFile.exists()) {
-            logConsole("&c[&eEzChestShop&c] &eGenerating language.yml file...");
+            logConsole("&c[&eEzChestShop&c] &eGenerating languages.yml file...");
             customConfigFile.getParentFile().mkdirs();
             saveResource("languages.yml", false);
             languages = YamlConfiguration.loadConfiguration(customConfigFile);
             lm.setLanguageConfig(languages);
-            logConsole("&c[&eEzChestShop&c] &elanguage.yml successfully loaded");
+            logConsole("&c[&eEzChestShop&c] &elanguages.yml successfully loaded");
         } else {
             languages = YamlConfiguration.loadConfiguration(customConfigFile);
             lm.setLanguageConfig(languages);
-            logConsole("&c[&eEzChestShop&c] &elanguage.yml successfully loaded");
+            logConsole("&c[&eEzChestShop&c] &elanguages.yml successfully loaded");
         }
     }
 
