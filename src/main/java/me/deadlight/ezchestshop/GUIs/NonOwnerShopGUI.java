@@ -2,7 +2,8 @@ package me.deadlight.ezchestshop.GUIs;
 
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.LanguageManager;
-import me.deadlight.ezchestshop.Utils;
+import me.deadlight.ezchestshop.Listeners.PlayerTransactEvent;
+import me.deadlight.ezchestshop.Utils.Utils;
 import me.mattstudios.mfgui.gui.guis.Gui;
 import me.mattstudios.mfgui.gui.guis.GuiItem;
 import net.milkbowl.vault.economy.Economy;
@@ -15,6 +16,7 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 //mojodi
 //balance
 
@@ -27,9 +29,11 @@ public class NonOwnerShopGUI {
     public void showGUI(Player player, PersistentDataContainer data, Chest chest) {
         LanguageManager lm = new LanguageManager();
 
-        String shopOwner = data.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING);
+        String shopOwner = Bukkit.getOfflinePlayer(UUID.fromString(data.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING))).getName();
         double sellPrice = data.get(new NamespacedKey(EzChestShop.getPlugin(), "sell"), PersistentDataType.DOUBLE);
         double buyPrice = data.get(new NamespacedKey(EzChestShop.getPlugin(), "buy"), PersistentDataType.DOUBLE);
+        boolean disabledBuy = data.get(new NamespacedKey(EzChestShop.getPlugin(), "dbuy"), PersistentDataType.INTEGER) == 1;
+        boolean disabledSell = data.get(new NamespacedKey(EzChestShop.getPlugin(), "dsell"), PersistentDataType.INTEGER) == 1;
 
         ItemStack mainitem = Utils.getItem(data.get(new NamespacedKey(EzChestShop.getPlugin(), "item"), PersistentDataType.STRING));
         ItemStack guiMainItem = mainitem.clone();
@@ -59,10 +63,14 @@ public class NonOwnerShopGUI {
         meta.setLore(lores);
         oneSellIS.setItemMeta(meta);
 
-        GuiItem oneSell = new GuiItem(oneSellIS, event -> {
+        GuiItem oneSell = new GuiItem(disablingCheck(oneSellIS, disabledSell), event -> {
             // sell things
             event.setCancelled(true);
-            sellItem(chest, sellPrice, 1, mainitem, Bukkit.getOfflinePlayer(shopOwner), player);
+            //disabling arg
+            if (disabledSell) {
+                return;
+            }
+            sellItem(chest, sellPrice, 1, mainitem, Bukkit.getOfflinePlayer(shopOwner), player, data);
         });
 
         ItemStack moreSellIS = new ItemStack(Material.RED_DYE, 64);
@@ -72,11 +80,15 @@ public class NonOwnerShopGUI {
         meta2.setLore(lores2);
         moreSellIS.setItemMeta(meta2);
 
-        GuiItem moreSell = new GuiItem(moreSellIS, event -> {
+        GuiItem moreSell = new GuiItem(disablingCheck(moreSellIS, disabledSell), event -> {
 
             event.setCancelled(true);
            //sell things
-            sellItem(chest, sellPrice * 64, 64, mainitem, Bukkit.getOfflinePlayer(shopOwner), player);
+            //disabling arg
+            if (disabledSell) {
+                return;
+            }
+            sellItem(chest, sellPrice * 64, 64, mainitem, Bukkit.getOfflinePlayer(shopOwner), player, data);
         });
 
         //buy 1x
@@ -88,10 +100,14 @@ public class NonOwnerShopGUI {
         meta3.setLore(lores3);
         oneBuyIS.setItemMeta(meta3);
 
-        GuiItem oneBuy = new GuiItem(oneBuyIS, event -> {
+        GuiItem oneBuy = new GuiItem(disablingCheck(oneBuyIS, disabledBuy), event -> {
             //buy things
             event.setCancelled(true);
-            buyItem(chest, buyPrice, 1, player, mainitem, Bukkit.getOfflinePlayer(shopOwner));
+            //disabling arg
+            if (disabledBuy) {
+                return;
+            }
+            buyItem(chest, buyPrice, 1, player, mainitem, Bukkit.getOfflinePlayer(shopOwner), data);
         });
 
 
@@ -102,10 +118,14 @@ public class NonOwnerShopGUI {
         meta4.setLore(lores4);
         moreBuyIS.setItemMeta(meta4);
 
-        GuiItem moreBuy = new GuiItem(moreBuyIS, event -> {
+        GuiItem moreBuy = new GuiItem(disablingCheck(moreBuyIS, disabledBuy), event -> {
             //buy things
             event.setCancelled(true);
-            buyItem(chest, buyPrice * 64, 64, player, mainitem, Bukkit.getOfflinePlayer(shopOwner));
+            //disabling arg
+            if (disabledBuy) {
+                return;
+            }
+            buyItem(chest, buyPrice * 64, 64, player, mainitem, Bukkit.getOfflinePlayer(shopOwner), data);
         });
 
 
@@ -136,7 +156,7 @@ public class NonOwnerShopGUI {
 
 
 
-    private void buyItem(Chest chest, double price, int count, Player player, ItemStack tthatItem, OfflinePlayer owner) {
+    private void buyItem(Chest chest, double price, int count, Player player, ItemStack tthatItem, OfflinePlayer owner, PersistentDataContainer data) {
         ItemStack thatItem = tthatItem.clone();
 
         LanguageManager lm = new LanguageManager();
@@ -150,6 +170,7 @@ public class NonOwnerShopGUI {
 
                     thatItem.setAmount(count);
                     getandgive(Bukkit.getOfflinePlayer(player.getUniqueId()), price, owner);
+                    transactionMessage(data, owner, player, price, true, getFinalItemName(tthatItem), count);
                     chest.getInventory().removeItem(thatItem);
                     player.getInventory().addItem(thatItem);
                     player.sendMessage(lm.messageSuccBuy(price));
@@ -174,7 +195,7 @@ public class NonOwnerShopGUI {
 
     }
 
-    private void sellItem(Chest chest, double price, int count, ItemStack tthatItem , OfflinePlayer owner, Player player) {
+    private void sellItem(Chest chest, double price, int count, ItemStack tthatItem , OfflinePlayer owner, Player player, PersistentDataContainer data) {
 
         LanguageManager lm = new LanguageManager();
 
@@ -187,6 +208,7 @@ public class NonOwnerShopGUI {
                 if (chest.getInventory().firstEmpty() != -1) {
                     thatItem.setAmount(count);
                     getandgive(owner, price, Bukkit.getOfflinePlayer(player.getUniqueId()));
+                    transactionMessage(data, owner, Bukkit.getOfflinePlayer(player.getUniqueId()), price, false, getFinalItemName(tthatItem), count);
                     player.getInventory().removeItem(thatItem);
                     chest.getInventory().addItem(thatItem);
                     player.sendMessage(lm.messageSuccSell(price));
@@ -225,7 +247,41 @@ public class NonOwnerShopGUI {
         econ.withdrawPlayer(withdraw, price);
         econ.depositPlayer(deposit, price);
 
+
     }
+
+    private void transactionMessage(PersistentDataContainer data, OfflinePlayer owner, OfflinePlayer customer, double price, boolean isBuy, String itemName, int count) {
+        if (data.get(new NamespacedKey(EzChestShop.getPlugin(), "msgtoggle"), PersistentDataType.INTEGER) == 1) {
+            //kharidan? true forokhtan? false
+            PlayerTransactEvent transactEvent = new PlayerTransactEvent(owner, customer, price, isBuy, itemName, count);
+            Bukkit.getPluginManager().callEvent(transactEvent);
+
+        }
+    }
+
+    private String getFinalItemName(ItemStack item) {
+        if (item.getItemMeta().hasDisplayName()) {
+            return item.getItemMeta().getDisplayName();
+        } else {
+            return item.getType().name();
+        }
+    }
+
+    private ItemStack disablingCheck(ItemStack mainItem, boolean disabling) {
+        if (disabling){
+            //disabled Item
+            ItemStack disabledItemStack = new ItemStack(Material.BARRIER, mainItem.getAmount());
+            ItemMeta disabledItemMeta = disabledItemStack.getItemMeta();
+            disabledItemMeta.setDisplayName(Utils.color("&cDisabled"));
+            disabledItemMeta.setLore(Arrays.asList(Utils.color("&7This option is disabled by"), Utils.color("&7the shop owner.")));
+            disabledItemStack.setItemMeta(disabledItemMeta);
+
+            return disabledItemStack;
+        } else {
+            return mainItem;
+        }
+    }
+
 
 
 

@@ -1,5 +1,7 @@
-package me.deadlight.ezchestshop;
+package me.deadlight.ezchestshop.Utils;
 import me.deadlight.ezchestshop.Commands.MainCommands;
+import me.deadlight.ezchestshop.EzChestShop;
+import me.deadlight.ezchestshop.LanguageManager;
 import me.deadlight.ezchestshop.Listeners.PlayerLookingAtChestShop;
 import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
@@ -85,9 +87,8 @@ public class Utils {
 
     public static void reloadLanguages() {
         FileConfiguration fc = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "languages.yml"));
-        LanguageManager languageManager = new LanguageManager();
-        languageManager.setLanguageConfig(fc);
-        MainCommands.setLanguageManager(languageManager);
+        EzChestShop.setLanguages(fc);
+        MainCommands.updateLM(new LanguageManager());
     }
 
     //this one checks for the config.yml ima make one for language.yml
@@ -107,7 +108,7 @@ public class Utils {
     public static void checkForLanguagesYMLupdate() throws IOException {
 
         //update 1.2.8 Languages
-        boolean result = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "languages.yml")).isInt("commandmsg-negativeprice");
+        boolean result = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "languages.yml")).isString("commandmsg-negativeprice");
         if (!result) {
             FileConfiguration fc = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "languages.yml"));
             //new values that were added in update 1.2.8
@@ -124,14 +125,18 @@ public class Utils {
             fc.set("commandmsg-csremoved", "&eThis chest shop successfully removed.");
             fc.set("commandmsg-notowner", "&aYou are not the owner of this chest shop!");
             fc.set("commandmsg-notachestorcs", "&cThe block that you are looking at is not a chest/or this is not a chest shop.");
-            fc.save(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml"));
+            fc.save(new File(EzChestShop.getPlugin().getDataFolder(), "languages.yml"));
 
 
             Utils.reloadLanguages();
+            EzChestShop.getPlugin().logConsole("&c[&eEzChestShop&c]&r &bNew languages.yml generated...");
         }
     }
 
     public static HashMap<String, Block> blockBreakMap = new HashMap<>();
+
+    public static LanguageManager lm;
+
     //
 
 

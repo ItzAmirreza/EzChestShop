@@ -1,4 +1,4 @@
-package me.deadlight.ezchestshop;
+package me.deadlight.ezchestshop.Utils;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;

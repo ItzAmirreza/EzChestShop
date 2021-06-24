@@ -2,19 +2,16 @@ package me.deadlight.ezchestshop.GUIs;
 
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.LanguageManager;
-import me.deadlight.ezchestshop.Packets.WrapperPlayServerCustomSoundEffect;
-import me.deadlight.ezchestshop.Utils;
+import me.deadlight.ezchestshop.Utils.Utils;
 import me.mattstudios.mfgui.gui.guis.Gui;
 import me.mattstudios.mfgui.gui.guis.GuiItem;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.*;
 import org.bukkit.block.Chest;
 import org.bukkit.block.DoubleChest;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.DoubleChestInventory;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -22,6 +19,7 @@ import org.bukkit.persistence.PersistentDataType;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 //success player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 0.5f, 0.5f);
 //fail player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_IRON_XYLOPHONE, 0.5f, 0.5f);
 //storage player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 0.5f, 0.5f);
@@ -32,13 +30,15 @@ public class OwnerShopGUI {
     public OwnerShopGUI() {}
 
 
-    public void showGUI(Player player, PersistentDataContainer data, Chest chest) {
+    public void showGUI(Player player, PersistentDataContainer data, Chest chest, Chest rightChest) {
 
         LanguageManager lm = new LanguageManager();
 
-        String shopOwner = data.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING);
+        String shopOwner = Bukkit.getOfflinePlayer(UUID.fromString(data.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING))).getName();
         double sellPrice = data.get(new NamespacedKey(EzChestShop.getPlugin(), "sell"), PersistentDataType.DOUBLE);
         double buyPrice = data.get(new NamespacedKey(EzChestShop.getPlugin(), "buy"), PersistentDataType.DOUBLE);
+        boolean disabledBuy = data.get(new NamespacedKey(EzChestShop.getPlugin(), "dbuy"), PersistentDataType.INTEGER) == 1;
+        boolean disabledSell = data.get(new NamespacedKey(EzChestShop.getPlugin(), "dsell"), PersistentDataType.INTEGER) == 1;
 
         ItemStack mainitem = Utils.getItem(data.get(new NamespacedKey(EzChestShop.getPlugin(), "item"), PersistentDataType.STRING));
         ItemStack guiMainItem = mainitem.clone();
@@ -68,9 +68,12 @@ public class OwnerShopGUI {
         meta.setLore(lores);
         oneSellIS.setItemMeta(meta);
 
-        GuiItem oneSell = new GuiItem(oneSellIS, event -> {
+        GuiItem oneSell = new GuiItem(disablingCheck(oneSellIS, disabledSell), event -> {
             // sell things
             event.setCancelled(true);
+            if (disabledSell) {
+                return;
+            }
             player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_IRON_XYLOPHONE, 0.5f, 0.5f);
             player.sendMessage(lm.selfTransaction());
         });
@@ -82,10 +85,13 @@ public class OwnerShopGUI {
         meta2.setLore(lores2);
         moreSellIS.setItemMeta(meta2);
 
-        GuiItem moreSell = new GuiItem(moreSellIS, event -> {
+        GuiItem moreSell = new GuiItem(disablingCheck(moreSellIS, disabledSell), event -> {
 
             event.setCancelled(true);
             //sell things
+            if (disabledSell) {
+                return;
+            }
             player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_IRON_XYLOPHONE, 0.5f, 0.5f);
             player.sendMessage(lm.selfTransaction());
         });
@@ -99,9 +105,12 @@ public class OwnerShopGUI {
         meta3.setLore(lores3);
         oneBuyIS.setItemMeta(meta3);
 
-        GuiItem oneBuy = new GuiItem(oneBuyIS, event -> {
+        GuiItem oneBuy = new GuiItem(disablingCheck(oneBuyIS, disabledBuy), event -> {
             //buy things
             event.setCancelled(true);
+            if (disabledBuy) {
+                return;
+            }
             player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_IRON_XYLOPHONE, 0.5f, 0.5f);
             player.sendMessage(lm.selfTransaction());
         });
@@ -114,18 +123,19 @@ public class OwnerShopGUI {
         meta4.setLore(lores4);
         moreBuyIS.setItemMeta(meta4);
 
-        GuiItem moreBuy = new GuiItem(moreBuyIS, event -> {
+        GuiItem moreBuy = new GuiItem(disablingCheck(moreBuyIS, disabledBuy), event -> {
             //buy things
             event.setCancelled(true);
+            if (disabledBuy) {
+                return;
+            }
             player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_IRON_XYLOPHONE, 0.5f, 0.5f);
             player.sendMessage(lm.selfTransaction());
         });
 
         ItemStack storageitem = new ItemStack(Material.CHEST, 1);
-        storageitem.addUnsafeEnchantment(Enchantment.LURE, 1);
         ItemMeta storagemeta = storageitem.getItemMeta();
         storagemeta.setDisplayName(lm.buttonStorage());
-        storagemeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         storageitem.setItemMeta(storagemeta);
 
         GuiItem storageGUI = new GuiItem(storageitem, event -> {
@@ -139,6 +149,19 @@ public class OwnerShopGUI {
             player.openInventory(lastinv);
         });
 
+        //settings item
+        ItemStack settingsItem = new ItemStack(Material.SMITHING_TABLE, 1);
+        ItemMeta settingsMeta = settingsItem.getItemMeta();
+        settingsMeta.setDisplayName(Utils.color("&b&lSettings"));
+        settingsItem.setItemMeta(settingsMeta);
+
+        GuiItem settingsGui = new GuiItem(settingsItem, event -> {
+           event.setCancelled(true);
+           //opening the settigns menu
+            SettingsGUI settingsGUI = new SettingsGUI();
+            settingsGUI.ShowGUI(player, rightChest);
+            player.playSound(player.getLocation(), Sound.BLOCK_DISPENSER_LAUNCH, 0.5f, 0.5f);
+        });
 
         gui.getFiller().fillBorder(glasses);
 
@@ -155,6 +178,8 @@ public class OwnerShopGUI {
         gui.setItem(15, moreBuy);
         //chest storage
         gui.setItem(18, storageGUI);
+        //settings item
+        gui.setItem(26, settingsGui);
 
         gui.open(player);
 
@@ -164,6 +189,21 @@ public class OwnerShopGUI {
 
     private long roundDecimals(double num) {
         return (long) (((long)(num * 1e1)) / 1e1);
+    }
+
+    private ItemStack disablingCheck(ItemStack mainItem, boolean disabling) {
+        if (disabling){
+            //disabled Item
+            ItemStack disabledItemStack = new ItemStack(Material.BARRIER, mainItem.getAmount());
+            ItemMeta disabledItemMeta = disabledItemStack.getItemMeta();
+            disabledItemMeta.setDisplayName(Utils.color("&cDisabled"));
+            disabledItemMeta.setLore(Arrays.asList(Utils.color("&7This option is disabled by"), Utils.color("&7the shop owner.")));
+            disabledItemStack.setItemMeta(disabledItemMeta);
+
+            return disabledItemStack;
+        } else {
+            return mainItem;
+        }
     }
 
 }

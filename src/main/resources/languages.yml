@@ -40,3 +40,5 @@ commandmsg-lookatchest: "&cPlease look at a chest."
 commandmsg-csremoved: "&eThis chest shop successfully removed."
 commandmsg-notowner: "&aYou are not the owner of this chest shop!"
 commandmsg-notachestorcs: "&cThe block that you are looking at is not a chest/or this is not a chest shop."
+#update 1.3.0 added messages related to GUI and chat messages
+#gui-button-settings: "&bSettings"

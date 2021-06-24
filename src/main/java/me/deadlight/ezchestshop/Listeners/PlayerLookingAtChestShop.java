@@ -1,8 +1,8 @@
 package me.deadlight.ezchestshop.Listeners;
-import me.deadlight.ezchestshop.ASHologram;
-import me.deadlight.ezchestshop.EzChestShop;
-import me.deadlight.ezchestshop.Packets.WrapperPlayServerSpawnEntity;
-import me.deadlight.ezchestshop.Utils;
+import me.deadlight.ezchestshop.*;
+import me.deadlight.ezchestshop.Utils.ASHologram;
+import me.deadlight.ezchestshop.Utils.FloatingItem;
+import me.deadlight.ezchestshop.Utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -111,6 +111,8 @@ public class PlayerLookingAtChestShop implements Listener {
 
         Location thirdLocation = secondLineLocation.clone().subtract(0, 0.4, 0);
 
+        Location floatingItemLocation = thirdLocation.clone().add(0, 2, 0);
+
         String itemname = "Error";
 
 
@@ -129,12 +131,19 @@ public class PlayerLookingAtChestShop implements Listener {
         ASHologram hologram2 = new ASHologram(player, Utils.color(secondLine.replace("%buy%", String.valueOf(buy)).replace("%sell%", String.valueOf(sell)).replace("%item%", itemname)), EntityType.ARMOR_STAND, thirdLocation, false);
         hologram2.spawn();
 
+        FloatingItem floatingItem = new FloatingItem(player, thatItem, floatingItemLocation);
+
+        //FakeAdvancement outOfStock = new FakeAdvancement(player, thatItem);
+
+
         Bukkit.getScheduler().scheduleAsyncDelayedTask(EzChestShop.getPlugin(), new Runnable() {
             @Override
             public void run() {
                 hologram.destroy();
                 hologram2.destroy();
+                floatingItem.destroy();
                 playershopmap.remove(spawnLocation);
+
             }
         }, 20 * holodelay);
 

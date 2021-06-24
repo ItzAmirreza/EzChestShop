@@ -1,6 +1,6 @@
 package me.deadlight.ezchestshop.Listeners;
 
-import me.deadlight.ezchestshop.Utils;
+import me.deadlight.ezchestshop.Utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
@@ -8,7 +8,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.plugin.RegisteredListener;
 
 import java.util.Collection;
 

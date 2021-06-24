@@ -3,9 +3,8 @@ import com.bgsoftware.wildchests.api.WildChestsAPI;
 import com.bgsoftware.wildchests.api.handlers.ChestsManager;
 import me.deadlight.ezchestshop.Commands.Ecsadmin;
 import me.deadlight.ezchestshop.Commands.MainCommands;
-import me.deadlight.ezchestshop.Listeners.BlockBreakListener;
-import me.deadlight.ezchestshop.Listeners.ChestOpeningEvent;
-import me.deadlight.ezchestshop.Listeners.PlayerLookingAtChestShop;
+import me.deadlight.ezchestshop.Listeners.*;
+import me.deadlight.ezchestshop.Utils.Utils;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -30,7 +29,7 @@ public final class EzChestShop extends JavaPlugin {
     @Override
     public void onEnable() {
         plugin = this;
-        logConsole("&c[&eEzChestShop&c] &aEnabling EzChestShop - version 1.2.7");
+        logConsole("&c[&eEzChestShop&c] &aEnabling EzChestShop - version 1.2.9");
         saveDefaultConfig();
         // Plugin startup logic
         if (!setupEconomy() ) {
@@ -38,6 +37,7 @@ public final class EzChestShop extends JavaPlugin {
             logConsole("&c[&eEzChestShop&c] &4Cannot find vault or economy plugin. Self disabling... &ePlease note that you need vault and at least one economy plugin installed.");
             Bukkit.getPluginManager().disablePlugin(this);
         }
+
 
         if (getServer().getPluginManager().getPlugin("ProtocolLib") != null) {
             protocollib = true;
@@ -47,14 +47,13 @@ public final class EzChestShop extends JavaPlugin {
         }
 
         registerListeners();
-
+        loadLanguages();
         try {
             Utils.checkForConfigYMLupdate();
             Utils.checkForLanguagesYMLupdate();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        loadLanguages();
 
         registerCommands();
         //metrics
@@ -72,6 +71,9 @@ public final class EzChestShop extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new ChestOpeningEvent(), this);
         getServer().getPluginManager().registerEvents(new PlayerLookingAtChestShop(), this);
         getServer().getPluginManager().registerEvents(new BlockBreakListener(), this);
+        getServer().getPluginManager().registerEvents(new PlayerTransactionListener(), this);
+        getServer().getPluginManager().registerEvents(new ChatListener(), this);
+        getServer().getPluginManager().registerEvents(new PlayerLeavingListener(), this);
     }
     private void registerCommands() {
         getCommand("ecs").setExecutor(new MainCommands());
@@ -134,6 +136,10 @@ public final class EzChestShop extends JavaPlugin {
 
     public static FileConfiguration getLanguages() {
         return languages;
+    }
+
+    public static void setLanguages(FileConfiguration file) {
+        languages = file;
     }
 
 
