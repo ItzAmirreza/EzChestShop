@@ -227,7 +227,10 @@ public class SettingsGUI {
             });
             this.themain.setItem(13, signItemg);
             if (hastAtLeastOneAdmin) {
-                this.themain.setItem(22, sharedIncome);
+                if (dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"), PersistentDataType.INTEGER) == 0) {
+                    this.themain.setItem(22, sharedIncome);
+                }
+
             }
         }
 
@@ -359,7 +362,8 @@ public class SettingsGUI {
          lores.add(Utils.color("&7You can add/remove admins to"));
          lores.add(Utils.color("&7your chest shop. Admins are able to"));
          lores.add(Utils.color("&7access the shop storage & access certain"));
-         lores.add(Utils.color("&7settings (everything except share income and add/remove-ing admins)."));
+         lores.add(Utils.color("&7settings (everything except share income"));
+         lores.add(Utils.color("&7and add/remove-ing admins)."));
          lores.add(Utils.color("&aLeft Click &7to add an admin"));
          lores.add(Utils.color("&cRight Click &7to remove an admin \n \n"));
         if (data) {

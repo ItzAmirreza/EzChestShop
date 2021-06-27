@@ -27,12 +27,14 @@ import java.util.UUID;
 
 public class AdminShopGUI {
     private Economy econ = EzChestShop.getEconomy();
+    private Chest chest;
 
     public AdminShopGUI() {
 
     }
 
     public void showGUI(Player player, PersistentDataContainer data, Chest chest, Chest rightChest) {
+        this.chest = rightChest;
         LanguageManager lm = new LanguageManager();
         String shopOwner = Bukkit.getOfflinePlayer(UUID.fromString(data.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING))).getName();
         String owneruuid = data.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING);
@@ -296,7 +298,7 @@ public class AdminShopGUI {
     private void transactionMessage(PersistentDataContainer data, OfflinePlayer owner, OfflinePlayer customer, double price, boolean isBuy, String itemName, int count) {
         if (data.get(new NamespacedKey(EzChestShop.getPlugin(), "msgtoggle"), PersistentDataType.INTEGER) == 1) {
             //kharidan? true forokhtan? false
-            PlayerTransactEvent transactEvent = new PlayerTransactEvent(owner, customer, price, isBuy, itemName, count);
+            PlayerTransactEvent transactEvent = new PlayerTransactEvent(owner, customer, price, isBuy, itemName, count, Utils.getAdminsList(data), this.chest);
             Bukkit.getPluginManager().callEvent(transactEvent);
 
         }

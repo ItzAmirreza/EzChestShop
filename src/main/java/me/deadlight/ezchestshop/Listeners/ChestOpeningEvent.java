@@ -86,7 +86,7 @@ public class ChestOpeningEvent implements Listener {
                         }
 
                         if (event.getPlayer().getUniqueId().toString().equalsIgnoreCase(owneruuid) || isAdmin) {
-                            System.out.println("yes opening owner shop");
+
                             ownerShopGUI.showGUI(event.getPlayer(), rightone, chest, rightChest, isAdmin);
 
                         } else {

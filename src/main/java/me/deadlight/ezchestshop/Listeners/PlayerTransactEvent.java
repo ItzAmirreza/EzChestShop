@@ -1,9 +1,12 @@
 package me.deadlight.ezchestshop.Listeners;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.block.Chest;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
 
 public class PlayerTransactEvent extends Event {
 
@@ -15,6 +18,8 @@ public class PlayerTransactEvent extends Event {
     private boolean isBuy;
     private String itemName;
     private int count;
+    private List<UUID> admins;
+    private Chest chest;
 
 
     private static final HandlerList HANDLERS = new HandlerList();
@@ -29,7 +34,7 @@ public class PlayerTransactEvent extends Event {
     }
 
 
-    public PlayerTransactEvent(OfflinePlayer owner, OfflinePlayer customer, double price, boolean isBuy, String itemName, int count) {
+    public PlayerTransactEvent(OfflinePlayer owner, OfflinePlayer customer, double price, boolean isBuy, String itemName, int count, List<UUID> admins, Chest chest) {
         this.owner = owner;
         this.customer = customer;
         this.price = price;
@@ -37,6 +42,8 @@ public class PlayerTransactEvent extends Event {
         this.isBuy = isBuy;
         this.itemName = itemName;
         this.count = count;
+        this.admins = admins;
+        this.chest = chest;
     }
 
 
@@ -64,6 +71,13 @@ public class PlayerTransactEvent extends Event {
     }
     public int getCount() {
         return this.count;
+    }
+
+    public List<UUID> getAdminsUUID() {
+        return this.admins;
+    }
+    public Chest getChest() {
+        return this.chest;
     }
 
 
