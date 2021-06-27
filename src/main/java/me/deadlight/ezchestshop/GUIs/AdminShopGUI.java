@@ -18,6 +18,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -32,6 +34,7 @@ public class AdminShopGUI {
     public void showGUI(Player player, PersistentDataContainer data, Chest chest, Chest rightChest) {
         LanguageManager lm = new LanguageManager();
         String shopOwner = Bukkit.getOfflinePlayer(UUID.fromString(data.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING))).getName();
+        String owneruuid = data.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING);
         double sellPrice = data.get(new NamespacedKey(EzChestShop.getPlugin(), "sell"), PersistentDataType.DOUBLE);
         double buyPrice = data.get(new NamespacedKey(EzChestShop.getPlugin(), "buy"), PersistentDataType.DOUBLE);
         boolean disabledBuy = data.get(new NamespacedKey(EzChestShop.getPlugin(), "dbuy"), PersistentDataType.INTEGER) == 1;
@@ -154,6 +157,21 @@ public class AdminShopGUI {
         });
 
 
+        ItemStack settingsItem = new ItemStack(Material.SMITHING_TABLE, 1);
+        ItemMeta settingsMeta = settingsItem.getItemMeta();
+        settingsMeta.setDisplayName(Utils.color("&b&lSettings"));
+        settingsItem.setItemMeta(settingsMeta);
+
+
+        GuiItem settingsGui = new GuiItem(settingsItem, event -> {
+            event.setCancelled(true);
+            //opening the settigns menu
+            SettingsGUI settingsGUI = new SettingsGUI();
+            settingsGUI.ShowGUI(player, rightChest, false);
+            player.playSound(player.getLocation(), Sound.BLOCK_DISPENSER_LAUNCH, 0.5f, 0.5f);
+        });
+
+
         gui.getFiller().fillBorder(glasses);
 
         gui.setItem(10, glasses);
@@ -169,14 +187,16 @@ public class AdminShopGUI {
         gui.setItem(15, moreBuy);
         //chest storage
         gui.setItem(18, storageGUI);
+        //settings item
+        gui.setItem(26, settingsGui);
 
         gui.open(player);
 
 
-
     }
+
     private long roundDecimals(double num) {
-        return (long) (((long)(num * 1e1)) / 1e1);
+        return (long) (((long) (num * 1e1)) / 1e1);
     }
 
     private void buyItem(Chest chest, double price, int count, Player player, ItemStack tthatItem, OfflinePlayer owner, PersistentDataContainer data) {
@@ -185,7 +205,7 @@ public class AdminShopGUI {
 
         //check for money
 
-        if (chest.getInventory().containsAtLeast(thatItem , count)) {
+        if (chest.getInventory().containsAtLeast(thatItem, count)) {
 
             if (ifHasMoney(Bukkit.getOfflinePlayer(player.getUniqueId()), price)) {
 
@@ -218,7 +238,7 @@ public class AdminShopGUI {
 
     }
 
-    private void sellItem(Chest chest, double price, int count, ItemStack tthatItem , OfflinePlayer owner, Player player, PersistentDataContainer data) {
+    private void sellItem(Chest chest, double price, int count, ItemStack tthatItem, OfflinePlayer owner, Player player, PersistentDataContainer data) {
 
 
         ItemStack thatItem = tthatItem.clone();
@@ -231,7 +251,7 @@ public class AdminShopGUI {
                 if (chest.getInventory().firstEmpty() != -1) {
                     thatItem.setAmount(count);
                     getandgive(owner, price, Bukkit.getOfflinePlayer(player.getUniqueId()));
-                    transactionMessage(data, owner,Bukkit.getOfflinePlayer(player.getUniqueId()), price, false, getFinalItemName(tthatItem), count);
+                    transactionMessage(data, owner, Bukkit.getOfflinePlayer(player.getUniqueId()), price, false, getFinalItemName(tthatItem), count);
                     player.getInventory().removeItem(thatItem);
                     chest.getInventory().addItem(thatItem);
                     player.sendMessage(lm.messageSuccSell(price));
@@ -254,8 +274,6 @@ public class AdminShopGUI {
         }
 
     }
-
-
 
 
     private boolean ifHasMoney(OfflinePlayer player, double price) {
@@ -291,7 +309,7 @@ public class AdminShopGUI {
     }
 
     private ItemStack disablingCheck(ItemStack mainItem, boolean disabling) {
-        if (disabling){
+        if (disabling) {
             //disabled Item
             ItemStack disabledItemStack = new ItemStack(Material.BARRIER, mainItem.getAmount());
             ItemMeta disabledItemMeta = disabledItemStack.getItemMeta();
@@ -304,8 +322,6 @@ public class AdminShopGUI {
             return mainItem;
         }
     }
-
-
 
 
 

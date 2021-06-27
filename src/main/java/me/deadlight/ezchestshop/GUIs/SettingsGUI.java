@@ -35,7 +35,7 @@ public class SettingsGUI {
 
     private Gui themain;
 
-    public void ShowGUI(Player player, Chest rightChest) {
+    public void ShowGUI(Player player, Chest rightChest, boolean isAdmin) {
 
         LanguageManager lm = new LanguageManager();
 
@@ -54,6 +54,8 @@ public class SettingsGUI {
             // Handle your click action here
             event.setCancelled(true);
         });
+        //I changed its place to first part of code because of different GUI sections for admins and owners
+        this.themain.getFiller().fillBorder(glasses);
 
         //trans
         ItemStack lastTransItem = new ItemStack(Material.PAPER, 1);
@@ -167,43 +169,54 @@ public class SettingsGUI {
         //How it saves the owners? like this man
         //if empty: "none"
         //otherwise: UUID@UUID@UUID@UUID
+        if (!isAdmin) {
+            boolean hastAtLeastOneAdmin = !dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "admins"), PersistentDataType.STRING).equals("none");
+            ItemStack signItem = new ItemStack(Material.OAK_SIGN, 1);
+            ItemMeta signMeta = signItem.getItemMeta();
+            signMeta.setDisplayName(Utils.color("&eShop admins"));
+            signMeta.setLore(signLoreChooser(hastAtLeastOneAdmin, dataContainer));
+            signItem.setItemMeta(signMeta);
+            GuiItem signItemg = new GuiItem(signItem, event -> {
+                event.setCancelled(true);
+                //do the job
+                if (event.getClick() == ClickType.LEFT) {
+                    //left click == add admin
 
-        boolean hastAtLeastOneAdmin = !dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "admins"), PersistentDataType.STRING).equals("none");
-        ItemStack signItem = new ItemStack(Material.OAK_SIGN, 1);
-        ItemMeta signMeta = signItem.getItemMeta();
-        signMeta.setDisplayName(Utils.color("&eShop admins"));
-        signMeta.setLore(signLoreChooser(hastAtLeastOneAdmin, dataContainer));
-        signItem.setItemMeta(signMeta);
-        GuiItem signItemg = new GuiItem(signItem, event -> {
-            event.setCancelled(true);
-            //do the job
-            if (event.getClick() == ClickType.LEFT) {
-                //left click == add admin
-
-                ChatListener.chatmap.put(player.getUniqueId(), new ChatWaitObject("none", "add", rightChest));
-                player.closeInventory();
-                player.sendMessage(Utils.color("&ePlease enter the name of the person you want to add to the list of admins."));
+                    ChatListener.chatmap.put(player.getUniqueId(), new ChatWaitObject("none", "add", rightChest));
+                    player.closeInventory();
+                    player.sendMessage(Utils.color("&ePlease enter the name of the person you want to add to the list of admins."));
 
 
-            } else if (event.getClick() == ClickType.RIGHT) {
-                //right click == remove admin
-                ChatListener.chatmap.put(player.getUniqueId(), new ChatWaitObject("none", "remove", rightChest));
-                player.closeInventory();
-                player.sendMessage(Utils.color("&ePlease enter the name of the person you want to remove from the list of admins."));
+                } else if (event.getClick() == ClickType.RIGHT) {
+                    //right click == remove admin
+                    ChatListener.chatmap.put(player.getUniqueId(), new ChatWaitObject("none", "remove", rightChest));
+                    player.closeInventory();
+                    player.sendMessage(Utils.color("&ePlease enter the name of the person you want to remove from the list of admins."));
+                }
+
+            });
+            boolean isSharedIncome = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "shareincome"), PersistentDataType.INTEGER) == 1;
+            ItemStack sharedIncomeItem = new ItemStack(grayGreenChooser(isSharedIncome), 1);
+            ItemMeta sharedIncomeMeta = sharedIncomeItem.getItemMeta();
+            sharedIncomeMeta.setDisplayName(Utils.color("&eShared income"));
+            sharedIncomeMeta.setLore(buyMessageChooser(isSharedIncome));
+            sharedIncomeItem.setItemMeta(sharedIncomeMeta);
+            GuiItem sharedIncome = new GuiItem(sharedIncomeItem, event -> {
+                event.setCancelled(true);
+                //start the functionality for shared income
+            });
+            this.themain.setItem(13, signItemg);
+            if (hastAtLeastOneAdmin) {
+                this.themain.setItem(22, sharedIncome);
             }
+        }
 
-        });
-
-        boolean isSharedIncome = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "shareincome"), PersistentDataType.INTEGER) == 1;
-        ItemStack sharedIncomeItem = new ItemStack(grayGreenChooser(isSharedIncome), 1);
-        ItemMeta sharedIncomeMeta = sharedIncomeItem.getItemMeta();
-        sharedIncomeMeta.setDisplayName(Utils.color("&eShared income"));
-        sharedIncomeMeta.setLore(buyMessageChooser(isSharedIncome));
-        sharedIncomeItem.setItemMeta(sharedIncomeMeta);
-        GuiItem sharedIncome = new GuiItem(sharedIncomeItem, event -> {
+        GuiItem fillerItem = new GuiItem(glassis, event -> {
+            // Handle your click action here
             event.setCancelled(true);
-            //start the functionality for shared income
         });
+
+
 
         ItemStack backItemStack = new ItemStack(Material.DARK_OAK_DOOR, 1);
         ItemMeta backItemMeta = backItemStack.getItemMeta();
@@ -211,17 +224,18 @@ public class SettingsGUI {
         backItemStack.setItemMeta(backItemMeta);
         GuiItem backItem = new GuiItem(backItemStack, event -> {
            event.setCancelled(true);
-            String owner = Bukkit.getOfflinePlayer(UUID.fromString(dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING))).getName();
+            String owneruuid = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING);
 
             if (isAdminShop) {
                 ServerShopGUI serverShopGUI = new ServerShopGUI();
                 serverShopGUI.showGUI(player, dataContainer, rightChest, rightChest);
                 return;
             }
-            if (player.getName().equalsIgnoreCase(owner)) { //I have to check for admins later
+
+            if (player.getUniqueId().toString().equalsIgnoreCase(owneruuid) || isAdmin) { //I have to check for admins later
                 //owner show special gui
                 OwnerShopGUI ownerShopGUI = new OwnerShopGUI();
-                ownerShopGUI.showGUI(player, dataContainer, rightChest, rightChest);
+                ownerShopGUI.showGUI(player, dataContainer, rightChest, rightChest, isAdmin);
 
 
             } else {
@@ -238,7 +252,7 @@ public class SettingsGUI {
 
         });
 
-        this.themain.getFiller().fillBorder(glasses);
+
         this.themain.setItem(0, backItem);
         //14-15-16
         this.themain.setItem(14, glasses);
@@ -252,9 +266,8 @@ public class SettingsGUI {
         this.themain.setItem(10, messageToggle);
         this.themain.setItem(11, buyDisabled);
         this.themain.setItem(12, sellDisabled);
-        this.themain.setItem(13, signItemg);
-        if (hastAtLeastOneAdmin) {
-            this.themain.setItem(22, sharedIncome);
+        if (isAdmin) {
+            this.themain.setItem(13, fillerItem);
         }
 
         this.themain.open(player);
@@ -365,15 +378,6 @@ public class SettingsGUI {
             return finalList;
         }
     }
-
-
-
-
-
-
-
-
-
 
 
 

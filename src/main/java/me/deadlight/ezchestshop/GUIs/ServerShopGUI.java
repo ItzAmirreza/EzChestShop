@@ -15,6 +15,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -30,7 +31,7 @@ public class ServerShopGUI {
     public void showGUI(Player player, PersistentDataContainer data, Chest chest, Chest rightChest) {
         LanguageManager lm = new LanguageManager();
 
-        String shopOwner = Bukkit.getOfflinePlayer(UUID.fromString(data.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING))).getName();
+        String owneruuid = data.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING);
         double sellPrice = data.get(new NamespacedKey(EzChestShop.getPlugin(), "sell"), PersistentDataType.DOUBLE);
         double buyPrice = data.get(new NamespacedKey(EzChestShop.getPlugin(), "buy"), PersistentDataType.DOUBLE);
         boolean disabledBuy = data.get(new NamespacedKey(EzChestShop.getPlugin(), "dbuy"), PersistentDataType.INTEGER) == 1;
@@ -132,15 +133,24 @@ public class ServerShopGUI {
         settingsMeta.setDisplayName(Utils.color("&b&lSettings"));
         settingsItem.setItemMeta(settingsMeta);
 
-        GuiItem settingsGui = new GuiItem(settingsItem, event -> {
-            event.setCancelled(true);
-            //opening the settigns menu
-            SettingsGUI settingsGUI = new SettingsGUI();
-            settingsGUI.ShowGUI(player, rightChest);
-            player.playSound(player.getLocation(), Sound.BLOCK_PISTON_EXTEND, 0.5f, 0.5f);
-        });
-
+        boolean result = isAdmin(rightChest.getPersistentDataContainer(), owneruuid);
+        //place moved vvv because of settingsGUI
         gui.getFiller().fillBorder(glasses);
+
+        if (player.hasPermission("ecs.admin") || result) {
+            GuiItem settingsGui = new GuiItem(settingsItem, event -> {
+                event.setCancelled(true);
+                //opening the settigns menu
+                SettingsGUI settingsGUI = new SettingsGUI();
+
+                settingsGUI.ShowGUI(player, rightChest, result);
+                player.playSound(player.getLocation(), Sound.BLOCK_PISTON_EXTEND, 0.5f, 0.5f);
+            });
+
+            gui.setItem(26, settingsGui);
+        }
+
+
 
         gui.setItem(10, glasses);
         gui.setItem(16, glasses);
@@ -153,10 +163,6 @@ public class ServerShopGUI {
         gui.setItem(14, oneBuy);
         //64x buy (15)
         gui.setItem(15, moreBuy);
-
-        if (player.getName().equalsIgnoreCase(shopOwner)) {
-            gui.setItem(26, settingsGui);
-        }
 
         gui.open(player);
 
@@ -275,6 +281,35 @@ public class ServerShopGUI {
         } else {
             return mainItem;
         }
+    }
+
+
+    public List<UUID> getAdminsList(PersistentDataContainer data) {
+
+        String adminsString = data.get(new NamespacedKey(EzChestShop.getPlugin(), "admins"), PersistentDataType.STRING);
+        //UUID@UUID@UUID
+        if (adminsString.equalsIgnoreCase("none")) {
+            return new ArrayList<>();
+        } else {
+            String[] stringUUIDS = adminsString.split("@");
+            List<UUID> finalList = new ArrayList<>();
+            for (String uuidInString : stringUUIDS) {
+                finalList.add(UUID.fromString(uuidInString));
+            }
+            return finalList;
+        }
+    }
+
+
+    private boolean isAdmin(PersistentDataContainer data, String uuid) {
+        UUID owneruuid = UUID.fromString(uuid);
+        List<UUID> adminsUUID = getAdminsList(data);
+        if (adminsUUID.contains(owneruuid)) {
+            return true;
+        } else {
+            return false;
+        }
+
     }
 
 

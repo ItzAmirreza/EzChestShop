@@ -4,6 +4,8 @@ import com.bgsoftware.wildchests.api.handlers.ChestsManager;
 import me.deadlight.ezchestshop.Commands.Ecsadmin;
 import me.deadlight.ezchestshop.Commands.MainCommands;
 import me.deadlight.ezchestshop.Listeners.*;
+import me.deadlight.ezchestshop.Utils.ASHologram;
+import me.deadlight.ezchestshop.Utils.FloatingItem;
 import me.deadlight.ezchestshop.Utils.Utils;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
@@ -106,6 +108,24 @@ public final class EzChestShop extends JavaPlugin {
     @Override
     public void onDisable() {
         // Plugin shutdown logic
+        try {
+            for (Object object : Utils.onlinePackets) {
+
+                if (object instanceof ASHologram) {
+                    ASHologram hologram = (ASHologram) object;
+                    hologram.destroy();
+                    continue;
+                }
+                if (object instanceof FloatingItem) {
+                    FloatingItem floatingItem = (FloatingItem) object;
+                    floatingItem.destroy();
+                }
+
+            }
+        } catch (Exception e) {
+
+        }
+
 
     }
 

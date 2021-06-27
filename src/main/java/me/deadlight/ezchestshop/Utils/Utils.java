@@ -17,10 +17,14 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
+import java.util.List;
 
 public class Utils {
+
+    public static List<Object> onlinePackets = new ArrayList<>();
 
     public static String color(String str) {
         return ChatColor.translateAlternateColorCodes('&', str);

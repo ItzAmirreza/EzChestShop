@@ -1,5 +1,4 @@
 package me.deadlight.ezchestshop.Listeners;
-
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.GUIs.AdminShopGUI;
 import me.deadlight.ezchestshop.GUIs.NonOwnerShopGUI;
@@ -10,6 +9,7 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.*;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
@@ -19,6 +19,8 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class ChestOpeningEvent implements Listener {
@@ -66,26 +68,29 @@ public class ChestOpeningEvent implements Listener {
 
                         ownerValueConvertor(rightChest);
                         insertNewValues(rightChest);
-                        String owner = Bukkit.getOfflinePlayer(UUID.fromString(rightone.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING))).getName();
+                        //String owner = Bukkit.getOfflinePlayer(UUID.fromString(rightone.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING))).getName();
+                        String owneruuid = rightone.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING);
                         boolean isAdminShop = rightone.get(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"), PersistentDataType.INTEGER) == 1;
+
                         if (isAdminShop) {
                             ServerShopGUI serverShopGUI = new ServerShopGUI();
                             serverShopGUI.showGUI(event.getPlayer(), rightone, chest, rightChest);
                             return;
                         }
+                        boolean isAdmin = isAdmin(rightone, event.getPlayer().getUniqueId().toString());
 
-                        if (event.getPlayer().getName().equalsIgnoreCase(owner)) {
+                        if (event.getPlayer().hasPermission("ecs.admin")) {
+                            adminShopGUI.showGUI(event.getPlayer(), rightone, chest, rightChest);
+                            return;
+                        }
 
-                            ownerShopGUI.showGUI(event.getPlayer(), rightone, chest, rightChest);
-
+                        if (event.getPlayer().getUniqueId().toString().equalsIgnoreCase(owneruuid) || isAdmin) {
+                            System.out.println("yes opening owner shop");
+                            ownerShopGUI.showGUI(event.getPlayer(), rightone, chest, rightChest, isAdmin);
 
                         } else {
 
                             //not owner show default
-                            if (event.getPlayer().hasPermission("ecs.admin")) {
-                                adminShopGUI.showGUI(event.getPlayer(), rightone, chest, rightChest);
-                                return;
-                            }
                             nonOwnerShopGUI.showGUI(event.getPlayer(), rightone, chest);
 
                         }
@@ -102,25 +107,28 @@ public class ChestOpeningEvent implements Listener {
                         ownerValueConvertor(chest);
                         insertNewValues(chest);
                         boolean isAdminShop = container.get(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"), PersistentDataType.INTEGER) == 1;
-                        String owner = Bukkit.getOfflinePlayer(UUID.fromString(container.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING))).getName();
+                        //String owner = Bukkit.getOfflinePlayer(UUID.fromString(container.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING))).getName();
+                        String owneruuid = container.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING);
+                        boolean isAdmin = isAdmin(container, event.getPlayer().getUniqueId().toString());
 
                         if (isAdminShop) {
                             ServerShopGUI serverShopGUI = new ServerShopGUI();
                             serverShopGUI.showGUI(event.getPlayer(), container, chest, chest);
                             return;
                         }
-                        if (event.getPlayer().getName().equalsIgnoreCase(owner)) {
-                            //owner show special gui
-                            ownerShopGUI.showGUI(event.getPlayer(), container, chest, chest);
 
+                        if (event.getPlayer().hasPermission("ecs.admin")) {
+                            adminShopGUI.showGUI(event.getPlayer(), container, chest, chest);
+                            return;
+                        }
+
+                        if (event.getPlayer().getUniqueId().toString().equalsIgnoreCase(owneruuid) || isAdmin) {
+                            //owner show special gui
+                            ownerShopGUI.showGUI(event.getPlayer(), container, chest, chest, isAdmin);
 
                         } else {
 
                             //not owner show default
-                            if (event.getPlayer().hasPermission("ecs.admin")) {
-                                adminShopGUI.showGUI(event.getPlayer(), container, chest, chest);
-                                return;
-                            }
                             nonOwnerShopGUI.showGUI(event.getPlayer(), container, chest);
 
                         }
@@ -144,7 +152,7 @@ public class ChestOpeningEvent implements Listener {
             //is UUID
             UUID.fromString(shopOwner);
         } catch (Exception e) {
-            //then its old owner vale and I have to change it immediately!
+            //then its old owner value and I have to change it immediately!
             OfflinePlayer offplayer = Bukkit.getOfflinePlayer(shopOwner);
             data.set(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING, offplayer.getUniqueId().toString());
             chest.update();
@@ -164,6 +172,35 @@ public class ChestOpeningEvent implements Listener {
             data.set(new NamespacedKey(EzChestShop.getPlugin(), "logs"), PersistentDataType.STRING, "none");
             data.set(new NamespacedKey(EzChestShop.getPlugin(), "trans"), PersistentDataType.STRING, "none");
             chest.update();
+        }
+    }
+
+
+    private boolean isAdmin(PersistentDataContainer data, String uuid) {
+        UUID owneruuid = UUID.fromString(uuid);
+        List<UUID> adminsUUID = getAdminsList(data);
+        if (adminsUUID.contains(owneruuid)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
+
+    public List<UUID> getAdminsList(PersistentDataContainer data) {
+
+        String adminsString = data.get(new NamespacedKey(EzChestShop.getPlugin(), "admins"), PersistentDataType.STRING);
+        //UUID@UUID@UUID
+        if (adminsString.equalsIgnoreCase("none")) {
+            return new ArrayList<>();
+        } else {
+            String[] stringUUIDS = adminsString.split("@");
+            List<UUID> finalList = new ArrayList<>();
+            for (String uuidInString : stringUUIDS) {
+                finalList.add(UUID.fromString(uuidInString));
+            }
+            return finalList;
         }
     }
 

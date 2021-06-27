@@ -11,40 +11,40 @@ import java.util.Map;
 
 public class FakeAdvancement {
 
-//    private WrapperPlayServerAdvancements advancements;
-//    private Player player;
-//
-//
-//    public FakeAdvancement(Player player, ItemStack itemStack) {
-//        this.advancements = new WrapperPlayServerAdvancements();
-//        this.advancements.setReset(false);
-//        MinecraftKey mck = new MinecraftKey("ecs", "ous");
-//
-//        Map<MinecraftKey, WrapperPlayServerAdvancements.SerializedAdvancement> advancementMap = new HashMap<>();
-//        WrapperPlayServerAdvancements.SerializedAdvancement serializedAdvancement = new WrapperPlayServerAdvancements.SerializedAdvancement();
-//
-//        //setting the advancement object
-//        serializedAdvancement.advancement = new CustomAdvancement();
-//
-//        //setting the advancement key
-//        serializedAdvancement.key = mck;
-//
-//        //display object of that
-//        WrapperPlayServerAdvancements.AdvancementDisplay display = new WrapperPlayServerAdvancements.AdvancementDisplay();
-//        display.announceToChat = false;;
-//        display.icon = itemStack;
-//        display.title = WrappedChatComponent.fromText("Out of Stock!");
-//        display.description = WrappedChatComponent.fromText("This chest shop is out of stock...");
-//        display.frame = WrapperPlayServerAdvancements.FrameType.GOAL;
-//
-//        //setting display object
-//        serializedAdvancement.display = display;
-//
-//        advancementMap.put(mck, serializedAdvancement);
-//        this.advancements.setAdvancements(advancementMap);
-//        this.advancements.sendPacket(player);
-//
-//    }
+    private WrapperPlayServerAdvancements advancements;
+    private Player player;
+
+
+    public FakeAdvancement(Player player, ItemStack itemStack) {
+        this.advancements = new WrapperPlayServerAdvancements();
+        this.advancements.setReset(false);
+        MinecraftKey mck = new MinecraftKey("ecs", "ous");
+
+        Map<MinecraftKey, WrapperPlayServerAdvancements.SerializedAdvancement> advancementMap = new HashMap<>();
+        WrapperPlayServerAdvancements.SerializedAdvancement serializedAdvancement = new WrapperPlayServerAdvancements.SerializedAdvancement();
+
+        //setting the advancement object
+        serializedAdvancement.advancement = new CustomAdvancement();
+
+        //setting the advancement key
+        serializedAdvancement.key = mck;
+
+        //display object of that
+        WrapperPlayServerAdvancements.AdvancementDisplay display = new WrapperPlayServerAdvancements.AdvancementDisplay();
+        display.announceToChat = false;;
+        display.icon = itemStack;
+        display.title = WrappedChatComponent.fromText("Out of Stock!");
+        display.description = WrappedChatComponent.fromText("This chest shop is out of stock...");
+        display.frame = WrapperPlayServerAdvancements.FrameType.GOAL;
+
+        //setting display object
+        serializedAdvancement.display = display;
+
+        advancementMap.put(mck, serializedAdvancement);
+        this.advancements.setAdvancements(advancementMap);
+        this.advancements.sendPacket(player);
+
+    }
 
 //    private WrapperPlayServerAdvancements advancements;
 //    private Player player;

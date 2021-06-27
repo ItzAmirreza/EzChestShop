@@ -3,7 +3,6 @@ import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.GUIs.SettingsGUI;
 import me.deadlight.ezchestshop.Utils.ChatWaitObject;
 import me.deadlight.ezchestshop.Utils.Utils;
-import me.mattstudios.mfgui.gui.guis.Gui;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.OfflinePlayer;
@@ -31,6 +30,14 @@ public class ChatListener implements Listener {
         if (chatmap.containsKey(player.getUniqueId())) {
             //waiting for the answer
             event.setCancelled(true);
+
+            if (event.getMessage().equalsIgnoreCase(player.getName())) {
+                chatmap.remove(player.getUniqueId());
+                player.sendMessage(Utils.color("&cYou can't add or remove yourself in the admins list!"));
+
+                return;
+            }
+
             String type = chatmap.get(player.getUniqueId()).type;
             Chest rightChest = chatmap.get(player.getUniqueId()).rightChest;
             chatmap.put(player.getUniqueId(), new ChatWaitObject(event.getMessage(), type, rightChest));
@@ -44,7 +51,7 @@ public class ChatListener implements Listener {
                         @Override
                         public void run() {
                             addThePlayer(event.getMessage(), rightChest, player);
-                            guiInstance.ShowGUI(player, rightChest);
+                            guiInstance.ShowGUI(player, rightChest, false);
                         }
                     }, 0);
                 } else {
@@ -53,7 +60,7 @@ public class ChatListener implements Listener {
                         @Override
                         public void run() {
                             removeThePlayer(event.getMessage(), rightChest, player);
-                            guiInstance.ShowGUI(player, rightChest);
+                            guiInstance.ShowGUI(player, rightChest, false);
                         }
                     }, 0);
                 }
@@ -70,8 +77,28 @@ public class ChatListener implements Listener {
 
 
     public boolean checkIfPlayerExists(String name) {
-        OfflinePlayer thaPlayer = Bukkit.getOfflinePlayer(name);
-        return thaPlayer.hasPlayedBefore();
+        Player player = Bukkit.getPlayer(name);
+
+        if (player != null) {
+
+            if (player.isOnline()) {
+                return true;
+            } else {
+                OfflinePlayer thaPlayer = Bukkit.getOfflinePlayer(name);
+                if (thaPlayer.hasPlayedBefore()) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+
+        } else {
+            OfflinePlayer thaPlayer = Bukkit.getOfflinePlayer(name);
+            return thaPlayer.hasPlayedBefore();
+        }
+
+
+
     }
 
 
@@ -154,6 +181,7 @@ public class ChatListener implements Listener {
         }
         return finalString.toString();
     }
+
 
 
 

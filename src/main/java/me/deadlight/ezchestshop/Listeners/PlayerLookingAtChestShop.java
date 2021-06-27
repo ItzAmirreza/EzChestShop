@@ -19,7 +19,11 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
 
 public class PlayerLookingAtChestShop implements Listener {
 
@@ -127,12 +131,14 @@ public class PlayerLookingAtChestShop implements Listener {
 
         ASHologram hologram = new ASHologram(player, finalfirstline, EntityType.ARMOR_STAND, secondLineLocation, false);
         hologram.spawn();
+        Utils.onlinePackets.add(hologram);
 
         ASHologram hologram2 = new ASHologram(player, Utils.color(secondLine.replace("%buy%", String.valueOf(buy)).replace("%sell%", String.valueOf(sell)).replace("%item%", itemname)), EntityType.ARMOR_STAND, thirdLocation, false);
         hologram2.spawn();
+        Utils.onlinePackets.add(hologram2);
 
         FloatingItem floatingItem = new FloatingItem(player, thatItem, floatingItemLocation);
-
+        Utils.onlinePackets.add(floatingItem);
         //FakeAdvancement outOfStock = new FakeAdvancement(player, thatItem);
 
 
@@ -140,8 +146,11 @@ public class PlayerLookingAtChestShop implements Listener {
             @Override
             public void run() {
                 hologram.destroy();
+                Utils.onlinePackets.remove(hologram);
                 hologram2.destroy();
+                Utils.onlinePackets.remove(hologram2);
                 floatingItem.destroy();
+                Utils.onlinePackets.remove(floatingItem);
                 playershopmap.remove(spawnLocation);
 
             }
@@ -181,5 +190,6 @@ public class PlayerLookingAtChestShop implements Listener {
         }
 
     }
+
 
 }
