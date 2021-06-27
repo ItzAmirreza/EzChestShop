@@ -199,11 +199,31 @@ public class SettingsGUI {
             ItemStack sharedIncomeItem = new ItemStack(grayGreenChooser(isSharedIncome), 1);
             ItemMeta sharedIncomeMeta = sharedIncomeItem.getItemMeta();
             sharedIncomeMeta.setDisplayName(Utils.color("&eShared income"));
-            sharedIncomeMeta.setLore(buyMessageChooser(isSharedIncome));
+            sharedIncomeMeta.setLore(shareIncomeLoreChooser(isSharedIncome));
             sharedIncomeItem.setItemMeta(sharedIncomeMeta);
             GuiItem sharedIncome = new GuiItem(sharedIncomeItem, event -> {
                 event.setCancelled(true);
                 //start the functionality for shared income
+
+                if (checkIfOn(event.getCurrentItem().getType())) {
+                    rightChest.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "shareincome"), PersistentDataType.INTEGER, 0);
+                    rightChest.update();
+                    player.sendMessage(Utils.color("&7Shared income: &cOFF"));
+                    event.getCurrentItem().setType(Material.GRAY_DYE);
+                    ItemMeta meta = event.getCurrentItem().getItemMeta();
+                    meta.setLore(shareIncomeLoreChooser(false));
+                    event.getCurrentItem().setItemMeta(meta);
+                } else {
+                    rightChest.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "shareincome"), PersistentDataType.INTEGER, 1);
+                    rightChest.update();
+                    player.sendMessage(Utils.color("&7Shared income: &aON"));
+                    event.getCurrentItem().setType(Material.LIME_DYE);
+                    ItemMeta meta = event.getCurrentItem().getItemMeta();
+                    meta.setLore(shareIncomeLoreChooser(true));
+                    event.getCurrentItem().setItemMeta(meta);
+                }
+
+
             });
             this.themain.setItem(13, signItemg);
             if (hastAtLeastOneAdmin) {
@@ -321,18 +341,31 @@ public class SettingsGUI {
         return lores;
     }
 
+    private List<String> shareIncomeLoreChooser(boolean data) {
+        List<String> lores = new ArrayList<>();
+        if (data) {
+            lores.add(Utils.color("&7Current status: &aOn \n \n"));
+        } else {
+            lores.add(Utils.color("&7Current status: &cOff \n \n"));
+        }
+        lores.add(Utils.color("&7If you keep this option on,"));
+        lores.add(Utils.color("&7the profit of ONLY sales, will be"));
+        lores.add(Utils.color("&7shared with admins as well."));
+        return lores;
+    }
+
      private List<String> signLoreChooser(boolean data, PersistentDataContainer container) {
         List<String> lores = new ArrayList<>();
          lores.add(Utils.color("&7You can add/remove admins to"));
          lores.add(Utils.color("&7your chest shop. Admins are able to"));
-         lores.add(Utils.color("&7access the shop storage access certain"));
-         lores.add(Utils.color("&7settings."));
+         lores.add(Utils.color("&7access the shop storage & access certain"));
+         lores.add(Utils.color("&7settings (everything except share income and add/remove-ing admins)."));
          lores.add(Utils.color("&aLeft Click &7to add an admin"));
          lores.add(Utils.color("&cRight Click &7to remove an admin \n \n"));
         if (data) {
             //has at least one admin
             StringBuilder adminsListString = new StringBuilder("&a");
-            List<UUID> admins = getAdminsList(container);
+            List<UUID> admins = Utils.getAdminsList(container);
             boolean first = false;
             for (UUID admin : admins) {
                 OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(admin);
@@ -363,21 +396,7 @@ public class SettingsGUI {
 
      }
 
-    public List<UUID> getAdminsList(PersistentDataContainer data) {
 
-        String adminsString = data.get(new NamespacedKey(EzChestShop.getPlugin(), "admins"), PersistentDataType.STRING);
-        //UUID@UUID@UUID
-        if (adminsString.equalsIgnoreCase("none")) {
-            return new ArrayList<>();
-        } else {
-            String[] stringUUIDS = adminsString.split("@");
-            List<UUID> finalList = new ArrayList<>();
-            for (String uuidInString : stringUUIDS) {
-                finalList.add(UUID.fromString(uuidInString));
-            }
-            return finalList;
-        }
-    }
 
 
 

@@ -4,6 +4,7 @@ import me.deadlight.ezchestshop.GUIs.AdminShopGUI;
 import me.deadlight.ezchestshop.GUIs.NonOwnerShopGUI;
 import me.deadlight.ezchestshop.GUIs.OwnerShopGUI;
 import me.deadlight.ezchestshop.GUIs.ServerShopGUI;
+import me.deadlight.ezchestshop.Utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -178,7 +179,7 @@ public class ChestOpeningEvent implements Listener {
 
     private boolean isAdmin(PersistentDataContainer data, String uuid) {
         UUID owneruuid = UUID.fromString(uuid);
-        List<UUID> adminsUUID = getAdminsList(data);
+        List<UUID> adminsUUID = Utils.getAdminsList(data);
         if (adminsUUID.contains(owneruuid)) {
             return true;
         } else {
@@ -188,20 +189,5 @@ public class ChestOpeningEvent implements Listener {
 
 
 
-    public List<UUID> getAdminsList(PersistentDataContainer data) {
-
-        String adminsString = data.get(new NamespacedKey(EzChestShop.getPlugin(), "admins"), PersistentDataType.STRING);
-        //UUID@UUID@UUID
-        if (adminsString.equalsIgnoreCase("none")) {
-            return new ArrayList<>();
-        } else {
-            String[] stringUUIDS = adminsString.split("@");
-            List<UUID> finalList = new ArrayList<>();
-            for (String uuidInString : stringUUIDS) {
-                finalList.add(UUID.fromString(uuidInString));
-            }
-            return finalList;
-        }
-    }
 
 }

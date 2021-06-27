@@ -17,10 +17,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class Utils {
 
@@ -140,6 +137,22 @@ public class Utils {
     public static HashMap<String, Block> blockBreakMap = new HashMap<>();
 
     public static LanguageManager lm;
+
+    public static List<UUID> getAdminsList(PersistentDataContainer data) {
+
+        String adminsString = data.get(new NamespacedKey(EzChestShop.getPlugin(), "admins"), PersistentDataType.STRING);
+        //UUID@UUID@UUID
+        if (adminsString.equalsIgnoreCase("none")) {
+            return new ArrayList<>();
+        } else {
+            String[] stringUUIDS = adminsString.split("@");
+            List<UUID> finalList = new ArrayList<>();
+            for (String uuidInString : stringUUIDS) {
+                finalList.add(UUID.fromString(uuidInString));
+            }
+            return finalList;
+        }
+    }
 
     //
 

@@ -284,26 +284,10 @@ public class ServerShopGUI {
     }
 
 
-    public List<UUID> getAdminsList(PersistentDataContainer data) {
-
-        String adminsString = data.get(new NamespacedKey(EzChestShop.getPlugin(), "admins"), PersistentDataType.STRING);
-        //UUID@UUID@UUID
-        if (adminsString.equalsIgnoreCase("none")) {
-            return new ArrayList<>();
-        } else {
-            String[] stringUUIDS = adminsString.split("@");
-            List<UUID> finalList = new ArrayList<>();
-            for (String uuidInString : stringUUIDS) {
-                finalList.add(UUID.fromString(uuidInString));
-            }
-            return finalList;
-        }
-    }
-
 
     private boolean isAdmin(PersistentDataContainer data, String uuid) {
         UUID owneruuid = UUID.fromString(uuid);
-        List<UUID> adminsUUID = getAdminsList(data);
+        List<UUID> adminsUUID = Utils.getAdminsList(data);
         if (adminsUUID.contains(owneruuid)) {
             return true;
         } else {

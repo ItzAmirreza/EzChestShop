@@ -7,6 +7,7 @@ import me.deadlight.ezchestshop.Utils.Utils;
 import me.mattstudios.mfgui.gui.guis.Gui;
 import me.mattstudios.mfgui.gui.guis.GuiItem;
 import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.*;
 import org.bukkit.block.Chest;
 import org.bukkit.block.DoubleChest;
@@ -213,6 +214,7 @@ public class AdminShopGUI {
 
                     thatItem.setAmount(count);
                     getandgive(Bukkit.getOfflinePlayer(player.getUniqueId()), price, owner);
+                    sharedIncomeCheck(data, price);
                     transactionMessage(data, owner, Bukkit.getOfflinePlayer(player.getUniqueId()), price, true, getFinalItemName(tthatItem), count);
                     chest.getInventory().removeItem(thatItem);
                     player.getInventory().addItem(thatItem);
@@ -322,6 +324,29 @@ public class AdminShopGUI {
             return mainItem;
         }
     }
+
+    private void sharedIncomeCheck(PersistentDataContainer data, double price) {
+        boolean isSharedIncome = data.get(new NamespacedKey(EzChestShop.getPlugin(), "shareincome"), PersistentDataType.INTEGER) == 1;
+        if (isSharedIncome) {
+            UUID ownerUUID = UUID.fromString(data.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING));
+            List<UUID> adminsList = Utils.getAdminsList(data);
+            double profit = price/(adminsList.size() + 1);
+            if (adminsList.size() > 0) {
+                if (econ.has(Bukkit.getOfflinePlayer(ownerUUID), profit * adminsList.size())) {
+                    EconomyResponse details = econ.withdrawPlayer(Bukkit.getOfflinePlayer(ownerUUID), profit * adminsList.size());
+                    if (details.transactionSuccess()) {
+                        for (UUID adminUUID : adminsList) {
+                            econ.depositPlayer(Bukkit.getOfflinePlayer(adminUUID), profit);
+                        }
+                    }
+                }
+
+            }
+        }
+
+    }
+
+
 
 
 

@@ -106,7 +106,7 @@ public class ChatListener implements Listener {
     public void addThePlayer(String answer, Chest rightChest, Player player) {
 
         UUID answerUUID = Bukkit.getOfflinePlayer(answer).getUniqueId();
-        List<UUID> admins = getAdminsList(rightChest.getPersistentDataContainer());
+        List<UUID> admins = Utils.getAdminsList(rightChest.getPersistentDataContainer());
         if (!admins.contains(answerUUID)) {
 
             admins.add(answerUUID);
@@ -124,7 +124,7 @@ public class ChatListener implements Listener {
 
     public void removeThePlayer(String answer, Chest rightChest, Player player) {
         UUID answerUUID = Bukkit.getOfflinePlayer(answer).getUniqueId();
-        List<UUID> admins = getAdminsList(rightChest.getPersistentDataContainer());
+        List<UUID> admins = Utils.getAdminsList(rightChest.getPersistentDataContainer());
         if (admins.contains(answerUUID)) {
 
             admins.remove(answerUUID);
@@ -146,22 +146,6 @@ public class ChatListener implements Listener {
         }
     }
 
-
-    public List<UUID> getAdminsList(PersistentDataContainer data) {
-
-        String adminsString = data.get(new NamespacedKey(EzChestShop.getPlugin(), "admins"), PersistentDataType.STRING);
-        //UUID@UUID@UUID
-        if (adminsString.equalsIgnoreCase("none")) {
-            return new ArrayList<>();
-        } else {
-            String[] stringUUIDS = adminsString.split("@");
-            List<UUID> finalList = new ArrayList<>();
-            for (String uuidInString : stringUUIDS) {
-                finalList.add(UUID.fromString(uuidInString));
-            }
-            return finalList;
-        }
-    }
 
 
 
