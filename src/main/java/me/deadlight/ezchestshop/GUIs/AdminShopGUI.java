@@ -296,12 +296,11 @@ public class AdminShopGUI {
     }
 
     private void transactionMessage(PersistentDataContainer data, OfflinePlayer owner, OfflinePlayer customer, double price, boolean isBuy, String itemName, int count) {
-        if (data.get(new NamespacedKey(EzChestShop.getPlugin(), "msgtoggle"), PersistentDataType.INTEGER) == 1) {
             //kharidan? true forokhtan? false
             PlayerTransactEvent transactEvent = new PlayerTransactEvent(owner, customer, price, isBuy, itemName, count, Utils.getAdminsList(data), this.chest);
             Bukkit.getPluginManager().callEvent(transactEvent);
 
-        }
+
     }
 
     private String getFinalItemName(ItemStack item) {

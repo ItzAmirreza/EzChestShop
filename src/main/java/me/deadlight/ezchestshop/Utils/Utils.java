@@ -4,8 +4,10 @@ import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.LanguageManager;
 import me.deadlight.ezchestshop.Listeners.PlayerLookingAtChestShop;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
+import org.bukkit.block.Chest;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
@@ -152,6 +154,33 @@ public class Utils {
             }
             return finalList;
         }
+    }
+
+
+    public static List<TransactionLogObject> getListOfTransactions(PersistentDataContainer data) {
+        String wholeString = data.get(new NamespacedKey(EzChestShop.getPlugin(), "trans"), PersistentDataType.STRING);
+        if (wholeString.equalsIgnoreCase("none")) {
+            return new ArrayList<>();
+        } else {
+            List<TransactionLogObject> logObjectList = new ArrayList<>();
+            String[] logs = wholeString.split("#");
+            for (String log : logs) {
+                String[] datas = log.split("@");
+                String pname = datas[0];
+                String type = datas[1];
+                String price = datas[2];
+                String time = datas[3];
+                int count = Integer.parseInt(datas[4]);
+                logObjectList.add(new TransactionLogObject(type, pname, price, time, count));
+
+            }
+            return logObjectList;
+
+        }
+    }
+
+    public static Location getSpawnLocation(Chest chest) {
+        return chest.getLocation().clone().add(0.5, 1, 0.5);
     }
 
     //

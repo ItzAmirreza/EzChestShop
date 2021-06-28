@@ -11,7 +11,6 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,11 +21,13 @@ public class PlayerTransactionListener implements Listener {
     @EventHandler
     public void onTransaction(PlayerTransactEvent event) {
         log(event);
-        if (event.getOwner().isOnline()) {
+        if (event.getChest().getPersistentDataContainer().get(new NamespacedKey(EzChestShop.getPlugin(), "msgtoggle"), PersistentDataType.INTEGER) == 1) {
+
+            List<UUID> getters = event.getAdminsUUID();
+            getters.add(event.getOwner().getUniqueId());
 
             if (event.isBuy()) {
-                event.getOwner().getPlayer().sendMessage(Utils.color("&7[&aECS&7] &b" + event.getCustomer().getName() + " &7has bought &e" + event.getCount() + "x &7of &d" + event.getItemName() + "&7 with the worth of &a" + event.getPrice() + "$"));
-                for (UUID adminUUID : event.getAdminsUUID()) {
+                for (UUID adminUUID : getters) {
                     Player admin = Bukkit.getPlayer(adminUUID);
                     if (admin != null) {
                         if (admin.isOnline()) {
@@ -35,8 +36,7 @@ public class PlayerTransactionListener implements Listener {
                     }
                 }
             } else {
-                event.getOwner().getPlayer().sendMessage(Utils.color("&7[&aECS&7] &b" + event.getCustomer().getName() + " &7has sold &e" + event.getCount() + "x &7of &d" + event.getItemName() + "&7 with the worth of &a" + event.getPrice() + "$"));
-                for (UUID adminUUID : event.getAdminsUUID()) {
+                for (UUID adminUUID : getters) {
                     Player admin = Bukkit.getPlayer(adminUUID);
                     if (admin != null) {
                         if (admin.isOnline()) {
@@ -46,39 +46,45 @@ public class PlayerTransactionListener implements Listener {
                 }
             }
 
+
+
+
+
+
         }
+
     }
 
     private void log(PlayerTransactEvent event) {
 
         PersistentDataContainer data = event.getChest().getPersistentDataContainer();
-        //player name@but|sell@price@time#
+        //player name@but|sell@price@time@count#
 
         String ttype;
         if (event.isBuy()) {
-            ttype = "Buy";
+            ttype = "buy";
         } else {
-            ttype = "Sell";
+            ttype = "sell";
         }
         String formattedDateTime = event.getTime().format(formatter);
 
-        List<TransactionLogObject> logObjectList = getListOfTransactions(data);
+        List<TransactionLogObject> logObjectList = Utils.getListOfTransactions(data);
         if (logObjectList.size() == 53) {
-            logObjectList.remove(52);
+            logObjectList.remove(0);
         }
-        logObjectList.add(new TransactionLogObject(ttype, event.getCustomer().getName(), String.valueOf(event.getPrice()), formattedDateTime));
+        logObjectList.add(new TransactionLogObject(ttype, event.getCustomer().getName(), String.valueOf(event.getPrice()), formattedDateTime, event.getCount()));
 //        StringBuilder logString = new StringBuilder(event.getCustomer().getName());
-//        logString.append("@").append(ttype).append("@").append(event.getPrice()).append("@").append(formattedDateTime);
+//        logString.append("@").append(ttype).append("@").append(event.getPrice()).append("@").append(formattedDateTime) + count;
         //convert all into strings
         StringBuilder finalString = new StringBuilder();
         boolean first = false;
         for (TransactionLogObject log : logObjectList) {
 
             if (first) {
-                finalString.append("#").append(log.pname).append("@").append(log.type).append("@").append(log.price).append("@").append(log.time);
+                finalString.append("#").append(log.pname).append("@").append(log.type).append("@").append(log.price).append("@").append(log.time).append("@").append(log.count);
             } else {
                 first = true;
-                finalString.append(log.pname).append("@").append(log.type).append("@").append(log.price).append("@").append(log.time);
+                finalString.append(log.pname).append("@").append(log.type).append("@").append(log.price).append("@").append(log.time).append("@").append(log.count);
             }
         }
 
@@ -87,25 +93,6 @@ public class PlayerTransactionListener implements Listener {
 
     }
 
-    private List<TransactionLogObject> getListOfTransactions(PersistentDataContainer data) {
-        String wholeString = data.get(new NamespacedKey(EzChestShop.getPlugin(), "trans"), PersistentDataType.STRING);
-        if (wholeString.equalsIgnoreCase("none")) {
-            return new ArrayList<>();
-        } else {
-            List<TransactionLogObject> logObjectList = new ArrayList<>();
-            String[] logs = wholeString.split("#");
-            for (String log : logs) {
-                String[] datas = log.split("@");
-                String pname = datas[0];
-                String type = datas[1];
-                String price = datas[2];
-                String time = datas[3];
-                logObjectList.add(new TransactionLogObject(type, pname, price, time));
 
-            }
-            return logObjectList;
-
-        }
-    }
 
 }

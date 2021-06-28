@@ -4,6 +4,7 @@ import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.LanguageManager;
 import me.deadlight.ezchestshop.Listeners.ChatListener;
 import me.deadlight.ezchestshop.Utils.ChatWaitObject;
+import me.deadlight.ezchestshop.Utils.LogType;
 import me.deadlight.ezchestshop.Utils.Utils;
 import me.mattstudios.mfgui.gui.guis.Gui;
 import me.mattstudios.mfgui.gui.guis.GuiItem;
@@ -64,6 +65,8 @@ public class SettingsGUI {
         lastTransItem.setItemMeta(lastTransMeta);
         GuiItem lastTrans = new GuiItem(lastTransItem, event -> {
            event.setCancelled(true);
+           LogsGUI logsGUI = new LogsGUI();
+           logsGUI.showGUI(player, dataContainer, rightChest, LogType.TRANSACTION, isAdmin);
         });
 
         //settings change logs
@@ -73,6 +76,8 @@ public class SettingsGUI {
         lastLogsItem.setItemMeta(lastLogsMeta);
         GuiItem lastLogs = new GuiItem(lastLogsItem, event -> {
            event.setCancelled(true);
+            LogsGUI logsGUI = new LogsGUI();
+            logsGUI.showGUI(player, dataContainer, rightChest, LogType.ACTION, isAdmin);
         });
         //Message Toggle Item
         boolean isToggleMessageOn = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "msgtoggle"), PersistentDataType.INTEGER) == 1;
@@ -255,7 +260,7 @@ public class SettingsGUI {
                 return;
             }
 
-            if (player.getUniqueId().toString().equalsIgnoreCase(owneruuid) || isAdmin) { //I have to check for admins later
+            if (player.getUniqueId().toString().equalsIgnoreCase(owneruuid) || isAdmin) {
                 //owner show special gui
                 OwnerShopGUI ownerShopGUI = new OwnerShopGUI();
                 ownerShopGUI.showGUI(player, dataContainer, rightChest, rightChest, isAdmin);

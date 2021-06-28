@@ -16,6 +16,7 @@ public class BlockBreakListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onBlockBreak(BlockBreakEvent event) {
+
         if (Utils.blockBreakMap.containsKey(event.getPlayer().getName())) {
             Collection<Entity> entityList = event.getBlock().getLocation().getWorld().getNearbyEntities(event.getBlock().getLocation(), 2, 2 ,2);
             for (Entity en : entityList) {
