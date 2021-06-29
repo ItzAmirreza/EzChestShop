@@ -134,7 +134,7 @@ public class ServerShopGUI {
         settingsMeta.setDisplayName(Utils.color("&b&lSettings"));
         settingsItem.setItemMeta(settingsMeta);
 
-        boolean result = isAdmin(rightChest.getPersistentDataContainer(), owneruuid);
+        boolean result = isAdmin(rightChest.getPersistentDataContainer(), player.getUniqueId().toString());
         //place moved vvv because of settingsGUI
         gui.getFiller().fillBorder(glasses);
 
@@ -164,6 +164,10 @@ public class ServerShopGUI {
         gui.setItem(14, oneBuy);
         //64x buy (15)
         gui.setItem(15, moreBuy);
+
+//        if (player.hasPermission("ecs.admin") || isAdmin(data, player.getUniqueId().toString())) {
+//            gui.setItem();
+//        }
 
         gui.open(player);
 

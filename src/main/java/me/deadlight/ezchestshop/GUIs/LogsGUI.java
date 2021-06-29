@@ -76,12 +76,7 @@ public class LogsGUI {
 
             }
 
-        } else {
-            //interactions with ecs
-
         }
-
-
 
         //until slot 53 there is space
         gui.setItem(0, doorItem);

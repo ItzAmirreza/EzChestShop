@@ -28,12 +28,20 @@ public final class EzChestShop extends JavaPlugin {
     public ChestsManager wchests = null;
 
     public static boolean protocollib = false;
+
+
     @Override
     public void onEnable() {
         plugin = this;
         logConsole("&c[&eEzChestShop&c] &aEnabling EzChestShop - version 1.2.9");
         saveDefaultConfig();
         // Plugin startup logic
+
+        if (getServer().getVersion().contains("1.17")) {
+            Utils.is1_17 = true;
+            logConsole("&c[&eEzChestShop&c] &eInitializing 1.17 protocol BETA update...");
+        }
+
         if (!setupEconomy() ) {
 
             logConsole("&c[&eEzChestShop&c] &4Cannot find vault or economy plugin. Self disabling... &ePlease note that you need vault and at least one economy plugin installed.");

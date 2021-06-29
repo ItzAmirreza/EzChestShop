@@ -183,6 +183,9 @@ public class Utils {
         return chest.getLocation().clone().add(0.5, 1, 0.5);
     }
 
+
+    public static boolean is1_17 = false;
+
     //
 
 

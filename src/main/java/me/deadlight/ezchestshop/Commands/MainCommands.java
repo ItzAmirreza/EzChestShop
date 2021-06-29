@@ -147,7 +147,6 @@ public class MainCommands implements CommandExecutor {
                             container.set(new NamespacedKey(EzChestShop.getPlugin(), "dsell"), PersistentDataType.INTEGER, 0);
                             container.set(new NamespacedKey(EzChestShop.getPlugin(), "admins"), PersistentDataType.STRING, "none");
                             container.set(new NamespacedKey(EzChestShop.getPlugin(), "shareincome"), PersistentDataType.INTEGER, 1);
-                            container.set(new NamespacedKey(EzChestShop.getPlugin(), "logs"), PersistentDataType.STRING, "none");
                             container.set(new NamespacedKey(EzChestShop.getPlugin(), "trans"), PersistentDataType.STRING, "none");
                             container.set(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"), PersistentDataType.INTEGER, 0);
 
@@ -240,7 +239,6 @@ public class MainCommands implements CommandExecutor {
                                 container.remove(new NamespacedKey(EzChestShop.getPlugin(), "dsell"));
                                 container.remove(new NamespacedKey(EzChestShop.getPlugin(), "admins"));
                                 container.remove(new NamespacedKey(EzChestShop.getPlugin(), "shareincome"));
-                                container.remove(new NamespacedKey(EzChestShop.getPlugin(), "logs"));
                                 container.remove(new NamespacedKey(EzChestShop.getPlugin(), "trans"));
                                 container.remove(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"));
                                 //msgtoggle 0/1

@@ -30,12 +30,16 @@ public class ChatListener implements Listener {
         if (chatmap.containsKey(player.getUniqueId())) {
             //waiting for the answer
             event.setCancelled(true);
-
+            ChatWaitObject waitObject = chatmap.get(player.getUniqueId());
+            String owneruuid = waitObject.rightChest.getPersistentDataContainer().get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING);
             if (event.getMessage().equalsIgnoreCase(player.getName())) {
-                chatmap.remove(player.getUniqueId());
-                player.sendMessage(Utils.color("&cYou can't add or remove yourself in the admins list!"));
+                OfflinePlayer ofplayer = Bukkit.getOfflinePlayer(owneruuid);
+                if (ofplayer.getName().equalsIgnoreCase(event.getPlayer().getName())) {
+                    chatmap.remove(player.getUniqueId());
+                    player.sendMessage(Utils.color("&cYou can't add or remove yourself in the admins list!"));
+                    return;
+                }
 
-                return;
             }
 
             String type = chatmap.get(player.getUniqueId()).type;

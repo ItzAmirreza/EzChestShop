@@ -69,16 +69,19 @@ public class SettingsGUI {
            logsGUI.showGUI(player, dataContainer, rightChest, LogType.TRANSACTION, isAdmin);
         });
 
-        //settings change logs
-        ItemStack lastLogsItem = new ItemStack(Material.PAPER, 1);
-        ItemMeta lastLogsMeta = lastLogsItem.getItemMeta();
-        lastLogsMeta.setDisplayName(Utils.color("&aLatest Logs"));
-        lastLogsItem.setItemMeta(lastLogsMeta);
-        GuiItem lastLogs = new GuiItem(lastLogsItem, event -> {
-           event.setCancelled(true);
-            LogsGUI logsGUI = new LogsGUI();
-            logsGUI.showGUI(player, dataContainer, rightChest, LogType.ACTION, isAdmin);
-        });
+        //I was going to add logs section which would be about actions in that chest shop but I decided not to implement it. maybe later
+//        //settings change logs
+//        ItemStack lastLogsItem = new ItemStack(Material.PAPER, 1);
+//        ItemMeta lastLogsMeta = lastLogsItem.getItemMeta();
+//        lastLogsMeta.setDisplayName(Utils.color("&aLatest Logs"));
+//        lastLogsItem.setItemMeta(lastLogsMeta);
+//        GuiItem lastLogs = new GuiItem(lastLogsItem, event -> {
+//           event.setCancelled(true);
+//            LogsGUI logsGUI = new LogsGUI();
+//            logsGUI.showGUI(player, dataContainer, rightChest, LogType.ACTION, isAdmin);
+//        });
+
+
         //Message Toggle Item
         boolean isToggleMessageOn = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "msgtoggle"), PersistentDataType.INTEGER) == 1;
         ItemStack messageToggleItem = new ItemStack(grayGreenChooser(isToggleMessageOn), 1);
@@ -261,6 +264,11 @@ public class SettingsGUI {
             }
 
             if (player.getUniqueId().toString().equalsIgnoreCase(owneruuid) || isAdmin) {
+                if (player.hasPermission("ecs.admin")) {
+                    AdminShopGUI adminShopGUI = new AdminShopGUI();
+                    adminShopGUI.showGUI(player, dataContainer, rightChest, rightChest);
+                    return;
+                }
                 //owner show special gui
                 OwnerShopGUI ownerShopGUI = new OwnerShopGUI();
                 ownerShopGUI.showGUI(player, dataContainer, rightChest, rightChest, isAdmin);
@@ -287,8 +295,10 @@ public class SettingsGUI {
         this.themain.setItem(15, glasses);
         this.themain.setItem(16, glasses);
         //17-26
-        this.themain.setItem(17, lastTrans);
-        this.themain.setItem(26, lastLogs);
+        this.themain.setItem(26, lastTrans);
+
+        //for forgotten logs button
+        //this.themain.setItem(26, lastLogs);
 
         //10-11-12-13-(22 optional)
         this.themain.setItem(10, messageToggle);
