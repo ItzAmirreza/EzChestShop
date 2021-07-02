@@ -104,9 +104,10 @@ public class ChestOpeningEvent implements Listener {
 
                         ownerValueConvertor(chest);
                         insertNewValues(chest);
-                        boolean isAdminShop = container.get(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"), PersistentDataType.INTEGER) == 1;
+
                         //String owner = Bukkit.getOfflinePlayer(UUID.fromString(container.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING))).getName();
                         String owneruuid = container.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING);
+                        boolean isAdminShop = container.get(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"), PersistentDataType.INTEGER) == 1;
                         boolean isAdmin = isAdmin(container, event.getPlayer().getUniqueId().toString());
 
                         if (isAdminShop) {

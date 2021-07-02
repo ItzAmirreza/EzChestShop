@@ -36,8 +36,8 @@ public class AdminShopGUI {
     public void showGUI(Player player, PersistentDataContainer data, Chest chest, Chest rightChest) {
         this.chest = rightChest;
         LanguageManager lm = new LanguageManager();
-        String shopOwner = Bukkit.getOfflinePlayer(UUID.fromString(data.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING))).getName();
-        String owneruuid = data.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING);
+        OfflinePlayer shopOwnerOfflineObject = Bukkit.getOfflinePlayer(UUID.fromString(data.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING)));
+        String shopOwner = shopOwnerOfflineObject.getName();
         double sellPrice = data.get(new NamespacedKey(EzChestShop.getPlugin(), "sell"), PersistentDataType.DOUBLE);
         double buyPrice = data.get(new NamespacedKey(EzChestShop.getPlugin(), "buy"), PersistentDataType.DOUBLE);
         boolean disabledBuy = data.get(new NamespacedKey(EzChestShop.getPlugin(), "dbuy"), PersistentDataType.INTEGER) == 1;
@@ -81,7 +81,7 @@ public class AdminShopGUI {
                 return;
             }
 
-            sellItem(chest, sellPrice, 1, mainitem, Bukkit.getOfflinePlayer(shopOwner), player, data);
+            sellItem(rightChest, sellPrice, 1, mainitem, shopOwnerOfflineObject, player, data);
         });
 
         ItemStack moreSellIS = new ItemStack(Material.RED_DYE, 64);
@@ -99,7 +99,7 @@ public class AdminShopGUI {
                 return;
             }
             //sell things
-            sellItem(chest, sellPrice * 64, 64, mainitem, Bukkit.getOfflinePlayer(shopOwner), player, data);
+            sellItem(rightChest, sellPrice * 64, 64, mainitem, shopOwnerOfflineObject, player, data);
         });
 
         //buy 1x
@@ -118,7 +118,7 @@ public class AdminShopGUI {
             if (disabledBuy) {
                 return;
             }
-            buyItem(chest, buyPrice, 1, player, mainitem, Bukkit.getOfflinePlayer(shopOwner), data);
+            buyItem(rightChest, buyPrice, 1, player, mainitem, shopOwnerOfflineObject, data);
         });
 
 
@@ -136,7 +136,7 @@ public class AdminShopGUI {
             if (disabledBuy) {
                 return;
             }
-            buyItem(chest, buyPrice * 64, 64, player, mainitem, Bukkit.getOfflinePlayer(shopOwner), data);
+            buyItem(rightChest, buyPrice * 64, 64, player, mainitem, shopOwnerOfflineObject, data);
         });
 
         ItemStack storageitem = new ItemStack(Material.REDSTONE, 1);
