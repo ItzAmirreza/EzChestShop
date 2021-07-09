@@ -57,15 +57,15 @@ public class ChestOpeningEvent implements Listener {
                         event.setCancelled(true);
 
                         if (!chestleft.getPersistentDataContainer().isEmpty()) {
-                            rightone = chestleft.getPersistentDataContainer();
                             rightChest = chestleft;
                         } else {
-                            rightone = chestright.getPersistentDataContainer();
                             rightChest = chestright;
                         }
 
                         ownerValueConvertor(rightChest);
                         insertNewValues(rightChest);
+                        rightone = rightChest.getPersistentDataContainer();
+
                         //String owner = Bukkit.getOfflinePlayer(UUID.fromString(rightone.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING))).getName();
                         String owneruuid = rightone.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING);
                         boolean isAdminShop = rightone.get(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"), PersistentDataType.INTEGER) == 1;
@@ -104,10 +104,10 @@ public class ChestOpeningEvent implements Listener {
 
                         ownerValueConvertor(chest);
                         insertNewValues(chest);
-
+                        container = chest.getPersistentDataContainer();
+                        boolean isAdminShop = container.get(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"), PersistentDataType.INTEGER) == 1;
                         //String owner = Bukkit.getOfflinePlayer(UUID.fromString(container.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING))).getName();
                         String owneruuid = container.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING);
-                        boolean isAdminShop = container.get(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"), PersistentDataType.INTEGER) == 1;
                         boolean isAdmin = isAdmin(container, event.getPlayer().getUniqueId().toString());
 
                         if (isAdminShop) {

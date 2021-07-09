@@ -19,25 +19,20 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
-
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
 public class AdminShopGUI {
     private Economy econ = EzChestShop.getEconomy();
-    private Chest chest;
 
     public AdminShopGUI() {
 
     }
 
     public void showGUI(Player player, PersistentDataContainer data, Chest chest, Chest rightChest) {
-        this.chest = rightChest;
         LanguageManager lm = new LanguageManager();
-        OfflinePlayer shopOwnerOfflineObject = Bukkit.getOfflinePlayer(UUID.fromString(data.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING)));
-        String shopOwner = shopOwnerOfflineObject.getName();
+        String shopOwner = Bukkit.getOfflinePlayer(UUID.fromString(data.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING))).getName();
         double sellPrice = data.get(new NamespacedKey(EzChestShop.getPlugin(), "sell"), PersistentDataType.DOUBLE);
         double buyPrice = data.get(new NamespacedKey(EzChestShop.getPlugin(), "buy"), PersistentDataType.DOUBLE);
         boolean disabledBuy = data.get(new NamespacedKey(EzChestShop.getPlugin(), "dbuy"), PersistentDataType.INTEGER) == 1;
@@ -81,7 +76,7 @@ public class AdminShopGUI {
                 return;
             }
 
-            sellItem(rightChest, sellPrice, 1, mainitem, shopOwnerOfflineObject, player, data);
+            sellItem(rightChest, sellPrice, 1, mainitem, Bukkit.getOfflinePlayer(shopOwner), player, data);
         });
 
         ItemStack moreSellIS = new ItemStack(Material.RED_DYE, 64);
@@ -99,7 +94,7 @@ public class AdminShopGUI {
                 return;
             }
             //sell things
-            sellItem(rightChest, sellPrice * 64, 64, mainitem, shopOwnerOfflineObject, player, data);
+            sellItem(rightChest, sellPrice * 64, 64, mainitem, Bukkit.getOfflinePlayer(shopOwner), player, data);
         });
 
         //buy 1x
@@ -118,7 +113,7 @@ public class AdminShopGUI {
             if (disabledBuy) {
                 return;
             }
-            buyItem(rightChest, buyPrice, 1, player, mainitem, shopOwnerOfflineObject, data);
+            buyItem(rightChest, buyPrice, 1, player, mainitem, Bukkit.getOfflinePlayer(shopOwner));
         });
 
 
@@ -136,7 +131,7 @@ public class AdminShopGUI {
             if (disabledBuy) {
                 return;
             }
-            buyItem(rightChest, buyPrice * 64, 64, player, mainitem, shopOwnerOfflineObject, data);
+            buyItem(rightChest, buyPrice * 64, 64, player, mainitem, Bukkit.getOfflinePlayer(shopOwner));
         });
 
         ItemStack storageitem = new ItemStack(Material.REDSTONE, 1);
@@ -202,7 +197,7 @@ public class AdminShopGUI {
         return (long) (((long) (num * 1e1)) / 1e1);
     }
 
-    private void buyItem(Chest chest, double price, int count, Player player, ItemStack tthatItem, OfflinePlayer owner, PersistentDataContainer data) {
+    private void buyItem(Chest chest, double price, int count, Player player, ItemStack tthatItem, OfflinePlayer owner) {
         ItemStack thatItem = tthatItem.clone();
         LanguageManager lm = new LanguageManager();
 
@@ -216,8 +211,8 @@ public class AdminShopGUI {
 
                     thatItem.setAmount(count);
                     getandgive(Bukkit.getOfflinePlayer(player.getUniqueId()), price, owner);
-                    sharedIncomeCheck(data, price);
-                    transactionMessage(data, owner, Bukkit.getOfflinePlayer(player.getUniqueId()), price, true, getFinalItemName(tthatItem), count);
+                    sharedIncomeCheck(chest.getPersistentDataContainer(), price);
+                    transactionMessage(chest.getPersistentDataContainer(), owner, Bukkit.getOfflinePlayer(player.getUniqueId()), price, true, getFinalItemName(tthatItem), count, chest);
                     chest.getInventory().removeItem(thatItem);
                     player.getInventory().addItem(thatItem);
                     player.sendMessage(Utils.color(lm.messageSuccBuy(price)));
@@ -255,7 +250,7 @@ public class AdminShopGUI {
                 if (chest.getInventory().firstEmpty() != -1) {
                     thatItem.setAmount(count);
                     getandgive(owner, price, Bukkit.getOfflinePlayer(player.getUniqueId()));
-                    transactionMessage(data, owner, Bukkit.getOfflinePlayer(player.getUniqueId()), price, false, getFinalItemName(tthatItem), count);
+                    transactionMessage(data, owner, Bukkit.getOfflinePlayer(player.getUniqueId()), price, false, getFinalItemName(tthatItem), count, chest);
                     player.getInventory().removeItem(thatItem);
                     chest.getInventory().addItem(thatItem);
                     player.sendMessage(lm.messageSuccSell(price));
@@ -295,9 +290,9 @@ public class AdminShopGUI {
 
     }
 
-    private void transactionMessage(PersistentDataContainer data, OfflinePlayer owner, OfflinePlayer customer, double price, boolean isBuy, String itemName, int count) {
+    private void transactionMessage(PersistentDataContainer data, OfflinePlayer owner, OfflinePlayer customer, double price, boolean isBuy, String itemName, int count, Chest chest) {
             //kharidan? true forokhtan? false
-            PlayerTransactEvent transactEvent = new PlayerTransactEvent(owner, customer, price, isBuy, itemName, count, Utils.getAdminsList(data), this.chest);
+            PlayerTransactEvent transactEvent = new PlayerTransactEvent(owner, customer, price, isBuy, itemName, count, Utils.getAdminsList(data), chest);
             Bukkit.getPluginManager().callEvent(transactEvent);
 
 
