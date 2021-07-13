@@ -1,9 +1,6 @@
 package me.deadlight.ezchestshop;
-
-import me.deadlight.ezchestshop.Utils.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -22,7 +19,6 @@ public class LanguageManager {
     public void setLanguageConfig(FileConfiguration config) {
         languages = config;
     }
-
 
     /**
      * @return returns buy price of GUI item in lore
@@ -319,7 +315,7 @@ public class LanguageManager {
         List<String> list = Arrays.asList(lm.split("\n"));
         List<String> finalList = new ArrayList<>();
         for (String str : list) {
-            finalList.add(colorify(str).replace("%price%", price).replace("%count%", String.valueOf(count)).replace("%time%", time));
+            finalList.add(colorify(str.replace("%price%", price).replace("%count%", String.valueOf(count)).replace("%time%", time)));
         }
         return finalList;
     }
@@ -328,7 +324,7 @@ public class LanguageManager {
         List<String> list = Arrays.asList(lm.split("\n"));
         List<String> finalList = new ArrayList<>();
         for (String str : list) {
-            finalList.add(colorify(str).replace("%price%", price).replace("%count%", String.valueOf(count)).replace("%time%", time));
+            finalList.add(colorify(str.replace("%price%", price).replace("%count%", String.valueOf(count)).replace("%time%", time)));
         }
         return finalList;
     }
@@ -337,7 +333,7 @@ public class LanguageManager {
         List<String> list = Arrays.asList(lm.split("\n"));
         List<String> finalList = new ArrayList<>();
         for (String str : list) {
-            finalList.add(colorify(str).replace("%status%", status));
+            finalList.add(colorify(str.replace("%status%", status)));
         }
         return finalList;
     }
@@ -346,7 +342,7 @@ public class LanguageManager {
         List<String> list = Arrays.asList(lm.split("\n"));
         List<String> finalList = new ArrayList<>();
         for (String str : list) {
-            finalList.add(colorify(str).replace("%status%", status));
+            finalList.add(colorify(str.replace("%status%", status)));
         }
         return finalList;
     }
@@ -355,7 +351,7 @@ public class LanguageManager {
         List<String> list = Arrays.asList(lm.split("\n"));
         List<String> finalList = new ArrayList<>();
         for (String str : list) {
-            finalList.add(colorify(str).replace("%status%", status));
+            finalList.add(colorify(str.replace("%status%", status)));
         }
         return finalList;
     }
@@ -364,7 +360,7 @@ public class LanguageManager {
         List<String> list = Arrays.asList(lm.split("\n"));
         List<String> finalList = new ArrayList<>();
         for (String str : list) {
-            finalList.add(colorify(str).replace("%admins%", admins));
+            finalList.add(colorify(str.replace("%admins%", admins)));
         }
         return finalList;
     }
@@ -374,7 +370,7 @@ public class LanguageManager {
         List<String> list = Arrays.asList(lm.split("\n"));
         List<String> finalList = new ArrayList<>();
         for (String str : list) {
-            finalList.add(colorify(str).replace("%status%", admins));
+            finalList.add(colorify(str.replace("%status%", admins)));
         }
         return finalList;
     }

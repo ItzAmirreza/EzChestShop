@@ -1,6 +1,6 @@
 package me.deadlight.ezchestshop.Utils;
-
 import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.BukkitConverters;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
@@ -11,13 +11,14 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 public class FloatingItem {
 
-    private WrapperPlayServerEntityDestroy destroy;
+//    private WrapperPlayServerEntityDestroy destroy;
     private WrapperPlayServerEntityMetadata meta;
     private WrapperPlayServerSpawnEntity spawn;
     private int eID;
@@ -28,7 +29,7 @@ public class FloatingItem {
     public FloatingItem(Player player, ItemStack itemStack, Location location) {
 
         this.spawn = new WrapperPlayServerSpawnEntity();
-        this.destroy = new WrapperPlayServerEntityDestroy();
+        //this.destroy = new WrapperPlayServerEntityDestroy();
         this.meta = new WrapperPlayServerEntityMetadata();
         this.velocity = new WrapperPlayServerEntityVelocity();
         this.player = player;
@@ -39,7 +40,7 @@ public class FloatingItem {
         this.spawn.setY(location.getY());
         this.spawn.setZ(location.getZ());
         this.spawn.setType(EntityType.DROPPED_ITEM);
-        this.destroy.setEntityIds(new int[] { eID });
+        //this.destroy.setEntityIds(new int[] { eID });
         this.spawn.sendPacket(player);
 
         //using packetwrapper
@@ -65,7 +66,14 @@ public class FloatingItem {
     }
 
     public void destroy() {
-        this.destroy.sendPacket(player);
+        //this.destroy.sendPacket(player);
+        PacketContainer destroyEntityPacket = new PacketContainer(PacketType.Play.Server.ENTITY_DESTROY);
+        destroyEntityPacket.getIntegers().write(0, eID);
+        try {
+            ProtocolLibrary.getProtocolManager().sendServerPacket(player, destroyEntityPacket);
+        } catch (InvocationTargetException e) {
+
+        }
     }
 
 

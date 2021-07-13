@@ -1,6 +1,4 @@
 package me.deadlight.ezchestshop.Utils;
-
-import me.mattstudios.mfgui.gui.guis.Gui;
 import org.bukkit.block.Chest;
 
 public class ChatWaitObject {

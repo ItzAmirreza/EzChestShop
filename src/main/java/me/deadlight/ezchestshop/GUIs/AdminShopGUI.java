@@ -1,11 +1,10 @@
 package me.deadlight.ezchestshop.GUIs;
-
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.LanguageManager;
 import me.deadlight.ezchestshop.Listeners.PlayerTransactEvent;
 import me.deadlight.ezchestshop.Utils.Utils;
-import me.mattstudios.mfgui.gui.guis.Gui;
-import me.mattstudios.mfgui.gui.guis.GuiItem;
+import dev.triumphteam.gui.guis.Gui;
+import dev.triumphteam.gui.guis.GuiItem;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.*;
@@ -166,7 +165,7 @@ public class AdminShopGUI {
             //opening the settigns menu
             SettingsGUI settingsGUI = new SettingsGUI();
             settingsGUI.ShowGUI(player, rightChest, false);
-            player.playSound(player.getLocation(), Sound.BLOCK_DISPENSER_LAUNCH, 0.5f, 0.5f);
+            player.playSound(player.getLocation(), Sound.BLOCK_PISTON_EXTEND, 0.5f, 0.5f);
         });
 
 

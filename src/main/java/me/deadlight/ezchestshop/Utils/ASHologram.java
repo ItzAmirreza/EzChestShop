@@ -1,7 +1,13 @@
 package me.deadlight.ezchestshop.Utils;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.ProtocolManager;
+import com.comphenix.protocol.events.PacketContainer;
 import me.deadlight.ezchestshop.Packets.WrapperPlayServerEntityDestroy;
 import me.deadlight.ezchestshop.Packets.WrapperPlayServerEntityMetadata;
 import me.deadlight.ezchestshop.Packets.WrapperPlayServerEntityTeleport;
@@ -21,7 +27,7 @@ public class ASHologram {
     private int entityID;
     private WrapperPlayServerSpawnEntity spawn;
     private WrapperPlayServerEntityMetadata meta;
-    private WrapperPlayServerEntityDestroy destroy;
+    //private WrapperPlayServerEntityDestroy destroy;
     private String name;
     private Player handler;
 
@@ -30,7 +36,7 @@ public class ASHologram {
 
         this.name = name;
         byte meta;
-        if(isGlowing == true) {
+        if(isGlowing) {
             meta = 0x20 | 0x40;
         } else {
             meta = 0x20;
@@ -39,7 +45,7 @@ public class ASHologram {
         this.handler = p;
         this.spawn = new WrapperPlayServerSpawnEntity();
         this.meta = new WrapperPlayServerEntityMetadata();
-        this.destroy = new WrapperPlayServerEntityDestroy();
+        //this.destroy = new WrapperPlayServerEntityDestroy();
         this.spawn.setType(type);
         this.spawn.setEntityID(entityID);
         this.spawn.setUniqueId(uuid);
@@ -47,8 +53,13 @@ public class ASHologram {
         this.spawn.setY(loc.getY());
         this.spawn.setZ(loc.getZ());
         WrappedChatComponent nick = WrappedChatComponent.fromText(name);
+        //1.17 = 15 | 1.16 and lower 14
+        int armorstandindex = 14;
+        if (Utils.is1_17) {
+            armorstandindex = 15;
+        }
         List<WrappedWatchableObject> obj = Util.asList(
-                new WrappedWatchableObject(new WrappedDataWatcherObject(14, Registry.get(Byte.class)), (byte) 0x01),
+                new WrappedWatchableObject(new WrappedDataWatcherObject(armorstandindex, Registry.get(Byte.class)), (byte) 0x01),
                 new WrappedWatchableObject(new WrappedDataWatcherObject(0, Registry.get(Byte.class)), meta),
                 new WrappedWatchableObject(new WrappedDataWatcherObject(3, Registry.get(Boolean.class)), true),
                 new WrappedWatchableObject(new WrappedDataWatcherObject(2, Registry.getChatComponentSerializer(true)),
@@ -56,7 +67,7 @@ public class ASHologram {
         this.meta = new WrapperPlayServerEntityMetadata();
         this.meta.setEntityID(entityID);
         this.meta.setMetadata(obj);
-        this.destroy.setEntityIds(new int[] { entityID });
+        //this.destroy.setEntityIds(new int[] { entityID });
         spawn();
 
     }
@@ -87,7 +98,14 @@ public class ASHologram {
         meta.sendPacket(handler);
     }
     public void destroy() {
-        this.destroy.sendPacket(handler);
+        PacketContainer destroyEntityPacket = new PacketContainer(PacketType.Play.Server.ENTITY_DESTROY);
+        destroyEntityPacket.getIntegers().write(0, entityID);
+        try {
+            ProtocolLibrary.getProtocolManager().sendServerPacket(handler, destroyEntityPacket);
+        } catch (InvocationTargetException e) {
+
+        }
+
     }
     public void setHandler(Player p) {
         this.handler = p;

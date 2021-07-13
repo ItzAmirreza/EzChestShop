@@ -33,13 +33,13 @@ public final class EzChestShop extends JavaPlugin {
     @Override
     public void onEnable() {
         plugin = this;
-        logConsole("&c[&eEzChestShop&c] &aEnabling EzChestShop - version 1.3.0 BETA");
+        logConsole("&c[&eEzChestShop&c] &aEnabling EzChestShop - version 1.3.0");
         saveDefaultConfig();
         // Plugin startup logic
 
         if (getServer().getVersion().contains("1.17")) {
             Utils.is1_17 = true;
-            logConsole("&c[&eEzChestShop&c] &eInitializing 1.17 protocol BETA update... &c(Not Supported Yet!)");
+            logConsole("&c[&eEzChestShop&c] &eInitializing 1.17 protocol update... ");
         }
 
         if (!setupEconomy() ) {
@@ -53,10 +53,9 @@ public final class EzChestShop extends JavaPlugin {
             protocollib = true;
             logConsole("&c[&eEzChestShop&c] &aProtocollib is installed. Enabling holograms functionality.");
         } else {
-            logConsole("&c[&eEzChestShop&c] &eProtocollib is not installed. Plugin will not support holograms.");
+            logConsole("&c[&eEzChestShop&c] &eProtocollib is not installed. Plugin will not support holograms and floating items.");
         }
 
-        registerListeners();
         loadLanguages();
         try {
             Utils.checkForConfigYMLupdate();
@@ -65,6 +64,7 @@ public final class EzChestShop extends JavaPlugin {
             e.printStackTrace();
         }
 
+        registerListeners();
         registerCommands();
         //metrics
         Metrics metrics = new Metrics(this, 10756);

@@ -4,8 +4,8 @@ import me.deadlight.ezchestshop.LanguageManager;
 import me.deadlight.ezchestshop.Utils.LogType;
 import me.deadlight.ezchestshop.Utils.TransactionLogObject;
 import me.deadlight.ezchestshop.Utils.Utils;
-import me.mattstudios.mfgui.gui.guis.Gui;
-import me.mattstudios.mfgui.gui.guis.GuiItem;
+import dev.triumphteam.gui.guis.Gui;
+import dev.triumphteam.gui.guis.GuiItem;
 import org.bukkit.Material;
 import org.bukkit.block.Chest;
 import org.bukkit.entity.Player;
@@ -15,7 +15,6 @@ import org.bukkit.persistence.PersistentDataContainer;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 

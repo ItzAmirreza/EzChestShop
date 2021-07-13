@@ -1,5 +1,4 @@
 package me.deadlight.ezchestshop.Listeners;
-import me.deadlight.ezchestshop.Commands.MainCommands;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.GUIs.SettingsGUI;
 import me.deadlight.ezchestshop.LanguageManager;
@@ -37,8 +36,8 @@ public class ChatListener implements Listener {
             ChatWaitObject waitObject = chatmap.get(player.getUniqueId());
             String owneruuid = waitObject.rightChest.getPersistentDataContainer().get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING);
             if (event.getMessage().equalsIgnoreCase(player.getName())) {
-                OfflinePlayer ofplayer = Bukkit.getOfflinePlayer(owneruuid);
-                if (ofplayer.getName().equalsIgnoreCase(event.getPlayer().getName())) {
+                OfflinePlayer ofplayer = Bukkit.getOfflinePlayer(UUID.fromString(owneruuid));
+                if (ofplayer.getName().equalsIgnoreCase(player.getName())) {
                     chatmap.remove(player.getUniqueId());
                     player.sendMessage(lm.selfAdmin());
                     return;

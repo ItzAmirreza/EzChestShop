@@ -24,7 +24,7 @@ public class Ecsadmin implements CommandExecutor {
     public static LanguageManager lm = new LanguageManager();
 
     public static void updateLM(LanguageManager languageManager) {
-        MainCommands.lm = languageManager;
+        Ecsadmin.lm = languageManager;
     }
 
 

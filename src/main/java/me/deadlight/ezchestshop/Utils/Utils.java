@@ -1,4 +1,5 @@
 package me.deadlight.ezchestshop.Utils;
+import me.deadlight.ezchestshop.Commands.Ecsadmin;
 import me.deadlight.ezchestshop.Commands.MainCommands;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.LanguageManager;
@@ -92,8 +93,10 @@ public class Utils {
     public static void reloadLanguages() {
         FileConfiguration fc = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "languages.yml"));
         EzChestShop.setLanguages(fc);
-        MainCommands.updateLM(new LanguageManager());
-        ChatListener.updateLM(new LanguageManager());
+        LanguageManager newLanguage = new LanguageManager();
+        MainCommands.updateLM(newLanguage);
+        ChatListener.updateLM(newLanguage);
+        Ecsadmin.updateLM(newLanguage);
     }
 
     //this one checks for the config.yml ima make one for language.yml
@@ -133,8 +136,7 @@ public class Utils {
             fc.set("commandmsg-notachestorcs", "&cThe block that you are looking at is not a chest/or this is not a chest shop.");
             fc.save(new File(EzChestShop.getPlugin().getDataFolder(), "languages.yml"));
 
-
-            Utils.reloadLanguages();
+            reloadLanguages();
             EzChestShop.getPlugin().logConsole("&c[&eEzChestShop&c]&r &bNew languages.yml generated...");
         }
 
@@ -188,7 +190,7 @@ public class Utils {
             fc.set("sucAdminRemoved", "&e%player% &asuccessfully removed from the admins list.");
             fc.set("notInAdminList", "&cThis player is not in the admins list!");
             fc.save(new File(EzChestShop.getPlugin().getDataFolder(), "languages.yml"));
-            Utils.reloadLanguages();
+            reloadLanguages();
             EzChestShop.getPlugin().logConsole("&c[&eEzChestShop&c]&r &bNew languages.yml generated... (1.3.0V)");
         }
     }

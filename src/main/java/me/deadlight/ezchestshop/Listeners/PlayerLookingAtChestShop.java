@@ -33,9 +33,6 @@ public class PlayerLookingAtChestShop implements Listener {
     public static String firstLine = EzChestShop.getPlugin().getConfig().getString("hologram-first-line");
     public static String secondLine = EzChestShop.getPlugin().getConfig().getString("hologram-second-line");
     public static int holodelay = EzChestShop.getPlugin().getConfig().getInt("hologram-disappearance-delay");
-
-
-
     private HashMap<Location, String> playershopmap = new HashMap<>();
 
     @EventHandler

@@ -1,7 +1,4 @@
 package me.deadlight.ezchestshop.Utils;
-
-import java.time.LocalDateTime;
-
 public class TransactionLogObject {
 
     public String type;
