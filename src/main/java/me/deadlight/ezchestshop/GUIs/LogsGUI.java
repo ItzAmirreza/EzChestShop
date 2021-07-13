@@ -1,5 +1,6 @@
 package me.deadlight.ezchestshop.GUIs;
 
+import me.deadlight.ezchestshop.LanguageManager;
 import me.deadlight.ezchestshop.Utils.LogType;
 import me.deadlight.ezchestshop.Utils.TransactionLogObject;
 import me.deadlight.ezchestshop.Utils.Utils;
@@ -26,9 +27,10 @@ public class LogsGUI {
     }
 
     public void showGUI(Player player, PersistentDataContainer data, Chest chest, LogType type, boolean isAdmin) {
+        LanguageManager lm = new LanguageManager();
         String guititle;
         if (type == LogType.TRANSACTION) {
-            guititle = "&aTransaction logs";
+            guititle = lm.transactionButtonTitle();
         } else {
             guititle = "&aAction logs";
         }
@@ -37,7 +39,7 @@ public class LogsGUI {
 
         ItemStack door = new ItemStack(Material.DARK_OAK_DOOR, 1);
         ItemMeta doorMeta = door.getItemMeta();
-        doorMeta.setDisplayName(Utils.color("&eBack to settings"));
+        doorMeta.setDisplayName(lm.backToSettingsButton());
         door.setItemMeta(doorMeta);
         gui.setDefaultClickAction(event -> {
             event.setCancelled(true);
@@ -62,11 +64,11 @@ public class LogsGUI {
                 //set kardane etelaat
                 TransactionLogObject thelog = transLogs.get(count - 1);
                 if (thelog.type.equalsIgnoreCase("buy")) {
-                    paperMeta.setDisplayName(Utils.color("&aBuy | " + thelog.pname));
-                    paperMeta.setLore(generateLore(thelog));
+                    paperMeta.setDisplayName(lm.transactionPaperTitleBuy(thelog.pname));
+                    paperMeta.setLore(generateLore(thelog, lm));
                 } else {
-                    paperMeta.setDisplayName(Utils.color("&cSell | " + thelog.pname));
-                    paperMeta.setLore(generateLore(thelog));
+                    paperMeta.setDisplayName(lm.transactionPaperTitleSell(thelog.pname));
+                    paperMeta.setLore(generateLore(thelog, lm));
                 }
                 paperItem.setItemMeta(paperMeta);
                 GuiItem paper = new GuiItem(paperItem, event -> {
@@ -85,29 +87,23 @@ public class LogsGUI {
     }
 
 
-    private List<String> generateLore(TransactionLogObject log) {
-        List<String> lore = new ArrayList<>();
+    private List<String> generateLore(TransactionLogObject log, LanguageManager lm) {
+        List<String> lore;
 
         LocalDateTime time = LocalDateTime.parse(log.time, formatter);
 
         if (log.type.equalsIgnoreCase("buy")) {
-            lore.add(Utils.color("&7Total Price: " + log.price));
-            lore.add(Utils.color("&7Count: " + log.count));
-            lore.add(Utils.color("&7Transaction Type: &aBought from you"));
-            lore.add(Utils.color(Utils.color(getTimeString(time))));
+            lore = lm.transactionPaperLoreBuy(log.price, log.count, getTimeString(time, lm));
             return lore;
         } else {
-            lore.add(Utils.color("&7Total Price: " + log.price));
-            lore.add(Utils.color("&7Count: " + log.count));
-            lore.add(Utils.color("&7Transaction Type: &cSold to you"));
-            lore.add(Utils.color(Utils.color(getTimeString(time))));
+           lore = lm.transactionPaperLoreSell(log.price, log.count, getTimeString(time, lm));
             return lore;
         }
 
     }
 
 
-    private String getTimeString(LocalDateTime time) {
+    private String getTimeString(LocalDateTime time, LanguageManager lm) {
 
         String finalString;
 
@@ -115,18 +111,18 @@ public class LogsGUI {
         long hours = ChronoUnit.HOURS.between(time, LocalDateTime.now());
 
         if (minutes < 1) {
-            finalString = "&eless than a minute ago";
+            finalString = lm.lessthanminute();
         } else {
 
             if (hours < 1) {
-                finalString = "&e" + minutes + " minute(s) ago";
+                finalString = lm.minutesago(minutes);
             } else {
 
                 if (hours < 24) {
-                    finalString = "&e" + hours + " hour(s) ago";
+                    finalString = lm.hoursago(hours);
                 } else {
                     int days = (int) hours/24;
-                    finalString = "&e" + days + " days ago";
+                    finalString = lm.daysago(days);
                 }
 
             }

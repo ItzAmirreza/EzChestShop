@@ -2,6 +2,7 @@ package me.deadlight.ezchestshop.Utils;
 import me.deadlight.ezchestshop.Commands.MainCommands;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.LanguageManager;
+import me.deadlight.ezchestshop.Listeners.ChatListener;
 import me.deadlight.ezchestshop.Listeners.PlayerLookingAtChestShop;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -92,6 +93,7 @@ public class Utils {
         FileConfiguration fc = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "languages.yml"));
         EzChestShop.setLanguages(fc);
         MainCommands.updateLM(new LanguageManager());
+        ChatListener.updateLM(new LanguageManager());
     }
 
     //this one checks for the config.yml ima make one for language.yml
@@ -112,6 +114,7 @@ public class Utils {
 
         //update 1.2.8 Languages
         boolean result = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "languages.yml")).isString("commandmsg-negativeprice");
+        boolean update1_3_0 = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "languages.yml")).isString("settingsButton");
         if (!result) {
             FileConfiguration fc = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "languages.yml"));
             //new values that were added in update 1.2.8
@@ -133,6 +136,60 @@ public class Utils {
 
             Utils.reloadLanguages();
             EzChestShop.getPlugin().logConsole("&c[&eEzChestShop&c]&r &bNew languages.yml generated...");
+        }
+
+        if (!update1_3_0) {
+            FileConfiguration fc = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "languages.yml"));
+            //for update 1.3.0
+            fc.set("settingsButton", "&b&lSettings");
+            fc.set("disabledButtonTitle", "&cDisabled");
+            fc.set("disabledButtonLore", "&7This option is disabled by \n &7the shop owner.");
+            fc.set("transactionButtonTitle", "&aTransaction logs");
+            fc.set("backToSettingsButton", "&eBack to settings");
+            fc.set("transactionPaperTitleBuy", "&aBuy | %player%");
+            fc.set("transactionPaperTitleSell", "&cSell | %player%");
+            fc.set("transactionPaperLoreBuy", "&7Total Price: %price% \n &7Quantity: %count% \n &7Transaction Type: &aBought from you \n &e%time%");
+            fc.set("transactionPaperLoreSell", "&7Total Price: %price% \n &7Quantity: %count% \n &7Transaction Type: &cSold to you \n &e%time%");
+            fc.set("lessthanminute", "&eless than a minute ago");
+            fc.set("minutesago", "&e%minutes% minute(s) ago");
+            fc.set("hoursago", "&e%hours% hour(s) ago");
+            fc.set("daysago", "&e%days% days ago");
+            fc.set("adminshopguititle", "&cAdmin shop");
+            fc.set("settingsGuiTitle", "&b&lSettings");
+            fc.set("latestTransactionsButton", "&aLatest Transactions");
+            fc.set("toggleTransactionMessageButton", "&eToggle Transaction Message");
+            fc.set("statusOn", "&aOn");
+            fc.set("statusOff", "&cOff");
+            fc.set("toggleTransactionMessageButtonLore", "&7Current status: %status% \n &7If you keep this option on, \n &7you will recieve transaction \n &7messages in chat whenever someone \n &7buy/sell something from this shop");
+            fc.set("toggleTransactionMessageOnInChat", "&7Toggle Transaction Messages: &aON");
+            fc.set("toggleTransactionMessageOffInChat", "&7Toggle Transaction Messages: &cOFF");
+            fc.set("disableBuyingButtonTitle", "&eDisable Buying");
+            fc.set("disableBuyingButtonLore", "&7Current status: %status% \n &7If you keep this option on, \n &7the shop won't let anyone buy \n &7from your chest shop.");
+            fc.set("disableBuyingOnInChat", "&7Disable Buying: &aON");
+            fc.set("disableBuyingOffInChat", "&7Disable Buying: &cOFF");
+            fc.set("disableSellingButtonTitle", "&eDisable Selling");
+            fc.set("disableSellingButtonLore", "&7Current status: %status% \n &7If you keep this option on, \n &7the shop won't let anyone sell \n &7anything to the shop.");
+            fc.set("disableSellingOnInChat", "&7Disable Selling: &aON");
+            fc.set("disableSellingOffInChat", "&7Disable Selling: &cOFF");
+            fc.set("shopAdminsButtonTitle", "&eShop admins");
+            fc.set("nobodyStatusAdmins", "&aNobody");
+            fc.set("shopAdminsButtonLore", "&7You can add/remove admins to \n &7your chest shop. Admins are able to \n &7access the shop storage & access certain \n &7settings (everything except share income \n &7and add/remove-ing admins). \n &aLeft Click &7to add an admin \n &cRight Click &7to remove an admin \n &7Current admins: %admins%");
+            fc.set("addingAdminWaiting", "&ePlease enter the name of the person you want to add to the list of admins.");
+            fc.set("removingAdminWaiting", "&ePlease enter the name of the person you want to remove from the list of admins.");
+            fc.set("shareIncomeButtonTitle", "&eShared income");
+            fc.set("shareIncomeButtonLore", "&7Current status: %status% \n &7If you keep this option on, \n &7the profit of ONLY sales, will be \n &7shared with admins as well.");
+            fc.set("sharedIncomeOnInChat", "&7Shared income: &aON");
+            fc.set("sharedIncomeOffInChat", "&7Shared income: &cOFF");
+            fc.set("backToShopGuiButton", "&eBack to shop");
+            fc.set("selfAdmin", "&cYou can't add or remove yourself in the admins list!");
+            fc.set("noPlayer", "&cThis player doesn't exist or haven't played here before.");
+            fc.set("sucAdminAdded", "&e%player% &asuccessfully added to the admins list.");
+            fc.set("alreadyAdmin", "&cThis player is already in the admins list!");
+            fc.set("sucAdminRemoved", "&e%player% &asuccessfully removed from the admins list.");
+            fc.set("notInAdminList", "&cThis player is not in the admins list!");
+            fc.save(new File(EzChestShop.getPlugin().getDataFolder(), "languages.yml"));
+            Utils.reloadLanguages();
+            EzChestShop.getPlugin().logConsole("&c[&eEzChestShop&c]&r &bNew languages.yml generated... (1.3.0V)");
         }
     }
 

@@ -89,7 +89,7 @@ public class PlayerTransactionListener implements Listener {
         }
 
         data.set(new NamespacedKey(EzChestShop.getPlugin(), "trans"), PersistentDataType.STRING, finalString.toString());
-        System.out.println(event.getChest().update());
+        event.getChest().update();
 
     }
 

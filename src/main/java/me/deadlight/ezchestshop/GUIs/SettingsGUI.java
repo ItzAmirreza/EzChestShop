@@ -45,7 +45,7 @@ public class SettingsGUI {
         boolean isAdminShop = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"), PersistentDataType.INTEGER) == 1;
 
 
-        this.themain = new Gui(3, Utils.color("&b&lSettings"));
+        this.themain = new Gui(3, lm.settingsGuiTitle());
         ItemStack glassis = new ItemStack(Material.BLACK_STAINED_GLASS_PANE, 1);
         ItemMeta glassmeta = glassis.getItemMeta();
         glassmeta.setDisplayName(Utils.color("&d"));
@@ -61,7 +61,7 @@ public class SettingsGUI {
         //trans
         ItemStack lastTransItem = new ItemStack(Material.PAPER, 1);
         ItemMeta lastTransMeta = lastTransItem.getItemMeta();
-        lastTransMeta.setDisplayName(Utils.color("&aLatest Transactions"));
+        lastTransMeta.setDisplayName(lm.latestTransactionsButton());
         lastTransItem.setItemMeta(lastTransMeta);
         GuiItem lastTrans = new GuiItem(lastTransItem, event -> {
            event.setCancelled(true);
@@ -86,8 +86,8 @@ public class SettingsGUI {
         boolean isToggleMessageOn = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "msgtoggle"), PersistentDataType.INTEGER) == 1;
         ItemStack messageToggleItem = new ItemStack(grayGreenChooser(isToggleMessageOn), 1);
         ItemMeta messageToggleMeta = messageToggleItem.getItemMeta();
-        messageToggleMeta.setDisplayName(Utils.color("&eToggle Transaction Message"));
-        messageToggleMeta.setLore(toggleMessageChooser(isToggleMessageOn));
+        messageToggleMeta.setDisplayName(lm.toggleTransactionMessageButton());
+        messageToggleMeta.setLore(toggleMessageChooser(isToggleMessageOn, lm));
         messageToggleItem.setItemMeta(messageToggleMeta);
 
 
@@ -99,18 +99,18 @@ public class SettingsGUI {
 
                 rightChest.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "msgtoggle"), PersistentDataType.INTEGER, 0);
                 rightChest.update();
-                player.sendMessage(Utils.color("&7Toggle Transaction Messages: &cOFF"));
+                player.sendMessage(lm.toggleTransactionMessageOffInChat());
                 event.getCurrentItem().setType(Material.GRAY_DYE);
                 ItemMeta meta = event.getCurrentItem().getItemMeta();
-                meta.setLore(toggleMessageChooser(false));
+                meta.setLore(toggleMessageChooser(false, lm));
                 event.getCurrentItem().setItemMeta(meta);
             } else {
                 rightChest.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "msgtoggle"), PersistentDataType.INTEGER, 1);
                 rightChest.update();
-                player.sendMessage(Utils.color("&7Toggle Transaction Messages: &aON"));
+                player.sendMessage(lm.toggleTransactionMessageOnInChat());
                 event.getCurrentItem().setType(Material.LIME_DYE);
                 ItemMeta meta = event.getCurrentItem().getItemMeta();
-                meta.setLore(toggleMessageChooser(true));
+                meta.setLore(toggleMessageChooser(true, lm));
                 event.getCurrentItem().setItemMeta(meta);
 
             }
@@ -120,8 +120,8 @@ public class SettingsGUI {
         boolean isBuyDisabled = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "dbuy"), PersistentDataType.INTEGER) == 1;
         ItemStack buyDisabledItem= new ItemStack(grayGreenChooser(isBuyDisabled), 1);
         ItemMeta buyDisabledMeta = buyDisabledItem.getItemMeta();
-        buyDisabledMeta.setDisplayName(Utils.color("&eDisable Buying"));
-        buyDisabledMeta.setLore(buyMessageChooser(isBuyDisabled));
+        buyDisabledMeta.setDisplayName(lm.disableBuyingButtonTitle());
+        buyDisabledMeta.setLore(buyMessageChooser(isBuyDisabled, lm));
         buyDisabledItem.setItemMeta(buyDisabledMeta);
         GuiItem buyDisabled = new GuiItem(buyDisabledItem, event -> {
             event.setCancelled(true);
@@ -129,18 +129,18 @@ public class SettingsGUI {
             if (checkIfOn(event.getCurrentItem().getType())) {
                 rightChest.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "dbuy"), PersistentDataType.INTEGER, 0);
                 rightChest.update();
-                player.sendMessage(Utils.color("&7Disable Buying: &cOFF"));
+                player.sendMessage(lm.disableBuyingOffInChat());
                 event.getCurrentItem().setType(Material.GRAY_DYE);
                 ItemMeta meta = event.getCurrentItem().getItemMeta();
-                meta.setLore(buyMessageChooser(false));
+                meta.setLore(buyMessageChooser(false, lm));
                 event.getCurrentItem().setItemMeta(meta);
             } else {
                 rightChest.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "dbuy"), PersistentDataType.INTEGER, 1);
                 rightChest.update();
-                player.sendMessage(Utils.color("&7Disable Buying: &aON"));
+                player.sendMessage(lm.disableBuyingOnInChat());
                 event.getCurrentItem().setType(Material.LIME_DYE);
                 ItemMeta meta = event.getCurrentItem().getItemMeta();
-                meta.setLore(buyMessageChooser(true));
+                meta.setLore(buyMessageChooser(true, lm));
                 event.getCurrentItem().setItemMeta(meta);
             }
 
@@ -149,8 +149,8 @@ public class SettingsGUI {
         boolean isSellDisabled = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "dsell"), PersistentDataType.INTEGER) == 1;
         ItemStack sellDisabledItem= new ItemStack(grayGreenChooser(isSellDisabled), 1);
         ItemMeta sellDisabledMeta = sellDisabledItem.getItemMeta();
-        sellDisabledMeta.setDisplayName(Utils.color("&eDisable Selling"));
-        sellDisabledMeta.setLore(sellMessageChooser(isSellDisabled));
+        sellDisabledMeta.setDisplayName(lm.disableSellingButtonTitle());
+        sellDisabledMeta.setLore(sellMessageChooser(isSellDisabled, lm));
         sellDisabledItem.setItemMeta(sellDisabledMeta);
         GuiItem sellDisabled = new GuiItem(sellDisabledItem, event -> {
             event.setCancelled(true);
@@ -158,18 +158,18 @@ public class SettingsGUI {
             if (checkIfOn(event.getCurrentItem().getType())) {
                 rightChest.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "dsell"), PersistentDataType.INTEGER, 0);
                 rightChest.update();
-                player.sendMessage(Utils.color("&7Disable Selling: &cOFF"));
+                player.sendMessage(lm.disableSellingOffInChat());
                 event.getCurrentItem().setType(Material.GRAY_DYE);
                 ItemMeta meta = event.getCurrentItem().getItemMeta();
-                meta.setLore(sellMessageChooser(false));
+                meta.setLore(sellMessageChooser(false, lm));
                 event.getCurrentItem().setItemMeta(meta);
             } else {
                 rightChest.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "dsell"), PersistentDataType.INTEGER, 1);
                 rightChest.update();
-                player.sendMessage(Utils.color("&7Disable Selling: &aON"));
+                player.sendMessage(lm.disableSellingOnInChat());
                 event.getCurrentItem().setType(Material.LIME_DYE);
                 ItemMeta meta = event.getCurrentItem().getItemMeta();
-                meta.setLore(sellMessageChooser(true));
+                meta.setLore(sellMessageChooser(true, lm));
                 event.getCurrentItem().setItemMeta(meta);
             }
         });
@@ -181,8 +181,8 @@ public class SettingsGUI {
             boolean hastAtLeastOneAdmin = !dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "admins"), PersistentDataType.STRING).equals("none");
             ItemStack signItem = new ItemStack(Material.OAK_SIGN, 1);
             ItemMeta signMeta = signItem.getItemMeta();
-            signMeta.setDisplayName(Utils.color("&eShop admins"));
-            signMeta.setLore(signLoreChooser(hastAtLeastOneAdmin, dataContainer));
+            signMeta.setDisplayName(lm.shopAdminsButtonTitle());
+            signMeta.setLore(signLoreChooser(hastAtLeastOneAdmin, dataContainer, lm));
             signItem.setItemMeta(signMeta);
             GuiItem signItemg = new GuiItem(signItem, event -> {
                 event.setCancelled(true);
@@ -192,22 +192,22 @@ public class SettingsGUI {
 
                     ChatListener.chatmap.put(player.getUniqueId(), new ChatWaitObject("none", "add", rightChest));
                     player.closeInventory();
-                    player.sendMessage(Utils.color("&ePlease enter the name of the person you want to add to the list of admins."));
+                    player.sendMessage(lm.addingAdminWaiting());
 
 
                 } else if (event.getClick() == ClickType.RIGHT) {
                     //right click == remove admin
                     ChatListener.chatmap.put(player.getUniqueId(), new ChatWaitObject("none", "remove", rightChest));
                     player.closeInventory();
-                    player.sendMessage(Utils.color("&ePlease enter the name of the person you want to remove from the list of admins."));
+                    player.sendMessage(lm.removingAdminWaiting());
                 }
 
             });
             boolean isSharedIncome = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "shareincome"), PersistentDataType.INTEGER) == 1;
             ItemStack sharedIncomeItem = new ItemStack(grayGreenChooser(isSharedIncome), 1);
             ItemMeta sharedIncomeMeta = sharedIncomeItem.getItemMeta();
-            sharedIncomeMeta.setDisplayName(Utils.color("&eShared income"));
-            sharedIncomeMeta.setLore(shareIncomeLoreChooser(isSharedIncome));
+            sharedIncomeMeta.setDisplayName(lm.shareIncomeButtonTitle());
+            sharedIncomeMeta.setLore(shareIncomeLoreChooser(isSharedIncome, lm));
             sharedIncomeItem.setItemMeta(sharedIncomeMeta);
             GuiItem sharedIncome = new GuiItem(sharedIncomeItem, event -> {
                 event.setCancelled(true);
@@ -216,18 +216,18 @@ public class SettingsGUI {
                 if (checkIfOn(event.getCurrentItem().getType())) {
                     rightChest.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "shareincome"), PersistentDataType.INTEGER, 0);
                     rightChest.update();
-                    player.sendMessage(Utils.color("&7Shared income: &cOFF"));
+                    player.sendMessage(lm.sharedIncomeOffInChat());
                     event.getCurrentItem().setType(Material.GRAY_DYE);
                     ItemMeta meta = event.getCurrentItem().getItemMeta();
-                    meta.setLore(shareIncomeLoreChooser(false));
+                    meta.setLore(shareIncomeLoreChooser(false, lm));
                     event.getCurrentItem().setItemMeta(meta);
                 } else {
                     rightChest.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "shareincome"), PersistentDataType.INTEGER, 1);
                     rightChest.update();
-                    player.sendMessage(Utils.color("&7Shared income: &aON"));
+                    player.sendMessage(lm.sharedIncomeOnInChat());
                     event.getCurrentItem().setType(Material.LIME_DYE);
                     ItemMeta meta = event.getCurrentItem().getItemMeta();
-                    meta.setLore(shareIncomeLoreChooser(true));
+                    meta.setLore(shareIncomeLoreChooser(true, lm));
                     event.getCurrentItem().setItemMeta(meta);
                 }
 
@@ -251,7 +251,7 @@ public class SettingsGUI {
 
         ItemStack backItemStack = new ItemStack(Material.DARK_OAK_DOOR, 1);
         ItemMeta backItemMeta = backItemStack.getItemMeta();
-        backItemMeta.setDisplayName(Utils.color("&eBack to shop"));
+        backItemMeta.setDisplayName(lm.backToShopGuiButton());
         backItemStack.setItemMeta(backItemMeta);
         GuiItem backItem = new GuiItem(backItemStack, event -> {
            event.setCancelled(true);
@@ -320,67 +320,59 @@ public class SettingsGUI {
         return Material.GRAY_DYE;
     }
 
-    private List<String> toggleMessageChooser(boolean data) {
-        List<String> lores = new ArrayList<>();
+    private List<String> toggleMessageChooser(boolean data, LanguageManager lm) {
+        List<String> lores;
+        String status;
         if (data) {
-            lores.add(Utils.color("&7Current status: &aOn \n \n"));
+            status = lm.statusOn();
         } else {
-            lores.add(Utils.color("&7Current status: &cOff \n \n"));
+            status = lm.statusOff();
         }
-        lores.add(Utils.color("&7If you keep this option on,"));
-        lores.add(Utils.color("&7you will recieve transaction"));
-        lores.add(Utils.color("&7messages in chat whenever someone"));
-        lores.add(Utils.color("&7buy/sell something from this shop"));
+        lores = lm.toggleTransactionMessageButtonLore(status);
+
         return lores;
      }
-     private List<String> buyMessageChooser(boolean data) {
-        List<String> lores = new ArrayList<>();
-        if (data) {
-            lores.add(Utils.color("&7Current status: &aOn \n \n"));
-        } else {
-            lores.add(Utils.color("&7Current status: &cOff \n \n"));
-        }
-        lores.add(Utils.color("&7If you keep this option on,"));
-        lores.add(Utils.color("&7the shop won't let anyone buy"));
-        lores.add(Utils.color("&7from your chest shop."));
+     private List<String> buyMessageChooser(boolean data, LanguageManager lm) {
+        List<String> lores;
+        String status;
+         if (data) {
+             status = lm.statusOn();
+         } else {
+             status = lm.statusOff();
+         }
+         lores = lm.disableBuyingButtonLore(status);
+
         return lores;
      }
 
-    private List<String> sellMessageChooser(boolean data) {
-        List<String> lores = new ArrayList<>();
+    private List<String> sellMessageChooser(boolean data, LanguageManager lm) {
+        List<String> lores;
+        String status;
         if (data) {
-            lores.add(Utils.color("&7Current status: &aOn \n \n"));
+            status = lm.statusOn();
         } else {
-            lores.add(Utils.color("&7Current status: &cOff \n \n"));
+            status = lm.statusOff();
         }
-        lores.add(Utils.color("&7If you keep this option on,"));
-        lores.add(Utils.color("&7the shop won't let anyone sell"));
-        lores.add(Utils.color("&7anything to the shop."));
+        lores = lm.disableSellingButtonLore(status);
         return lores;
     }
 
-    private List<String> shareIncomeLoreChooser(boolean data) {
-        List<String> lores = new ArrayList<>();
+    private List<String> shareIncomeLoreChooser(boolean data, LanguageManager lm) {
+        List<String> lores;
+        String status;
         if (data) {
-            lores.add(Utils.color("&7Current status: &aOn \n \n"));
+            status = lm.statusOn();
         } else {
-            lores.add(Utils.color("&7Current status: &cOff \n \n"));
+            status = lm.statusOff();
         }
-        lores.add(Utils.color("&7If you keep this option on,"));
-        lores.add(Utils.color("&7the profit of ONLY sales, will be"));
-        lores.add(Utils.color("&7shared with admins as well."));
+        lores = lm.shareIncomeButtonLore(status);
         return lores;
     }
 
-     private List<String> signLoreChooser(boolean data, PersistentDataContainer container) {
-        List<String> lores = new ArrayList<>();
-         lores.add(Utils.color("&7You can add/remove admins to"));
-         lores.add(Utils.color("&7your chest shop. Admins are able to"));
-         lores.add(Utils.color("&7access the shop storage & access certain"));
-         lores.add(Utils.color("&7settings (everything except share income"));
-         lores.add(Utils.color("&7and add/remove-ing admins)."));
-         lores.add(Utils.color("&aLeft Click &7to add an admin"));
-         lores.add(Utils.color("&cRight Click &7to remove an admin \n \n"));
+     private List<String> signLoreChooser(boolean data, PersistentDataContainer container, LanguageManager lm) {
+        List<String> lores;
+        String status;
+
         if (data) {
             //has at least one admin
             StringBuilder adminsListString = new StringBuilder("&a");
@@ -398,10 +390,12 @@ public class SettingsGUI {
                 }
             }
 
-            lores.add(Utils.color("&7Current admins: " + adminsListString));
+            status = adminsListString.toString();
         } else {
-            lores.add(Utils.color("&7Current admins: &aNobody \n \n"));
+            status = lm.nobodyStatusAdmins();
         }
+
+        lores = lm.shopAdminsButtonLore(status);
 
         return lores;
      }

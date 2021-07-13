@@ -157,7 +157,7 @@ public class AdminShopGUI {
 
         ItemStack settingsItem = new ItemStack(Material.SMITHING_TABLE, 1);
         ItemMeta settingsMeta = settingsItem.getItemMeta();
-        settingsMeta.setDisplayName(Utils.color("&b&lSettings"));
+        settingsMeta.setDisplayName(lm.settingsButton());
         settingsItem.setItemMeta(settingsMeta);
 
 
@@ -200,7 +200,6 @@ public class AdminShopGUI {
     private void buyItem(Chest chest, double price, int count, Player player, ItemStack tthatItem, OfflinePlayer owner) {
         ItemStack thatItem = tthatItem.clone();
         LanguageManager lm = new LanguageManager();
-
         //check for money
 
         if (chest.getInventory().containsAtLeast(thatItem, count)) {
@@ -212,9 +211,9 @@ public class AdminShopGUI {
                     thatItem.setAmount(count);
                     getandgive(Bukkit.getOfflinePlayer(player.getUniqueId()), price, owner);
                     sharedIncomeCheck(chest.getPersistentDataContainer(), price);
-                    transactionMessage(chest.getPersistentDataContainer(), owner, Bukkit.getOfflinePlayer(player.getUniqueId()), price, true, getFinalItemName(tthatItem), count, chest);
                     chest.getInventory().removeItem(thatItem);
                     player.getInventory().addItem(thatItem);
+                    transactionMessage(chest.getPersistentDataContainer(), owner, Bukkit.getOfflinePlayer(player.getUniqueId()), price, true, getFinalItemName(tthatItem), count, (Chest) chest.getLocation().getBlock().getState());
                     player.sendMessage(Utils.color(lm.messageSuccBuy(price)));
                     player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 0.5f, 0.5f);
 
@@ -250,9 +249,9 @@ public class AdminShopGUI {
                 if (chest.getInventory().firstEmpty() != -1) {
                     thatItem.setAmount(count);
                     getandgive(owner, price, Bukkit.getOfflinePlayer(player.getUniqueId()));
-                    transactionMessage(data, owner, Bukkit.getOfflinePlayer(player.getUniqueId()), price, false, getFinalItemName(tthatItem), count, chest);
                     player.getInventory().removeItem(thatItem);
                     chest.getInventory().addItem(thatItem);
+                    transactionMessage(data, owner, Bukkit.getOfflinePlayer(player.getUniqueId()), price, false, getFinalItemName(tthatItem), count, (Chest) chest.getLocation().getBlock().getState());
                     player.sendMessage(lm.messageSuccSell(price));
                     player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 0.5f, 0.5f);
 
@@ -309,12 +308,12 @@ public class AdminShopGUI {
     private ItemStack disablingCheck(ItemStack mainItem, boolean disabling) {
         if (disabling) {
             //disabled Item
+            LanguageManager lm = new LanguageManager();
             ItemStack disabledItemStack = new ItemStack(Material.BARRIER, mainItem.getAmount());
             ItemMeta disabledItemMeta = disabledItemStack.getItemMeta();
-            disabledItemMeta.setDisplayName(Utils.color("&cDisabled"));
-            disabledItemMeta.setLore(Arrays.asList(Utils.color("&7This option is disabled by"), Utils.color("&7the shop owner.")));
+            disabledItemMeta.setDisplayName(lm.disabledButtonTitle());
+            disabledItemMeta.setLore(lm.disabledButtonLore());
             disabledItemStack.setItemMeta(disabledItemMeta);
-
             return disabledItemStack;
         } else {
             return mainItem;

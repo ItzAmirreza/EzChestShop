@@ -24,12 +24,10 @@ import java.util.UUID;
 public class NonOwnerShopGUI {
 
     private Economy econ = EzChestShop.getEconomy();
-    private Chest chest;
 
     public NonOwnerShopGUI() {}
 
     public void showGUI(Player player, PersistentDataContainer data, Chest chest) {
-        this.chest = chest;
         LanguageManager lm = new LanguageManager();
 
         String shopOwner = Bukkit.getOfflinePlayer(UUID.fromString(data.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING))).getName();
@@ -174,9 +172,9 @@ public class NonOwnerShopGUI {
                     thatItem.setAmount(count);
                     getandgive(Bukkit.getOfflinePlayer(player.getUniqueId()), price, owner);
                     sharedIncomeCheck(data, price);
-                    transactionMessage(data, owner, player, price, true, getFinalItemName(tthatItem), count);
                     chest.getInventory().removeItem(thatItem);
                     player.getInventory().addItem(thatItem);
+                    transactionMessage(data, owner, player, price, true, getFinalItemName(tthatItem), count, (Chest) chest.getLocation().getBlock().getState());
                     player.sendMessage(lm.messageSuccBuy(price));
                     player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 0.5f, 0.5f);
 
@@ -212,7 +210,7 @@ public class NonOwnerShopGUI {
                 if (chest.getInventory().firstEmpty() != -1) {
                     thatItem.setAmount(count);
                     getandgive(owner, price, Bukkit.getOfflinePlayer(player.getUniqueId()));
-                    transactionMessage(data, owner, Bukkit.getOfflinePlayer(player.getUniqueId()), price, false, getFinalItemName(tthatItem), count);
+                    transactionMessage(data, owner, Bukkit.getOfflinePlayer(player.getUniqueId()), price, false, getFinalItemName(tthatItem), count, (Chest) chest.getLocation().getBlock().getState());
                     player.getInventory().removeItem(thatItem);
                     chest.getInventory().addItem(thatItem);
                     player.sendMessage(lm.messageSuccSell(price));
@@ -254,7 +252,7 @@ public class NonOwnerShopGUI {
 
     }
 
-    private void transactionMessage(PersistentDataContainer data, OfflinePlayer owner, OfflinePlayer customer, double price, boolean isBuy, String itemName, int count) {
+    private void transactionMessage(PersistentDataContainer data, OfflinePlayer owner, OfflinePlayer customer, double price, boolean isBuy, String itemName, int count, Chest chest) {
 
             //kharidan? true forokhtan? false
             PlayerTransactEvent transactEvent = new PlayerTransactEvent(owner, customer, price, isBuy, itemName, count, Utils.getAdminsList(data), chest);
@@ -272,12 +270,13 @@ public class NonOwnerShopGUI {
     }
 
     private ItemStack disablingCheck(ItemStack mainItem, boolean disabling) {
+        LanguageManager lm = new LanguageManager();
         if (disabling){
             //disabled Item
             ItemStack disabledItemStack = new ItemStack(Material.BARRIER, mainItem.getAmount());
             ItemMeta disabledItemMeta = disabledItemStack.getItemMeta();
-            disabledItemMeta.setDisplayName(Utils.color("&cDisabled"));
-            disabledItemMeta.setLore(Arrays.asList(Utils.color("&7This option is disabled by"), Utils.color("&7the shop owner.")));
+            disabledItemMeta.setDisplayName(lm.disabledButtonTitle());
+            disabledItemMeta.setLore(lm.disabledButtonLore());
             disabledItemStack.setItemMeta(disabledItemMeta);
 
             return disabledItemStack;

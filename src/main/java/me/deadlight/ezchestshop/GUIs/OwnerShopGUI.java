@@ -152,7 +152,7 @@ public class OwnerShopGUI {
         //settings item
         ItemStack settingsItem = new ItemStack(Material.SMITHING_TABLE, 1);
         ItemMeta settingsMeta = settingsItem.getItemMeta();
-        settingsMeta.setDisplayName(Utils.color("&b&lSettings"));
+        settingsMeta.setDisplayName(lm.settingsButton());
         settingsItem.setItemMeta(settingsMeta);
 
         GuiItem settingsGui = new GuiItem(settingsItem, event -> {
@@ -194,10 +194,11 @@ public class OwnerShopGUI {
     private ItemStack disablingCheck(ItemStack mainItem, boolean disabling) {
         if (disabling){
             //disabled Item
+            LanguageManager lm = new LanguageManager();
             ItemStack disabledItemStack = new ItemStack(Material.BARRIER, mainItem.getAmount());
             ItemMeta disabledItemMeta = disabledItemStack.getItemMeta();
-            disabledItemMeta.setDisplayName(Utils.color("&cDisabled"));
-            disabledItemMeta.setLore(Arrays.asList(Utils.color("&7This option is disabled by"), Utils.color("&7the shop owner.")));
+            disabledItemMeta.setDisplayName(lm.disabledButtonTitle());
+            disabledItemMeta.setLore(lm.disabledButtonLore());
             disabledItemStack.setItemMeta(disabledItemMeta);
 
             return disabledItemStack;

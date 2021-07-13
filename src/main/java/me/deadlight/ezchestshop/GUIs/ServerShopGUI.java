@@ -49,7 +49,7 @@ public class ServerShopGUI {
             event.setCancelled(true);
         });
 
-        Gui gui = new Gui(3, Utils.color("&cAdmin shop"));
+        Gui gui = new Gui(3, lm.adminshopguititle());
         ItemStack glassis = new ItemStack(Material.BLACK_STAINED_GLASS_PANE, 1);
         ItemMeta glassmeta = glassis.getItemMeta();
         glassmeta.setDisplayName("");
@@ -131,7 +131,7 @@ public class ServerShopGUI {
         //settings item
         ItemStack settingsItem = new ItemStack(Material.SMITHING_TABLE, 1);
         ItemMeta settingsMeta = settingsItem.getItemMeta();
-        settingsMeta.setDisplayName(Utils.color("&b&lSettings"));
+        settingsMeta.setDisplayName(lm.settingsButton());
         settingsItem.setItemMeta(settingsMeta);
 
         boolean result = isAdmin(rightChest.getPersistentDataContainer(), player.getUniqueId().toString());
@@ -276,10 +276,11 @@ public class ServerShopGUI {
     private ItemStack disablingCheck(ItemStack mainItem, boolean disabling) {
         if (disabling){
             //disabled Item
+            LanguageManager lm = new LanguageManager();
             ItemStack disabledItemStack = new ItemStack(Material.BARRIER, mainItem.getAmount());
             ItemMeta disabledItemMeta = disabledItemStack.getItemMeta();
-            disabledItemMeta.setDisplayName(Utils.color("&cDisabled"));
-            disabledItemMeta.setLore(Arrays.asList(Utils.color("&7This option is disabled by"), Utils.color("&7the shop owner.")));
+            disabledItemMeta.setDisplayName(lm.disabledButtonTitle());
+            disabledItemMeta.setLore(lm.disabledButtonLore());
             disabledItemStack.setItemMeta(disabledItemMeta);
 
             return disabledItemStack;

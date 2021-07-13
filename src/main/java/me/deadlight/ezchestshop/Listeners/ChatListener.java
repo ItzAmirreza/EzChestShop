@@ -1,6 +1,8 @@
 package me.deadlight.ezchestshop.Listeners;
+import me.deadlight.ezchestshop.Commands.MainCommands;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.GUIs.SettingsGUI;
+import me.deadlight.ezchestshop.LanguageManager;
 import me.deadlight.ezchestshop.Utils.ChatWaitObject;
 import me.deadlight.ezchestshop.Utils.Utils;
 import org.bukkit.Bukkit;
@@ -13,8 +15,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
-
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -22,6 +22,10 @@ import java.util.UUID;
 public class ChatListener implements Listener {
 
     public static HashMap<UUID, ChatWaitObject> chatmap = new HashMap<>();
+    public static LanguageManager lm = new LanguageManager();
+    public static void updateLM(LanguageManager languageManager) {
+        ChatListener.lm = languageManager;
+    }
 
     @EventHandler
     public void onAsyncChat(AsyncPlayerChatEvent event) {
@@ -36,7 +40,7 @@ public class ChatListener implements Listener {
                 OfflinePlayer ofplayer = Bukkit.getOfflinePlayer(owneruuid);
                 if (ofplayer.getName().equalsIgnoreCase(event.getPlayer().getName())) {
                     chatmap.remove(player.getUniqueId());
-                    player.sendMessage(Utils.color("&cYou can't add or remove yourself in the admins list!"));
+                    player.sendMessage(lm.selfAdmin());
                     return;
                 }
 
@@ -71,7 +75,7 @@ public class ChatListener implements Listener {
 
 
             } else {
-                player.sendMessage(Utils.color("&cThis player doesn't exist or haven't played here before."));
+                player.sendMessage(lm.noPlayer());
                 chatmap.remove(player.getUniqueId());
             }
 
@@ -118,10 +122,10 @@ public class ChatListener implements Listener {
             PersistentDataContainer data = rightChest.getPersistentDataContainer();
             data.set(new NamespacedKey(EzChestShop.getPlugin(), "admins"), PersistentDataType.STRING, adminsString);
             rightChest.update();
-            player.sendMessage(Utils.color("&e" + answer + " &asuccessfully added to the admins list."));
+            player.sendMessage(lm.sucAdminAdded(answer));
 
         } else {
-            player.sendMessage(Utils.color("&cThis player is already in the admins list!"));
+            player.sendMessage(lm.alreadyAdmin());
         }
     }
 
@@ -136,17 +140,17 @@ public class ChatListener implements Listener {
                 PersistentDataContainer data = rightChest.getPersistentDataContainer();
                 data.set(new NamespacedKey(EzChestShop.getPlugin(), "admins"), PersistentDataType.STRING, "none");
                 rightChest.update();
-                player.sendMessage(Utils.color("&e" + answer + " &asuccessfully removed from the admins list."));
+                player.sendMessage(lm.sucAdminRemoved(answer));
                 return;
             }
             String adminsString = convertListUUIDtoString(admins);
             PersistentDataContainer data = rightChest.getPersistentDataContainer();
             data.set(new NamespacedKey(EzChestShop.getPlugin(), "admins"), PersistentDataType.STRING, adminsString);
             rightChest.update();
-            player.sendMessage(Utils.color("&e" + answer + " &asuccessfully removed from the admins list."));
+            player.sendMessage(lm.sucAdminRemoved(answer));
 
         } else {
-            player.sendMessage(Utils.color("&cThis player is not in the admins list!"));
+            player.sendMessage(lm.notInAdminList());
         }
     }
 
