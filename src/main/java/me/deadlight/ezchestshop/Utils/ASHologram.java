@@ -3,12 +3,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketContainer;
-import me.deadlight.ezchestshop.Packets.WrapperPlayServerEntityDestroy;
 import me.deadlight.ezchestshop.Packets.WrapperPlayServerEntityMetadata;
 import me.deadlight.ezchestshop.Packets.WrapperPlayServerEntityTeleport;
 import me.deadlight.ezchestshop.Packets.WrapperPlayServerSpawnEntity;
@@ -99,7 +96,12 @@ public class ASHologram {
     }
     public void destroy() {
         PacketContainer destroyEntityPacket = new PacketContainer(PacketType.Play.Server.ENTITY_DESTROY);
-        destroyEntityPacket.getIntegers().write(0, entityID);
+        if (Utils.is1_17) {
+            destroyEntityPacket.getIntegers().writeSafely(0, entityID);
+        } else {
+            destroyEntityPacket.getIntegers().writeSafely(0, 1);
+            destroyEntityPacket.getIntegerArrays().writeSafely(0, new int[]{entityID});
+        }
         try {
             ProtocolLibrary.getProtocolManager().sendServerPacket(handler, destroyEntityPacket);
         } catch (InvocationTargetException e) {

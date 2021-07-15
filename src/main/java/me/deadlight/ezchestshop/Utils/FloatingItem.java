@@ -10,7 +10,6 @@ import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
@@ -68,7 +67,12 @@ public class FloatingItem {
     public void destroy() {
         //this.destroy.sendPacket(player);
         PacketContainer destroyEntityPacket = new PacketContainer(PacketType.Play.Server.ENTITY_DESTROY);
-        destroyEntityPacket.getIntegers().write(0, eID);
+        if (Utils.is1_17) {
+            destroyEntityPacket.getIntegers().writeSafely(0, eID);
+        } else {
+            destroyEntityPacket.getIntegers().writeSafely(0, 1);
+            destroyEntityPacket.getIntegerArrays().writeSafely(0, new int[]{eID});
+        }
         try {
             ProtocolLibrary.getProtocolManager().sendServerPacket(player, destroyEntityPacket);
         } catch (InvocationTargetException e) {
