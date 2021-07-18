@@ -34,8 +34,6 @@ public class SettingsGUI {
     //trans [list of infos seperated by @ in string form]
     //adminshop 0/1
 
-    private Gui themain;
-
     public void ShowGUI(Player player, Chest rightChest, boolean isAdmin) {
 
         LanguageManager lm = new LanguageManager();
@@ -45,18 +43,17 @@ public class SettingsGUI {
         boolean isAdminShop = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"), PersistentDataType.INTEGER) == 1;
 
 
-        this.themain = new Gui(3, lm.settingsGuiTitle());
+        Gui gui = new Gui(3, lm.settingsGuiTitle());
         ItemStack glassis = new ItemStack(Material.BLACK_STAINED_GLASS_PANE, 1);
         ItemMeta glassmeta = glassis.getItemMeta();
         glassmeta.setDisplayName(Utils.color("&d"));
         glassis.setItemMeta(glassmeta);
-
         GuiItem glasses = new GuiItem(glassis, event -> {
-            // Handle your click action here
             event.setCancelled(true);
         });
         //I changed its place to first part of code because of different GUI sections for admins and owners
-        this.themain.getFiller().fillBorder(glasses);
+
+        gui.getFiller().fillBorder(glasses);
 
         //trans
         ItemStack lastTransItem = new ItemStack(Material.PAPER, 1);
@@ -233,19 +230,16 @@ public class SettingsGUI {
 
 
             });
-            this.themain.setItem(13, signItemg);
+            gui.setItem(13, signItemg);
             if (hastAtLeastOneAdmin) {
                 if (dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"), PersistentDataType.INTEGER) == 0) {
-                    this.themain.setItem(22, sharedIncome);
+                    gui.setItem(22, sharedIncome);
                 }
 
             }
         }
 
-        GuiItem fillerItem = new GuiItem(glassis, event -> {
-            // Handle your click action here
-            event.setCancelled(true);
-        });
+
 
 
 
@@ -289,26 +283,26 @@ public class SettingsGUI {
         });
 
 
-        this.themain.setItem(0, backItem);
+        gui.setItem(0, backItem);
         //14-15-16
-        this.themain.setItem(14, glasses);
-        this.themain.setItem(15, glasses);
-        this.themain.setItem(16, glasses);
+        gui.setItem(14, glasses);
+        gui.setItem(15, glasses);
+        gui.setItem(16, glasses);
         //17-26
-        this.themain.setItem(26, lastTrans);
+        gui.setItem(26, lastTrans);
 
         //for forgotten logs button
         //this.themain.setItem(26, lastLogs);
 
         //10-11-12-13-(22 optional)
-        this.themain.setItem(10, messageToggle);
-        this.themain.setItem(11, buyDisabled);
-        this.themain.setItem(12, sellDisabled);
+        gui.setItem(10, messageToggle);
+        gui.setItem(11, buyDisabled);
+        gui.setItem(12, sellDisabled);
         if (isAdmin) {
-            this.themain.setItem(13, fillerItem);
+            gui.setItem(13, glasses);
         }
 
-        this.themain.open(player);
+        gui.open(player);
 
     }
 

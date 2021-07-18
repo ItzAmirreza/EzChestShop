@@ -33,19 +33,20 @@ public final class EzChestShop extends JavaPlugin {
     @Override
     public void onEnable() {
         plugin = this;
-        logConsole("&c[&eEzChestShop&c] &aEnabling EzChestShop - version 1.3.1");
+        logConsole("&c[&eEzChestShop&c] &aEnabling EzChestShop - version 1.3.2");
         saveDefaultConfig();
         // Plugin startup logic
 
         if (getServer().getVersion().contains("1.17")) {
             Utils.is1_17 = true;
-            logConsole("&c[&eEzChestShop&c] &eInitializing 1.17 protocol update... ");
+            logConsole("&c[&eEzChestShop&c] &eInitializing 1.17 protocol update...  1.17.1 NOT SUPPORTED!");
         }
 
         if (!setupEconomy() ) {
 
             logConsole("&c[&eEzChestShop&c] &4Cannot find vault or economy plugin. Self disabling... &ePlease note that you need vault and at least one economy plugin installed.");
             Bukkit.getPluginManager().disablePlugin(this);
+            return;
         }
 
 
