@@ -67,6 +67,7 @@ public final class EzChestShop extends JavaPlugin {
 
         registerListeners();
         registerCommands();
+        registerTabCompleters();
         //metrics
         Metrics metrics = new Metrics(this, 10756);
 
@@ -89,7 +90,11 @@ public final class EzChestShop extends JavaPlugin {
     private void registerCommands() {
         getCommand("ecs").setExecutor(new MainCommands());
         getCommand("ecsadmin").setExecutor(new Ecsadmin());
+    }
 
+    private void registerTabCompleters() {
+        getCommand("ecs").setTabCompleter(new MainCommands());
+        getCommand("ecsadmin").setTabCompleter(new Ecsadmin());
     }
 
 
