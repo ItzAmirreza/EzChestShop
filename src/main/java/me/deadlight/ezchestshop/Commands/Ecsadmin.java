@@ -9,17 +9,22 @@ import org.bukkit.block.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.DoubleChestInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-public class Ecsadmin implements CommandExecutor {
+public class Ecsadmin implements CommandExecutor, TabCompleter {
 
     public static LanguageManager lm = new LanguageManager();
 
@@ -92,6 +97,25 @@ public class Ecsadmin implements CommandExecutor {
         }
 
         return false;
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
+        List<String> fList = new ArrayList<String>();
+        List<String> list_firstarg = Arrays.asList("create", "reload", "remove");
+        List<String> list_create_1 = Arrays.asList("[BuyPrice]");
+        List<String> list_create_2 = Arrays.asList("[SellPrice]");
+        if (sender instanceof Player) {
+            if (args.length == 1)
+                StringUtil.copyPartialMatches(args[0], list_firstarg, fList);
+            if (args.length > 1 && args[0].equalsIgnoreCase("create")) {
+                if (args.length == 2)
+                    StringUtil.copyPartialMatches(args[1], list_create_1, fList);
+                if (args.length == 3)
+                    StringUtil.copyPartialMatches(args[2], list_create_2, fList);
+            }
+        }
+        return fList;
     }
 
 
