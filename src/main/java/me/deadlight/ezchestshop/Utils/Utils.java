@@ -1,10 +1,10 @@
 package me.deadlight.ezchestshop.Utils;
 import me.deadlight.ezchestshop.Commands.Ecsadmin;
 import me.deadlight.ezchestshop.Commands.MainCommands;
+import me.deadlight.ezchestshop.Config;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.LanguageManager;
 import me.deadlight.ezchestshop.Listeners.ChatListener;
-import me.deadlight.ezchestshop.Listeners.PlayerLookingAtChestShop;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
@@ -77,19 +77,6 @@ public class Utils {
     }
 
 
-    public static void reloadConfigs() {
-
-        //reloading config.yml
-
-        EzChestShop.getPlugin().reloadConfig();
-        FileConfiguration config = EzChestShop.getPlugin().getConfig();
-        PlayerLookingAtChestShop.showholo = config.getBoolean("show-holograms");
-        PlayerLookingAtChestShop.firstLine = config.getString("hologram-first-line");
-        PlayerLookingAtChestShop.secondLine = config.getString("hologram-second-line");
-        PlayerLookingAtChestShop.holodelay = config.getInt("hologram-disappearance-delay");
-
-    }
-
     public static void reloadLanguages() {
         FileConfiguration fc = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "languages.yml"));
         EzChestShop.setLanguages(fc);
@@ -103,13 +90,13 @@ public class Utils {
     public static void checkForConfigYMLupdate() throws IOException {
 
         //update 1.2.4 config.yml
-        boolean result = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml")).isInt("hologram-disappearance-delay");
+        boolean result = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml")).isInt("hologram.hologram-disappearance-delay");
         if (!result) {
             FileConfiguration fc = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml"));
-            fc.set("hologram-disappearance-delay", 10);
+            fc.set("hologram.hologram-disappearance-delay", 10);
             fc.save(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml"));
 
-            Utils.reloadConfigs();
+            Config.loadConfig();
         }
     }
 
@@ -247,7 +234,22 @@ public class Utils {
 
     //
 
-
+    /**
+     * Split a String by "_" and capitalize each First word, then join them together
+     * via " "
+     *
+     * @param string
+     * @return
+     */
+    public static String capitalizeFirstSplit(String string) {
+        string = string.toLowerCase();
+        String n_string = "";
+        for (String s : string.split("_")) {
+            n_string += s.subSequence(0, 1).toString().toUpperCase()
+                    + s.subSequence(1, s.length()).toString().toLowerCase() + " ";
+        }
+        return n_string;
+    }
 
 
 

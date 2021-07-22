@@ -4,6 +4,8 @@ import org.bukkit.configuration.file.FileConfiguration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class LanguageManager {
     public FileConfiguration languages;
@@ -13,7 +15,25 @@ public class LanguageManager {
     }
 
     private String colorify(String str) {
-        return ChatColor.translateAlternateColorCodes('&', str);
+        return translateHexColorCodes("#", "", ChatColor.translateAlternateColorCodes('&', str));
+    }
+
+    public String translateHexColorCodes(String startTag, String endTag, String message)
+    {
+        final Pattern hexPattern = Pattern.compile(startTag + "([A-Fa-f0-9]{6})" + endTag);
+        final char COLOR_CHAR = ChatColor.COLOR_CHAR;
+        Matcher matcher = hexPattern.matcher(message);
+        StringBuffer buffer = new StringBuffer(message.length() + 4 * 8);
+        while (matcher.find())
+        {
+            String group = matcher.group(1);
+            matcher.appendReplacement(buffer, COLOR_CHAR + "x"
+                    + COLOR_CHAR + group.charAt(0) + COLOR_CHAR + group.charAt(1)
+                    + COLOR_CHAR + group.charAt(2) + COLOR_CHAR + group.charAt(3)
+                    + COLOR_CHAR + group.charAt(4) + COLOR_CHAR + group.charAt(5)
+            );
+        }
+        return matcher.appendTail(buffer).toString();
     }
 
     public void setLanguageConfig(FileConfiguration config) {
@@ -26,13 +46,13 @@ public class LanguageManager {
 
     public String initialBuyPrice(double buyprice) {
 
-        return colorify(languages.getString("gui-initialbuyprice").replace("%buyprice%", String.valueOf(buyprice)));
+        return colorify(languages.getString("gui-initialbuyprice").replace("%buyprice%", String.valueOf(buyprice)).replace("%currency%", Config.currency));
     }/**
      * @return returns buy price of GUI item in lore
      */
     public String initialSellPrice(double sellprice) {
 
-        return colorify(languages.getString("gui-initialsellprice").replace("%sellprice%", String.valueOf(sellprice)));
+        return colorify(languages.getString("gui-initialsellprice").replace("%sellprice%", String.valueOf(sellprice)).replace("%currency%", Config.currency));
     }/**
      * @return returns buy price of GUI item in lore
      */
@@ -56,7 +76,7 @@ public class LanguageManager {
     }
     public String buttonSell1Lore(long price) {
 
-        return colorify(languages.getString("gui-button-sellone-lore").replace("%price%", String.valueOf(price)));
+        return colorify(languages.getString("gui-button-sellone-lore").replace("%price%", String.valueOf(price)).replace("%currency%", Config.currency));
     }
     public String buttonSell64Title() {
 
@@ -64,7 +84,7 @@ public class LanguageManager {
     }
     public String buttonSell64Lore(long price) {
 
-        return colorify(languages.getString("gui-button-sell64-lore").replace("%price%", String.valueOf(price)));
+        return colorify(languages.getString("gui-button-sell64-lore").replace("%price%", String.valueOf(price)).replace("%currency%", Config.currency));
     }
 
     public String buttonBuy1Title() {
@@ -73,7 +93,7 @@ public class LanguageManager {
     }
     public String buttonBuy1Lore(long price) {
 
-        return colorify(languages.getString("gui-button-buyone-lore").replace("%price%", String.valueOf(price)));
+        return colorify(languages.getString("gui-button-buyone-lore").replace("%price%", String.valueOf(price)).replace("%currency%", Config.currency));
     }
     public String buttonBuy64Title() {
 
@@ -81,7 +101,7 @@ public class LanguageManager {
     }
     public String buttonBuy64Lore(long price) {
 
-        return colorify(languages.getString("gui-button-buy64-lore").replace("%price%", String.valueOf(price)));
+        return colorify(languages.getString("gui-button-buy64-lore").replace("%price%", String.valueOf(price)).replace("%currency%", Config.currency));
     }
 
     public String buttonAdminView() {
@@ -95,7 +115,7 @@ public class LanguageManager {
 
     public String messageSuccBuy(double price) {
 
-        return colorify(languages.getString("message-successful-buy").replace("%price%", String.valueOf(price)));
+        return colorify(languages.getString("message-successful-buy").replace("%price%", String.valueOf(price)).replace("%currency%", Config.currency));
     }
     public String fullinv() {
 
@@ -111,7 +131,7 @@ public class LanguageManager {
     }
     public String messageSuccSell(double price) {
 
-        return colorify(languages.getString("message-successful-sell").replace("%price%", String.valueOf(price)));
+        return colorify(languages.getString("message-successful-sell").replace("%price%", String.valueOf(price)).replace("%currency%", Config.currency));
     }
     public String shopCannotAfford() {
 
