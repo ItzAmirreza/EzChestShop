@@ -17,10 +17,10 @@ public class Config {
         EzChestShop.getPlugin().reloadConfig();
         FileConfiguration config = EzChestShop.getPlugin().getConfig();
         currency = config.getString("economy.server-currency");
-        showholo = config.getBoolean("hologram.show-holograms");
-        firstLine = config.getString("hologram.hologram-first-line");
-        secondLine = config.getString("hologram.hologram-second-line").replace("%currency%", Config.currency);
-        holodelay = config.getInt("hologram.hologram-disappearance-delay");
+        showholo = config.getBoolean("show-holograms");
+        firstLine = config.getString("hologram-first-line");
+        secondLine = config.getString("hologram-second-line").replace("%currency%", Config.currency);
+        holodelay = config.getInt("hologram-disappearance-delay");
 
     }
 }
