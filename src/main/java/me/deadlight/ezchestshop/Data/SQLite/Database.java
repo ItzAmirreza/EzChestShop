@@ -576,7 +576,8 @@ public abstract class Database {
         ResultSet rs;
         try {
             conn = getSQLConnection();
-            ps = conn.prepareStatement("SELECT name FROM sqlite_master WHERE type='table' AND name='" + table + "'");
+            ps = conn.prepareStatement("SELECT name FROM sqlite_master WHERE type='table' AND name=?");
+            ps.setString(1, table);
 
             rs = ps.executeQuery();
             return rs.next();
