@@ -55,7 +55,8 @@ public abstract class Database {
         ResultSet rs;
         try {
             conn = getSQLConnection();
-            ps = conn.prepareStatement("SELECT * FROM " + table + " WHERE " + primary_key + " = '" + key + "';");
+            ps = conn.prepareStatement("SELECT * FROM " + table + " WHERE " + primary_key + " = ?;");
+            ps.setString(1, key);
 
             rs = ps.executeQuery();
             if (rs.next()) {
@@ -91,7 +92,8 @@ public abstract class Database {
         ResultSet rs;
         try {
             conn = getSQLConnection();
-            ps = conn.prepareStatement("SELECT * FROM " + table + " WHERE " + primary_key + " = '" + key + "';");
+            ps = conn.prepareStatement("SELECT * FROM " + table + " WHERE " + primary_key + " = ?;");
+            ps.setString(1, key);
 
             rs = ps.executeQuery();
             if (rs.next()) {
@@ -127,7 +129,8 @@ public abstract class Database {
         ResultSet rs;
         try {
             conn = getSQLConnection();
-            ps = conn.prepareStatement("SELECT * FROM " + table + " WHERE " + primary_key + " = '" + key + "';");
+            ps = conn.prepareStatement("SELECT * FROM " + table + " WHERE " + primary_key + " = ?;");
+            ps.setString(1, key);
 
             rs = ps.executeQuery();
             if (rs.next()) {
@@ -163,7 +166,8 @@ public abstract class Database {
         ResultSet rs;
         try {
             conn = getSQLConnection();
-            ps = conn.prepareStatement("SELECT * FROM " + table + " WHERE " + primary_key + " = '" + key + "';");
+            ps = conn.prepareStatement("SELECT * FROM " + table + " WHERE " + primary_key + " = ?;");
+            ps.setString(1, key);
 
             rs = ps.executeQuery();
             if (rs.next()) {
@@ -218,14 +222,16 @@ public abstract class Database {
             //Check if existing -> if not insert new entry
             if (checkExsting && !hasKey(table, primary_key, key)) {
                 //String statement = "REPLACE INTO " + table + " (" + primary_key + ", " + column + ") VALUES('" + key + "','" + data + "');";
-                String statement = "REPLACE INTO " + table +
-                        " (" + primary_key + ", " + column + ") VALUES(\"" + key + "\",\"" + data +"\");";
-                EzChestShop.getPlugin().logConsole(statement);
-                ps = conn.prepareStatement(statement);
+                ps = conn.prepareStatement("REPLACE INTO " + table +
+                        " (" + primary_key + ", " + column + ") VALUES(?,?);");
+                ps.setString(1, key);
+                ps.setString(2, data);
             } else {
                 //if existing, update old data
-                ps = conn.prepareStatement("UPDATE " + table + " SET " + column + " = " + addQuotes(data) + " WHERE "
-                        + primary_key + " = '" + key + "';");
+                ps = conn.prepareStatement("UPDATE " + table + " SET " + column + " = ? WHERE "
+                        + primary_key + " = ?;");
+                ps.setString(1, data);
+                ps.setString(2, key);
             }
 
             ps.executeUpdate();
@@ -257,8 +263,10 @@ public abstract class Database {
         PreparedStatement ps = null;
         try {
             conn = getSQLConnection();
-            ps = conn.prepareStatement("UPDATE " + table + " SET " + column + " = " + data + " WHERE " + primary_key
-                    + " = '" + key + "';");
+            ps = conn.prepareStatement("UPDATE " + table + " SET " + column + " = ? WHERE " + primary_key
+                    + " = ?;");
+            ps.setInt(1, data);
+            ps.setString(2, key);
 
             ps.executeUpdate();
         } catch (SQLException e) {
@@ -289,8 +297,10 @@ public abstract class Database {
         PreparedStatement ps = null;
         try {
             conn = getSQLConnection();
-            ps = conn.prepareStatement("UPDATE " + table + " SET " + column + " = " + (data ? 1 : 0) + " WHERE "
-                    + primary_key + " = '" + key + "';");
+            ps = conn.prepareStatement("UPDATE " + table + " SET " + column + " = ? WHERE "
+                    + primary_key + " = ?;");
+            ps.setBoolean(1, data);
+            ps.setString(2, key);
 
             ps.executeUpdate();
         } catch (SQLException e) {
@@ -321,8 +331,9 @@ public abstract class Database {
         PreparedStatement ps = null;
         try {
             conn = getSQLConnection();
-            ps = conn.prepareStatement("UPDATE " + table + " SET " + column + " = " + column + " + " + increment
-                    + " WHERE " + primary_key + " = '" + key + "';");
+            ps = conn.prepareStatement("UPDATE " + table + " SET " + column + " = " + column + " + ? WHERE " + primary_key + " = ?;");
+            ps.setInt(1, increment);
+            ps.setString(2, key);
 
             ps.executeUpdate();
         } catch (SQLException e) {
@@ -351,7 +362,8 @@ public abstract class Database {
         PreparedStatement ps = null;
         try {
             conn = getSQLConnection();
-            ps = conn.prepareStatement("DELETE FROM " + table + " WHERE " + primary_key + " = '" + key + "';");
+            ps = conn.prepareStatement("DELETE FROM " + table + " WHERE " + primary_key + " = ?;");
+            ps.setString(1, key);
 
             ps.executeUpdate();
         } catch (SQLException e) {
@@ -531,7 +543,8 @@ public abstract class Database {
         ResultSet rs;
         try {
             conn = getSQLConnection();
-            ps = conn.prepareStatement("SELECT * FROM " + table + " WHERE " + primary_key + " = '" + key + "';");
+            ps = conn.prepareStatement("SELECT * FROM " + table + " WHERE " + primary_key + " = ?;");
+            ps.setString(1, key);
 
             rs = ps.executeQuery();
             return rs.next();
