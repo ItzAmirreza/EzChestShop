@@ -52,9 +52,10 @@ public class ASHologram {
         WrappedChatComponent nick = WrappedChatComponent.fromText(name);
         //1.17 = 15 | 1.16 and lower 14
         int armorstandindex = 14;
-        if (Utils.is1_17) {
+        if (Utils.family1_17) {
             armorstandindex = 15;
         }
+
         List<WrappedWatchableObject> obj = Util.asList(
                 new WrappedWatchableObject(new WrappedDataWatcherObject(armorstandindex, Registry.get(Byte.class)), (byte) 0x01),
                 new WrappedWatchableObject(new WrappedDataWatcherObject(0, Registry.get(Byte.class)), meta),
@@ -104,8 +105,8 @@ public class ASHologram {
         }
         try {
             ProtocolLibrary.getProtocolManager().sendServerPacket(handler, destroyEntityPacket);
-        } catch (InvocationTargetException e) {
-
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
     }
