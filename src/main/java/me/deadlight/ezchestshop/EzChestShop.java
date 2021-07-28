@@ -35,6 +35,7 @@ public final class EzChestShop extends JavaPlugin {
         plugin = this;
         logConsole("&c[&eEzChestShop&c] &aEnabling EzChestShop - version 1.3.2");
         saveDefaultConfig();
+        Config.loadConfig();
         // Plugin startup logic
 
         if (getServer().getVersion().contains("1.17")) {

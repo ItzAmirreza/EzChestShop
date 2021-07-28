@@ -29,10 +29,7 @@ public class PlayerLookingAtChestShop implements Listener {
 
     private HashMap<Player, Block> map = new HashMap<>();
 
-    public static boolean showholo = EzChestShop.getPlugin().getConfig().getBoolean("show-holograms");
-    public static String firstLine = EzChestShop.getPlugin().getConfig().getString("hologram-first-line");
-    public static String secondLine = EzChestShop.getPlugin().getConfig().getString("hologram-second-line");
-    public static int holodelay = EzChestShop.getPlugin().getConfig().getInt("hologram-disappearance-delay");
+
     private HashMap<Location, String> playershopmap = new HashMap<>();
 
     @EventHandler
@@ -69,7 +66,7 @@ public class PlayerLookingAtChestShop implements Listener {
 
                         Location holoLoc = leftchest.getLocation().add(0.5D, 0, 0.5D).add(rightchest.getLocation().add(0.5D, 0, 0.5D)).multiply(0.5).add(0, 1, 0);
 
-                        if (!isAlreadyLooking(event.getPlayer(), target) && showholo && !isAlreadyPresenting(holoLoc, event.getPlayer().getName())) {
+                        if (!isAlreadyLooking(event.getPlayer(), target) && Config.showholo && !isAlreadyPresenting(holoLoc, event.getPlayer().getName())) {
                             showHologram(holoLoc,thatItem, buy, sell, event.getPlayer());
                         }
 
@@ -88,7 +85,7 @@ public class PlayerLookingAtChestShop implements Listener {
                         double sell = container.get(new NamespacedKey(EzChestShop.getPlugin(), "sell"), PersistentDataType.DOUBLE);
                         Location holoLoc = chest.getLocation().clone().add(0.5, 1, 0.5);
 
-                        if (!isAlreadyLooking(event.getPlayer(), target) && showholo && !isAlreadyPresenting(holoLoc, event.getPlayer().getName())) {
+                        if (!isAlreadyLooking(event.getPlayer(), target) && Config.showholo && !isAlreadyPresenting(holoLoc, event.getPlayer().getName())) {
                             showHologram(holoLoc,thatItem, buy, sell, event.getPlayer());
                         }
 
@@ -122,15 +119,19 @@ public class PlayerLookingAtChestShop implements Listener {
             itemname = Utils.color(thatItem.getItemMeta().getDisplayName());
         }
         else {
-            itemname = thatItem.getType().name();
+            if (thatItem.getItemMeta().hasLocalizedName()) {
+                itemname = thatItem.getItemMeta().getLocalizedName();
+            } else {
+                itemname = Utils.capitalizeFirstSplit(thatItem.getType().toString());
+            }
         }
-        String finalfirstline = Utils.color(firstLine.replace("%item%", itemname).replace("%buy%", String.valueOf(buy)).replace("%sell%", String.valueOf(sell)));
+        String finalfirstline = Utils.color(Config.firstLine.replace("%item%", itemname).replace("%buy%", String.valueOf(buy)).replace("%sell%", String.valueOf(sell)));
 
         ASHologram hologram = new ASHologram(player, finalfirstline, EntityType.ARMOR_STAND, secondLineLocation, false);
         hologram.spawn();
         Utils.onlinePackets.add(hologram);
 
-        ASHologram hologram2 = new ASHologram(player, Utils.color(secondLine.replace("%buy%", String.valueOf(buy)).replace("%sell%", String.valueOf(sell)).replace("%item%", itemname)), EntityType.ARMOR_STAND, thirdLocation, false);
+        ASHologram hologram2 = new ASHologram(player, Utils.color(Config.secondLine.replace("%buy%", String.valueOf(buy)).replace("%sell%", String.valueOf(sell)).replace("%item%", itemname)), EntityType.ARMOR_STAND, thirdLocation, false);
         hologram2.spawn();
         Utils.onlinePackets.add(hologram2);
 
@@ -151,7 +152,7 @@ public class PlayerLookingAtChestShop implements Listener {
                 playershopmap.remove(spawnLocation);
 
             }
-        }, 20 * holodelay);
+        }, 20 * Config.holodelay);
 
 
     }
