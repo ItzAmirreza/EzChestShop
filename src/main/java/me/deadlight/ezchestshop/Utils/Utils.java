@@ -113,9 +113,9 @@ public class Utils {
             FileConfiguration fc = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml"));
 
             fc.set("show-holograms", null);
-            fc.set("hologram.hologram-first-line", null);
-            fc.set("hologram.hologram-second-line", null);
-            fc.set("hologram.hologram-disappearance-delay", null);
+            fc.set("hologram-first-line", null);
+            fc.set("hologram-second-line", null);
+            fc.set("hologram-disappearance-delay", null);
 
             fc.set("hologram.show-holograms", show_holograms);
             fc.set("hologram.hologram-first-line", hologram_first_line);
@@ -264,6 +264,8 @@ public class Utils {
 
 
     public static boolean is1_17 = false;
+
+    public static boolean family1_17 = false;
 
     //
 

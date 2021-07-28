@@ -48,7 +48,7 @@ public class FloatingItem {
         metadata.add(new WrappedWatchableObject(new WrappedDataWatcher.WrappedDataWatcherObject(5, WrappedDataWatcher.Registry.get(Boolean.class)), true)); //setting the value of no graviy to true
         //metadata.add(new WrappedWatchableObject(new WrappedDataWatcher.WrappedDataWatcherObject(0, WrappedDataWatcher.Registry.get(Byte.class)), (byte) 0x40)); //just makin the dropped item glow
         int indexofIS = 7;
-        if (Utils.is1_17) {
+        if (Utils.family1_17) {
             indexofIS = 8;
         }
         metadata.add(new WrappedWatchableObject(new WrappedDataWatcher.WrappedDataWatcherObject(indexofIS, WrappedDataWatcher.Registry.getItemStackSerializer(false)), BukkitConverters.getItemStackConverter().getGeneric(itemStack))); //ma item
@@ -75,8 +75,8 @@ public class FloatingItem {
         }
         try {
             ProtocolLibrary.getProtocolManager().sendServerPacket(player, destroyEntityPacket);
-        } catch (InvocationTargetException e) {
-
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
