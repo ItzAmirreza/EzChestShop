@@ -1,6 +1,6 @@
 package me.deadlight.ezchestshop.GUIs;
 import me.deadlight.ezchestshop.EzChestShop;
-import me.deadlight.ezchestshop.LanguageManager;
+import me.deadlight.ezchestshop.Data.LanguageManager;
 import me.deadlight.ezchestshop.Listeners.PlayerTransactEvent;
 import me.deadlight.ezchestshop.Utils.Utils;
 import dev.triumphteam.gui.guis.Gui;

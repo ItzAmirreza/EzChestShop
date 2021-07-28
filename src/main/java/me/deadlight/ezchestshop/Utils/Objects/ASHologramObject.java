@@ -1,5 +1,7 @@
-package me.deadlight.ezchestshop.Utils;
+package me.deadlight.ezchestshop.Utils.Objects;
 
+import me.deadlight.ezchestshop.Utils.ASHologram;
+import me.deadlight.ezchestshop.Utils.FloatingItem;
 import org.bukkit.Location;
 
 public class ASHologramObject {

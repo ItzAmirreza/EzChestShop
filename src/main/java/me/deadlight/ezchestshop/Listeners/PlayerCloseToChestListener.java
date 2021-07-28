@@ -1,12 +1,12 @@
 package me.deadlight.ezchestshop.Listeners;
 
+import me.deadlight.ezchestshop.Data.Config;
 import me.deadlight.ezchestshop.Data.ShopContainer;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.Utils.ASHologram;
-import me.deadlight.ezchestshop.Utils.ASHologramObject;
+import me.deadlight.ezchestshop.Utils.Objects.ASHologramObject;
 import me.deadlight.ezchestshop.Utils.FloatingItem;
 import me.deadlight.ezchestshop.Utils.Utils;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -29,7 +29,6 @@ import org.bukkit.persistence.PersistentDataType;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class PlayerCloseToChestListener implements Listener {
 
@@ -47,11 +46,11 @@ public class PlayerCloseToChestListener implements Listener {
         if (!hasMovedXYZ(event))
             return;
         ShopContainer.getShops().stream()
-                .filter(sloc -> sloc != null && loc.getWorld().equals(sloc.getWorld()) && loc.distance(sloc) < 15)
+                .filter(sloc -> sloc != null && loc.getWorld().equals(sloc.getWorld()) && loc.distance(sloc) < Config.holodistancing_distance + 5)
                 .forEach(sloc -> {
                     double dist = loc.distance(sloc);
             //Show the Hologram if Player close enough
-            if (dist < 10) {
+            if (dist < Config.holodistancing_distance) {
                 if (isAlreadyPresenting(sloc, player.getName()))
                     return; //forEach -> acts as continue;
 
@@ -89,7 +88,7 @@ public class PlayerCloseToChestListener implements Listener {
 
             }
             //Hide the Hologram that is too far away from the player
-            else if (dist > 11 && dist < 13){
+            else if (dist > Config.holodistancing_distance + 1 && dist < Config.holodistancing_distance + 3){
                 //Hide the Hologram - requires spawn Position of the Hologram and Position of the Shop
                 hideHologram(player, sloc);
             }
@@ -103,7 +102,7 @@ public class PlayerCloseToChestListener implements Listener {
         Player player = event.getPlayer();
         Location loc = player.getLocation();
         ShopContainer.getShops().stream()
-                .filter(sloc -> sloc != null && loc.getWorld().equals(sloc.getWorld()) && loc.distance(sloc) < 15)
+                .filter(sloc -> sloc != null && loc.getWorld().equals(sloc.getWorld()) && loc.distance(sloc) < Config.holodistancing_distance + 5)
                 .forEach(sloc -> {
                     hideHologram(player, sloc);
                 });
@@ -114,7 +113,7 @@ public class PlayerCloseToChestListener implements Listener {
         Player player = event.getPlayer();
         Location loc = event.getFrom();
         ShopContainer.getShops().stream()
-                .filter(sloc -> sloc != null && loc.getWorld().equals(sloc.getWorld()) && loc.distance(sloc) < 15)
+                .filter(sloc -> sloc != null && loc.getWorld().equals(sloc.getWorld()) && loc.distance(sloc) < Config.holodistancing_distance + 5)
                 .forEach(sloc -> {
                     hideHologram(player, sloc);
                 });

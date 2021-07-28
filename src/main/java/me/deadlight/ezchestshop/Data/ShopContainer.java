@@ -3,14 +3,12 @@ package me.deadlight.ezchestshop.Data;
 import me.deadlight.ezchestshop.Data.SQLite.Database;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.Listeners.PlayerCloseToChestListener;
-import me.deadlight.ezchestshop.Utils.ASHologramObject;
 import me.deadlight.ezchestshop.Utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**

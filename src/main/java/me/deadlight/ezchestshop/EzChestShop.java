@@ -3,6 +3,8 @@ import com.bgsoftware.wildchests.api.WildChestsAPI;
 import com.bgsoftware.wildchests.api.handlers.ChestsManager;
 import me.deadlight.ezchestshop.Commands.Ecsadmin;
 import me.deadlight.ezchestshop.Commands.MainCommands;
+import me.deadlight.ezchestshop.Data.Config;
+import me.deadlight.ezchestshop.Data.LanguageManager;
 import me.deadlight.ezchestshop.Data.SQLite.Database;
 import me.deadlight.ezchestshop.Data.SQLite.SQLite;
 import me.deadlight.ezchestshop.Data.ShopContainer;
@@ -98,7 +100,7 @@ public final class EzChestShop extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new ChatListener(), this);
         //Add Config check over here, to change the Shop display varient.
         //PlayerLooking is less laggy but probably harder to spot.
-        if (true) {
+        if (Config.holodistancing) {
             getServer().getPluginManager().registerEvents(new PlayerCloseToChestListener(), this);
         } else {
             getServer().getPluginManager().registerEvents(new PlayerLookingAtChestShop(), this);

@@ -1,5 +1,6 @@
 package me.deadlight.ezchestshop.Listeners;
 import me.deadlight.ezchestshop.*;
+import me.deadlight.ezchestshop.Data.Config;
 import me.deadlight.ezchestshop.Utils.ASHologram;
 import me.deadlight.ezchestshop.Utils.FloatingItem;
 import me.deadlight.ezchestshop.Utils.Utils;
@@ -20,10 +21,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
 
 public class PlayerLookingAtChestShop implements Listener {
 

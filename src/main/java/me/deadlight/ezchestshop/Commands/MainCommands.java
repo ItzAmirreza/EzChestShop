@@ -2,7 +2,7 @@ package me.deadlight.ezchestshop.Commands;
 import com.bgsoftware.wildchests.api.handlers.ChestsManager;
 import me.deadlight.ezchestshop.Data.ShopContainer;
 import me.deadlight.ezchestshop.EzChestShop;
-import me.deadlight.ezchestshop.LanguageManager;
+import me.deadlight.ezchestshop.Data.LanguageManager;
 import me.deadlight.ezchestshop.Utils.Utils;
 import org.bukkit.*;
 import org.bukkit.block.*;

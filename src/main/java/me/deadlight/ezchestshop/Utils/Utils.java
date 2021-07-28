@@ -1,12 +1,11 @@
 package me.deadlight.ezchestshop.Utils;
 import me.deadlight.ezchestshop.Commands.Ecsadmin;
 import me.deadlight.ezchestshop.Commands.MainCommands;
-import me.deadlight.ezchestshop.Data.SQLite.Database;
-import me.deadlight.ezchestshop.Listeners.PlayerLookingAtChestShop;
+import me.deadlight.ezchestshop.Utils.Objects.TransactionLogObject;
 import org.bukkit.*;
-import me.deadlight.ezchestshop.Config;
+import me.deadlight.ezchestshop.Data.Config;
 import me.deadlight.ezchestshop.EzChestShop;
-import me.deadlight.ezchestshop.LanguageManager;
+import me.deadlight.ezchestshop.Data.LanguageManager;
 import me.deadlight.ezchestshop.Listeners.ChatListener;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
