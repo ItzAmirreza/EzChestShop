@@ -38,7 +38,7 @@ public final class EzChestShop extends JavaPlugin {
     @Override
     public void onEnable() {
         plugin = this;
-        logConsole("&c[&eEzChestShop&c] &aEnabling EzChestShop - version 1.3.2");
+        logConsole("&c[&eEzChestShop&c] &aEnabling EzChestShop - version 1.3.3");
         saveDefaultConfig();
 
         this.db = new SQLite(this);
@@ -46,14 +46,16 @@ public final class EzChestShop extends JavaPlugin {
 
         Config.loadConfig();
         // Plugin startup logic
-
-        if (getServer().getVersion().contains("1.17")) {
+        if (getServer().getBukkitVersion().equalsIgnoreCase("1.17-R0.1-SNAPSHOT")) {
             Utils.is1_17 = true;
-            logConsole("&c[&eEzChestShop&c] &eInitializing 1.17 protocol update...  1.17.1 NOT SUPPORTED!");
+            logConsole("&c[&eEzChestShop&c] &eInitializing 1.17 protocol change...");
+        }
+        if (getServer().getVersion().contains("1.17")) {
+            Utils.family1_17 = true;
+            logConsole("&c[&eEzChestShop&c] &e1.17 family protocol initialized.");
         }
 
         if (!setupEconomy() ) {
-
             logConsole("&c[&eEzChestShop&c] &4Cannot find vault or economy plugin. Self disabling... &ePlease note that you need vault and at least one economy plugin installed.");
             Bukkit.getPluginManager().disablePlugin(this);
             return;
