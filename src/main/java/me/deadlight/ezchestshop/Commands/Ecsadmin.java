@@ -1,5 +1,6 @@
 package me.deadlight.ezchestshop.Commands;
 
+import me.deadlight.ezchestshop.Config;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.LanguageManager;
 import me.deadlight.ezchestshop.Utils.Utils;
@@ -55,7 +56,7 @@ public class Ecsadmin implements CommandExecutor, TabCompleter {
 
                     } else if (firstarg.equalsIgnoreCase("reload")) {
 
-                        Utils.reloadConfigs();
+                        Config.loadConfig();
                         Utils.reloadLanguages();
                         player.sendMessage(Utils.color("&aEzChestShop successfully reloaded!"));
 

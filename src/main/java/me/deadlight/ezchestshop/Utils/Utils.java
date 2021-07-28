@@ -2,11 +2,15 @@ package me.deadlight.ezchestshop.Utils;
 import me.deadlight.ezchestshop.Commands.Ecsadmin;
 import me.deadlight.ezchestshop.Commands.MainCommands;
 import me.deadlight.ezchestshop.Data.SQLite.Database;
+import me.deadlight.ezchestshop.Listeners.PlayerLookingAtChestShop;
+import org.bukkit.*;
+import me.deadlight.ezchestshop.Config;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.LanguageManager;
 import me.deadlight.ezchestshop.Listeners.ChatListener;
-import me.deadlight.ezchestshop.Listeners.PlayerLookingAtChestShop;
-import org.bukkit.*;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -79,19 +83,6 @@ public class Utils {
     }
 
 
-    public static void reloadConfigs() {
-
-        //reloading config.yml
-
-        EzChestShop.getPlugin().reloadConfig();
-        FileConfiguration config = EzChestShop.getPlugin().getConfig();
-        PlayerLookingAtChestShop.showholo = config.getBoolean("show-holograms");
-        PlayerLookingAtChestShop.firstLine = config.getString("hologram-first-line");
-        PlayerLookingAtChestShop.secondLine = config.getString("hologram-second-line");
-        PlayerLookingAtChestShop.holodelay = config.getInt("hologram-disappearance-delay");
-
-    }
-
     public static void reloadLanguages() {
         FileConfiguration fc = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "languages.yml"));
         EzChestShop.setLanguages(fc);
@@ -104,15 +95,48 @@ public class Utils {
     //this one checks for the config.yml ima make one for language.yml
     public static void checkForConfigYMLupdate() throws IOException {
 
-        //update 1.2.4 config.yml
-        boolean result = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml")).isInt("hologram-disappearance-delay");
-        if (!result) {
-            FileConfiguration fc = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml"));
-            fc.set("hologram-disappearance-delay", 10);
-            fc.save(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml"));
+        //update 1.2.4 config.yml ( this section commented because we don't support versions lower than 1.2.4 anymore)
+//        boolean result = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml")).isInt("hologram.hologram-disappearance-delay");
+//        if (!result) {
+//            FileConfiguration fc = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml"));
+//            fc.set("hologram.hologram-disappearance-delay", 10);
+//            fc.save(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml"));
+//
+//            Config.loadConfig();
+//        }
 
-            Utils.reloadConfigs();
+        //update 1.3.3 new config file model update constructed by ElitoGame
+        boolean isOldConfigModel = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml")).isBoolean("show-holograms");
+        //if true, then we have to implement the new config model and delete old ones
+        if (isOldConfigModel) {
+            //getting current values of configs
+            //show-holograms
+            boolean show_holograms = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml")).getBoolean("show-holograms");
+            String hologram_first_line = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml")).getString("hologram-first-line");
+            String hologram_second_line = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml")).getString("hologram-second-line");
+            int hologram_disappearance_delay = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml")).getInt("hologram-disappearance-delay");
+
+            FileConfiguration fc = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml"));
+
+            fc.set("show-holograms", null);
+            fc.set("hologram.hologram-first-line", null);
+            fc.set("hologram.hologram-second-line", null);
+            fc.set("hologram.hologram-disappearance-delay", null);
+
+            fc.set("hologram.show-holograms", show_holograms);
+            fc.set("hologram.hologram-first-line", hologram_first_line);
+            fc.set("hologram.hologram-second-line", hologram_second_line);
+            fc.set("hologram.hologram-disappearance-delay", hologram_disappearance_delay);
+
+            //new economy config section
+            fc.set("economy.server-currency", "$");
+            fc.save(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml"));
+            Config.loadConfig();
+
         }
+
+        //well then its already an updated config, no need to change
+
     }
 
     public static void checkForLanguagesYMLupdate() throws IOException {
@@ -348,7 +372,22 @@ public class Utils {
     }
 
 
-
+    /**
+     * Split a String by "_" and capitalize each First word, then join them together
+     * via " "
+     *
+     * @param string
+     * @return
+     */
+    public static String capitalizeFirstSplit(String string) {
+        string = string.toLowerCase();
+        String n_string = "";
+        for (String s : string.split("_")) {
+            n_string += s.subSequence(0, 1).toString().toUpperCase()
+                    + s.subSequence(1, s.length()).toString().toLowerCase() + " ";
+        }
+        return n_string;
+    }
 
 
 

@@ -44,6 +44,7 @@ public final class EzChestShop extends JavaPlugin {
         this.db = new SQLite(this);
         this.db.load();
 
+        Config.loadConfig();
         // Plugin startup logic
 
         if (getServer().getVersion().contains("1.17")) {
