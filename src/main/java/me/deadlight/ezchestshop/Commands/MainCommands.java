@@ -1,7 +1,8 @@
 package me.deadlight.ezchestshop.Commands;
 import com.bgsoftware.wildchests.api.handlers.ChestsManager;
+import me.deadlight.ezchestshop.Data.ShopContainer;
 import me.deadlight.ezchestshop.EzChestShop;
-import me.deadlight.ezchestshop.LanguageManager;
+import me.deadlight.ezchestshop.Data.LanguageManager;
 import me.deadlight.ezchestshop.Utils.Utils;
 import org.bukkit.*;
 import org.bukkit.block.*;
@@ -53,10 +54,18 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                     if (args.length >= 3) {
 
                             if (isPositive(Double.parseDouble(args[1])) && isPositive(Double.parseDouble(args[2]))) {
-                                try {
-                                    createShop(player, args);
-                                } catch (IOException e) {
-                                    e.printStackTrace();
+                                int maxShops = Utils.getMaxPermission(player, "ecs.shops.limit.");
+                                maxShops = maxShops == -1 ? 10000 : maxShops;
+                                int shops = ShopContainer.getShopCount(player);
+                                EzChestShop.getPlugin().logConsole("Shops: " + shops + ", Max: " + maxShops);
+                                if (shops < maxShops) {
+                                    try {
+                                        createShop(player, args);
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+                                } else {
+                                    player.sendMessage("Max-Shop limit reached: " + maxShops);
                                 }
                             } else {
                                 player.sendMessage(lm.negativePrice());
@@ -68,7 +77,6 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                     }
 
                 } else if (mainarg.equalsIgnoreCase("remove")) {
-
                         removeShop(player ,args);
 
 
@@ -188,6 +196,8 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                             //adminshop 0/1
                             Utils.storeItem(thatItem, container);
                             state.update();
+                            ShopContainer.createShop(block.getLocation(), player);
+
                             player.sendMessage(lm.shopCreated());
 
 
@@ -277,6 +287,8 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                             }catch (Exception ex) {
                                 //nothing really worrying...
                             }
+
+                            ShopContainer.deleteShop(block.getLocation());
 
 
                             state.update();

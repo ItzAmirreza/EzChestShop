@@ -1,6 +1,6 @@
 package me.deadlight.ezchestshop.Listeners;
 import me.deadlight.ezchestshop.EzChestShop;
-import me.deadlight.ezchestshop.Utils.TransactionLogObject;
+import me.deadlight.ezchestshop.Utils.Objects.TransactionLogObject;
 import me.deadlight.ezchestshop.Utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;

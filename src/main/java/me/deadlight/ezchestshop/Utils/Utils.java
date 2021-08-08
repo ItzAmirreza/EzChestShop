@@ -1,9 +1,11 @@
 package me.deadlight.ezchestshop.Utils;
 import me.deadlight.ezchestshop.Commands.Ecsadmin;
 import me.deadlight.ezchestshop.Commands.MainCommands;
-import me.deadlight.ezchestshop.Config;
+import me.deadlight.ezchestshop.Utils.Objects.TransactionLogObject;
+import org.bukkit.*;
+import me.deadlight.ezchestshop.Data.Config;
 import me.deadlight.ezchestshop.EzChestShop;
-import me.deadlight.ezchestshop.LanguageManager;
+import me.deadlight.ezchestshop.Data.LanguageManager;
 import me.deadlight.ezchestshop.Listeners.ChatListener;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -13,6 +15,8 @@ import org.bukkit.block.Chest;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.permissions.Permissible;
+import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.io.BukkitObjectInputStream;
@@ -22,6 +26,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Utils {
 
@@ -267,7 +272,109 @@ public class Utils {
 
     public static boolean family1_17 = false;
 
+    /**
+     * Convert a Location to a String
+     *
+     * @param loc
+     * @return
+     */
+    public static String LocationtoString(Location loc) {
+        if (loc == null)
+            return null;
+        String sloc = "";
+        sloc += ("W:" + loc.getWorld().getName() + ",");
+        sloc += ("X:" + loc.getX() + ",");
+        sloc += ("Y:" + loc.getY() + ",");
+        sloc += ("Z:" + loc.getZ());
+        return sloc;
+    }
+
+    /**
+     * Convert a Location to a String with the Location rounded as defined via the decimal argument
+     *
+     * @param loc
+     * @param decimals
+     * @return
+     */
+    public static String LocationRoundedtoString(Location loc, int decimals) {
+        if (loc == null)
+            return null;
+        String sloc = "";
+        sloc += ("W:" + loc.getWorld().getName() + ",");
+        sloc += ("X:" + round(loc.getX(), decimals) + ",");
+        sloc += ("Y:" + round(loc.getY(), decimals) + ",");
+        sloc += ("Z:" + round(loc.getZ(), decimals));
+        return sloc;
+    }
+
+    /**
+     * Convert a String to a Location
+     *
+     * @param sloc
+     * @return
+     */
+    public static Location StringtoLocation(String sloc) {
+        if (sloc == null)
+            return null;
+        String[] slocs = sloc.split(",");
+        World w = Bukkit.getWorld(slocs[0].split(":")[1]);
+        Double x = Double.valueOf(slocs[1].split(":")[1]);
+        Double y = Double.valueOf(slocs[2].split(":")[1]);
+        Double z = Double.valueOf(slocs[3].split(":")[1]);
+        Location loc = new Location(w, x, y, z);
+
+        if (sloc.contains("Yaw:") && sloc.contains("Pitch:")) {
+            loc.setYaw(Float.valueOf(slocs[4].split(":")[1]));
+            loc.setPitch(Float.valueOf(slocs[5].split(":")[1]));
+        }
+        return loc;
+    }
+
+    private static double round(double value, int precision) {
+        int scale = (int) Math.pow(10, precision);
+        return (double) Math.round(value * scale) / scale;
+    }
+
+    /**
+     * Get the max permission level of a permission object (e.g. player)
+     *
+     * @param permissible a object using the Permissible System e.g. a Player.
+     * @param permission a Permission String to check e.g. ecs.shops.limit.
+     * @return the maximum int found, unless user is an Operator or has the ecs.admin permission.
+     * Then the returned result will be -1
+     */
+    public static int getMaxPermission(Permissible permissible, String permission) {
+        if (permissible.isOp() || permissible.hasPermission("ecs.admin"))
+            return -1;
+
+        final AtomicInteger max = new AtomicInteger();
+
+        permissible.getEffectivePermissions().stream().map(PermissionAttachmentInfo::getPermission)
+                .map(String::toLowerCase).filter(value -> value.startsWith(permission))
+                .map(value -> value.replace(permission, "")).forEach(value -> {
+            if (value.equalsIgnoreCase("*")) {
+                max.set(-1);
+                return;
+            }
+
+            if (max.get() == -1)
+                return;
+
+            try {
+                int amount = Integer.parseInt(value);
+
+                if (amount > max.get())
+                    max.set(amount);
+            } catch (NumberFormatException ignored) {
+            }
+        });
+
+        return max.get();
+    }
+
+
     //
+
 
     /**
      * Split a String by "_" and capitalize each First word, then join them together

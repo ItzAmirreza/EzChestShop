@@ -1,6 +1,8 @@
 package me.deadlight.ezchestshop.Listeners;
 
+import me.deadlight.ezchestshop.Data.ShopContainer;
 import me.deadlight.ezchestshop.Utils.Utils;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
@@ -36,6 +38,12 @@ public class BlockBreakListener implements Listener {
 
                     event.setCancelled(true);
                 }
+            }
+        }
+        if (!event.isCancelled()) {
+            Location loc = event.getBlock().getLocation();
+            if (ShopContainer.isShop(loc)) {
+                ShopContainer.deleteShop(loc);
             }
         }
     }

@@ -3,6 +3,11 @@ import com.bgsoftware.wildchests.api.WildChestsAPI;
 import com.bgsoftware.wildchests.api.handlers.ChestsManager;
 import me.deadlight.ezchestshop.Commands.Ecsadmin;
 import me.deadlight.ezchestshop.Commands.MainCommands;
+import me.deadlight.ezchestshop.Data.Config;
+import me.deadlight.ezchestshop.Data.LanguageManager;
+import me.deadlight.ezchestshop.Data.SQLite.Database;
+import me.deadlight.ezchestshop.Data.SQLite.SQLite;
+import me.deadlight.ezchestshop.Data.ShopContainer;
 import me.deadlight.ezchestshop.Listeners.*;
 import me.deadlight.ezchestshop.Utils.ASHologram;
 import me.deadlight.ezchestshop.Utils.FloatingItem;
@@ -24,6 +29,8 @@ public final class EzChestShop extends JavaPlugin {
 
     private static Economy econ = null;
 
+    private Database db;
+
     public boolean integrationWildChests = false;
     public ChestsManager wchests = null;
 
@@ -35,6 +42,10 @@ public final class EzChestShop extends JavaPlugin {
         plugin = this;
         logConsole("&c[&eEzChestShop&c] &aEnabling EzChestShop - version 1.3.3");
         saveDefaultConfig();
+
+        this.db = new SQLite(this);
+        this.db.load();
+
         Config.loadConfig();
         // Plugin startup logic
         if (getServer().getBukkitVersion().equalsIgnoreCase("1.17-R0.1-SNAPSHOT")) {
@@ -80,15 +91,24 @@ public final class EzChestShop extends JavaPlugin {
             wchests = WildChestsAPI.getInstance().getChestsManager();
         }
 
+        ShopContainer.queryShopsToMemory();
+
     }
 
     private void registerListeners() {
         getServer().getPluginManager().registerEvents(new ChestOpeningEvent(), this);
-        getServer().getPluginManager().registerEvents(new PlayerLookingAtChestShop(), this);
         getServer().getPluginManager().registerEvents(new BlockBreakListener(), this);
         getServer().getPluginManager().registerEvents(new PlayerTransactionListener(), this);
         getServer().getPluginManager().registerEvents(new ChatListener(), this);
-        getServer().getPluginManager().registerEvents(new PlayerLeavingListener(), this);
+        //Add Config check over here, to change the Shop display varient.
+        //PlayerLooking is less laggy but probably harder to spot.
+        if (Config.holodistancing) {
+            getServer().getPluginManager().registerEvents(new PlayerCloseToChestListener(), this);
+        } else {
+            getServer().getPluginManager().registerEvents(new PlayerLookingAtChestShop(), this);
+            getServer().getPluginManager().registerEvents(new PlayerLeavingListener(), this);
+        }
+
     }
     private void registerCommands() {
         getCommand("ecs").setExecutor(new MainCommands());
@@ -125,6 +145,9 @@ public final class EzChestShop extends JavaPlugin {
     @Override
     public void onDisable() {
         // Plugin shutdown logic
+
+        getDatabase().disconnect();
+
         try {
             for (Object object : Utils.onlinePackets) {
 
@@ -169,6 +192,10 @@ public final class EzChestShop extends JavaPlugin {
 
     public static Economy getEconomy() {
         return econ;
+    }
+
+    public Database getDatabase() {
+        return this.db;
     }
 
     public static FileConfiguration getLanguages() {

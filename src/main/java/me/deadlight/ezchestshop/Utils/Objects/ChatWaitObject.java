@@ -1,4 +1,4 @@
-package me.deadlight.ezchestshop.Utils;
+package me.deadlight.ezchestshop.Utils.Objects;
 import org.bukkit.block.Chest;
 
 public class ChatWaitObject {

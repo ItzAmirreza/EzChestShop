@@ -1,4 +1,6 @@
-package me.deadlight.ezchestshop;
+package me.deadlight.ezchestshop.Data;
+import me.deadlight.ezchestshop.Data.Config;
+import me.deadlight.ezchestshop.EzChestShop;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import java.util.ArrayList;

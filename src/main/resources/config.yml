@@ -3,13 +3,19 @@
 #Before starting to config, please note that any usage of TABs in the config file may break the plugin so avoid using tabs and use space.
 #If you need help/found a bug, contact me on Discord: Dead_Light#5608
 hologram:
-  show-holograms: true
   #holograms are all shown in the async way and they won't waste a single tick / nor they are buggy like some other plugins
-  hologram-first-line: "&d%item%"
+  show-holograms: true
   #represents the first line of chest shop hologram | use %item% to display the item's display name.
-  hologram-second-line: "&fBuy: &a%buy% %currency% &f| Sell: &c%sell% %currency%"
+  hologram-first-line: "&d%item%"
   #represents the second line of chest shop hologram | use %buy% for buy price and %sell% for sell price
-  hologram-disappearance-delay: 10
+  hologram-second-line: "&fBuy: &a%buy% %currency% &f| Sell: &c%sell% %currency%"
   #hologram will get removed after x seconds if plugin doesn't detect any movement toward chest shop (default: 10)
+  hologram-disappearance-delay: 10
+  #an alternative hologram display system, which is slower but provides easier visibility of nearby shops.
+  distance:
+    toggled: false
+    #Defines the range at which shops will render holograms (default: 10.0)
+    range: 10.0
 economy:
+  #Used to replace %currency% for the language files and the 2nd hologram line.
   server-currency: $

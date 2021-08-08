@@ -1,8 +1,8 @@
 package me.deadlight.ezchestshop.Listeners;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.GUIs.SettingsGUI;
-import me.deadlight.ezchestshop.LanguageManager;
-import me.deadlight.ezchestshop.Utils.ChatWaitObject;
+import me.deadlight.ezchestshop.Data.LanguageManager;
+import me.deadlight.ezchestshop.Utils.Objects.ChatWaitObject;
 import me.deadlight.ezchestshop.Utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;

@@ -1,4 +1,4 @@
-package me.deadlight.ezchestshop.Utils;
+package me.deadlight.ezchestshop.Utils.Objects;
 public class TransactionLogObject {
 
     public String type;

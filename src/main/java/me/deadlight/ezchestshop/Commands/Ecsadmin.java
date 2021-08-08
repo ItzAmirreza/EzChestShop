@@ -1,8 +1,8 @@
 package me.deadlight.ezchestshop.Commands;
 
-import me.deadlight.ezchestshop.Config;
+import me.deadlight.ezchestshop.Data.Config;
 import me.deadlight.ezchestshop.EzChestShop;
-import me.deadlight.ezchestshop.LanguageManager;
+import me.deadlight.ezchestshop.Data.LanguageManager;
 import me.deadlight.ezchestshop.Utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
