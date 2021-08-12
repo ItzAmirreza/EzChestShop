@@ -1,4 +1,5 @@
 package me.deadlight.ezchestshop.Listeners;
+import me.deadlight.ezchestshop.Data.ShopContainer;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.Utils.Objects.TransactionLogObject;
 import me.deadlight.ezchestshop.Utils.Utils;
@@ -90,6 +91,7 @@ public class PlayerTransactionListener implements Listener {
 
         data.set(new NamespacedKey(EzChestShop.getPlugin(), "trans"), PersistentDataType.STRING, finalString.toString());
         event.getChest().update();
+        ShopContainer.getShopSettings(event.getChest().getLocation()).setTrans(finalString.toString());
 
     }
 

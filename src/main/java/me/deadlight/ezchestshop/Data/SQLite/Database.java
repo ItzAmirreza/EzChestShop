@@ -188,6 +188,43 @@ public abstract class Database {
         return 0;
     }
 
+    /**
+     * Query the Database for a Double value
+     *
+     * @param primary_key the name of the primary key row.
+     * @param key the value of the primary key that is to query
+     * @param column the name of the column whose data needs to be queried
+     * @param table the table that is to be queried
+     * @return the resulting long or 0
+     */
+    public double getDouble(String primary_key, String key, String column, String table) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs;
+        try {
+            conn = getSQLConnection();
+            ps = conn.prepareStatement("SELECT * FROM " + table + " WHERE " + primary_key + " = ?;");
+            ps.setString(1, key);
+
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getDouble(column);
+            }
+        } catch (SQLException e) {
+            plugin.getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute(), e);
+        } finally {
+            try {
+                if (ps != null)
+                    ps.close();
+                if (conn != null)
+                    conn.close();
+            } catch (SQLException e) {
+                plugin.getLogger().log(Level.SEVERE, Errors.sqlConnectionClose(), e);
+            }
+        }
+        return 0;
+    }
+
 
     /**
      * Set a String in the Database.
@@ -266,6 +303,40 @@ public abstract class Database {
             ps = conn.prepareStatement("UPDATE " + table + " SET " + column + " = ? WHERE " + primary_key
                     + " = ?;");
             ps.setInt(1, data);
+            ps.setString(2, key);
+
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            plugin.getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute(), e);
+        } finally {
+            try {
+                if (ps != null)
+                    ps.close();
+                if (conn != null)
+                    conn.close();
+            } catch (SQLException e) {
+                plugin.getLogger().log(Level.SEVERE, Errors.sqlConnectionClose(), e);
+            }
+        }
+    }
+
+    /**
+     * Set a Double in the Database.
+     *
+     * @param primary_key the name of the primary key row.
+     * @param key the value of the primary key that is to query
+     * @param column the name of the column whose data needs to be queried
+     * @param table the table that is to be queried
+     * @param data the int to be set
+     */
+    public void setDouble(String primary_key, String key, String column, String table, double data) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try {
+            conn = getSQLConnection();
+            ps = conn.prepareStatement("UPDATE " + table + " SET " + column + " = ? WHERE " + primary_key
+                    + " = ?;");
+            ps.setDouble(1, data);
             ps.setString(2, key);
 
             ps.executeUpdate();

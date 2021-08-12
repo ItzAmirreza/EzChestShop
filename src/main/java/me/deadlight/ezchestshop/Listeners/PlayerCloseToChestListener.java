@@ -34,9 +34,6 @@ public class PlayerCloseToChestListener implements Listener {
 
     public static HashMap<Player, List<ASHologramObject>> map = new HashMap<>();
 
-    public static boolean showholo = EzChestShop.getPlugin().getConfig().getBoolean("show-holograms");
-    public static String firstLine = EzChestShop.getPlugin().getConfig().getString("hologram-first-line");
-    public static String secondLine = EzChestShop.getPlugin().getConfig().getString("hologram-second-line");
     private static HashMap<Location, String> playershopmap = new HashMap<>();
 
     @EventHandler
@@ -137,13 +134,13 @@ public class PlayerCloseToChestListener implements Listener {
         } else {
             itemname = thatItem.getType().name();
         }
-        String finalfirstline = Utils.color(firstLine.replace("%item%", itemname).replace("%buy%", String.valueOf(buy)).replace("%sell%", String.valueOf(sell)));
+        String finalfirstline = Utils.color(Config.firstLine.replace("%item%", itemname).replace("%buy%", String.valueOf(buy)).replace("%sell%", String.valueOf(sell)));
 
         ASHologram hologram = new ASHologram(player, finalfirstline, EntityType.ARMOR_STAND, secondLineLocation, false);
         hologram.spawn();
         Utils.onlinePackets.add(hologram);
 
-        ASHologram hologram2 = new ASHologram(player, Utils.color(secondLine.replace("%buy%", String.valueOf(buy)).replace("%sell%", String.valueOf(sell)).replace("%item%", itemname)), EntityType.ARMOR_STAND, thirdLocation, false);
+        ASHologram hologram2 = new ASHologram(player, Utils.color(Config.secondLine.replace("%buy%", String.valueOf(buy)).replace("%sell%", String.valueOf(sell)).replace("%item%", itemname)), EntityType.ARMOR_STAND, thirdLocation, false);
         hologram2.spawn();
         Utils.onlinePackets.add(hologram2);
 

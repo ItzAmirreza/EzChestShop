@@ -1,4 +1,5 @@
 package me.deadlight.ezchestshop.Listeners;
+import me.deadlight.ezchestshop.Data.ShopContainer;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.GUIs.SettingsGUI;
 import me.deadlight.ezchestshop.Data.LanguageManager;
@@ -121,7 +122,9 @@ public class ChatListener implements Listener {
             PersistentDataContainer data = rightChest.getPersistentDataContainer();
             data.set(new NamespacedKey(EzChestShop.getPlugin(), "admins"), PersistentDataType.STRING, adminsString);
             rightChest.update();
+            ShopContainer.getShopSettings(rightChest.getLocation()).setAdmins(adminsString);
             player.sendMessage(lm.sucAdminAdded(answer));
+
 
         } else {
             player.sendMessage(lm.alreadyAdmin());
@@ -146,6 +149,7 @@ public class ChatListener implements Listener {
             PersistentDataContainer data = rightChest.getPersistentDataContainer();
             data.set(new NamespacedKey(EzChestShop.getPlugin(), "admins"), PersistentDataType.STRING, adminsString);
             rightChest.update();
+            ShopContainer.getShopSettings(rightChest.getLocation()).setAdmins(adminsString);
             player.sendMessage(lm.sucAdminRemoved(answer));
 
         } else {
