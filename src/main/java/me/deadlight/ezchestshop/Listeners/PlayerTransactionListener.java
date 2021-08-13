@@ -5,7 +5,6 @@ import me.deadlight.ezchestshop.Utils.Objects.TransactionLogObject;
 import me.deadlight.ezchestshop.Utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
-import org.bukkit.block.Block;
 import org.bukkit.block.TileState;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -24,7 +23,7 @@ public class PlayerTransactionListener implements Listener {
     @EventHandler
     public void onTransaction(PlayerTransactEvent event) {
         log(event);
-        if (((TileState)event.getChest().getState()).getPersistentDataContainer().get(new NamespacedKey(EzChestShop.getPlugin(), "msgtoggle"), PersistentDataType.INTEGER) == 1) {
+        if (((TileState)event.getContainerBlock().getState()).getPersistentDataContainer().get(new NamespacedKey(EzChestShop.getPlugin(), "msgtoggle"), PersistentDataType.INTEGER) == 1) {
 
             List<UUID> getters = event.getAdminsUUID();
             getters.add(event.getOwner().getUniqueId());
@@ -60,7 +59,7 @@ public class PlayerTransactionListener implements Listener {
 
     private void log(PlayerTransactEvent event) {
 
-        TileState state = ((TileState)event.getChest().getState());
+        TileState state = ((TileState)event.getContainerBlock().getState());
         PersistentDataContainer data = state.getPersistentDataContainer();
         //player name@buy|sell@price@time@count#
 
@@ -93,8 +92,9 @@ public class PlayerTransactionListener implements Listener {
         }
 
         data.set(new NamespacedKey(EzChestShop.getPlugin(), "trans"), PersistentDataType.STRING, finalString.toString());
+        //NEED TO CHECK FOR OFFICIAL RELEASE <---
         state.update();
-        ShopContainer.getShopSettings(event.getChest().getLocation()).setTrans(finalString.toString());
+        ShopContainer.getShopSettings(event.getContainerBlock().getLocation()).setTrans(finalString.toString());
 
     }
 

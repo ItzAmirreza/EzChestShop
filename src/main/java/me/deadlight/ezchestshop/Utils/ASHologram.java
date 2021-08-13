@@ -108,8 +108,8 @@ public class ASHologram {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
+
     public void setHandler(Player p) {
         this.handler = p;
     }

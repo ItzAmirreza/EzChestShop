@@ -31,7 +31,7 @@ public class AdminShopGUI {
 
     }
 
-    public void showGUI(Player player, PersistentDataContainer data, Block chest) {
+    public void showGUI(Player player, PersistentDataContainer data, Block containerBlock) {
         LanguageManager lm = new LanguageManager();
         String shopOwner = Bukkit.getOfflinePlayer(UUID.fromString(data.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING))).getName();
         double sellPrice = data.get(new NamespacedKey(EzChestShop.getPlugin(), "sell"), PersistentDataType.DOUBLE);
@@ -77,7 +77,7 @@ public class AdminShopGUI {
                 return;
             }
 
-            sellItem(chest, sellPrice, 1, mainitem, Bukkit.getOfflinePlayer(shopOwner), player, data);
+            sellItem(containerBlock, sellPrice, 1, mainitem, Bukkit.getOfflinePlayer(shopOwner), player, data);
         });
 
         ItemStack moreSellIS = new ItemStack(Material.RED_DYE, 64);
@@ -95,7 +95,7 @@ public class AdminShopGUI {
                 return;
             }
             //sell things
-            sellItem(chest, sellPrice * 64, 64, mainitem, Bukkit.getOfflinePlayer(shopOwner), player, data);
+            sellItem(containerBlock, sellPrice * 64, 64, mainitem, Bukkit.getOfflinePlayer(shopOwner), player, data);
         });
 
         //buy 1x
@@ -114,7 +114,7 @@ public class AdminShopGUI {
             if (disabledBuy) {
                 return;
             }
-            buyItem(chest, buyPrice, 1, player, mainitem, Bukkit.getOfflinePlayer(shopOwner));
+            buyItem(containerBlock, buyPrice, 1, player, mainitem, Bukkit.getOfflinePlayer(shopOwner));
         });
 
 
@@ -132,7 +132,7 @@ public class AdminShopGUI {
             if (disabledBuy) {
                 return;
             }
-            buyItem(chest, buyPrice * 64, 64, player, mainitem, Bukkit.getOfflinePlayer(shopOwner));
+            buyItem(containerBlock, buyPrice * 64, 64, player, mainitem, Bukkit.getOfflinePlayer(shopOwner));
         });
 
         ItemStack storageitem = new ItemStack(Material.REDSTONE, 1);
@@ -143,7 +143,7 @@ public class AdminShopGUI {
 
         GuiItem storageGUI = new GuiItem(storageitem, event -> {
             event.setCancelled(true);
-            Inventory lastinv = Utils.getBlockInventory(chest);
+            Inventory lastinv = Utils.getBlockInventory(containerBlock);
             if (lastinv instanceof DoubleChestInventory) {
                 DoubleChest doubleChest = (DoubleChest) lastinv.getHolder();
                 lastinv = doubleChest.getInventory();
@@ -166,7 +166,7 @@ public class AdminShopGUI {
             event.setCancelled(true);
             //opening the settigns menu
             SettingsGUI settingsGUI = new SettingsGUI();
-            settingsGUI.ShowGUI(player, chest, false);
+            settingsGUI.ShowGUI(player, containerBlock, false);
             player.playSound(player.getLocation(), Sound.BLOCK_PISTON_EXTEND, 0.5f, 0.5f);
         });
 
@@ -184,7 +184,7 @@ public class AdminShopGUI {
         gui.setItem(14, oneBuy);
         //64x buy (15)
         gui.setItem(15, moreBuy);
-        //chest storage
+        //containerBlock storage
         gui.setItem(18, storageGUI);
         //settings item
         gui.setItem(26, settingsGui);

@@ -20,7 +20,7 @@ public class PlayerTransactEvent extends Event {
     private String itemName;
     private int count;
     private List<UUID> admins;
-    private Block chest;
+    private Block containerBlock;
 
 
     private static final HandlerList HANDLERS = new HandlerList();
@@ -35,7 +35,7 @@ public class PlayerTransactEvent extends Event {
     }
 
 
-    public PlayerTransactEvent(OfflinePlayer owner, OfflinePlayer customer, double price, boolean isBuy, String itemName, int count, List<UUID> admins, Block chest) {
+    public PlayerTransactEvent(OfflinePlayer owner, OfflinePlayer customer, double price, boolean isBuy, String itemName, int count, List<UUID> admins, Block containerBlock) {
         this.owner = owner;
         this.customer = customer;
         this.price = price;
@@ -44,7 +44,7 @@ public class PlayerTransactEvent extends Event {
         this.itemName = itemName;
         this.count = count;
         this.admins = admins;
-        this.chest = chest;
+        this.containerBlock = containerBlock;
     }
 
 
@@ -77,8 +77,8 @@ public class PlayerTransactEvent extends Event {
     public List<UUID> getAdminsUUID() {
         return this.admins;
     }
-    public Block getChest() {
-        return this.chest;
+    public Block getContainerBlock() {
+        return this.containerBlock;
     }
 
 

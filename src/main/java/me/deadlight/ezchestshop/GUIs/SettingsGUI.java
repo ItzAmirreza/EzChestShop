@@ -6,7 +6,6 @@ import me.deadlight.ezchestshop.Data.LanguageManager;
 import me.deadlight.ezchestshop.Listeners.ChatListener;
 import me.deadlight.ezchestshop.Utils.Objects.ChatWaitObject;
 import me.deadlight.ezchestshop.Utils.LogType;
-import me.deadlight.ezchestshop.Utils.Objects.ShopSettings;
 import me.deadlight.ezchestshop.Utils.Utils;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
@@ -15,7 +14,6 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
-import org.bukkit.block.Chest;
 import org.bukkit.block.TileState;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -37,11 +35,11 @@ public class SettingsGUI {
     //trans [list of infos seperated by @ in string form]
     //adminshop 0/1
 
-    public void ShowGUI(Player player, Block chest, boolean isAdmin) {
+    public void ShowGUI(Player player, Block containerBlock, boolean isAdmin) {
 
         LanguageManager lm = new LanguageManager();
 
-        PersistentDataContainer dataContainer = ((TileState)chest.getState()).getPersistentDataContainer();
+        PersistentDataContainer dataContainer = ((TileState)containerBlock.getState()).getPersistentDataContainer();
 
         boolean isAdminShop = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"), PersistentDataType.INTEGER) == 1;
 
@@ -66,10 +64,10 @@ public class SettingsGUI {
         GuiItem lastTrans = new GuiItem(lastTransItem, event -> {
            event.setCancelled(true);
            LogsGUI logsGUI = new LogsGUI();
-           logsGUI.showGUI(player, dataContainer, chest, LogType.TRANSACTION, isAdmin);
+           logsGUI.showGUI(player, dataContainer, containerBlock, LogType.TRANSACTION, isAdmin);
         });
 
-        //I was going to add logs section which would be about actions in that chest shop but I decided not to implement it. maybe later
+        //I was going to add logs section which would be about actions in that containerBlock shop but I decided not to implement it. maybe later
 //        //settings change logs
 //        ItemStack lastLogsItem = new ItemStack(Material.PAPER, 1);
 //        ItemMeta lastLogsMeta = lastLogsItem.getItemMeta();
@@ -96,7 +94,7 @@ public class SettingsGUI {
             event.setCancelled(true);
             //start the functionality for toggle message
             if (checkIfOn(event.getCurrentItem().getType())) {
-                TileState state = ((TileState)chest.getState());
+                TileState state = ((TileState)containerBlock.getState());
                 state.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "msgtoggle"), PersistentDataType.INTEGER, 0);
                 state.update();
                 player.sendMessage(lm.toggleTransactionMessageOffInChat());
@@ -104,9 +102,9 @@ public class SettingsGUI {
                 ItemMeta meta = event.getCurrentItem().getItemMeta();
                 meta.setLore(toggleMessageChooser(false, lm));
                 event.getCurrentItem().setItemMeta(meta);
-                ShopContainer.getShopSettings(chest.getLocation()).setMsgtoggle(false);
+                ShopContainer.getShopSettings(containerBlock.getLocation()).setMsgtoggle(false);
             } else {
-                TileState state = ((TileState)chest.getState());
+                TileState state = ((TileState)containerBlock.getState());
                 state.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "msgtoggle"), PersistentDataType.INTEGER, 1);
                 state.update();
                 player.sendMessage(lm.toggleTransactionMessageOnInChat());
@@ -114,7 +112,7 @@ public class SettingsGUI {
                 ItemMeta meta = event.getCurrentItem().getItemMeta();
                 meta.setLore(toggleMessageChooser(true, lm));
                 event.getCurrentItem().setItemMeta(meta);
-                ShopContainer.getShopSettings(chest.getLocation()).setMsgtoggle(true);
+                ShopContainer.getShopSettings(containerBlock.getLocation()).setMsgtoggle(true);
 
             }
         });
@@ -130,7 +128,7 @@ public class SettingsGUI {
             event.setCancelled(true);
             //start the functionality for disabling buy
             if (checkIfOn(event.getCurrentItem().getType())) {
-                TileState state = ((TileState)chest.getState());
+                TileState state = ((TileState)containerBlock.getState());
                 state.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "dbuy"), PersistentDataType.INTEGER, 0);
                 state.update();
                 player.sendMessage(lm.disableBuyingOffInChat());
@@ -138,9 +136,9 @@ public class SettingsGUI {
                 ItemMeta meta = event.getCurrentItem().getItemMeta();
                 meta.setLore(buyMessageChooser(false, lm));
                 event.getCurrentItem().setItemMeta(meta);
-                ShopContainer.getShopSettings(chest.getLocation()).setDbuy(false);
+                ShopContainer.getShopSettings(containerBlock.getLocation()).setDbuy(false);
             } else {
-                TileState state = ((TileState)chest.getState());
+                TileState state = ((TileState)containerBlock.getState());
                 state.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "dbuy"), PersistentDataType.INTEGER, 1);
                 state.update();
                 player.sendMessage(lm.disableBuyingOnInChat());
@@ -148,7 +146,7 @@ public class SettingsGUI {
                 ItemMeta meta = event.getCurrentItem().getItemMeta();
                 meta.setLore(buyMessageChooser(true, lm));
                 event.getCurrentItem().setItemMeta(meta);
-                ShopContainer.getShopSettings(chest.getLocation()).setDbuy(true);
+                ShopContainer.getShopSettings(containerBlock.getLocation()).setDbuy(true);
             }
 
         });
@@ -163,7 +161,7 @@ public class SettingsGUI {
             event.setCancelled(true);
             //start the functionality for disabling sell
             if (checkIfOn(event.getCurrentItem().getType())) {
-                TileState state = ((TileState)chest.getState());
+                TileState state = ((TileState)containerBlock.getState());
                 state.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "dsell"), PersistentDataType.INTEGER, 0);
                 state.update();
                 player.sendMessage(lm.disableSellingOffInChat());
@@ -171,9 +169,9 @@ public class SettingsGUI {
                 ItemMeta meta = event.getCurrentItem().getItemMeta();
                 meta.setLore(sellMessageChooser(false, lm));
                 event.getCurrentItem().setItemMeta(meta);
-                ShopContainer.getShopSettings(chest.getLocation()).setDsell(false);
+                ShopContainer.getShopSettings(containerBlock.getLocation()).setDsell(false);
             } else {
-                TileState state = ((TileState)chest.getState());
+                TileState state = ((TileState)containerBlock.getState());
                 state.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "dsell"), PersistentDataType.INTEGER, 1);
                 state.update();
                 player.sendMessage(lm.disableSellingOnInChat());
@@ -181,7 +179,7 @@ public class SettingsGUI {
                 ItemMeta meta = event.getCurrentItem().getItemMeta();
                 meta.setLore(sellMessageChooser(true, lm));
                 event.getCurrentItem().setItemMeta(meta);
-                ShopContainer.getShopSettings(chest.getLocation()).setDsell(true);
+                ShopContainer.getShopSettings(containerBlock.getLocation()).setDsell(true);
             }
         });
 
@@ -201,14 +199,14 @@ public class SettingsGUI {
                 if (event.getClick() == ClickType.LEFT) {
                     //left click == add admin
 
-                    ChatListener.chatmap.put(player.getUniqueId(), new ChatWaitObject("none", "add", chest));
+                    ChatListener.chatmap.put(player.getUniqueId(), new ChatWaitObject("none", "add", containerBlock));
                     player.closeInventory();
                     player.sendMessage(lm.addingAdminWaiting());
 
 
                 } else if (event.getClick() == ClickType.RIGHT) {
                     //right click == remove admin
-                    ChatListener.chatmap.put(player.getUniqueId(), new ChatWaitObject("none", "remove", chest));
+                    ChatListener.chatmap.put(player.getUniqueId(), new ChatWaitObject("none", "remove", containerBlock));
                     player.closeInventory();
                     player.sendMessage(lm.removingAdminWaiting());
                 }
@@ -225,7 +223,7 @@ public class SettingsGUI {
                 //start the functionality for shared income
 
                 if (checkIfOn(event.getCurrentItem().getType())) {
-                    TileState state = ((TileState)chest.getState());
+                    TileState state = ((TileState)containerBlock.getState());
                     state.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "shareincome"), PersistentDataType.INTEGER, 0);
                     state.update();
                     player.sendMessage(lm.sharedIncomeOffInChat());
@@ -233,9 +231,9 @@ public class SettingsGUI {
                     ItemMeta meta = event.getCurrentItem().getItemMeta();
                     meta.setLore(shareIncomeLoreChooser(false, lm));
                     event.getCurrentItem().setItemMeta(meta);
-                    ShopContainer.getShopSettings(chest.getLocation()).setShareincome(false);
+                    ShopContainer.getShopSettings(containerBlock.getLocation()).setShareincome(false);
                 } else {
-                    TileState state = ((TileState)chest.getState());
+                    TileState state = ((TileState)containerBlock.getState());
                     state.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "shareincome"), PersistentDataType.INTEGER, 1);
                     state.update();
                     player.sendMessage(lm.sharedIncomeOnInChat());
@@ -243,7 +241,7 @@ public class SettingsGUI {
                     ItemMeta meta = event.getCurrentItem().getItemMeta();
                     meta.setLore(shareIncomeLoreChooser(true, lm));
                     event.getCurrentItem().setItemMeta(meta);
-                    ShopContainer.getShopSettings(chest.getLocation()).setShareincome(true);
+                    ShopContainer.getShopSettings(containerBlock.getLocation()).setShareincome(true);
                 }
 
 
@@ -271,19 +269,19 @@ public class SettingsGUI {
 
             if (isAdminShop) {
                 ServerShopGUI serverShopGUI = new ServerShopGUI();
-                serverShopGUI.showGUI(player, dataContainer, chest);
+                serverShopGUI.showGUI(player, dataContainer, containerBlock);
                 return;
             }
 
             if (player.getUniqueId().toString().equalsIgnoreCase(owneruuid) || isAdmin) {
                 if (player.hasPermission("ecs.admin")) {
                     AdminShopGUI adminShopGUI = new AdminShopGUI();
-                    adminShopGUI.showGUI(player, dataContainer, chest);
+                    adminShopGUI.showGUI(player, dataContainer, containerBlock);
                     return;
                 }
                 //owner show special gui
                 OwnerShopGUI ownerShopGUI = new OwnerShopGUI();
-                ownerShopGUI.showGUI(player, dataContainer, chest, isAdmin);
+                ownerShopGUI.showGUI(player, dataContainer, containerBlock, isAdmin);
 
 
             } else {
@@ -292,7 +290,7 @@ public class SettingsGUI {
                 //just in case, i check again for player's permission
                 if (player.hasPermission("ecs.admin")) {
                     AdminShopGUI adminShopGUI = new AdminShopGUI();
-                    adminShopGUI.showGUI(player, dataContainer, chest);
+                    adminShopGUI.showGUI(player, dataContainer, containerBlock);
                 } else {
                     player.closeInventory();
                 }

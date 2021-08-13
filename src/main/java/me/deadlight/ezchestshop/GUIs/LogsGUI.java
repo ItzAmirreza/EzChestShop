@@ -26,7 +26,7 @@ public class LogsGUI {
 
     }
 
-    public void showGUI(Player player, PersistentDataContainer data, Block chest, LogType type, boolean isAdmin) {
+    public void showGUI(Player player, PersistentDataContainer data, Block containerBlock, LogType type, boolean isAdmin) {
         LanguageManager lm = new LanguageManager();
         String guititle;
         if (type == LogType.TRANSACTION) {
@@ -47,7 +47,7 @@ public class LogsGUI {
         GuiItem doorItem = new GuiItem(door, event -> {
            event.setCancelled(true);
            OwnerShopGUI ownerShopGUI = new OwnerShopGUI();
-           ownerShopGUI.showGUI(player, data, chest, isAdmin);
+           ownerShopGUI.showGUI(player, data, containerBlock, isAdmin);
         });
 
 

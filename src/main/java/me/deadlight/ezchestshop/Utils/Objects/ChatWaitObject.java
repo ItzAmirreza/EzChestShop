@@ -8,23 +8,23 @@ public class ChatWaitObject {
 
     public String answer;
     public String type;
-    public Block chest;
+    public Block containerBlock;
     public PersistentDataContainer dataContainer;
 
-    public ChatWaitObject(String answer, String type, Block chest) {
+    public ChatWaitObject(String answer, String type, Block containerBlock) {
 
         this.answer = answer;
         this.type = type;
-        this.chest = chest;
-        this.dataContainer = getDataContainer(chest.getState(), chest.getType());
+        this.containerBlock = containerBlock;
+        this.dataContainer = getDataContainer(containerBlock.getState(), containerBlock.getType());
 
     }
 
-    public ChatWaitObject(String answer, String type, Block chest, PersistentDataContainer dataContainer) {
+    public ChatWaitObject(String answer, String type, Block containerBlock, PersistentDataContainer dataContainer) {
 
         this.answer = answer;
         this.type = type;
-        this.chest = chest;
+        this.containerBlock = containerBlock;
         this.dataContainer = dataContainer;
 
     }

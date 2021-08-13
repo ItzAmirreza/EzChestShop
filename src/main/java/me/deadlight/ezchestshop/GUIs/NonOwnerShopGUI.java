@@ -29,7 +29,7 @@ public class NonOwnerShopGUI {
 
     public NonOwnerShopGUI() {}
 
-    public void showGUI(Player player, PersistentDataContainer data, Block chest) {
+    public void showGUI(Player player, PersistentDataContainer data, Block containerBlock) {
         LanguageManager lm = new LanguageManager();
 
         String shopOwner = Bukkit.getOfflinePlayer(UUID.fromString(data.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING))).getName();
@@ -73,7 +73,7 @@ public class NonOwnerShopGUI {
             if (disabledSell) {
                 return;
             }
-            sellItem(chest, sellPrice, 1, mainitem, Bukkit.getOfflinePlayer(shopOwner), player, data);
+            sellItem(containerBlock, sellPrice, 1, mainitem, Bukkit.getOfflinePlayer(shopOwner), player, data);
         });
 
         ItemStack moreSellIS = new ItemStack(Material.RED_DYE, 64);
@@ -91,7 +91,7 @@ public class NonOwnerShopGUI {
             if (disabledSell) {
                 return;
             }
-            sellItem(chest, sellPrice * 64, 64, mainitem, Bukkit.getOfflinePlayer(shopOwner), player, data);
+            sellItem(containerBlock, sellPrice * 64, 64, mainitem, Bukkit.getOfflinePlayer(shopOwner), player, data);
         });
 
         //buy 1x
@@ -110,7 +110,7 @@ public class NonOwnerShopGUI {
             if (disabledBuy) {
                 return;
             }
-            buyItem(chest, buyPrice, 1, player, mainitem, Bukkit.getOfflinePlayer(shopOwner), data);
+            buyItem(containerBlock, buyPrice, 1, player, mainitem, Bukkit.getOfflinePlayer(shopOwner), data);
         });
 
 
@@ -128,7 +128,7 @@ public class NonOwnerShopGUI {
             if (disabledBuy) {
                 return;
             }
-            buyItem(chest, buyPrice * 64, 64, player, mainitem, Bukkit.getOfflinePlayer(shopOwner), data);
+            buyItem(containerBlock, buyPrice * 64, 64, player, mainitem, Bukkit.getOfflinePlayer(shopOwner), data);
         });
 
 

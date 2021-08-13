@@ -31,7 +31,7 @@ public class OwnerShopGUI {
     public OwnerShopGUI() {}
 
 
-    public void showGUI(Player player, PersistentDataContainer data, Block chest, boolean isAdmin) {
+    public void showGUI(Player player, PersistentDataContainer data, Block containerBlock, boolean isAdmin) {
 
         LanguageManager lm = new LanguageManager();
 
@@ -141,7 +141,7 @@ public class OwnerShopGUI {
 
         GuiItem storageGUI = new GuiItem(storageitem, event -> {
             event.setCancelled(true);
-            Inventory lastinv = Utils.getBlockInventory(chest);
+            Inventory lastinv = Utils.getBlockInventory(containerBlock);
             if (lastinv instanceof DoubleChestInventory) {
                 DoubleChest doubleChest = (DoubleChest) lastinv.getHolder();
                 lastinv = doubleChest.getInventory();
@@ -160,7 +160,7 @@ public class OwnerShopGUI {
            event.setCancelled(true);
            //opening the settigns menu
             SettingsGUI settingsGUI = new SettingsGUI();
-            settingsGUI.ShowGUI(player, chest, isAdmin);
+            settingsGUI.ShowGUI(player, containerBlock, isAdmin);
             player.playSound(player.getLocation(), Sound.BLOCK_PISTON_EXTEND, 0.5f, 0.5f);
         });
 
@@ -177,7 +177,7 @@ public class OwnerShopGUI {
         gui.setItem(14, oneBuy);
         //64x buy (15)
         gui.setItem(15, moreBuy);
-        //chest storage
+        //containerBlock storage
         gui.setItem(18, storageGUI);
         //settings item
         gui.setItem(26, settingsGui);

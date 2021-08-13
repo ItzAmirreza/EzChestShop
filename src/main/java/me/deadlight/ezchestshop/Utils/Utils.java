@@ -160,16 +160,6 @@ public class Utils {
     //this one checks for the config.yml ima make one for language.yml
     public static void checkForConfigYMLupdate() throws IOException {
 
-        //update 1.2.4 config.yml ( this section commented because we don't support versions lower than 1.2.4 anymore)
-//        boolean result = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml")).isInt("hologram.hologram-disappearance-delay");
-//        if (!result) {
-//            FileConfiguration fc = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml"));
-//            fc.set("hologram.hologram-disappearance-delay", 10);
-//            fc.save(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml"));
-//
-//            Config.loadConfig();
-//        }
-
         //update 1.3.3 new config file model update constructed by ElitoGame
         boolean isOldConfigModel = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml")).isBoolean("show-holograms");
         //if true, then we have to implement the new config model and delete old ones
