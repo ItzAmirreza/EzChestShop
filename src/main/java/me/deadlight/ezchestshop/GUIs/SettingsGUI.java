@@ -14,7 +14,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
+import org.bukkit.block.TileState;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
@@ -35,11 +37,11 @@ public class SettingsGUI {
     //trans [list of infos seperated by @ in string form]
     //adminshop 0/1
 
-    public void ShowGUI(Player player, Chest rightChest, boolean isAdmin) {
+    public void ShowGUI(Player player, Block chest, boolean isAdmin) {
 
         LanguageManager lm = new LanguageManager();
 
-        PersistentDataContainer dataContainer = rightChest.getPersistentDataContainer();
+        PersistentDataContainer dataContainer = ((TileState)chest.getState()).getPersistentDataContainer();
 
         boolean isAdminShop = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"), PersistentDataType.INTEGER) == 1;
 
@@ -64,7 +66,7 @@ public class SettingsGUI {
         GuiItem lastTrans = new GuiItem(lastTransItem, event -> {
            event.setCancelled(true);
            LogsGUI logsGUI = new LogsGUI();
-           logsGUI.showGUI(player, dataContainer, rightChest, LogType.TRANSACTION, isAdmin);
+           logsGUI.showGUI(player, dataContainer, chest, LogType.TRANSACTION, isAdmin);
         });
 
         //I was going to add logs section which would be about actions in that chest shop but I decided not to implement it. maybe later
@@ -94,24 +96,25 @@ public class SettingsGUI {
             event.setCancelled(true);
             //start the functionality for toggle message
             if (checkIfOn(event.getCurrentItem().getType())) {
-
-                rightChest.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "msgtoggle"), PersistentDataType.INTEGER, 0);
-                rightChest.update();
+                TileState state = ((TileState)chest.getState());
+                state.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "msgtoggle"), PersistentDataType.INTEGER, 0);
+                state.update();
                 player.sendMessage(lm.toggleTransactionMessageOffInChat());
                 event.getCurrentItem().setType(Material.GRAY_DYE);
                 ItemMeta meta = event.getCurrentItem().getItemMeta();
                 meta.setLore(toggleMessageChooser(false, lm));
                 event.getCurrentItem().setItemMeta(meta);
-                ShopContainer.getShopSettings(rightChest.getLocation()).setMsgtoggle(false);
+                ShopContainer.getShopSettings(chest.getLocation()).setMsgtoggle(false);
             } else {
-                rightChest.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "msgtoggle"), PersistentDataType.INTEGER, 1);
-                rightChest.update();
+                TileState state = ((TileState)chest.getState());
+                state.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "msgtoggle"), PersistentDataType.INTEGER, 1);
+                state.update();
                 player.sendMessage(lm.toggleTransactionMessageOnInChat());
                 event.getCurrentItem().setType(Material.LIME_DYE);
                 ItemMeta meta = event.getCurrentItem().getItemMeta();
                 meta.setLore(toggleMessageChooser(true, lm));
                 event.getCurrentItem().setItemMeta(meta);
-                ShopContainer.getShopSettings(rightChest.getLocation()).setMsgtoggle(true);
+                ShopContainer.getShopSettings(chest.getLocation()).setMsgtoggle(true);
 
             }
         });
@@ -127,23 +130,25 @@ public class SettingsGUI {
             event.setCancelled(true);
             //start the functionality for disabling buy
             if (checkIfOn(event.getCurrentItem().getType())) {
-                rightChest.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "dbuy"), PersistentDataType.INTEGER, 0);
-                rightChest.update();
+                TileState state = ((TileState)chest.getState());
+                state.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "dbuy"), PersistentDataType.INTEGER, 0);
+                state.update();
                 player.sendMessage(lm.disableBuyingOffInChat());
                 event.getCurrentItem().setType(Material.GRAY_DYE);
                 ItemMeta meta = event.getCurrentItem().getItemMeta();
                 meta.setLore(buyMessageChooser(false, lm));
                 event.getCurrentItem().setItemMeta(meta);
-                ShopContainer.getShopSettings(rightChest.getLocation()).setDbuy(false);
+                ShopContainer.getShopSettings(chest.getLocation()).setDbuy(false);
             } else {
-                rightChest.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "dbuy"), PersistentDataType.INTEGER, 1);
-                rightChest.update();
+                TileState state = ((TileState)chest.getState());
+                state.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "dbuy"), PersistentDataType.INTEGER, 1);
+                state.update();
                 player.sendMessage(lm.disableBuyingOnInChat());
                 event.getCurrentItem().setType(Material.LIME_DYE);
                 ItemMeta meta = event.getCurrentItem().getItemMeta();
                 meta.setLore(buyMessageChooser(true, lm));
                 event.getCurrentItem().setItemMeta(meta);
-                ShopContainer.getShopSettings(rightChest.getLocation()).setDbuy(true);
+                ShopContainer.getShopSettings(chest.getLocation()).setDbuy(true);
             }
 
         });
@@ -158,24 +163,25 @@ public class SettingsGUI {
             event.setCancelled(true);
             //start the functionality for disabling sell
             if (checkIfOn(event.getCurrentItem().getType())) {
-                rightChest.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "dsell"), PersistentDataType.INTEGER, 0);
-                rightChest.update();
+                TileState state = ((TileState)chest.getState());
+                state.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "dsell"), PersistentDataType.INTEGER, 0);
+                state.update();
                 player.sendMessage(lm.disableSellingOffInChat());
                 event.getCurrentItem().setType(Material.GRAY_DYE);
                 ItemMeta meta = event.getCurrentItem().getItemMeta();
                 meta.setLore(sellMessageChooser(false, lm));
                 event.getCurrentItem().setItemMeta(meta);
-
-                ShopContainer.getShopSettings(rightChest.getLocation()).setDsell(false);
+                ShopContainer.getShopSettings(chest.getLocation()).setDsell(false);
             } else {
-                rightChest.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "dsell"), PersistentDataType.INTEGER, 1);
-                rightChest.update();
+                TileState state = ((TileState)chest.getState());
+                state.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "dsell"), PersistentDataType.INTEGER, 1);
+                state.update();
                 player.sendMessage(lm.disableSellingOnInChat());
                 event.getCurrentItem().setType(Material.LIME_DYE);
                 ItemMeta meta = event.getCurrentItem().getItemMeta();
                 meta.setLore(sellMessageChooser(true, lm));
                 event.getCurrentItem().setItemMeta(meta);
-                ShopContainer.getShopSettings(rightChest.getLocation()).setDsell(true);
+                ShopContainer.getShopSettings(chest.getLocation()).setDsell(true);
             }
         });
 
@@ -195,14 +201,14 @@ public class SettingsGUI {
                 if (event.getClick() == ClickType.LEFT) {
                     //left click == add admin
 
-                    ChatListener.chatmap.put(player.getUniqueId(), new ChatWaitObject("none", "add", rightChest));
+                    ChatListener.chatmap.put(player.getUniqueId(), new ChatWaitObject("none", "add", chest));
                     player.closeInventory();
                     player.sendMessage(lm.addingAdminWaiting());
 
 
                 } else if (event.getClick() == ClickType.RIGHT) {
                     //right click == remove admin
-                    ChatListener.chatmap.put(player.getUniqueId(), new ChatWaitObject("none", "remove", rightChest));
+                    ChatListener.chatmap.put(player.getUniqueId(), new ChatWaitObject("none", "remove", chest));
                     player.closeInventory();
                     player.sendMessage(lm.removingAdminWaiting());
                 }
@@ -219,23 +225,25 @@ public class SettingsGUI {
                 //start the functionality for shared income
 
                 if (checkIfOn(event.getCurrentItem().getType())) {
-                    rightChest.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "shareincome"), PersistentDataType.INTEGER, 0);
-                    rightChest.update();
+                    TileState state = ((TileState)chest.getState());
+                    state.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "shareincome"), PersistentDataType.INTEGER, 0);
+                    state.update();
                     player.sendMessage(lm.sharedIncomeOffInChat());
                     event.getCurrentItem().setType(Material.GRAY_DYE);
                     ItemMeta meta = event.getCurrentItem().getItemMeta();
                     meta.setLore(shareIncomeLoreChooser(false, lm));
                     event.getCurrentItem().setItemMeta(meta);
-                    ShopContainer.getShopSettings(rightChest.getLocation()).setShareincome(false);
+                    ShopContainer.getShopSettings(chest.getLocation()).setShareincome(false);
                 } else {
-                    rightChest.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "shareincome"), PersistentDataType.INTEGER, 1);
-                    rightChest.update();
+                    TileState state = ((TileState)chest.getState());
+                    state.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "shareincome"), PersistentDataType.INTEGER, 1);
+                    state.update();
                     player.sendMessage(lm.sharedIncomeOnInChat());
                     event.getCurrentItem().setType(Material.LIME_DYE);
                     ItemMeta meta = event.getCurrentItem().getItemMeta();
                     meta.setLore(shareIncomeLoreChooser(true, lm));
                     event.getCurrentItem().setItemMeta(meta);
-                    ShopContainer.getShopSettings(rightChest.getLocation()).setShareincome(true);
+                    ShopContainer.getShopSettings(chest.getLocation()).setShareincome(true);
                 }
 
 
@@ -263,19 +271,19 @@ public class SettingsGUI {
 
             if (isAdminShop) {
                 ServerShopGUI serverShopGUI = new ServerShopGUI();
-                serverShopGUI.showGUI(player, dataContainer, rightChest, rightChest);
+                serverShopGUI.showGUI(player, dataContainer, chest);
                 return;
             }
 
             if (player.getUniqueId().toString().equalsIgnoreCase(owneruuid) || isAdmin) {
                 if (player.hasPermission("ecs.admin")) {
                     AdminShopGUI adminShopGUI = new AdminShopGUI();
-                    adminShopGUI.showGUI(player, dataContainer, rightChest, rightChest);
+                    adminShopGUI.showGUI(player, dataContainer, chest);
                     return;
                 }
                 //owner show special gui
                 OwnerShopGUI ownerShopGUI = new OwnerShopGUI();
-                ownerShopGUI.showGUI(player, dataContainer, rightChest, rightChest, isAdmin);
+                ownerShopGUI.showGUI(player, dataContainer, chest, isAdmin);
 
 
             } else {
@@ -284,7 +292,7 @@ public class SettingsGUI {
                 //just in case, i check again for player's permission
                 if (player.hasPermission("ecs.admin")) {
                     AdminShopGUI adminShopGUI = new AdminShopGUI();
-                    adminShopGUI.showGUI(player, dataContainer, rightChest, rightChest);
+                    adminShopGUI.showGUI(player, dataContainer, chest);
                 } else {
                     player.closeInventory();
                 }

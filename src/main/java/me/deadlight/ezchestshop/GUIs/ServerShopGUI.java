@@ -8,7 +8,9 @@ import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.*;
+import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
+import org.bukkit.block.TileState;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -22,13 +24,13 @@ import java.util.UUID;
 public class ServerShopGUI {
 
     private Economy econ = EzChestShop.getEconomy();
-    private Chest chest;
+    private Block chest;
     public ServerShopGUI() {
 
     }
 
-    public void showGUI(Player player, PersistentDataContainer data, Chest chest, Chest rightChest) {
-        this.chest = rightChest;
+    public void showGUI(Player player, PersistentDataContainer data, Block chest) {
+        this.chest = chest;
         LanguageManager lm = new LanguageManager();
 
         String owneruuid = data.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING);
@@ -133,7 +135,7 @@ public class ServerShopGUI {
         settingsMeta.setDisplayName(lm.settingsButton());
         settingsItem.setItemMeta(settingsMeta);
 
-        boolean result = isAdmin(rightChest.getPersistentDataContainer(), player.getUniqueId().toString());
+        boolean result = isAdmin(((TileState)chest.getState()).getPersistentDataContainer(), player.getUniqueId().toString());
         //place moved vvv because of settingsGUI
         gui.getFiller().fillBorder(glasses);
 
@@ -143,7 +145,7 @@ public class ServerShopGUI {
                 //opening the settigns menu
                 SettingsGUI settingsGUI = new SettingsGUI();
 
-                settingsGUI.ShowGUI(player, rightChest, result);
+                settingsGUI.ShowGUI(player, chest, result);
                 player.playSound(player.getLocation(), Sound.BLOCK_PISTON_EXTEND, 0.5f, 0.5f);
             });
 

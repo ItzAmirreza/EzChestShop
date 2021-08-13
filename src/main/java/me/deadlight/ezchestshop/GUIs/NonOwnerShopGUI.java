@@ -9,7 +9,9 @@ import dev.triumphteam.gui.guis.GuiItem;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.*;
+import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
+import org.bukkit.block.TileState;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -27,7 +29,7 @@ public class NonOwnerShopGUI {
 
     public NonOwnerShopGUI() {}
 
-    public void showGUI(Player player, PersistentDataContainer data, Chest chest) {
+    public void showGUI(Player player, PersistentDataContainer data, Block chest) {
         LanguageManager lm = new LanguageManager();
 
         String shopOwner = Bukkit.getOfflinePlayer(UUID.fromString(data.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING))).getName();
@@ -157,13 +159,13 @@ public class NonOwnerShopGUI {
 
 
 
-    private void buyItem(Chest chest, double price, int count, Player player, ItemStack tthatItem, OfflinePlayer owner, PersistentDataContainer data) {
+    private void buyItem(Block chest, double price, int count, Player player, ItemStack tthatItem, OfflinePlayer owner, PersistentDataContainer data) {
         ItemStack thatItem = tthatItem.clone();
 
         LanguageManager lm = new LanguageManager();
         //check for money
 
-        if (chest.getInventory().containsAtLeast(thatItem , count)) {
+        if (Utils.getBlockInventory(chest).containsAtLeast(thatItem , count)) {
 
             if (ifHasMoney(Bukkit.getOfflinePlayer(player.getUniqueId()), price)) {
 
@@ -172,9 +174,9 @@ public class NonOwnerShopGUI {
                     thatItem.setAmount(count);
                     getandgive(Bukkit.getOfflinePlayer(player.getUniqueId()), price, owner);
                     sharedIncomeCheck(data, price);
-                    chest.getInventory().removeItem(thatItem);
+                    Utils.getBlockInventory(chest).removeItem(thatItem);
                     player.getInventory().addItem(thatItem);
-                    transactionMessage(data, owner, player, price, true, getFinalItemName(tthatItem), count, (Chest) chest.getLocation().getBlock().getState());
+                    transactionMessage(data, owner, player, price, true, getFinalItemName(tthatItem), count, chest.getLocation().getBlock());
                     player.sendMessage(lm.messageSuccBuy(price));
                     player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 0.5f, 0.5f);
 
@@ -197,7 +199,7 @@ public class NonOwnerShopGUI {
 
     }
 
-    private void sellItem(Chest chest, double price, int count, ItemStack tthatItem , OfflinePlayer owner, Player player, PersistentDataContainer data) {
+    private void sellItem(Block chest, double price, int count, ItemStack tthatItem , OfflinePlayer owner, Player player, PersistentDataContainer data) {
 
         LanguageManager lm = new LanguageManager();
 
@@ -207,12 +209,12 @@ public class NonOwnerShopGUI {
 
             if (ifHasMoney(owner, price)) {
 
-                if (chest.getInventory().firstEmpty() != -1) {
+                if (Utils.getBlockInventory(chest).firstEmpty() != -1) {
                     thatItem.setAmount(count);
                     getandgive(owner, price, Bukkit.getOfflinePlayer(player.getUniqueId()));
-                    transactionMessage(data, owner, Bukkit.getOfflinePlayer(player.getUniqueId()), price, false, getFinalItemName(tthatItem), count, (Chest) chest.getLocation().getBlock().getState());
+                    transactionMessage(data, owner, Bukkit.getOfflinePlayer(player.getUniqueId()), price, false, getFinalItemName(tthatItem), count, chest.getLocation().getBlock());
                     player.getInventory().removeItem(thatItem);
-                    chest.getInventory().addItem(thatItem);
+                    Utils.getBlockInventory(chest).addItem(thatItem);
                     player.sendMessage(lm.messageSuccSell(price));
                     player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 0.5f, 0.5f);
 
@@ -252,7 +254,7 @@ public class NonOwnerShopGUI {
 
     }
 
-    private void transactionMessage(PersistentDataContainer data, OfflinePlayer owner, OfflinePlayer customer, double price, boolean isBuy, String itemName, int count, Chest chest) {
+    private void transactionMessage(PersistentDataContainer data, OfflinePlayer owner, OfflinePlayer customer, double price, boolean isBuy, String itemName, int count, Block chest) {
 
             //kharidan? true forokhtan? false
             PlayerTransactEvent transactEvent = new PlayerTransactEvent(owner, customer, price, isBuy, itemName, count, Utils.getAdminsList(data), chest);
