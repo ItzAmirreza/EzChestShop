@@ -19,7 +19,7 @@ import org.bukkit.persistence.PersistentDataType;
 import java.util.List;
 import java.util.UUID;
 
-public class ChestOpeningEvent implements Listener {
+public class ChestOpeningListener implements Listener {
 
     private NonOwnerShopGUI nonOwnerShopGUI= new NonOwnerShopGUI();
     private OwnerShopGUI ownerShopGUI = new OwnerShopGUI();

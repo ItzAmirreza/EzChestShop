@@ -37,7 +37,7 @@ public class ChatListener implements Listener {
             //waiting for the answer
             event.setCancelled(true);
             ChatWaitObject waitObject = chatmap.get(player.getUniqueId());
-            Block waitChest = waitObject.chest;
+            Block waitChest = waitObject.containerBlock;
             if (waitChest == null) return;
             String owneruuid = waitObject.dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING);
             if (event.getMessage().equalsIgnoreCase(player.getName())) {
@@ -51,7 +51,7 @@ public class ChatListener implements Listener {
             }
 
             String type = chatmap.get(player.getUniqueId()).type;
-            Block chest = chatmap.get(player.getUniqueId()).chest;
+            Block chest = chatmap.get(player.getUniqueId()).containerBlock;
             chatmap.put(player.getUniqueId(), new ChatWaitObject(event.getMessage(), type, chest, waitObject.dataContainer));
             SettingsGUI guiInstance = new SettingsGUI();
 

@@ -1,4 +1,4 @@
-package me.deadlight.ezchestshop.Listeners;
+package me.deadlight.ezchestshop.Events;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;

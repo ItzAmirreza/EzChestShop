@@ -1,5 +1,6 @@
 package me.deadlight.ezchestshop.Listeners;
 import me.deadlight.ezchestshop.Data.ShopContainer;
+import me.deadlight.ezchestshop.Events.PlayerTransactEvent;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.Utils.Objects.TransactionLogObject;
 import me.deadlight.ezchestshop.Utils.Utils;

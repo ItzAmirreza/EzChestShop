@@ -96,7 +96,7 @@ public final class EzChestShop extends JavaPlugin {
     }
 
     private void registerListeners() {
-        getServer().getPluginManager().registerEvents(new ChestOpeningEvent(), this);
+        getServer().getPluginManager().registerEvents(new ChestOpeningListener(), this);
         getServer().getPluginManager().registerEvents(new BlockBreakListener(), this);
         getServer().getPluginManager().registerEvents(new BlockPlaceListener(), this);
         getServer().getPluginManager().registerEvents(new PlayerTransactionListener(), this);
