@@ -1,10 +1,12 @@
 package me.deadlight.ezchestshop.GUIs;
 
+import me.deadlight.ezchestshop.Data.ShopContainer;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.Data.LanguageManager;
 import me.deadlight.ezchestshop.Listeners.ChatListener;
 import me.deadlight.ezchestshop.Utils.Objects.ChatWaitObject;
 import me.deadlight.ezchestshop.Utils.LogType;
+import me.deadlight.ezchestshop.Utils.Objects.ShopSettings;
 import me.deadlight.ezchestshop.Utils.Utils;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
@@ -100,6 +102,7 @@ public class SettingsGUI {
                 ItemMeta meta = event.getCurrentItem().getItemMeta();
                 meta.setLore(toggleMessageChooser(false, lm));
                 event.getCurrentItem().setItemMeta(meta);
+                ShopContainer.getShopSettings(rightChest.getLocation()).setMsgtoggle(false);
             } else {
                 rightChest.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "msgtoggle"), PersistentDataType.INTEGER, 1);
                 rightChest.update();
@@ -108,6 +111,7 @@ public class SettingsGUI {
                 ItemMeta meta = event.getCurrentItem().getItemMeta();
                 meta.setLore(toggleMessageChooser(true, lm));
                 event.getCurrentItem().setItemMeta(meta);
+                ShopContainer.getShopSettings(rightChest.getLocation()).setMsgtoggle(true);
 
             }
         });
@@ -130,6 +134,7 @@ public class SettingsGUI {
                 ItemMeta meta = event.getCurrentItem().getItemMeta();
                 meta.setLore(buyMessageChooser(false, lm));
                 event.getCurrentItem().setItemMeta(meta);
+                ShopContainer.getShopSettings(rightChest.getLocation()).setDbuy(false);
             } else {
                 rightChest.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "dbuy"), PersistentDataType.INTEGER, 1);
                 rightChest.update();
@@ -138,6 +143,7 @@ public class SettingsGUI {
                 ItemMeta meta = event.getCurrentItem().getItemMeta();
                 meta.setLore(buyMessageChooser(true, lm));
                 event.getCurrentItem().setItemMeta(meta);
+                ShopContainer.getShopSettings(rightChest.getLocation()).setDbuy(true);
             }
 
         });
@@ -159,6 +165,8 @@ public class SettingsGUI {
                 ItemMeta meta = event.getCurrentItem().getItemMeta();
                 meta.setLore(sellMessageChooser(false, lm));
                 event.getCurrentItem().setItemMeta(meta);
+
+                ShopContainer.getShopSettings(rightChest.getLocation()).setDsell(false);
             } else {
                 rightChest.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "dsell"), PersistentDataType.INTEGER, 1);
                 rightChest.update();
@@ -167,6 +175,7 @@ public class SettingsGUI {
                 ItemMeta meta = event.getCurrentItem().getItemMeta();
                 meta.setLore(sellMessageChooser(true, lm));
                 event.getCurrentItem().setItemMeta(meta);
+                ShopContainer.getShopSettings(rightChest.getLocation()).setDsell(true);
             }
         });
 
@@ -217,6 +226,7 @@ public class SettingsGUI {
                     ItemMeta meta = event.getCurrentItem().getItemMeta();
                     meta.setLore(shareIncomeLoreChooser(false, lm));
                     event.getCurrentItem().setItemMeta(meta);
+                    ShopContainer.getShopSettings(rightChest.getLocation()).setShareincome(false);
                 } else {
                     rightChest.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "shareincome"), PersistentDataType.INTEGER, 1);
                     rightChest.update();
@@ -225,6 +235,7 @@ public class SettingsGUI {
                     ItemMeta meta = event.getCurrentItem().getItemMeta();
                     meta.setLore(shareIncomeLoreChooser(true, lm));
                     event.getCurrentItem().setItemMeta(meta);
+                    ShopContainer.getShopSettings(rightChest.getLocation()).setShareincome(true);
                 }
 
 

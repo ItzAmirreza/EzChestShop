@@ -196,7 +196,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                             //adminshop 0/1
                             Utils.storeItem(thatItem, container);
                             state.update();
-                            ShopContainer.createShop(block.getLocation(), player);
+                            ShopContainer.createShop(block.getLocation(), player, thatItem, buyprice, sellprice, false, false, false, "none", true, "none", false);
 
                             player.sendMessage(lm.shopCreated());
 

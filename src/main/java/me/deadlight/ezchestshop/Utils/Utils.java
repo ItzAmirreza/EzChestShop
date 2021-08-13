@@ -38,6 +38,15 @@ public class Utils {
 
     public static void storeItem(ItemStack item, PersistentDataContainer data) throws IOException {
 
+        String encodedItem = encodeItem(item);
+        if (encodedItem != null) {
+            data.set(new NamespacedKey(EzChestShop.getPlugin(), "item"), PersistentDataType.STRING, encodedItem);
+        }
+
+
+    }
+
+    public static String encodeItem(ItemStack item) {
         try {
             ByteArrayOutputStream io = new ByteArrayOutputStream();
             BukkitObjectOutputStream os = new BukkitObjectOutputStream(io);
@@ -49,14 +58,13 @@ public class Utils {
 
             String encodedData = Base64.getEncoder().encodeToString(rawData);
 
-            data.set(new NamespacedKey(EzChestShop.getPlugin(), "item"), PersistentDataType.STRING, encodedData);
             os.close();
+           return encodedData;
 
         } catch (IOException ex) {
             System.out.println(ex);
+            return null;
         }
-
-
     }
 
     public static ItemStack getItem(String encodedItem) {

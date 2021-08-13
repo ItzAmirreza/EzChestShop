@@ -93,6 +93,17 @@ public class SQLite extends Database {
                 {
                     put("location", new SQLColumn("STRING (32)", true, false));
                     put("owner", new SQLColumn("STRING (32)", false, false));
+                    put("item", new SQLColumn("STRING (32)", false, false));
+                    put("buyPrice", new SQLColumn("DOUBLE", false, false));
+                    put("sellPrice", new SQLColumn("DOUBLE", false, false));
+                    put("msgToggle", new SQLColumn("BOOLEAN", false, false));
+                    put("buyDisabled", new SQLColumn("BOOLEAN", false, false));
+                    put("sellDisabled", new SQLColumn("BOOLEAN", false, false));
+                    put("admins", new SQLColumn("STRING (32)", false, false));
+                    put("shareIncome", new SQLColumn("BOOLEAN", false, false));
+                    put("transactions", new SQLColumn("STRING (32)", false, false));
+                    put("adminshop", new SQLColumn("BOOLEAN", false, false));
+
                 }
             }));
             return tables;

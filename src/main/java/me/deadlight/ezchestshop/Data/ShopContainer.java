@@ -3,12 +3,19 @@ package me.deadlight.ezchestshop.Data;
 import me.deadlight.ezchestshop.Data.SQLite.Database;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.Listeners.PlayerCloseToChestListener;
+import me.deadlight.ezchestshop.Utils.Objects.ShopSettings;
 import me.deadlight.ezchestshop.Utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
+import org.bukkit.block.Chest;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -19,6 +26,7 @@ import java.util.List;
 public class ShopContainer {
 
     private static List<Location> shops = new ArrayList<>();
+    private static HashMap<Location, ShopSettings> shopSettings = new HashMap<>();
 
     /**
      * Save all shops from the Database into memory,
@@ -53,13 +61,80 @@ public class ShopContainer {
      * @param loc the Location of the Shop.
      * @param p   the Owner of the Shop.
      */
-    public static void createShop(Location loc, Player p) {
+    public static void createShop(Location loc, Player p, ItemStack item, double buyprice, double sellprice, boolean msgtoggle,
+                                  boolean dbuy, boolean dsell, String admins, boolean shareincome,
+                                  String trans, boolean adminshop) {
         Database db = EzChestShop.getPlugin().getDatabase();
-        db.prepareColumn("shopdata", "location", Utils.LocationtoString(loc));
-        db.setString("location", Utils.LocationtoString(loc),
-                "owner", "shopdata", p.getUniqueId().toString()
-                        .replace("-", ""));
+        String sloc = Utils.LocationtoString(loc);
+        db.prepareColumn("shopdata", "location", sloc);
+        db.setString("location", sloc,
+                "owner", "shopdata", p.getUniqueId().toString());
+        String encodedItem = Utils.encodeItem(item);
+        db.setString("location", sloc,
+                "item", "shopdata", encodedItem == null ? "Error" : encodedItem);
+        db.setDouble("location", sloc,
+                "buyPrice", "shopdata", buyprice);
+        db.setDouble("location", sloc,
+                "sellPrice", "shopdata", sellprice);
+        db.setBool("location", sloc,
+                "msgToggle", "shopdata", msgtoggle);
+        db.setBool("location", sloc,
+                "buyDisabled", "shopdata", dbuy);
+        db.setBool("location", sloc,
+                "sellDisabled", "shopdata", dsell);
+        db.setString("location", sloc,
+                "admins", "shopdata", admins);
+        db.setBool("location", sloc,
+                "shareIncome", "shopdata", shareincome);
+        db.setString("location", sloc,
+                "transactions", "shopdata", trans);
+        db.setBool("location", sloc,
+                "adminshop", "shopdata", adminshop);
+        ShopSettings settings = new ShopSettings(sloc, msgtoggle, dbuy, dsell, admins, shareincome, trans, adminshop);
+        shopSettings.put(loc, settings);
         shops.add(loc);
+    }
+
+    public static void loadShop(Chest chest) {
+        Database db = EzChestShop.getPlugin().getDatabase();
+        String sloc = Utils.LocationtoString(chest.getLocation());
+        PersistentDataContainer dataContainer = chest.getPersistentDataContainer();
+
+        boolean msgtoggle = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "msgtoggle"), PersistentDataType.INTEGER) == 1;
+        boolean dbuy = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "dbuy"), PersistentDataType.INTEGER) == 1;
+        boolean dsell = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "dsell"), PersistentDataType.INTEGER) == 1;
+        String admins = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "admins"), PersistentDataType.STRING);
+        boolean shareincome = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "shareincome"), PersistentDataType.INTEGER) == 1;
+        String trans = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "admins"), PersistentDataType.STRING);
+        boolean adminshop = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"), PersistentDataType.INTEGER) == 1;
+
+        db.prepareColumn("shopdata", "location", sloc);
+        db.setString("location", sloc,
+                "owner", "shopdata", dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING));
+        String encodedItem = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "item"), PersistentDataType.STRING);
+        db.setString("location", sloc,
+                "item", "shopdata", encodedItem == null ? "Error" : encodedItem);
+        db.setDouble("location", sloc,
+                "buyPrice", "shopdata", dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "buy"), PersistentDataType.DOUBLE));
+        db.setDouble("location", sloc,
+                "sellPrice", "shopdata", dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "sell"), PersistentDataType.DOUBLE));
+        db.setBool("location", sloc,
+                "msgToggle", "shopdata", msgtoggle);
+        db.setBool("location", sloc,
+                "buyDisabled", "shopdata", dbuy);
+        db.setBool("location", sloc,
+                "sellDisabled", "shopdata", dsell);
+        db.setString("location", sloc,
+                "admins", "shopdata", admins);
+        db.setBool("location", sloc,
+                "shareIncome", "shopdata", shareincome);
+        db.setString("location", sloc,
+                "transactions", "shopdata", trans);
+        db.setBool("location", sloc,
+                "adminshop", "shopdata", adminshop);
+        ShopSettings settings = new ShopSettings(sloc, msgtoggle, dbuy, dsell, admins, shareincome, trans, adminshop);
+        shopSettings.put(chest.getLocation(), settings);
+        shops.add(chest.getLocation());
     }
 
     /**
@@ -94,4 +169,36 @@ public class ShopContainer {
         return new ArrayList<>(shops);
     }
 
+    public static ShopSettings getShopSettings(Location loc) {
+        if (shopSettings.containsKey(loc)) {
+            return shopSettings.get(loc);
+        } else {
+            Database db = EzChestShop.getPlugin().getDatabase();
+            String sloc = Utils.LocationtoString(loc);
+            boolean msgtoggle = db.getBool("location", sloc,
+                    "msgToggle", "shopdata");
+            boolean dbuy =  db.getBool("location", sloc,
+                    "buyDisabled", "shopdata");
+            boolean dsell = db.getBool("location", sloc,
+                    "sellDisabled", "shopdata");
+            String admins = db.getString("location", sloc,
+                    "admins", "shopdata");
+            boolean shareincome = db.getBool("location", sloc,
+                    "shareIncome", "shopdata");
+            String trans = db.getString("location", sloc,
+                    "transactions", "shopdata");
+            boolean adminshop = db.getBool("location", sloc,
+                    "adminshop", "shopdata");
+            ShopSettings settings = new ShopSettings(sloc, msgtoggle, dbuy, dsell, admins, shareincome, trans, adminshop);
+            shopSettings.put(loc, settings);
+            return settings;
+        }
+    }
+/*
+
+            db.getDouble("location", sloc,
+                    "buyPrice", "shopdata");
+            db.getDouble("location", sloc,
+                    "sellPrice", "shopdata");
+ */
 }

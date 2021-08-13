@@ -1,6 +1,7 @@
 package me.deadlight.ezchestshop.Commands;
 
 import me.deadlight.ezchestshop.Data.Config;
+import me.deadlight.ezchestshop.Data.ShopContainer;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.Data.LanguageManager;
 import me.deadlight.ezchestshop.Utils.Utils;
@@ -262,7 +263,7 @@ public class Ecsadmin implements CommandExecutor, TabCompleter {
                                 container.set(new NamespacedKey(EzChestShop.getPlugin(), "trans"), PersistentDataType.STRING, "none");
                                 container.set(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"), PersistentDataType.INTEGER, 1);
 
-
+                                ShopContainer.createShop(block.getLocation(), player, thatItem, buyprice, sellprice, false, false, false, "none", true, "none", true);
                                 //msgtoggle 0/1
                                 //dbuy 0/1
                                 //dsell 0/1

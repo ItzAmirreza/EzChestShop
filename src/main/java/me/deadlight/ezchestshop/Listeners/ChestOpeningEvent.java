@@ -1,4 +1,5 @@
 package me.deadlight.ezchestshop.Listeners;
+import me.deadlight.ezchestshop.Data.ShopContainer;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.GUIs.AdminShopGUI;
 import me.deadlight.ezchestshop.GUIs.NonOwnerShopGUI;
@@ -66,6 +67,14 @@ public class ChestOpeningEvent implements Listener {
                         insertNewValues(rightChest);
                         rightone = rightChest.getPersistentDataContainer();
 
+
+                        EzChestShop.getPlugin().logConsole("Clicking Chest");
+                        // Load old shops into the Database when clicked
+                        if (!ShopContainer.isShop(rightChest.getLocation())) {
+                            ShopContainer.loadShop(rightChest);
+                            EzChestShop.getPlugin().logConsole("Loaded old Chest");
+                        }
+
                         //String owner = Bukkit.getOfflinePlayer(UUID.fromString(rightone.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING))).getName();
                         String owneruuid = rightone.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING);
                         boolean isAdminShop = rightone.get(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"), PersistentDataType.INTEGER) == 1;
@@ -104,6 +113,14 @@ public class ChestOpeningEvent implements Listener {
 
                         ownerValueConvertor(chest);
                         insertNewValues(chest);
+
+                        EzChestShop.getPlugin().logConsole("Clicking Chest");
+                        // Load old shops into the Database when clicked
+                        if (!ShopContainer.isShop(chest.getLocation())) {
+                            ShopContainer.loadShop(chest);
+                            EzChestShop.getPlugin().logConsole("Loaded old Chest");
+                        }
+
                         container = chest.getPersistentDataContainer();
                         boolean isAdminShop = container.get(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"), PersistentDataType.INTEGER) == 1;
                         //String owner = Bukkit.getOfflinePlayer(UUID.fromString(container.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING))).getName();
