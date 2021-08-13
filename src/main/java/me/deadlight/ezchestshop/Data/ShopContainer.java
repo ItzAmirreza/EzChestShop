@@ -95,10 +95,9 @@ public class ShopContainer {
         shops.add(loc);
     }
 
-    public static void loadShop(Chest chest) {
+    public static void loadShop(Location loc, PersistentDataContainer dataContainer) {
         Database db = EzChestShop.getPlugin().getDatabase();
-        String sloc = Utils.LocationtoString(chest.getLocation());
-        PersistentDataContainer dataContainer = chest.getPersistentDataContainer();
+        String sloc = Utils.LocationtoString(loc);
 
         boolean msgtoggle = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "msgtoggle"), PersistentDataType.INTEGER) == 1;
         boolean dbuy = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "dbuy"), PersistentDataType.INTEGER) == 1;
@@ -133,8 +132,8 @@ public class ShopContainer {
         db.setBool("location", sloc,
                 "adminshop", "shopdata", adminshop);
         ShopSettings settings = new ShopSettings(sloc, msgtoggle, dbuy, dsell, admins, shareincome, trans, adminshop);
-        shopSettings.put(chest.getLocation(), settings);
-        shops.add(chest.getLocation());
+        shopSettings.put(loc, settings);
+        shops.add(loc);
     }
 
     /**

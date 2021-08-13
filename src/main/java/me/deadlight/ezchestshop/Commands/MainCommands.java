@@ -139,7 +139,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
 
             if (blockState instanceof TileState) {
 
-                if (block.getType() == Material.CHEST) {
+                if (Utils.isApplicableContainer(block)) {
 
                     if (checkIfLocation(block.getLocation(), player)) {
 
@@ -154,11 +154,9 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                     //item (String) (itemstack)
 
                     //already a shop
-                    if (container.has(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING) || ifItsADoubleChestShop((Chest) block.getState()) != null) {
+                    if (container.has(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING) || ifItsADoubleChestShop(block) != null) {
 
                         player.sendMessage(lm.alreadyAShop());
-                        ifItsADoubleChestShop((Chest) block.getState());
-
 
                     } else {
                         //not a shop
@@ -238,7 +236,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
             BlockState blockState = block.getState();
             if (blockState instanceof TileState) {
 
-                if (block.getType() == Material.CHEST) {
+                if (Utils.isApplicableContainer(block)) {
 
                     if (checkIfLocation(block.getLocation(), player)) {
 
@@ -246,7 +244,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                     TileState state = (TileState) blockState;
 
                     PersistentDataContainer container = ((TileState) blockState).getPersistentDataContainer();
-                    Chest chkIfDCS = ifItsADoubleChestShop((Chest) block.getState());
+                    Chest chkIfDCS = ifItsADoubleChestShop(block);
 
                     if (container.has(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING) || chkIfDCS != null) {
 
@@ -351,7 +349,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
         } // End of WildChests integration (future integration)
 
         Block exactBlock = player.getTargetBlockExact(6);
-        if (exactBlock == null || exactBlock.getType() == Material.AIR || exactBlock.getType() != Material.CHEST) {
+        if (exactBlock == null || exactBlock.getType() == Material.AIR || !(Utils.isApplicableContainer(exactBlock))) {
             return false;
         }
 
@@ -380,33 +378,31 @@ public class MainCommands implements CommandExecutor, TabCompleter {
         }
     }
 
-    private Chest ifItsADoubleChestShop(Chest chest) {
+    private Chest ifItsADoubleChestShop(Block block) {
             //double chest
-        Inventory inventory = chest.getInventory();
-        if (inventory instanceof DoubleChestInventory) {
-            DoubleChest doubleChest = (DoubleChest) chest.getInventory().getHolder();
-            Chest leftchest = (Chest) doubleChest.getLeftSide();
-            Chest rightchest = (Chest) doubleChest.getRightSide();
+        if (block instanceof Chest) {
+            Chest chest = (Chest) block.getState();
+            Inventory inventory = chest.getInventory();
+            if (inventory instanceof DoubleChestInventory) {
+                DoubleChest doubleChest = (DoubleChest) chest.getInventory().getHolder();
+                Chest leftchest = (Chest) doubleChest.getLeftSide();
+                Chest rightchest = (Chest) doubleChest.getRightSide();
 
-            if (leftchest.getPersistentDataContainer().has(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING) || rightchest.getPersistentDataContainer().has(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING)) {
+                if (leftchest.getPersistentDataContainer().has(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING) || rightchest.getPersistentDataContainer().has(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING)) {
 
-                Chest rightone = null;
+                    Chest rightone = null;
 
-                if (!leftchest.getPersistentDataContainer().isEmpty()) {
-                    rightone = leftchest;
-                } else {
-                    rightone = rightchest;
+                    if (!leftchest.getPersistentDataContainer().isEmpty()) {
+                        rightone = leftchest;
+                    } else {
+                        rightone = rightchest;
+                    }
+
+                    return rightone;
                 }
-
-                return rightone;
-            } else {
-                return null;
             }
-        } else {
-            return null;
         }
-
-
+        return null;
     }
 
     private void checkForNewValues(PersistentDataContainer dataContainer, boolean forceInsert) {

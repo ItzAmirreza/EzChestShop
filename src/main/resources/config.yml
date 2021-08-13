@@ -16,6 +16,11 @@ hologram:
     toggled: false
     #Defines the range at which shops will render holograms (default: 10.0)
     range: 10.0
+#Define which containers are applicable for chest shops:
+container:
+  chests: true
+  barrels: true
+  shulkers: true
 economy:
   #Used to replace %currency% for the language files and the 2nd hologram line.
   server-currency: $

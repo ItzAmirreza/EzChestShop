@@ -7,6 +7,7 @@ import me.deadlight.ezchestshop.Utils.Utils;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -25,7 +26,7 @@ public class LogsGUI {
 
     }
 
-    public void showGUI(Player player, PersistentDataContainer data, Chest chest, LogType type, boolean isAdmin) {
+    public void showGUI(Player player, PersistentDataContainer data, Block chest, LogType type, boolean isAdmin) {
         LanguageManager lm = new LanguageManager();
         String guititle;
         if (type == LogType.TRANSACTION) {
@@ -46,7 +47,7 @@ public class LogsGUI {
         GuiItem doorItem = new GuiItem(door, event -> {
            event.setCancelled(true);
            OwnerShopGUI ownerShopGUI = new OwnerShopGUI();
-           ownerShopGUI.showGUI(player, data, chest, chest, isAdmin);
+           ownerShopGUI.showGUI(player, data, chest, isAdmin);
         });
 
 

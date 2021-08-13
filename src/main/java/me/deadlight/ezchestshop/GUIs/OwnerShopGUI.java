@@ -7,6 +7,7 @@ import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.*;
+import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.block.DoubleChest;
 import org.bukkit.entity.Player;
@@ -30,7 +31,7 @@ public class OwnerShopGUI {
     public OwnerShopGUI() {}
 
 
-    public void showGUI(Player player, PersistentDataContainer data, Chest chest, Chest rightChest, boolean isAdmin) {
+    public void showGUI(Player player, PersistentDataContainer data, Block chest, boolean isAdmin) {
 
         LanguageManager lm = new LanguageManager();
 
@@ -140,7 +141,7 @@ public class OwnerShopGUI {
 
         GuiItem storageGUI = new GuiItem(storageitem, event -> {
             event.setCancelled(true);
-            Inventory lastinv = chest.getInventory();
+            Inventory lastinv = Utils.getBlockInventory(chest);
             if (lastinv instanceof DoubleChestInventory) {
                 DoubleChest doubleChest = (DoubleChest) lastinv.getHolder();
                 lastinv = doubleChest.getInventory();
@@ -159,7 +160,7 @@ public class OwnerShopGUI {
            event.setCancelled(true);
            //opening the settigns menu
             SettingsGUI settingsGUI = new SettingsGUI();
-            settingsGUI.ShowGUI(player, rightChest, isAdmin);
+            settingsGUI.ShowGUI(player, chest, isAdmin);
             player.playSound(player.getLocation(), Sound.BLOCK_PISTON_EXTEND, 0.5f, 0.5f);
         });
 

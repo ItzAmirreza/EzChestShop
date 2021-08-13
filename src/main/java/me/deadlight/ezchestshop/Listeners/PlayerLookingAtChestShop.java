@@ -8,9 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.block.Block;
-import org.bukkit.block.Chest;
-import org.bukkit.block.DoubleChest;
+import org.bukkit.block.*;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -36,10 +34,9 @@ public class PlayerLookingAtChestShop implements Listener {
         Block target = event.getPlayer().getTargetBlockExact(5);
 
         if (target != null) {
-            if (target.getType() == Material.CHEST) {
+            if (Utils.isApplicableContainer(target)) {
 
-                Chest chest = (Chest) target.getState();
-                Inventory inventory = chest.getInventory();
+                Inventory inventory = Utils.getBlockInventory(target);
                 if (inventory instanceof DoubleChestInventory) {
                     //double chest
 
@@ -73,7 +70,7 @@ public class PlayerLookingAtChestShop implements Listener {
                 } else {
                     //not a double chest
 
-                    PersistentDataContainer container = chest.getPersistentDataContainer();
+                    PersistentDataContainer container = ((TileState)target.getState()).getPersistentDataContainer();
                     if (container.has(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING)) {
 
 
@@ -81,7 +78,7 @@ public class PlayerLookingAtChestShop implements Listener {
                         ItemStack thatItem = Utils.getItem(container.get(new NamespacedKey(EzChestShop.getPlugin(), "item"), PersistentDataType.STRING));
                         double buy = container.get(new NamespacedKey(EzChestShop.getPlugin(), "buy"), PersistentDataType.DOUBLE);
                         double sell = container.get(new NamespacedKey(EzChestShop.getPlugin(), "sell"), PersistentDataType.DOUBLE);
-                        Location holoLoc = chest.getLocation().clone().add(0.5, 1, 0.5);
+                        Location holoLoc = target.getLocation().clone().add(0.5, 1, 0.5);
 
                         if (!isAlreadyLooking(event.getPlayer(), target) && Config.showholo && !isAlreadyPresenting(holoLoc, event.getPlayer().getName())) {
                             showHologram(holoLoc,thatItem, buy, sell, event.getPlayer());

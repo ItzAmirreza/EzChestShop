@@ -10,9 +10,7 @@ import me.deadlight.ezchestshop.Utils.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.block.Block;
-import org.bukkit.block.Chest;
-import org.bukkit.block.DoubleChest;
+import org.bukkit.block.*;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -53,9 +51,8 @@ public class PlayerCloseToChestListener implements Listener {
 
                     Block target = sloc.getWorld().getBlockAt(sloc);
                     if (target != null) {
-                        if (target.getType() == Material.CHEST) {
-                            Chest chest = (Chest) target.getState();
-                            Inventory inventory = chest.getInventory();
+                        if (Utils.isApplicableContainer(target)) {
+                            Inventory inventory = Utils.getBlockInventory(target);
                             Location holoLoc;
                             if (inventory instanceof DoubleChestInventory) {
                                 DoubleChest doubleChest = (DoubleChest) inventory.getHolder();
@@ -63,10 +60,10 @@ public class PlayerCloseToChestListener implements Listener {
                                 Chest rightchest = (Chest) doubleChest.getRightSide();
                                 holoLoc = leftchest.getLocation().add(0.5D, 0, 0.5D).add(rightchest.getLocation().add(0.5D, 0, 0.5D)).multiply(0.5).add(0, 1, 0);
                             } else {
-                                holoLoc = chest.getLocation().clone().add(0.5, 1, 0.5);
+                                holoLoc = target.getLocation().clone().add(0.5, 1, 0.5);
                             }
 
-                            PersistentDataContainer container = chest.getPersistentDataContainer();
+                            PersistentDataContainer container = ((TileState)target.getState()).getPersistentDataContainer();
                             ItemStack thatItem = Utils.getItem(container.get(new NamespacedKey(EzChestShop.getPlugin(),
                                     "item"), PersistentDataType.STRING));
 

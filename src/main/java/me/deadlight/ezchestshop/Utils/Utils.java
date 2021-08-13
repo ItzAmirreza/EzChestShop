@@ -10,10 +10,11 @@ import me.deadlight.ezchestshop.Listeners.ChatListener;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
-import org.bukkit.block.Block;
-import org.bukkit.block.Chest;
+import org.bukkit.block.*;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.inventory.DoubleChestInventory;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.Permissible;
 import org.bukkit.permissions.PermissionAttachmentInfo;
@@ -89,6 +90,63 @@ public class Utils {
 
     }
 
+    /**
+     * Get the Inventory of the given Block if it is a Chest, Barrel or any Shulker
+     * @param block
+     * @return
+     */
+    public static Inventory getBlockInventory(Block block) {
+        if (block.getType() == Material.CHEST) {
+            return  ((Chest) block.getState()).getInventory();
+        } else if (block.getType() == Material.BARREL) {
+            return  ((Barrel) block.getState()).getInventory();
+        }
+        else if (isShulkerBox(block)) {
+            return  ((ShulkerBox) block.getState()).getInventory();
+        }
+        else return null;
+    }
+    /**
+     * Check if the given Block is a Shulker box (dye check)
+     * @param block
+     * @return
+     */
+    public static boolean isShulkerBox(Block block) {
+        return isShulkerBox(block.getType());
+    }
+
+    /**
+     * Check if the given Material is a Shulker box (dye check)
+     * @param type
+     * @return
+     */
+    public static boolean isShulkerBox(Material type) {
+        return Arrays.asList(Material.SHULKER_BOX, Material.WHITE_SHULKER_BOX, Material.ORANGE_SHULKER_BOX,
+                Material.MAGENTA_SHULKER_BOX, Material.LIGHT_BLUE_SHULKER_BOX, Material.YELLOW_SHULKER_BOX,
+                Material.LIME_SHULKER_BOX, Material.PINK_SHULKER_BOX, Material.GRAY_SHULKER_BOX,
+                Material.LIGHT_GRAY_SHULKER_BOX, Material.CYAN_SHULKER_BOX, Material.PURPLE_SHULKER_BOX,
+                Material.BLACK_SHULKER_BOX, Material.BROWN_SHULKER_BOX, Material.GRAY_SHULKER_BOX,
+                Material.RED_SHULKER_BOX, Material.BLACK_SHULKER_BOX).contains(type);
+    }
+
+    /**
+     * Check if the given Block is a applicable Shop.
+     * @param block
+     * @return
+     */
+    public static boolean isApplicableContainer(Block block) {
+        return isApplicableContainer(block.getType());
+    }
+
+    /**
+     * Check if the given Material is a applicable Shop.
+     * @param type
+     * @return
+     */
+    public static boolean isApplicableContainer(Material type) {
+        return (type == Material.CHEST && Config.container_chests) || (type == Material.BARREL && Config.container_barrels) || (isShulkerBox(type) && Config.container_shulkers);
+    }
+
 
     public static void reloadLanguages() {
         FileConfiguration fc = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "languages.yml"));
@@ -137,6 +195,10 @@ public class Utils {
 
             //new economy config section
             fc.set("economy.server-currency", "$");
+
+            fc.set("container.chests", true);
+            fc.set("container.barrels", true);
+            fc.set("container.shulkers", true);
             fc.save(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml"));
             Config.loadConfig();
 
