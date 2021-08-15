@@ -1,8 +1,18 @@
 package me.deadlight.ezchestshop.Data;
+import me.deadlight.ezchestshop.Commands.Ecsadmin;
+import me.deadlight.ezchestshop.Commands.MainCommands;
 import me.deadlight.ezchestshop.Data.Config;
 import me.deadlight.ezchestshop.EzChestShop;
+import me.deadlight.ezchestshop.Listeners.ChatListener;
+import me.deadlight.ezchestshop.Utils.Utils;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -10,389 +20,461 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class LanguageManager {
-    public FileConfiguration languages;
+    private static FileConfiguration languageConfig;
+    
+    private static List<String> supported_locales = Arrays.asList("Locale_EN", "Locale_DE", "Locale_ES", "Locale_CN");
 
-    public LanguageManager() {
-        languages = EzChestShop.getLanguages();
+    public static List<String> getSupportedLanguages() {
+        return supported_locales;
     }
 
-    private String colorify(String str) {
-        return translateHexColorCodes("#", "", ChatColor.translateAlternateColorCodes('&', str));
-    }
-
-    public String translateHexColorCodes(String startTag, String endTag, String message)
-    {
-        final Pattern hexPattern = Pattern.compile(startTag + "([A-Fa-f0-9]{6})" + endTag);
-        final char COLOR_CHAR = ChatColor.COLOR_CHAR;
-        Matcher matcher = hexPattern.matcher(message);
-        StringBuffer buffer = new StringBuffer(message.length() + 4 * 8);
-        while (matcher.find())
-        {
-            String group = matcher.group(1);
-            matcher.appendReplacement(buffer, COLOR_CHAR + "x"
-                    + COLOR_CHAR + group.charAt(0) + COLOR_CHAR + group.charAt(1)
-                    + COLOR_CHAR + group.charAt(2) + COLOR_CHAR + group.charAt(3)
-                    + COLOR_CHAR + group.charAt(4) + COLOR_CHAR + group.charAt(5)
-            );
+    public static void loadLanguages() {
+        LanguageManager lm = new LanguageManager();
+        for (String locale : LanguageManager.getSupportedLanguages()) {
+            File customConfigFile = new File(EzChestShop.getPlugin().getDataFolder() + File.separator + "translations", locale + ".yml");
+            if (!customConfigFile.exists()) {
+                EzChestShop.logConsole("&c[&eEzChestShop&c] &eGenerating " + locale + " file...");
+                customConfigFile.getParentFile().mkdirs();
+                EzChestShop.getPlugin().saveResource("translations/" + locale + ".yml", false);
+            }
         }
-        return matcher.appendTail(buffer).toString();
+        File customConfigFile = new File(EzChestShop.getPlugin().getDataFolder() + File.separator + "translations", Config.language + ".yml");
+        languageConfig = YamlConfiguration.loadConfiguration(customConfigFile);
+        EzChestShop.logConsole("&c[&eEzChestShop&c] &e" + Config.language + " successfully loaded");
     }
 
-    public void setLanguageConfig(FileConfiguration config) {
-        languages = config;
+    public static void reloadLanguages() {
+        FileConfiguration fc = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(),
+                "translations/" + Config.language + ".yml"));
+        languageConfig = fc;
+        LanguageManager newLanguage = new LanguageManager();
+        MainCommands.updateLM(newLanguage);
+        ChatListener.updateLM(newLanguage);
+        Ecsadmin.updateLM(newLanguage);
+    }
+
+    public static void checkForLanguagesYMLupdate() throws IOException {
+        boolean changes = false;
+        for (String local : getSupportedLanguages()) {
+            FileConfiguration fc = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(),
+                    "translations/" + local + ".yml"));
+            FileConfiguration fc_internal = YamlConfiguration.loadConfiguration(
+                    new InputStreamReader(EzChestShop.getPlugin().getResource("translations/" + local + ".yml")));
+            for (String key : fc_internal.getKeys(false)) {
+                if (!fc.isString(key)) {
+                    fc.set(key, fc_internal.getString(key));
+                    changes = true;
+                }
+            }
+            if (changes) {
+                fc.options().copyHeader(true);
+                fc.save(new File(EzChestShop.getPlugin().getDataFolder(), "translations/" + local + ".yml"));
+            }
+        }
+        if (changes) {
+            reloadLanguages();
+            EzChestShop.logConsole("&c[&eEzChestShop&c]&r &bUpdated Local files.");
+        }
+    }
+
+    /**
+     * Custom getString method to avoid missing language errors. The plugin checks...
+     * <ol>
+     *     <li>if the external defined Locale contains the requested string</li>
+     *     <li>else if the internal defined Locale contains the requested string</li>
+     *     <li>else if the external Locale_EN contains the requested string</li>
+     *     <li>else if the internal Locale_EN contains the requested string</li>
+     * </ol>
+     * if all of these fail, null shall be returned, else the first match will.
+     * @param string the path to request.
+     * @return a String or one of it's fallbacks.
+     */
+    private String getString(String string) {
+        String result = languageConfig.getString(string);
+        if (result == null) {
+            result = YamlConfiguration.loadConfiguration(
+                    new InputStreamReader(EzChestShop.getPlugin().
+                            getResource("translations/" + Config.language + ".yml")))
+                    .getString(string);
+            if (result == null) {
+                FileConfiguration fc = YamlConfiguration.loadConfiguration(
+                        new File(EzChestShop.getPlugin().getDataFolder(),
+                                "translations/Locale_EN.yml"));
+                if (result == null) {
+                    result = YamlConfiguration.loadConfiguration(
+                            new InputStreamReader(EzChestShop.getPlugin().
+                                    getResource("translations/Locale_EN.yml")))
+                            .getString(string);
+                }
+            }
+        }
+        return result;
     }
 
     /**
      * @return returns buy price of GUI item in lore
      */
-
     public String initialBuyPrice(double buyprice) {
-
-        return colorify(languages.getString("gui-initialbuyprice").replace("%buyprice%", String.valueOf(buyprice)).replace("%currency%", Config.currency));
-    }/**
+        return Utils.colorify(getString("gui-initialbuyprice").replace("%buyprice%",
+                String.valueOf(buyprice)).replace("%currency%", Config.currency));
+    }
+    /**
      * @return returns buy price of GUI item in lore
      */
     public String initialSellPrice(double sellprice) {
 
-        return colorify(languages.getString("gui-initialsellprice").replace("%sellprice%", String.valueOf(sellprice)).replace("%currency%", Config.currency));
-    }/**
+        return Utils.colorify(getString("gui-initialsellprice").replace("%sellprice%",
+                String.valueOf(sellprice)).replace("%currency%", Config.currency));
+    }
+    /**
      * @return returns buy price of GUI item in lore
      */
     public String guiAdminTitle(String shopowner) {
 
-        return colorify(languages.getString("gui-admin-title").replace("%shopowner%", String.valueOf(shopowner)));
+        return Utils.colorify(getString("gui-admin-title").replace("%shopowner%",
+                String.valueOf(shopowner)));
     }
 
     public String guiNonOwnerTitle(String shopowner) {
 
-        return colorify(languages.getString("gui-nonowner-title").replace("%shopowner%", String.valueOf(shopowner)));
+        return Utils.colorify(getString("gui-nonowner-title").replace("%shopowner%",
+                String.valueOf(shopowner)));
     }
     public String guiOwnerTitle(String shopowner) {
 
-        return colorify(languages.getString("gui-owner-title").replace("%shopowner%", String.valueOf(shopowner)));
+        return Utils.colorify(getString("gui-owner-title").replace("%shopowner%",
+                String.valueOf(shopowner)));
     }
 
     public String buttonSell1Title() {
 
-        return colorify(languages.getString("gui-button-sellone-title"));
+        return Utils.colorify(getString("gui-button-sellone-title"));
     }
     public String buttonSell1Lore(long price) {
 
-        return colorify(languages.getString("gui-button-sellone-lore").replace("%price%", String.valueOf(price)).replace("%currency%", Config.currency));
+        return Utils.colorify(getString("gui-button-sellone-lore").replace("%price%",
+                String.valueOf(price)).replace("%currency%", Config.currency));
     }
     public String buttonSell64Title() {
 
-        return colorify(languages.getString("gui-button-sell64-title"));
+        return Utils.colorify(getString("gui-button-sell64-title"));
     }
     public String buttonSell64Lore(long price) {
 
-        return colorify(languages.getString("gui-button-sell64-lore").replace("%price%", String.valueOf(price)).replace("%currency%", Config.currency));
+        return Utils.colorify(getString("gui-button-sell64-lore").replace("%price%",
+                String.valueOf(price)).replace("%currency%", Config.currency));
     }
 
     public String buttonBuy1Title() {
 
-        return colorify(languages.getString("gui-button-buyone-title"));
+        return Utils.colorify(getString("gui-button-buyone-title"));
     }
     public String buttonBuy1Lore(long price) {
 
-        return colorify(languages.getString("gui-button-buyone-lore").replace("%price%", String.valueOf(price)).replace("%currency%", Config.currency));
+        return Utils.colorify(getString("gui-button-buyone-lore").replace("%price%",
+                String.valueOf(price)).replace("%currency%", Config.currency));
     }
     public String buttonBuy64Title() {
 
-        return colorify(languages.getString("gui-button-buy64-title"));
+        return Utils.colorify(getString("gui-button-buy64-title"));
     }
     public String buttonBuy64Lore(long price) {
 
-        return colorify(languages.getString("gui-button-buy64-lore").replace("%price%", String.valueOf(price)).replace("%currency%", Config.currency));
+        return Utils.colorify(getString("gui-button-buy64-lore").replace("%price%",
+                String.valueOf(price)).replace("%currency%", Config.currency));
     }
 
     public String buttonAdminView() {
 
-        return colorify(languages.getString("gui-button-adminview"));
+        return Utils.colorify(getString("gui-button-adminview"));
     }
     public String buttonStorage() {
 
-        return colorify(languages.getString("gui-button-storage"));
+        return Utils.colorify(getString("gui-button-storage"));
     }
 
     public String messageSuccBuy(double price) {
 
-        return colorify(languages.getString("message-successful-buy").replace("%price%", String.valueOf(price)).replace("%currency%", Config.currency));
+        return Utils.colorify(getString("message-successful-buy").replace("%price%",
+                String.valueOf(price)).replace("%currency%", Config.currency));
     }
     public String fullinv() {
 
-        return colorify(languages.getString("message-fullinv"));
+        return Utils.colorify(getString("message-fullinv"));
     }
     public String cannotAfford() {
 
-        return colorify(languages.getString("message-cannotafford"));
+        return Utils.colorify(getString("message-cannotafford"));
     }
     public String outofStock() {
 
-        return colorify(languages.getString("message-outofstock"));
+        return Utils.colorify(getString("message-outofstock"));
     }
     public String messageSuccSell(double price) {
 
-        return colorify(languages.getString("message-successful-sell").replace("%price%", String.valueOf(price)).replace("%currency%", Config.currency));
+        return Utils.colorify(getString("message-successful-sell").replace("%price%",
+                String.valueOf(price)).replace("%currency%", Config.currency));
     }
     public String shopCannotAfford() {
 
-        return colorify(languages.getString("message-shopcannotafford"));
+        return Utils.colorify(getString("message-shopcannotafford"));
     }
     public String notEnoughItemToSell() {
 
-        return colorify(languages.getString("message-notenoughitemtosell"));
+        return Utils.colorify(getString("message-notenoughitemtosell"));
     }
     public String chestIsFull() {
 
-        return colorify(languages.getString("message-chestisFull"));
+        return Utils.colorify(getString("message-chestisFull"));
     }
     public String selfTransaction() {
 
-        return colorify(languages.getString("message-selftransaction"));
+        return Utils.colorify(getString("message-selftransaction"));
     }
     //update 1.2.8 new messages
 
     public String negativePrice() {
 
-        return colorify(languages.getString("commandmsg-negativeprice"));
+        return Utils.colorify(getString("commandmsg-negativeprice"));
     }
     public String notenoughARGS() {
 
-        return colorify(languages.getString("commandmsg-notenoughargs"));
+        return Utils.colorify(getString("commandmsg-notenoughargs"));
     }
     public String consoleNotAllowed() {
 
-        return colorify(languages.getString("commandmsg-consolenotallowed"));
+        return Utils.colorify(getString("commandmsg-consolenotallowed"));
     }
     public String cmdHelp() {
 
-        return colorify(languages.getString("commandmsg-help"));
+        return Utils.colorify(getString("commandmsg-help"));
     }
     public String alreadyAShop() {
 
-        return colorify(languages.getString("commandmsg-alreadyashop"));
+        return Utils.colorify(getString("commandmsg-alreadyashop"));
     }
     public String shopCreated() {
 
-        return colorify(languages.getString("commandmsg-shopcreated"));
+        return Utils.colorify(getString("commandmsg-shopcreated"));
     }
     public String holdSomething() {
 
-        return colorify(languages.getString("commandmsg-holdsomething"));
+        return Utils.colorify(getString("commandmsg-holdsomething"));
     }
     public String notAllowedToCreateOrRemove() {
 
-        return colorify(languages.getString("commandmsg-notallowdtocreate"));
+        return Utils.colorify(getString("commandmsg-notallowdtocreate"));
     }
     public String noChest() {
 
-        return colorify(languages.getString("commandmsg-notchest"));
+        return Utils.colorify(getString("commandmsg-notchest"));
     }
     public String lookAtChest() {
 
-        return colorify(languages.getString("commandmsg-lookatchest"));
+        return Utils.colorify(getString("commandmsg-lookatchest"));
     }
     public String chestShopRemoved() {
 
-        return colorify(languages.getString("commandmsg-csremoved"));
+        return Utils.colorify(getString("commandmsg-csremoved"));
     }
     public String notOwner() {
 
-        return colorify(languages.getString("commandmsg-notowner"));
+        return Utils.colorify(getString("commandmsg-notowner"));
     }
     public String notAChestOrChestShop() {
-        return colorify(languages.getString("commandmsg-notachestorcs"));
+        return Utils.colorify(getString("commandmsg-notachestorcs"));
     }
     public String settingsButton() {
-        return colorify(languages.getString("settingsButton"));
+        return Utils.colorify(getString("settingsButton"));
     }
     public String disabledButtonTitle() {
-        return colorify(languages.getString("disabledButtonTitle"));
+        return Utils.colorify(getString("disabledButtonTitle"));
     }
     public String transactionButtonTitle() {
-        return colorify(languages.getString("transactionButtonTitle"));
+        return Utils.colorify(getString("transactionButtonTitle"));
     }
     public String backToSettingsButton() {
-        return colorify(languages.getString("backToSettingsButton"));
+        return Utils.colorify(getString("backToSettingsButton"));
     }
     public String transactionPaperTitleBuy(String name) {
-        return colorify(languages.getString("transactionPaperTitleBuy").replace("%player%", name));
+        return Utils.colorify(getString("transactionPaperTitleBuy").replace("%player%", name));
     }
     public String transactionPaperTitleSell(String name) {
-        return colorify(languages.getString("transactionPaperTitleSell").replace("%player%", name));
+        return Utils.colorify(getString("transactionPaperTitleSell").replace("%player%", name));
     }
     public String lessthanminute() {
-        return colorify(languages.getString("lessthanminute"));
+        return Utils.colorify(getString("lessthanminute"));
     }
     public String adminshopguititle() {
-        return colorify(languages.getString("adminshopguititle"));
+        return Utils.colorify(getString("adminshopguititle"));
     }
     public String settingsGuiTitle() {
-        return colorify(languages.getString("settingsGuiTitle"));
+        return Utils.colorify(getString("settingsGuiTitle"));
     }
     public String latestTransactionsButton() {
-        return colorify(languages.getString("latestTransactionsButton"));
+        return Utils.colorify(getString("latestTransactionsButton"));
     }
     public String toggleTransactionMessageButton() {
-        return colorify(languages.getString("toggleTransactionMessageButton"));
+        return Utils.colorify(getString("toggleTransactionMessageButton"));
     }
     public String toggleTransactionMessageOnInChat() {
-        return colorify(languages.getString("toggleTransactionMessageOnInChat"));
+        return Utils.colorify(getString("toggleTransactionMessageOnInChat"));
     }
     public String toggleTransactionMessageOffInChat() {
-        return colorify(languages.getString("toggleTransactionMessageOffInChat"));
+        return Utils.colorify(getString("toggleTransactionMessageOffInChat"));
     }
     public String disableBuyingButtonTitle() {
-        return colorify(languages.getString("disableBuyingButtonTitle"));
+        return Utils.colorify(getString("disableBuyingButtonTitle"));
     }
     public String disableBuyingOnInChat() {
-        return colorify(languages.getString("disableBuyingOnInChat"));
+        return Utils.colorify(getString("disableBuyingOnInChat"));
     }
     public String disableBuyingOffInChat() {
-        return colorify(languages.getString("disableBuyingOffInChat"));
+        return Utils.colorify(getString("disableBuyingOffInChat"));
     }
     public String disableSellingButtonTitle() {
-        return colorify(languages.getString("disableSellingButtonTitle"));
+        return Utils.colorify(getString("disableSellingButtonTitle"));
     }
     public String disableSellingOnInChat() {
-        return colorify(languages.getString("disableSellingOnInChat"));
+        return Utils.colorify(getString("disableSellingOnInChat"));
     }
     public String disableSellingOffInChat() {
-        return colorify(languages.getString("disableSellingOffInChat"));
+        return Utils.colorify(getString("disableSellingOffInChat"));
     }
     public String shopAdminsButtonTitle() {
-        return colorify(languages.getString("shopAdminsButtonTitle"));
+        return Utils.colorify(getString("shopAdminsButtonTitle"));
     }
     public String nobodyStatusAdmins() {
-        return colorify(languages.getString("nobodyStatusAdmins"));
+        return Utils.colorify(getString("nobodyStatusAdmins"));
     }
     public String addingAdminWaiting() {
-        return colorify(languages.getString("addingAdminWaiting"));
+        return Utils.colorify(getString("addingAdminWaiting"));
     }
     public String removingAdminWaiting() {
-        return colorify(languages.getString("removingAdminWaiting"));
+        return Utils.colorify(getString("removingAdminWaiting"));
     }
     public String shareIncomeButtonTitle() {
-        return colorify(languages.getString("shareIncomeButtonTitle"));
+        return Utils.colorify(getString("shareIncomeButtonTitle"));
     }
     public String sharedIncomeOnInChat() {
-        return colorify(languages.getString("sharedIncomeOnInChat"));
+        return Utils.colorify(getString("sharedIncomeOnInChat"));
     }
     public String sharedIncomeOffInChat() {
-        return colorify(languages.getString("sharedIncomeOffInChat"));
+        return Utils.colorify(getString("sharedIncomeOffInChat"));
     }
     public String backToShopGuiButton() {
-        return colorify(languages.getString("backToShopGuiButton"));
+        return Utils.colorify(getString("backToShopGuiButton"));
     }
     public String statusOn() {
-        return colorify(languages.getString("statusOn"));
+        return Utils.colorify(getString("statusOn"));
     }
     public String statusOff() {
-        return colorify(languages.getString("statusOff"));
+        return Utils.colorify(getString("statusOff"));
     }
     public String selfAdmin() {
-        return colorify(languages.getString("selfAdmin"));
+        return Utils.colorify(getString("selfAdmin"));
     }
     public String noPlayer() {
-        return colorify(languages.getString("noPlayer"));
+        return Utils.colorify(getString("noPlayer"));
     }
     public String alreadyAdmin() {
-        return colorify(languages.getString("alreadyAdmin"));
+        return Utils.colorify(getString("alreadyAdmin"));
     }
     public String notInAdminList() {
-        return colorify(languages.getString("notInAdminList"));
+        return Utils.colorify(getString("notInAdminList"));
     }
 
 
 
     public String minutesago(long minutes) {
-        return colorify(languages.getString("minutesago").replace("%minutes%", String.valueOf(minutes)));
+        return Utils.colorify(getString("minutesago").replace("%minutes%", String.valueOf(minutes)));
     }
     public String hoursago(long hours) {
-        return colorify(languages.getString("hoursago").replace("%hours%", String.valueOf(hours)));
+        return Utils.colorify(getString("hoursago").replace("%hours%", String.valueOf(hours)));
     }
     public String daysago(long days) {
-        return colorify(languages.getString("daysago").replace("%days%", String.valueOf(days)));
+        return Utils.colorify(getString("daysago").replace("%days%", String.valueOf(days)));
     }
     public String sucAdminAdded(String player) {
-        return colorify(languages.getString("sucAdminAdded").replace("%player%", player));
+        return Utils.colorify(getString("sucAdminAdded").replace("%player%", player));
     }
     public String sucAdminRemoved(String player) {
-        return colorify(languages.getString("sucAdminRemoved").replace("%player%", player));
+        return Utils.colorify(getString("sucAdminRemoved").replace("%player%", player));
     }
 
 
     public List<String> disabledButtonLore() {
-        String lm = languages.getString("disabledButtonLore");
+        String lm = getString("disabledButtonLore");
         List<String> list = Arrays.asList(lm.split("\n"));
         List<String> finalList = new ArrayList<>();
         for (String str : list) {
-            finalList.add(colorify(str));
+            finalList.add(Utils.colorify(str));
         }
         return finalList;
     }
     public List<String> transactionPaperLoreBuy(String price, int count, String time) {
-        String lm = languages.getString("transactionPaperLoreBuy");
+        String lm = getString("transactionPaperLoreBuy");
         List<String> list = Arrays.asList(lm.split("\n"));
         List<String> finalList = new ArrayList<>();
         for (String str : list) {
-            finalList.add(colorify(str.replace("%price%", price).replace("%count%", String.valueOf(count)).replace("%time%", time)));
+            finalList.add(Utils.colorify(str.replace("%price%", price).replace("%count%",
+                    String.valueOf(count)).replace("%time%", time)));
         }
         return finalList;
     }
     public List<String> transactionPaperLoreSell(String price, int count, String time) {
-        String lm = languages.getString("transactionPaperLoreSell");
+        String lm = getString("transactionPaperLoreSell");
         List<String> list = Arrays.asList(lm.split("\n"));
         List<String> finalList = new ArrayList<>();
         for (String str : list) {
-            finalList.add(colorify(str.replace("%price%", price).replace("%count%", String.valueOf(count)).replace("%time%", time)));
+            finalList.add(Utils.colorify(str.replace("%price%", price).replace("%count%",
+                    String.valueOf(count)).replace("%time%", time)));
         }
         return finalList;
     }
     public List<String> toggleTransactionMessageButtonLore(String status) {
-        String lm = languages.getString("toggleTransactionMessageButtonLore");
+        String lm = getString("toggleTransactionMessageButtonLore");
         List<String> list = Arrays.asList(lm.split("\n"));
         List<String> finalList = new ArrayList<>();
         for (String str : list) {
-            finalList.add(colorify(str.replace("%status%", status)));
+            finalList.add(Utils.colorify(str.replace("%status%", status)));
         }
         return finalList;
     }
     public List<String> disableBuyingButtonLore(String status) {
-        String lm = languages.getString("disableBuyingButtonLore");
+        String lm = getString("disableBuyingButtonLore");
         List<String> list = Arrays.asList(lm.split("\n"));
         List<String> finalList = new ArrayList<>();
         for (String str : list) {
-            finalList.add(colorify(str.replace("%status%", status)));
+            finalList.add(Utils.colorify(str.replace("%status%", status)));
         }
         return finalList;
     }
     public List<String> disableSellingButtonLore(String status) {
-        String lm = languages.getString("disableSellingButtonLore");
+        String lm = getString("disableSellingButtonLore");
         List<String> list = Arrays.asList(lm.split("\n"));
         List<String> finalList = new ArrayList<>();
         for (String str : list) {
-            finalList.add(colorify(str.replace("%status%", status)));
+            finalList.add(Utils.colorify(str.replace("%status%", status)));
         }
         return finalList;
     }
     public List<String> shopAdminsButtonLore(String admins) {
-        String lm = languages.getString("shopAdminsButtonLore");
+        String lm = getString("shopAdminsButtonLore");
         List<String> list = Arrays.asList(lm.split("\n"));
         List<String> finalList = new ArrayList<>();
         for (String str : list) {
-            finalList.add(colorify(str.replace("%admins%", admins)));
+            finalList.add(Utils.colorify(str.replace("%admins%", admins)));
         }
         return finalList;
     }
 
     public List<String> shareIncomeButtonLore(String admins) {
-        String lm = languages.getString("shareIncomeButtonLore");
+        String lm = getString("shareIncomeButtonLore");
         List<String> list = Arrays.asList(lm.split("\n"));
         List<String> finalList = new ArrayList<>();
         for (String str : list) {
-            finalList.add(colorify(str.replace("%status%", admins)));
+            finalList.add(Utils.colorify(str.replace("%status%", admins)));
         }
         return finalList;
     }

@@ -8,7 +8,6 @@ import me.deadlight.ezchestshop.Utils.Objects.ASHologramObject;
 import me.deadlight.ezchestshop.Utils.FloatingItem;
 import me.deadlight.ezchestshop.Utils.Utils;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.*;
 import org.bukkit.entity.EntityType;
@@ -64,7 +63,7 @@ public class PlayerCloseToChestListener implements Listener {
                             }
 
                             PersistentDataContainer container = ((TileState)target.getState()).getPersistentDataContainer();
-                            ItemStack thatItem = Utils.getItem(container.get(new NamespacedKey(EzChestShop.getPlugin(),
+                            ItemStack thatItem = Utils.decodeItem(container.get(new NamespacedKey(EzChestShop.getPlugin(),
                                     "item"), PersistentDataType.STRING));
 
                             double buy = container.get(new NamespacedKey(EzChestShop.getPlugin(), "buy"),

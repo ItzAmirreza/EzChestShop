@@ -58,7 +58,7 @@ public class Ecsadmin implements CommandExecutor, TabCompleter {
                     } else if (firstarg.equalsIgnoreCase("reload")) {
 
                         Config.loadConfig();
-                        Utils.reloadLanguages();
+                        LanguageManager.reloadLanguages();
                         player.sendMessage(Utils.color("&aEzChestShop successfully reloaded!"));
 
                     } else if (firstarg.equalsIgnoreCase("create")) {

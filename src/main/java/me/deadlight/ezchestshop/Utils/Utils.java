@@ -13,7 +13,6 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.block.*;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.inventory.DoubleChestInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.Permissible;
@@ -28,25 +27,41 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Utils {
 
+
+    public static boolean is1_17 = false;
+    public static boolean family1_17 = false;
+
     public static List<Object> onlinePackets = new ArrayList<>();
+
 
     public static String color(String str) {
         return ChatColor.translateAlternateColorCodes('&', str);
     }
 
-    public static void storeItem(ItemStack item, PersistentDataContainer data) throws IOException {
 
+    /**
+     * Store a ItemStack into a persistent Data Container using Base64 encoding.
+     * @param item
+     * @param data
+     * @throws IOException
+     */
+    public static void storeItem(ItemStack item, PersistentDataContainer data) throws IOException {
         String encodedItem = encodeItem(item);
         if (encodedItem != null) {
             data.set(new NamespacedKey(EzChestShop.getPlugin(), "item"), PersistentDataType.STRING, encodedItem);
         }
-
-
     }
 
+    /**
+     * Encode a ItemStack into a Base64 encoded String
+     * @param item
+     * @return
+     */
     public static String encodeItem(ItemStack item) {
         try {
             ByteArrayOutputStream io = new ByteArrayOutputStream();
@@ -68,7 +83,12 @@ public class Utils {
         }
     }
 
-    public static ItemStack getItem(String encodedItem) {
+    /**
+     * Decode a ItemStack from Base64 into a ItemStack
+     * @param encodedItem
+     * @return
+     */
+    public static ItemStack decodeItem(String encodedItem) {
 
         byte[] rawData = Base64.getDecoder().decode(encodedItem);
 
@@ -106,6 +126,7 @@ public class Utils {
         }
         else return null;
     }
+
     /**
      * Check if the given Block is a Shulker box (dye check)
      * @param block
@@ -147,142 +168,8 @@ public class Utils {
         return (type == Material.CHEST && Config.container_chests) || (type == Material.BARREL && Config.container_barrels) || (isShulkerBox(type) && Config.container_shulkers);
     }
 
-
-    public static void reloadLanguages() {
-        FileConfiguration fc = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "languages.yml"));
-        EzChestShop.setLanguages(fc);
-        LanguageManager newLanguage = new LanguageManager();
-        MainCommands.updateLM(newLanguage);
-        ChatListener.updateLM(newLanguage);
-        Ecsadmin.updateLM(newLanguage);
-    }
-
-    //this one checks for the config.yml ima make one for language.yml
-    public static void checkForConfigYMLupdate() throws IOException {
-
-        //update 1.3.3 new config file model update constructed by ElitoGame
-        boolean isOldConfigModel = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml")).isBoolean("show-holograms");
-        //if true, then we have to implement the new config model and delete old ones
-        if (isOldConfigModel) {
-            //getting current values of configs
-            //show-holograms
-            boolean show_holograms = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml")).getBoolean("show-holograms");
-            String hologram_first_line = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml")).getString("hologram-first-line");
-            String hologram_second_line = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml")).getString("hologram-second-line");
-            int hologram_disappearance_delay = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml")).getInt("hologram-disappearance-delay");
-
-            FileConfiguration fc = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml"));
-
-            fc.set("show-holograms", null);
-            fc.set("hologram-first-line", null);
-            fc.set("hologram-second-line", null);
-            fc.set("hologram-disappearance-delay", null);
-
-            fc.set("hologram.show-holograms", show_holograms);
-            fc.set("hologram.hologram-first-line", hologram_first_line);
-            fc.set("hologram.hologram-second-line", hologram_second_line);
-            fc.set("hologram.hologram-disappearance-delay", hologram_disappearance_delay);
-
-            //new economy config section
-            fc.set("economy.server-currency", "$");
-
-            fc.set("container.chests", true);
-            fc.set("container.barrels", true);
-            fc.set("container.shulkers", true);
-            fc.save(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml"));
-            Config.loadConfig();
-
-        }
-
-        //well then its already an updated config, no need to change
-
-    }
-
-    public static void checkForLanguagesYMLupdate() throws IOException {
-
-        //update 1.2.8 Languages
-        boolean result = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "languages.yml")).isString("commandmsg-negativeprice");
-        boolean update1_3_0 = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "languages.yml")).isString("settingsButton");
-        if (!result) {
-            FileConfiguration fc = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "languages.yml"));
-            //new values that were added in update 1.2.8
-            fc.set("commandmsg-negativeprice", "&cNegative price? but you have to use positive price...");
-            fc.set("commandmsg-notenoughargs", "&cYou haven't provided enough arguments! \\n &cCorrect usage: /ecs create (Buy price) (Sell price)");
-            fc.set("commandmsg-consolenotallowed", "&cYou are not allowed to execute any command from console.");
-            fc.set("commandmsg-help", "&7- &c/ecs create (Buy Price) (Sell Price) &7| Create a chest shop by looking at a chest and having the item that you want to sell in your hand. \n &7- &c/ecs remove &7| Removes the chest shop that you are looking at \n &7Eazy right? :)");
-            fc.set("commandmsg-alreadyashop", "&cThis chest is already a shop!");
-            fc.set("commandmsg-shopcreated", "&aYou have successfully created a chest shop!");
-            fc.set("commandmsg-holdsomething", "&cPlease hold something in your main hand!");
-            fc.set("commandmsg-notallowdtocreate", "&cYou are not allowed to create/remove a chest shop in this location.");
-            fc.set("commandmsg-notchest", "&cThe block that you are looking at is not supported type of chest/is not a chest.");
-            fc.set("commandmsg-lookatchest", "&cPlease look at a chest.");
-            fc.set("commandmsg-csremoved", "&eThis chest shop successfully removed.");
-            fc.set("commandmsg-notowner", "&aYou are not the owner of this chest shop!");
-            fc.set("commandmsg-notachestorcs", "&cThe block that you are looking at is not a chest/or this is not a chest shop.");
-            fc.save(new File(EzChestShop.getPlugin().getDataFolder(), "languages.yml"));
-
-            reloadLanguages();
-            EzChestShop.getPlugin().logConsole("&c[&eEzChestShop&c]&r &bNew languages.yml generated...");
-        }
-
-        if (!update1_3_0) {
-            FileConfiguration fc = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "languages.yml"));
-            //for update 1.3.0
-            fc.set("settingsButton", "&b&lSettings");
-            fc.set("disabledButtonTitle", "&cDisabled");
-            fc.set("disabledButtonLore", "&7This option is disabled by \n &7the shop owner.");
-            fc.set("transactionButtonTitle", "&aTransaction logs");
-            fc.set("backToSettingsButton", "&eBack to settings");
-            fc.set("transactionPaperTitleBuy", "&aBuy | %player%");
-            fc.set("transactionPaperTitleSell", "&cSell | %player%");
-            fc.set("transactionPaperLoreBuy", "&7Total Price: %price% \n &7Quantity: %count% \n &7Transaction Type: &aBought from you \n &e%time%");
-            fc.set("transactionPaperLoreSell", "&7Total Price: %price% \n &7Quantity: %count% \n &7Transaction Type: &cSold to you \n &e%time%");
-            fc.set("lessthanminute", "&eless than a minute ago");
-            fc.set("minutesago", "&e%minutes% minute(s) ago");
-            fc.set("hoursago", "&e%hours% hour(s) ago");
-            fc.set("daysago", "&e%days% days ago");
-            fc.set("adminshopguititle", "&cAdmin shop");
-            fc.set("settingsGuiTitle", "&b&lSettings");
-            fc.set("latestTransactionsButton", "&aLatest Transactions");
-            fc.set("toggleTransactionMessageButton", "&eToggle Transaction Message");
-            fc.set("statusOn", "&aOn");
-            fc.set("statusOff", "&cOff");
-            fc.set("toggleTransactionMessageButtonLore", "&7Current status: %status% \n &7If you keep this option on, \n &7you will recieve transaction \n &7messages in chat whenever someone \n &7buy/sell something from this shop");
-            fc.set("toggleTransactionMessageOnInChat", "&7Toggle Transaction Messages: &aON");
-            fc.set("toggleTransactionMessageOffInChat", "&7Toggle Transaction Messages: &cOFF");
-            fc.set("disableBuyingButtonTitle", "&eDisable Buying");
-            fc.set("disableBuyingButtonLore", "&7Current status: %status% \n &7If you keep this option on, \n &7the shop won't let anyone buy \n &7from your chest shop.");
-            fc.set("disableBuyingOnInChat", "&7Disable Buying: &aON");
-            fc.set("disableBuyingOffInChat", "&7Disable Buying: &cOFF");
-            fc.set("disableSellingButtonTitle", "&eDisable Selling");
-            fc.set("disableSellingButtonLore", "&7Current status: %status% \n &7If you keep this option on, \n &7the shop won't let anyone sell \n &7anything to the shop.");
-            fc.set("disableSellingOnInChat", "&7Disable Selling: &aON");
-            fc.set("disableSellingOffInChat", "&7Disable Selling: &cOFF");
-            fc.set("shopAdminsButtonTitle", "&eShop admins");
-            fc.set("nobodyStatusAdmins", "&aNobody");
-            fc.set("shopAdminsButtonLore", "&7You can add/remove admins to \n &7your chest shop. Admins are able to \n &7access the shop storage & access certain \n &7settings (everything except share income \n &7and add/remove-ing admins). \n &aLeft Click &7to add an admin \n &cRight Click &7to remove an admin \n &7Current admins: %admins%");
-            fc.set("addingAdminWaiting", "&ePlease enter the name of the person you want to add to the list of admins.");
-            fc.set("removingAdminWaiting", "&ePlease enter the name of the person you want to remove from the list of admins.");
-            fc.set("shareIncomeButtonTitle", "&eShared income");
-            fc.set("shareIncomeButtonLore", "&7Current status: %status% \n &7If you keep this option on, \n &7the profit of ONLY sales, will be \n &7shared with admins as well.");
-            fc.set("sharedIncomeOnInChat", "&7Shared income: &aON");
-            fc.set("sharedIncomeOffInChat", "&7Shared income: &cOFF");
-            fc.set("backToShopGuiButton", "&eBack to shop");
-            fc.set("selfAdmin", "&cYou can't add or remove yourself in the admins list!");
-            fc.set("noPlayer", "&cThis player doesn't exist or haven't played here before.");
-            fc.set("sucAdminAdded", "&e%player% &asuccessfully added to the admins list.");
-            fc.set("alreadyAdmin", "&cThis player is already in the admins list!");
-            fc.set("sucAdminRemoved", "&e%player% &asuccessfully removed from the admins list.");
-            fc.set("notInAdminList", "&cThis player is not in the admins list!");
-            fc.save(new File(EzChestShop.getPlugin().getDataFolder(), "languages.yml"));
-            reloadLanguages();
-            EzChestShop.getPlugin().logConsole("&c[&eEzChestShop&c]&r &bNew languages.yml generated... (1.3.0V)");
-        }
-    }
-
     public static HashMap<String, Block> blockBreakMap = new HashMap<>();
 
-    public static LanguageManager lm;
 
     public static List<UUID> getAdminsList(PersistentDataContainer data) {
 
@@ -322,15 +209,6 @@ public class Utils {
 
         }
     }
-
-    public static Location getSpawnLocation(Chest chest) {
-        return chest.getLocation().clone().add(0.5, 1, 0.5);
-    }
-
-
-    public static boolean is1_17 = false;
-
-    public static boolean family1_17 = false;
 
     /**
      * Convert a Location to a String
@@ -433,9 +311,6 @@ public class Utils {
     }
 
 
-    //
-
-
     /**
      * Split a String by "_" and capitalize each First word, then join them together
      * via " "
@@ -453,7 +328,41 @@ public class Utils {
         return n_string;
     }
 
+    /**
+     * Apply & color translating, as well as #ffffff hex color encoding to a String.
+     * Versions below 1.16 will only get the last hex color symbol applied to them.
+     * @param str
+     * @return
+     */
+    public static String colorify(String str) {
+        return translateHexColorCodes("#", "", ChatColor.translateAlternateColorCodes('&', str));
+    }
 
+    /**
+     * Apply hex color coding to a String. possibility to add a special start or end tag to the String.
+     * Versions below 1.16 will only get the last hex color symbol applied to them.
+     * @param startTag
+     * @param endTag
+     * @param message
+     * @return
+     */
+    public static  String translateHexColorCodes(String startTag, String endTag, String message)
+    {
+        final Pattern hexPattern = Pattern.compile(startTag + "([A-Fa-f0-9]{6})" + endTag);
+        final char COLOR_CHAR = ChatColor.COLOR_CHAR;
+        Matcher matcher = hexPattern.matcher(message);
+        StringBuffer buffer = new StringBuffer(message.length() + 4 * 8);
+        while (matcher.find())
+        {
+            String group = matcher.group(1);
+            matcher.appendReplacement(buffer, COLOR_CHAR + "x"
+                    + COLOR_CHAR + group.charAt(0) + COLOR_CHAR + group.charAt(1)
+                    + COLOR_CHAR + group.charAt(2) + COLOR_CHAR + group.charAt(3)
+                    + COLOR_CHAR + group.charAt(4) + COLOR_CHAR + group.charAt(5)
+            );
+        }
+        return matcher.appendTail(buffer).toString();
+    }
 
 
 

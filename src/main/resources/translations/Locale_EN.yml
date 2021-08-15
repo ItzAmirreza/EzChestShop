@@ -1,7 +1,7 @@
-#plugin uses this file in order to display messages in plugin
-#For hologram messages, you have to check config.yml
-#NOTE: DO NOT USE TAB in yml file as it can cause serious performance problems and it sometimes can break the plugin
-#Don't forget to rate if you liked EzChestShop
+# plugin uses this file in order to display messages in plugin
+# For hologram messages, you have to check config.yml
+# NOTE: DO NOT USE TAB in yml file as it can cause serious performance problems and it sometimes can break the plugin
+# Don't forget to rate if you liked EzChestShop
 gui-initialbuyprice: "&aInitial Buy price: &e%buyprice% %currency%"
 gui-initialsellprice: "&cInitial Sell price: &e%sellprice% %currency%"
 gui-admin-title: "&c%shopowner%'s chest shop &4(Admin view)"

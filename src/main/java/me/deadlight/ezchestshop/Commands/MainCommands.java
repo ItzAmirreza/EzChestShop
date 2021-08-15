@@ -57,7 +57,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                                 int maxShops = Utils.getMaxPermission(player, "ecs.shops.limit.");
                                 maxShops = maxShops == -1 ? 10000 : maxShops;
                                 int shops = ShopContainer.getShopCount(player);
-                                EzChestShop.getPlugin().logConsole("Shops: " + shops + ", Max: " + maxShops);
+                                EzChestShop.logConsole("Shops: " + shops + ", Max: " + maxShops);
                                 if (shops < maxShops) {
                                     try {
                                         createShop(player, args);
