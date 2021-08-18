@@ -20,7 +20,7 @@ public class FloatingItem {
 //    private WrapperPlayServerEntityDestroy destroy;
     private WrapperPlayServerEntityMetadata meta;
     private WrapperPlayServerSpawnEntity spawn;
-    private int eID;
+    private int entityID;
     private Player player;
     private WrapperPlayServerEntityVelocity velocity;
 
@@ -32,8 +32,8 @@ public class FloatingItem {
         this.meta = new WrapperPlayServerEntityMetadata();
         this.velocity = new WrapperPlayServerEntityVelocity();
         this.player = player;
-        this.eID = (int) (Math.random() * Integer.MAX_VALUE);
-        this.spawn.setEntityID(eID);
+        this.entityID = (int) (Math.random() * Integer.MAX_VALUE);
+        this.spawn.setEntityID(entityID);
         this.spawn.setUniqueId(UUID.randomUUID());
         this.spawn.setX(location.getX());
         this.spawn.setY(location.getY());
@@ -43,7 +43,7 @@ public class FloatingItem {
         this.spawn.sendPacket(player);
 
         //using packetwrapper
-        this.meta.setEntityID(eID);
+        this.meta.setEntityID(entityID);
         List<WrappedWatchableObject> metadata = new ArrayList<>();
         metadata.add(new WrappedWatchableObject(new WrappedDataWatcher.WrappedDataWatcherObject(5, WrappedDataWatcher.Registry.get(Boolean.class)), true)); //setting the value of no graviy to true
         //metadata.add(new WrappedWatchableObject(new WrappedDataWatcher.WrappedDataWatcherObject(0, WrappedDataWatcher.Registry.get(Byte.class)), (byte) 0x40)); //just makin the dropped item glow
@@ -56,7 +56,7 @@ public class FloatingItem {
         this.meta.sendPacket(player);
 
         //sending velocity packet
-        this.velocity.setEntityID(eID);
+        this.velocity.setEntityID(entityID);
         this.velocity.setVelocityX(0.0);
         this.velocity.setVelocityY(0.0);
         this.velocity.setVelocityZ(0.0);
@@ -68,10 +68,12 @@ public class FloatingItem {
         //this.destroy.sendPacket(player);
         PacketContainer destroyEntityPacket = new PacketContainer(PacketType.Play.Server.ENTITY_DESTROY);
         if (Utils.is1_17) {
-            destroyEntityPacket.getIntegers().writeSafely(0, eID);
+            destroyEntityPacket.getIntegers().writeSafely(0, entityID);
+        }else if (Utils.is1_17_1) {
+            PlayEntityDestory_1_17_1.destroy(player, entityID);
         } else {
             destroyEntityPacket.getIntegers().writeSafely(0, 1);
-            destroyEntityPacket.getIntegerArrays().writeSafely(0, new int[]{eID});
+            destroyEntityPacket.getIntegerArrays().writeSafely(0, new int[]{entityID});
         }
         try {
             ProtocolLibrary.getProtocolManager().sendServerPacket(player, destroyEntityPacket);

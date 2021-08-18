@@ -52,6 +52,10 @@ public final class EzChestShop extends JavaPlugin {
             Utils.is1_17 = true;
             logConsole("&c[&eEzChestShop&c] &eInitializing 1.17 protocol change...");
         }
+        if (getServer().getBukkitVersion().equalsIgnoreCase("1.17.1-R0.1-SNAPSHOT")) {
+            Utils.is1_17_1 = true;
+            logConsole("&c[&eEzChestShop&c] &eInitializing 1.17 protocol change...");
+        }
         if (getServer().getVersion().contains("1.17")) {
             Utils.family1_17 = true;
             logConsole("&c[&eEzChestShop&c] &e1.17 family protocol initialized.");
