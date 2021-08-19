@@ -8,6 +8,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 public class ShulkerShopDropEvent extends Event {
+    //only trigger via piston movement
 
     private Item droppedShulker;
     private Location previousShulkerLocation;
