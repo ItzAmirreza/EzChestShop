@@ -64,8 +64,8 @@ public class BlockPistonExtendListener implements Listener {
                                         if (item.getPersistentDataContainer().has(new NamespacedKey(EzChestShop.getPlugin(), "drop"), PersistentDataType.INTEGER)) {
                                             //it is surely that shulker
                                             item.getPersistentDataContainer().remove(new NamespacedKey(EzChestShop.getPlugin(), "drop"));
-                                            //idk if item also needs update after removing a persistent value (Have to check later) ^^^^
                                             ShulkerShopDropEvent shopDropEvent = new ShulkerShopDropEvent(item, shulkerLoc);
+                                            //idk if item also needs update after removing a persistent value (Have to check later) ^^^^
                                             Bukkit.getPluginManager().callEvent(shopDropEvent);
                                         }
 

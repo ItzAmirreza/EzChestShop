@@ -33,6 +33,7 @@ public class ASHologram {
 
         this.name = name;
         byte meta;
+        byte armorMeta = 0x01 | 0x10;
         if(isGlowing) {
             meta = 0x20 | 0x40;
         } else {
@@ -57,7 +58,7 @@ public class ASHologram {
         }
 
         List<WrappedWatchableObject> obj = Util.asList(
-                new WrappedWatchableObject(new WrappedDataWatcherObject(armorstandindex, Registry.get(Byte.class)), (byte) 0x01 | 0x10),
+                new WrappedWatchableObject(new WrappedDataWatcherObject(armorstandindex, Registry.get(Byte.class)), armorMeta),
                 new WrappedWatchableObject(new WrappedDataWatcherObject(0, Registry.get(Byte.class)), meta),
                 new WrappedWatchableObject(new WrappedDataWatcherObject(3, Registry.get(Boolean.class)), true),
                 new WrappedWatchableObject(new WrappedDataWatcherObject(2, Registry.getChatComponentSerializer(true)),
