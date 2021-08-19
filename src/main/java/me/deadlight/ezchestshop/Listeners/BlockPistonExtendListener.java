@@ -14,6 +14,7 @@ import org.bukkit.entity.Item;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPistonExtendEvent;
+import org.bukkit.event.inventory.InventoryPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -26,6 +27,8 @@ public class BlockPistonExtendListener implements Listener {
 
     private static HashMap<String, String> lockMap = new HashMap<>();
     private static List<String> lockList = new ArrayList<>();
+    private static HashMap<String, PersistentDataContainer> lockContainerMap = new HashMap<>();
+    private static HashMap<String, Location> lockLocationMap = new HashMap<>();
 
     @EventHandler
     public void onExtend(BlockPistonExtendEvent event) {
@@ -45,6 +48,8 @@ public class BlockPistonExtendListener implements Listener {
                         UUID uuid = UUID.randomUUID();
                         lockMap.put(uuid.toString(), ((ShulkerBox) state).getLock());
                         lockList.add(uuid.toString());
+                        lockContainerMap.put(uuid.toString(), container);
+                        lockLocationMap.put(uuid.toString(), shulkerLoc);
                         ((ShulkerBox) state).setLock(uuid.toString());
                         state.update();
 
@@ -71,6 +76,8 @@ public class BlockPistonExtendListener implements Listener {
                                             itemStack.setItemMeta(bsm);
                                             lockList.remove(lock);
                                             lockMap.remove(lock);
+                                            lockContainerMap.remove(lock);
+                                            lockLocationMap.remove(lock);
 
                                             //copy the new data over
                                             ItemMeta meta = itemStack.getItemMeta();
@@ -93,6 +100,47 @@ public class BlockPistonExtendListener implements Listener {
                         }, 5);
                     }
                 }
+            }
+        }
+    }
+
+    @EventHandler
+    public void InventoryItemPickup(InventoryPickupItemEvent event) {
+        Item item = event.getItem();
+        ItemStack itemStack = item.getItemStack();
+        if (Utils.isShulkerBox(itemStack.getType())) {
+            //get the lock
+            BlockStateMeta bsm = (BlockStateMeta) itemStack.getItemMeta();
+            ShulkerBox box = (ShulkerBox) bsm.getBlockState();
+            String lock = box.getLock();
+            //good, now validate that its the same shulker box that it was before
+            if (lock != null && lockList.contains(lock)) {
+                //it is surely that shulker
+
+                PersistentDataContainer container = lockContainerMap.get(lock);
+                Location shulkerLoc = lockLocationMap.get(lock);
+                //reset the lock
+                box.setLock(lockMap.get(lock));
+                box.update();
+                bsm.setBlockState(box);
+                itemStack.setItemMeta(bsm);
+                lockList.remove(lock);
+                lockMap.remove(lock);
+                lockContainerMap.remove(lock);
+                lockLocationMap.remove(lock);
+
+                //copy the new data over
+                ItemMeta meta = itemStack.getItemMeta();
+                PersistentDataContainer metaContainer = meta.getPersistentDataContainer();
+                metaContainer = ShopContainer.copyContainerData(container, metaContainer);
+                itemStack.setItemMeta(meta);
+
+                //Call the Event
+                item.setItemStack(itemStack);
+                ShulkerShopDropEvent shopDropEvent = new ShulkerShopDropEvent(item, shulkerLoc);
+                //idk if item also needs update after removing a persistent value (Have to check later) ^^^^
+                Bukkit.getPluginManager().callEvent(shopDropEvent);
+
             }
         }
     }
