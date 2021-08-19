@@ -144,7 +144,10 @@ public class Utils {
      * @return
      */
     public static boolean isApplicableContainer(Material type) {
-        return (type == Material.CHEST && Config.container_chests) || (type == Material.BARREL && Config.container_barrels) || (isShulkerBox(type) && Config.container_shulkers);
+        return (type == Material.CHEST && Config.container_chests)
+                || (type == Material.TRAPPED_CHEST && Config.container_trapped_chests)
+                || (type == Material.BARREL && Config.container_barrels)
+                || (isShulkerBox(type) && Config.container_shulkers);
     }
 
 

@@ -35,7 +35,7 @@ public class SettingsGUI {
     //trans [list of infos seperated by @ in string form]
     //adminshop 0/1
 
-    public void ShowGUI(Player player, Block containerBlock, boolean isAdmin) {
+    public void showGUI(Player player, Block containerBlock, boolean isAdmin) {
 
         LanguageManager lm = new LanguageManager();
 

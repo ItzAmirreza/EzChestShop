@@ -30,7 +30,7 @@ public class ChatWaitObject {
     }
 
     private PersistentDataContainer getDataContainer(BlockState state, Material type) {
-        if (type == Material.CHEST) {
+        if (type == Material.CHEST || type == Material.TRAPPED_CHEST) {
             return ((Chest) state).getPersistentDataContainer();
         } else if (type == Material.BARREL) {
             return ((Barrel) state).getPersistentDataContainer();

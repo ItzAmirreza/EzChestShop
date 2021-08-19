@@ -31,7 +31,7 @@ public class BlockBreakListener implements Listener {
             for (Entity en : entityList) {
                 if (en instanceof Item) {
                     Item item = (Item) en;
-                    if (item.getItemStack().getType() == Material.CHEST) {
+                    if (item.getItemStack().getType() == Material.CHEST || item.getItemStack().getType() == Material.TRAPPED_CHEST) {
                         en.remove();
                     }
                 }

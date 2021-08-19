@@ -8,7 +8,6 @@ import dev.triumphteam.gui.guis.GuiItem;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.*;
 import org.bukkit.block.Block;
-import org.bukkit.block.Chest;
 import org.bukkit.block.DoubleChest;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.DoubleChestInventory;
@@ -160,7 +159,7 @@ public class OwnerShopGUI {
            event.setCancelled(true);
            //opening the settigns menu
             SettingsGUI settingsGUI = new SettingsGUI();
-            settingsGUI.ShowGUI(player, containerBlock, isAdmin);
+            settingsGUI.showGUI(player, containerBlock, isAdmin);
             player.playSound(player.getLocation(), Sound.BLOCK_PISTON_EXTEND, 0.5f, 0.5f);
         });
 
