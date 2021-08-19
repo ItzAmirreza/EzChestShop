@@ -5,6 +5,7 @@ import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.Utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.ShulkerBox;
@@ -16,6 +17,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -44,6 +46,8 @@ public class BlockPistonExtendListener implements Listener {
                 Location shulkerLoc = shulkerBlock.getLocation();
                 if (ShopContainer.isShop(shulkerLoc)) {
                     //congrats
+                    container.set(new NamespacedKey(EzChestShop.getPlugin(), "drop"), PersistentDataType.INTEGER, 1);
+                    state.update();
                     ItemStack shulkerItem = null;
                     Block finalShulkerBlock = shulkerBlock;
                     Bukkit.getScheduler().scheduleSyncDelayedTask(EzChestShop.getPlugin(), new Runnable() {
@@ -57,8 +61,11 @@ public class BlockPistonExtendListener implements Listener {
                                     ItemStack itemStack = item.getItemStack();
                                     if (Utils.isShulkerBox(itemStack.getType())) {
                                         //good, now validate that its the same shulker box that it was before
-                                        if (item.getPersistentDataContainer().equals(container)) {
+                                        if (item.getPersistentDataContainer().has(new NamespacedKey(EzChestShop.getPlugin(), "drop"), PersistentDataType.INTEGER)) {
+                                            //it is surely that shulker
                                             ShulkerShopDropEvent shopDropEvent = new ShulkerShopDropEvent(item, shulkerLoc);
+                                            item.getPersistentDataContainer().remove(new NamespacedKey(EzChestShop.getPlugin(), "drop"));
+                                            //idk if item also needs update after removing a persistent value (Have to check later) ^^^^
                                             Bukkit.getPluginManager().callEvent(shopDropEvent);
                                         }
 
