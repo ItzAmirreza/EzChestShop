@@ -165,7 +165,7 @@ public class AdminShopGUI {
             event.setCancelled(true);
             //opening the settigns menu
             SettingsGUI settingsGUI = new SettingsGUI();
-            settingsGUI.ShowGUI(player, containerBlock, false);
+            settingsGUI.showGUI(player, containerBlock, false);
             player.playSound(player.getLocation(), Sound.BLOCK_PISTON_EXTEND, 0.5f, 0.5f);
         });
 

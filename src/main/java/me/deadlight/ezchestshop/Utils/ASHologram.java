@@ -1,11 +1,11 @@
 package me.deadlight.ezchestshop.Utils;
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
+import me.deadlight.ezchestshop.Packets.PlayEntityDestory_1_17_1;
 import me.deadlight.ezchestshop.Packets.WrapperPlayServerEntityMetadata;
 import me.deadlight.ezchestshop.Packets.WrapperPlayServerEntityTeleport;
 import me.deadlight.ezchestshop.Packets.WrapperPlayServerSpawnEntity;
@@ -99,6 +99,8 @@ public class ASHologram {
         PacketContainer destroyEntityPacket = new PacketContainer(PacketType.Play.Server.ENTITY_DESTROY);
         if (Utils.is1_17) {
             destroyEntityPacket.getIntegers().writeSafely(0, entityID);
+        } else if (Utils.is1_17_1) {
+            PlayEntityDestory_1_17_1.destroy(this.handler, entityID);
         } else {
             destroyEntityPacket.getIntegers().writeSafely(0, 1);
             destroyEntityPacket.getIntegerArrays().writeSafely(0, new int[]{entityID});

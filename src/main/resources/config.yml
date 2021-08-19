@@ -19,6 +19,7 @@ hologram:
 #Define which containers are applicable for chest shops:
 container:
   chests: true
+  trapped-chests: true
   barrels: true
   shulkers: true
 economy:

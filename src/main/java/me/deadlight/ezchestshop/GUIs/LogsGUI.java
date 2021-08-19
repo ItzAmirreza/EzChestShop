@@ -45,8 +45,8 @@ public class LogsGUI {
         });
         GuiItem doorItem = new GuiItem(door, event -> {
            event.setCancelled(true);
-           OwnerShopGUI ownerShopGUI = new OwnerShopGUI();
-           ownerShopGUI.showGUI(player, data, containerBlock, isAdmin);
+           SettingsGUI settingsGUI = new SettingsGUI();
+           settingsGUI.showGUI(player, containerBlock, isAdmin);
         });
 
 

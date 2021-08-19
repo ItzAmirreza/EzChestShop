@@ -28,8 +28,9 @@ public class ChestOpeningListener implements Listener {
     @EventHandler
     public void onChestOpening(PlayerInteractEvent event) {
         if (event.getClickedBlock() == null) return;
+        if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
         Material clickedType = event.getClickedBlock().getType();
-        if (event.getAction() == Action.RIGHT_CLICK_BLOCK && (clickedType == Material.CHEST || clickedType == Material.BARREL || Utils.isShulkerBox(clickedType))) {
+        if (Utils.isApplicableContainer(clickedType)) {
 
             Block chestblock = event.getClickedBlock();
             PersistentDataContainer dataContainer = null;
@@ -37,7 +38,7 @@ public class ChestOpeningListener implements Listener {
             TileState state = (TileState) chestblock.getState();
             Inventory inventory = Utils.getBlockInventory(chestblock);
 
-            if (clickedType == Material.CHEST) {
+            if (clickedType == Material.CHEST || clickedType == Material.TRAPPED_CHEST) {
                 if (inventory instanceof DoubleChestInventory) {
                     DoubleChest doubleChest = (DoubleChest) inventory.getHolder();
                     Chest chestleft = (Chest) doubleChest.getLeftSide();

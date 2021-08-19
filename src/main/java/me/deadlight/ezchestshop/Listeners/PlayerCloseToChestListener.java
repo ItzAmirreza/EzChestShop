@@ -129,7 +129,7 @@ public class PlayerCloseToChestListener implements Listener {
         if (thatItem.getItemMeta().hasDisplayName()) {
             itemname = Utils.color(thatItem.getItemMeta().getDisplayName());
         } else {
-            itemname = thatItem.getType().name();
+            itemname = Utils.capitalizeFirstSplit(thatItem.getType().toString());
         }
         String finalfirstline = Utils.color(Config.firstLine.replace("%item%", itemname).replace("%buy%", String.valueOf(buy)).replace("%sell%", String.valueOf(sell)));
 

@@ -13,6 +13,7 @@ public class Config {
     public static boolean holodistancing;
     public static double holodistancing_distance;
     public static boolean container_chests;
+    public static boolean container_trapped_chests;
     public static boolean container_barrels;
     public static boolean container_shulkers;
 
@@ -32,6 +33,7 @@ public class Config {
         holodistancing_distance = config.getDouble("hologram.distance.range");
 
         container_chests = config.getBoolean("container.chests");
+        container_trapped_chests = config.getBoolean("container.trapped-chests");
         container_barrels = config.getBoolean("container.barrels");
         container_shulkers = config.getBoolean("container.shulkers");
 
