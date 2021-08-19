@@ -13,7 +13,6 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-    # Random comment so I can push again
     steps:
     - uses: actions/checkout@v2
     - name: Set up JDK 16
@@ -21,15 +20,15 @@ jobs:
       with:
         java-version: '16'
         distribution: 'adopt'
-    - name: Compile Minecraft Spigot or Paper (BuildTools)
-      uses: SpraxDev/Action-SpigotMC@v3
-      with:
-        versions: 1.17.1
     - name: Cache Maven packages
       uses: actions/cache@v2
       with:
         path: ~/.m2
         key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
         restore-keys: ${{ runner.os }}-m2
+    - name: Compile Minecraft Spigot or Paper (BuildTools)
+      uses: SpraxDev/Action-SpigotMC@v3
+      with:
+        versions: 1.17.1
     - name: Build with Maven
       run: mvn -B package --file pom.xml
