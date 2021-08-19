@@ -105,6 +105,7 @@ public final class EzChestShop extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new BlockPlaceListener(), this);
         getServer().getPluginManager().registerEvents(new PlayerTransactionListener(), this);
         getServer().getPluginManager().registerEvents(new ChatListener(), this);
+        getServer().getPluginManager().registerEvents(new BlockPistonExtendListener(), this);
         //Add Config check over here, to change the Shop display varient.
         //PlayerLooking is less laggy but probably harder to spot.
         if (Config.holodistancing) {
