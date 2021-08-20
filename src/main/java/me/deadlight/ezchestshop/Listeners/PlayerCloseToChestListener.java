@@ -130,11 +130,7 @@ public class PlayerCloseToChestListener implements Listener {
 
 
         //using ASHologram class
-        if (thatItem.getItemMeta().hasDisplayName()) {
-            itemname = Utils.color(thatItem.getItemMeta().getDisplayName());
-        } else {
-            itemname = Utils.capitalizeFirstSplit(thatItem.getType().toString());
-        }
+        itemname = Utils.getFinalItemName(thatItem);
         String finalfirstline = Utils.color(Config.firstLine.replace("%item%", itemname).replace("%buy%", String.valueOf(buy)).replace("%sell%", String.valueOf(sell)));
 
         ASHologram hologram = new ASHologram(player, finalfirstline, EntityType.ARMOR_STAND, secondLineLocation, false);
