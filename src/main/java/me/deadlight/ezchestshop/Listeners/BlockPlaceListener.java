@@ -4,9 +4,12 @@ import me.deadlight.ezchestshop.Data.ShopContainer;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.Utils.Utils;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
+import org.bukkit.block.Dispenser;
 import org.bukkit.block.TileState;
+import org.bukkit.block.data.Directional;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockDispenseEvent;
@@ -20,43 +23,32 @@ public class BlockPlaceListener implements Listener {
 
     @EventHandler
     public void onBlockPlace(BlockPlaceEvent event) {
-
         Block block = event.getBlock();
         ItemStack item = event.getItemInHand();
         placeBlock(block, item);
+    }
+
+    @EventHandler
+    public void onBlockDispenserPlace(BlockDispenseEvent  event) {
+        Dispenser dispenser = ((Dispenser) event.getBlock().getState());
+        final Directional directional = (Directional) dispenser.getBlockData();
+        Bukkit.getScheduler().scheduleSyncDelayedTask(EzChestShop.getPlugin(), () -> {
+            Block block = event.getBlock().getRelative(directional.getFacing());
+            ItemStack item = event.getItem();
+            placeBlock(block, item);
+        }, 5);
 
     }
 
     private void placeBlock(Block block, ItemStack shulker) {
-        if (Utils.isShulkerBox(shulker.getType())) {
+        if (Utils.isShulkerBox(shulker.getType()) && Utils.isShulkerBox(block)) {
             if (shulker.hasItemMeta()) {
                 ItemMeta meta = shulker.getItemMeta();
                 PersistentDataContainer container = meta.getPersistentDataContainer();
                 if (container.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING) != null) {
                     TileState state = ((TileState) block.getState());
                     PersistentDataContainer bcontainer = state.getPersistentDataContainer();
-                    bcontainer.set(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING,
-                            container.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING));
-                    bcontainer.set(new NamespacedKey(EzChestShop.getPlugin(), "buy"), PersistentDataType.DOUBLE,
-                            container.get(new NamespacedKey(EzChestShop.getPlugin(), "buy"), PersistentDataType.DOUBLE));
-                    bcontainer.set(new NamespacedKey(EzChestShop.getPlugin(), "sell"), PersistentDataType.DOUBLE,
-                            container.get(new NamespacedKey(EzChestShop.getPlugin(), "sell"), PersistentDataType.DOUBLE));
-                    bcontainer.set(new NamespacedKey(EzChestShop.getPlugin(), "msgtoggle"), PersistentDataType.INTEGER,
-                            container.get(new NamespacedKey(EzChestShop.getPlugin(), "msgtoggle"), PersistentDataType.INTEGER));
-                    bcontainer.set(new NamespacedKey(EzChestShop.getPlugin(), "dbuy"), PersistentDataType.INTEGER,
-                            container.get(new NamespacedKey(EzChestShop.getPlugin(), "dbuy"), PersistentDataType.INTEGER));
-                    bcontainer.set(new NamespacedKey(EzChestShop.getPlugin(), "dsell"), PersistentDataType.INTEGER,
-                            container.get(new NamespacedKey(EzChestShop.getPlugin(), "dsell"), PersistentDataType.INTEGER));
-                    bcontainer.set(new NamespacedKey(EzChestShop.getPlugin(), "admins"), PersistentDataType.STRING,
-                            container.get(new NamespacedKey(EzChestShop.getPlugin(), "admins"), PersistentDataType.STRING));
-                    bcontainer.set(new NamespacedKey(EzChestShop.getPlugin(), "shareincome"), PersistentDataType.INTEGER,
-                            container.get(new NamespacedKey(EzChestShop.getPlugin(), "shareincome"), PersistentDataType.INTEGER));
-                    bcontainer.set(new NamespacedKey(EzChestShop.getPlugin(), "trans"), PersistentDataType.STRING,
-                            container.get(new NamespacedKey(EzChestShop.getPlugin(), "trans"), PersistentDataType.STRING));
-                    bcontainer.set(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"), PersistentDataType.INTEGER,
-                            container.get(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"), PersistentDataType.INTEGER));
-                    bcontainer.set(new NamespacedKey(EzChestShop.getPlugin(), "item"), PersistentDataType.STRING,
-                            container.get(new NamespacedKey(EzChestShop.getPlugin(), "item"), PersistentDataType.STRING));
+                    bcontainer = ShopContainer.copyContainerData(container, bcontainer);
                     state.update();
                     ShopContainer.loadShop(block.getLocation(), bcontainer);
                 }
