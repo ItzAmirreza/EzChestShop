@@ -69,7 +69,7 @@ public class FloatingItem {
         PacketContainer destroyEntityPacket = new PacketContainer(PacketType.Play.Server.ENTITY_DESTROY);
         if (Utils.is1_17) {
             destroyEntityPacket.getIntegers().writeSafely(0, entityID);
-        } else if (Utils.is1_17_1) {
+        }else if (Utils.is1_17_1) {
             PlayEntityDestory_1_17_1.destroy(player, entityID);
         } else {
             destroyEntityPacket.getIntegers().writeSafely(0, 1);

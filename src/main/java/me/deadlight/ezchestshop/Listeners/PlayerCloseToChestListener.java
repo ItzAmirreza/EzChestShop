@@ -120,11 +120,11 @@ public class PlayerCloseToChestListener implements Listener {
     private void showHologram(Location spawnLocation, Location shopLocation, ItemStack thatItem, double buy,
                               double sell, Player player) {
 
-        Location secondLineLocation = spawnLocation.clone().add(0, 1.3, 0).subtract(0, 1, 0);
+        Location secondLineLocation = spawnLocation.clone().add(0, 0.3, 0).subtract(0, 1, 0);
 
         Location thirdLocation = secondLineLocation.clone().subtract(0, 0.4, 0);
 
-        Location floatingItemLocation = thirdLocation.clone().add(0, 1, 0);
+        Location floatingItemLocation = thirdLocation.clone().add(0, 2, 0);
 
         String itemname = "Error";
 

@@ -5,6 +5,7 @@ import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.Utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.ShulkerBox;
@@ -14,133 +15,68 @@ import org.bukkit.entity.Item;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPistonExtendEvent;
-import org.bukkit.event.inventory.InventoryPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.BlockStateMeta;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class BlockPistonExtendListener implements Listener {
-
-    private static HashMap<String, String> lockMap = new HashMap<>();
-    private static List<String> lockList = new ArrayList<>();
-    private static HashMap<String, PersistentDataContainer> lockContainerMap = new HashMap<>();
-    private static HashMap<String, Location> lockLocationMap = new HashMap<>();
 
     @EventHandler
     public void onExtend(BlockPistonExtendEvent event) {
 
+        Block shulkerBlock = null;
+
         for (Block block : event.getBlocks()) {
             if (Utils.isShulkerBox(block)) {
-                BlockState blockState = block.getState();
-                TileState state = (TileState) blockState;
-                PersistentDataContainer container = state.getPersistentDataContainer();
+                shulkerBlock = block;
+                continue;
+            }
+        }
+        if (shulkerBlock != null) {
+            BlockState blockState = shulkerBlock.getState();
+            TileState state = (TileState) blockState;
+            PersistentDataContainer container = state.getPersistentDataContainer();
 
-                if (Utils.isShulkerBox(block.getType())) {
-                    //it is a shulkerbox, now checking if its a shop
-                    Location shulkerLoc = block.getLocation();
-                    if (ShopContainer.isShop(shulkerLoc)) {
-                        //congrats
-                        //Add the Lock for dropped item recognition later
-                        UUID uuid = UUID.randomUUID();
-                        lockMap.put(uuid.toString(), ((ShulkerBox) state).getLock());
-                        lockList.add(uuid.toString());
-                        lockContainerMap.put(uuid.toString(), container);
-                        lockLocationMap.put(uuid.toString(), shulkerLoc);
-                        ((ShulkerBox) state).setLock(uuid.toString());
-                        state.update();
+            if (Utils.isShulkerBox(shulkerBlock.getType())) {
+                //it is a shulkerbox, now checking if its a shop
+                Location shulkerLoc = shulkerBlock.getLocation();
+                if (ShopContainer.isShop(shulkerLoc)) {
+                    //congrats
+                    container.set(new NamespacedKey(EzChestShop.getPlugin(), "drop"), PersistentDataType.INTEGER, 1);
+                    state.update();
+                    ItemStack shulkerItem = null;
+                    Block finalShulkerBlock = shulkerBlock;
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(EzChestShop.getPlugin(), new Runnable() {
+                        @Override
+                        public void run() {
 
-                        ShopContainer.deleteShop(shulkerLoc);
-                        Bukkit.getScheduler().scheduleSyncDelayedTask(EzChestShop.getPlugin(), () -> {
-
-                            Collection<Entity> entitiyList = block.getWorld().getNearbyEntities(shulkerLoc, 2, 2, 2);
+                            Collection<Entity> entitiyList = finalShulkerBlock.getWorld().getNearbyEntities(shulkerLoc, 2, 2, 2);
                             entitiyList.forEach(entity -> {
                                 if (entity instanceof Item) {
-                                    Item item = (Item) entity;
+                                    Item item = (Item) entitiyList;
                                     ItemStack itemStack = item.getItemStack();
                                     if (Utils.isShulkerBox(itemStack.getType())) {
-                                        //get the lock
-                                        BlockStateMeta bsm = (BlockStateMeta) itemStack.getItemMeta();
-                                        ShulkerBox box = (ShulkerBox) bsm.getBlockState();
-                                        String lock = box.getLock();
                                         //good, now validate that its the same shulker box that it was before
-                                        if (lock != null && lockList.contains(lock)) {
+                                        if (item.getPersistentDataContainer().has(new NamespacedKey(EzChestShop.getPlugin(), "drop"), PersistentDataType.INTEGER)) {
                                             //it is surely that shulker
-                                            //reset the lock
-                                            box.setLock(lockMap.get(lock));
-                                            box.update();
-                                            bsm.setBlockState(box);
-                                            itemStack.setItemMeta(bsm);
-                                            lockList.remove(lock);
-                                            lockMap.remove(lock);
-                                            lockContainerMap.remove(lock);
-                                            lockLocationMap.remove(lock);
-
-                                            //copy the new data over
-                                            ItemMeta meta = itemStack.getItemMeta();
-                                            PersistentDataContainer metaContainer = meta.getPersistentDataContainer();
-                                            metaContainer = ShopContainer.copyContainerData(container, metaContainer);
-                                            itemStack.setItemMeta(meta);
-
-                                            //Call the Event
-                                            item.setItemStack(itemStack);
+                                            item.getPersistentDataContainer().remove(new NamespacedKey(EzChestShop.getPlugin(), "drop"));
                                             ShulkerShopDropEvent shopDropEvent = new ShulkerShopDropEvent(item, shulkerLoc);
                                             //idk if item also needs update after removing a persistent value (Have to check later) ^^^^
                                             Bukkit.getPluginManager().callEvent(shopDropEvent);
-
                                         }
+
                                     }
                                 }
                             });
 
 
-                        }, 5);
-                    }
+                        }
+                    }, 5);
                 }
-            }
-        }
-    }
-
-    @EventHandler
-    public void InventoryItemPickup(InventoryPickupItemEvent event) {
-        Item item = event.getItem();
-        ItemStack itemStack = item.getItemStack();
-        if (Utils.isShulkerBox(itemStack.getType())) {
-            //get the lock
-            BlockStateMeta bsm = (BlockStateMeta) itemStack.getItemMeta();
-            ShulkerBox box = (ShulkerBox) bsm.getBlockState();
-            String lock = box.getLock();
-            //good, now validate that its the same shulker box that it was before
-            if (lock != null && lockList.contains(lock)) {
-                //it is surely that shulker
-
-                PersistentDataContainer container = lockContainerMap.get(lock);
-                Location shulkerLoc = lockLocationMap.get(lock);
-                //reset the lock
-                box.setLock(lockMap.get(lock));
-                box.update();
-                bsm.setBlockState(box);
-                itemStack.setItemMeta(bsm);
-                lockList.remove(lock);
-                lockMap.remove(lock);
-                lockContainerMap.remove(lock);
-                lockLocationMap.remove(lock);
-
-                //copy the new data over
-                ItemMeta meta = itemStack.getItemMeta();
-                PersistentDataContainer metaContainer = meta.getPersistentDataContainer();
-                metaContainer = ShopContainer.copyContainerData(container, metaContainer);
-                itemStack.setItemMeta(meta);
-
-                //Call the Event
-                item.setItemStack(itemStack);
-                ShulkerShopDropEvent shopDropEvent = new ShulkerShopDropEvent(item, shulkerLoc);
-                //idk if item also needs update after removing a persistent value (Have to check later) ^^^^
-                Bukkit.getPluginManager().callEvent(shopDropEvent);
-
             }
         }
     }
