@@ -90,9 +90,4 @@ sucAdminAdded: "&e%player% &asuccessfully added to the admins list."
 alreadyAdmin: "&cThis player is already in the admins list!"
 sucAdminRemoved: "&e%player% &asuccessfully removed from the admins list."
 notInAdminList: "&cThis player is not in the admins list!"
-#Update 1.4.0
-copiedShopSettings: "&6Copied &7shop settings!"
-pastedShopSettings: "&ePasted &7shop settings!"
-maxShopLimitReached: "&cMaximum shop limit reached: %shoplimit%!"
-clearedAdmins: "&cRemoved all admins from this shop."
 

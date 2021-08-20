@@ -1,9 +1,8 @@
 package me.deadlight.ezchestshop.Data;
-
+import me.deadlight.ezchestshop.Data.Config;
 import me.deadlight.ezchestshop.EzChestShop;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -397,11 +396,6 @@ public class LanguageManager {
         }
         return finalList;
     }
-
-    public String copiedShopSettings() { return colorify(languages.getString("copiedShopSettings")); }
-    public String pastedShopSettings() { return colorify(languages.getString("pastedShopSettings")); }
-    public String clearedAdmins() { return colorify(languages.getString("clearedAdmins")); }
-    public String maxShopLimitReached(int max) { return colorify(languages.getString("maxShopLimitReached")).replace("%shoplimit%", "" + max); }
 
 
 

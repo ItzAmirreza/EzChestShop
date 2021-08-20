@@ -32,7 +32,7 @@ public class PlayerCloseToChestListener implements Listener {
 
     public static HashMap<Player, List<ASHologramObject>> map = new HashMap<>();
 
-    private static HashMap<Location, List<Player>> playershopmap = new HashMap<>();
+    private static HashMap<Location, String> playershopmap = new HashMap<>();
 
     @EventHandler
     public void onMove(PlayerMoveEvent event) {
@@ -46,7 +46,7 @@ public class PlayerCloseToChestListener implements Listener {
                     double dist = loc.distance(sloc);
             //Show the Hologram if Player close enough
             if (dist < Config.holodistancing_distance) {
-                if (isAlreadyPresenting(sloc, player))
+                if (isAlreadyPresenting(sloc, player.getName()))
                     return; //forEach -> acts as continue;
 
                     Block target = sloc.getWorld().getBlockAt(sloc);
@@ -75,11 +75,7 @@ public class PlayerCloseToChestListener implements Listener {
 
                             showHologram(holoLoc, sloc, thatItem, buy, sell, event.getPlayer());
                             //mark the shop as visible
-                            List<Player> players = playershopmap.get(sloc);
-                            if (players == null)
-                                players = new ArrayList<>();
-                            players.add(player);
-                            playershopmap.put(sloc, players);
+                            playershopmap.put(sloc, player.getName());
 
                         }
                     }
@@ -167,10 +163,7 @@ public class PlayerCloseToChestListener implements Listener {
                 holo.getFloatingItem().destroy();
                 Utils.onlinePackets.remove(holo.getFloatingItem());
 
-                List<Player> players = playershopmap.get(loc);
-                players.remove(p);
-                if (players.isEmpty())
-                    playershopmap.remove(loc);
+                playershopmap.remove(loc);
                 List<ASHologramObject> holoList = map.get(p);
                 holoList.remove(holo);
                 map.put(p, holoList);
@@ -178,11 +171,11 @@ public class PlayerCloseToChestListener implements Listener {
         }
     }
 
-    private boolean isAlreadyPresenting(Location location, Player player) {
+    private boolean isAlreadyPresenting(Location location, String playername) {
 
         if (playershopmap.containsKey(location)) {
 
-            if (playershopmap.get(location).contains(player)) {
+            if (playershopmap.get(location).equalsIgnoreCase(playername)) {
                 return true;
             } else {
                 return false;

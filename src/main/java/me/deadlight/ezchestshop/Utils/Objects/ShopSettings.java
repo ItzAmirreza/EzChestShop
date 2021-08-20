@@ -26,102 +26,80 @@ public class ShopSettings {
         this.adminshop = adminshop;
     }
 
-    private ShopSettings(ShopSettings settings) {
-        this.sloc = settings.sloc;
-        this.msgtoggle = settings.msgtoggle;
-        this.dbuy = settings.dbuy;
-        this.dsell = settings.dsell;
-        this.admins = settings.admins;
-        this.shareincome = settings.shareincome;
-        this.trans = settings.trans;
-        this.adminshop = settings.adminshop;
-    }
-
-    public ShopSettings clone() {
-        return new ShopSettings(this);
-    }
-
     public boolean isMsgtoggle() {
         return msgtoggle;
     }
 
-    public ShopSettings setMsgtoggle(boolean msgtoggle) {
+    public void setMsgtoggle(boolean msgtoggle) {
         this.msgtoggle = msgtoggle;
         Database db = EzChestShop.getPlugin().getDatabase();
         db.setBool("location", sloc,
                 "msgToggle", "shopdata", msgtoggle);
-        return this;
     }
 
     public boolean isDbuy() {
         return dbuy;
     }
 
-    public ShopSettings setDbuy(boolean dbuy) {
+    public void setDbuy(boolean dbuy) {
         this.dbuy = dbuy;
         Database db = EzChestShop.getPlugin().getDatabase();
         db.setBool("location", sloc,
                 "buyDisabled", "shopdata", dbuy);
-        return this;
     }
 
     public boolean isDsell() {
         return dsell;
     }
 
-    public ShopSettings setDsell(boolean dsell) {
+    public void setDsell(boolean dsell) {
         this.dsell = dsell;
         Database db = EzChestShop.getPlugin().getDatabase();
         db.setBool("location", sloc,
                 "sellDisabled", "shopdata", dsell);
-        return this;
     }
 
     public String getAdmins() {
         return admins;
     }
 
-    public ShopSettings setAdmins(String admins) {
+    public void setAdmins(String admins) {
         this.admins = admins;
         Database db = EzChestShop.getPlugin().getDatabase();
         db.setString("location", sloc,
                 "admins", "shopdata", admins);
-        return this;
     }
 
     public boolean isShareincome() {
         return shareincome;
     }
 
-    public ShopSettings setShareincome(boolean shareincome) {
+    public void setShareincome(boolean shareincome) {
         this.shareincome = shareincome;
         Database db = EzChestShop.getPlugin().getDatabase();
         db.setBool("location", sloc,
                 "shareIncome", "shopdata", shareincome);
-        return this;
     }
 
     public String getTrans() {
         return trans;
     }
 
-    public ShopSettings setTrans(String trans) {
+    public void setTrans(String trans) {
         this.trans = trans;
         Database db = EzChestShop.getPlugin().getDatabase();
         db.setString("location", sloc,
                 "transactions", "shopdata", trans);
-        return this;
     }
 
     public boolean isAdminshop() {
         return adminshop;
     }
 
-    public ShopSettings setAdminshop(boolean adminshop) {
+    public void setAdminshop(boolean adminshop) {
         this.adminshop = adminshop;
         Database db = EzChestShop.getPlugin().getDatabase();
         db.setBool("location", sloc,
                 "adminshop", "shopdata", adminshop);
-        return this;
     }
 }
