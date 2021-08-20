@@ -207,6 +207,7 @@ public class Utils {
         //update 1.2.8 Languages
         boolean result = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "languages.yml")).isString("commandmsg-negativeprice");
         boolean update1_3_0 = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "languages.yml")).isString("settingsButton");
+        boolean update1_4_0 = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "languages.yml")).isString("copiedShopSettings");
         if (!result) {
             FileConfiguration fc = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "languages.yml"));
             //new values that were added in update 1.2.8
@@ -281,6 +282,17 @@ public class Utils {
             fc.save(new File(EzChestShop.getPlugin().getDataFolder(), "languages.yml"));
             reloadLanguages();
             EzChestShop.getPlugin().logConsole("&c[&eEzChestShop&c]&r &bNew languages.yml generated... (1.3.0V)");
+        }
+        if (!update1_4_0) {
+            FileConfiguration fc = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "languages.yml"));
+            //for update 1.4.0
+            fc.set("copiedShopSettings", "&6Copied &7shop settings!");
+            fc.set("pastedShopSettings", "&ePasted &7shop settings!");
+            fc.set("clearedAdmins", "&cRemoved all admins from this shop.");
+            fc.set("maxShopLimitReached", "&cMaximum shop limit reached: %shoplimit%!");
+            fc.save(new File(EzChestShop.getPlugin().getDataFolder(), "languages.yml"));
+            reloadLanguages();
+            EzChestShop.getPlugin().logConsole("&c[&eEzChestShop&c]&r &bNew languages.yml generated... (1.4.0V)");
         }
     }
 
