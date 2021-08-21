@@ -291,7 +291,11 @@ public class Ecsadmin implements CommandExecutor, TabCompleter {
 
                 }
 
+            } else {
+                player.sendMessage(lm.lookAtChest());
             }
+        } else {
+            player.sendMessage(lm.lookAtChest());
         }
     }
     public boolean isPositive(double price) {

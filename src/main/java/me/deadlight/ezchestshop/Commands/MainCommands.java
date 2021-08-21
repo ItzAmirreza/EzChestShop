@@ -304,6 +304,8 @@ public class MainCommands implements CommandExecutor, TabCompleter {
 
                 }
 
+            } else {
+                player.sendMessage(lm.lookAtChest());
             }
 
 

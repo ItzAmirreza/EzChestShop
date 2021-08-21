@@ -402,6 +402,12 @@ public class LanguageManager {
     public String pastedShopSettings() { return colorify(languages.getString("pastedShopSettings")); }
     public String clearedAdmins() { return colorify(languages.getString("clearedAdmins")); }
     public String maxShopLimitReached(int max) { return colorify(languages.getString("maxShopLimitReached")).replace("%shoplimit%", "" + max); }
+    public String disabledBuyingMessage() {
+        return colorify(languages.getString("buyingIsDisabled"));
+    }
+    public String disabledSellingMessage() {
+        return colorify(languages.getString("sellingIsDisabled"));
+    }
 
 
 

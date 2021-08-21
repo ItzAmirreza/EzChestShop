@@ -2,6 +2,7 @@ package me.deadlight.ezchestshop.GUIs;
 
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.Data.LanguageManager;
+import me.deadlight.ezchestshop.Utils.SignMenuFactory;
 import me.deadlight.ezchestshop.Utils.Utils;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
@@ -17,6 +18,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -163,6 +165,33 @@ public class OwnerShopGUI {
             player.playSound(player.getLocation(), Sound.BLOCK_PISTON_EXTEND, 0.5f, 0.5f);
         });
 
+        ItemStack signItem = new ItemStack(Material.OAK_SIGN, 1);
+        ItemMeta signMeta = signItem.getItemMeta();
+        signMeta.setDisplayName(Utils.color("&eCustom Buy/Sell"));
+        List<String> signMetaLores = new ArrayList<>();
+        signMetaLores.add(Utils.color("&7Buy or Sell in custom amount"));
+        signMetaLores.add(Utils.color("&d"));
+        signMetaLores.add(Utils.color("&aLeft click for custom Buy"));
+        signMetaLores.add(Utils.color("&cRight click for custom Sell"));
+        signMeta.setLore(signMetaLores);
+        signItem.setItemMeta(signMeta);
+
+        GuiItem guiSignItem = new GuiItem(signItem, event -> {
+            event.setCancelled(true);
+            if (event.isLeftClick()) {
+                //buy
+                player.sendMessage(lm.selfTransaction());
+
+
+            } else if (event.isRightClick()) {
+                //sell
+                player.sendMessage(lm.selfTransaction());
+
+
+            }
+        });
+
+
         gui.getFiller().fillBorder(glasses);
 
         gui.setItem(10, glasses);
@@ -180,6 +209,8 @@ public class OwnerShopGUI {
         gui.setItem(18, storageGUI);
         //settings item
         gui.setItem(26, settingsGui);
+        //sign item
+        gui.setItem(22, guiSignItem);
 
         gui.open(player);
 

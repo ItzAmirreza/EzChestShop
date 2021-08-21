@@ -2,9 +2,8 @@ name: EzChestShop
 version: ${project.version}
 main: me.deadlight.ezchestshop.EzChestShop
 api-version: 1.14
-depend: [Vault]
+depend: [Vault, ProtocolLib]
 softdepend:
-  - ProtocolLib
   - WildChests
 authors: [ Dead_Light ]
 description: Easy Chest Shop that any server owner wants that for his players

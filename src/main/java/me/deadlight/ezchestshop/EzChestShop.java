@@ -1,6 +1,8 @@
 package me.deadlight.ezchestshop;
 import com.bgsoftware.wildchests.api.WildChestsAPI;
 import com.bgsoftware.wildchests.api.handlers.ChestsManager;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.ProtocolManager;
 import me.deadlight.ezchestshop.Commands.Ecsadmin;
 import me.deadlight.ezchestshop.Commands.MainCommands;
 import me.deadlight.ezchestshop.Data.Config;
@@ -36,6 +38,8 @@ public final class EzChestShop extends JavaPlugin {
 
     public static boolean protocollib = false;
 
+    private static ProtocolManager manager;
+
 
     @Override
     public void onEnable() {
@@ -70,9 +74,12 @@ public final class EzChestShop extends JavaPlugin {
 
         if (getServer().getPluginManager().getPlugin("ProtocolLib") != null) {
             protocollib = true;
-            logConsole("&c[&eEzChestShop&c] &aProtocollib is installed. Enabling holograms functionality.");
+            manager = ProtocolLibrary.getProtocolManager();
+            logConsole("&c[&eEzChestShop&c] &aProtocolLib is installed.");
         } else {
-            logConsole("&c[&eEzChestShop&c] &eProtocollib is not installed. Plugin will not support holograms and floating items.");
+            logConsole("&c[&eEzChestShop&c] &4ProtocolLib is not installed. Disabling the plugin...");
+            Bukkit.getPluginManager().disablePlugin(this);
+            return;
         }
 
         loadLanguages();
@@ -178,6 +185,10 @@ public final class EzChestShop extends JavaPlugin {
 
     public static EzChestShop getPlugin() {
         return plugin;
+    }
+
+    public static ProtocolManager getProtocolManager() {
+        return manager;
     }
 
     public void logConsole(String str) {
