@@ -40,6 +40,8 @@ public class ServerShopGUI {
     public void showGUI(Player player, PersistentDataContainer data, Block containerBlock) {
         this.containerBlock = containerBlock;
         LanguageManager lm = new LanguageManager();
+
+        String owneruuid = data.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING);
         double sellPrice = data.get(new NamespacedKey(EzChestShop.getPlugin(), "sell"), PersistentDataType.DOUBLE);
         double buyPrice = data.get(new NamespacedKey(EzChestShop.getPlugin(), "buy"), PersistentDataType.DOUBLE);
         boolean disabledBuy = data.get(new NamespacedKey(EzChestShop.getPlugin(), "dbuy"), PersistentDataType.INTEGER) == 1;
@@ -278,8 +280,10 @@ public class ServerShopGUI {
 
                     thatItem.setAmount(count);
                     take(price, Bukkit.getOfflinePlayer(player.getUniqueId()));
+                    transactionMessage(data, Bukkit.getOfflinePlayer(UUID.fromString(
+                            data.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING))),
+                            Bukkit.getOfflinePlayer(player.getUniqueId()), price, true, Utils.getFinalItemName(tthatItem), count);
                     player.getInventory().addItem(thatItem);
-                    transactionMessage(data, Bukkit.getOfflinePlayer(UUID.fromString(data.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING))), Bukkit.getOfflinePlayer(player.getUniqueId()), price, true, getFinalItemName(tthatItem), count);
                     player.sendMessage(lm.messageSuccBuy(price));
                     player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 0.5f, 0.5f);
 
@@ -309,8 +313,10 @@ public class ServerShopGUI {
 
             thatItem.setAmount(count);
             deposit(price, Bukkit.getOfflinePlayer(player.getUniqueId()));
+            transactionMessage(data, Bukkit.getOfflinePlayer(UUID.fromString(
+                    data.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING))),
+                    Bukkit.getOfflinePlayer(player.getUniqueId()), price, false, Utils.getFinalItemName(tthatItem), count);
             player.getInventory().removeItem(thatItem);
-            transactionMessage(data, Bukkit.getOfflinePlayer(UUID.fromString(data.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING))), Bukkit.getOfflinePlayer(player.getUniqueId()), price, false, getFinalItemName(tthatItem), count);
             player.sendMessage(lm.messageSuccSell(price));
             player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 0.5f, 0.5f);
 
@@ -348,14 +354,6 @@ public class ServerShopGUI {
             PlayerTransactEvent transactEvent = new PlayerTransactEvent(owner, customer, price, isBuy, itemName, count, Utils.getAdminsList(data), containerBlock);
             Bukkit.getPluginManager().callEvent(transactEvent);
 
-        }
-    }
-
-    private String getFinalItemName(ItemStack item) {
-        if (item.getItemMeta().hasDisplayName()) {
-            return item.getItemMeta().getDisplayName();
-        } else {
-            return item.getType().name();
         }
     }
 

@@ -294,7 +294,7 @@ public class AdminShopGUI {
                     sharedIncomeCheck(((TileState)chest.getState()).getPersistentDataContainer(), price);
                     Utils.getBlockInventory(chest).removeItem(thatItem);
                     player.getInventory().addItem(thatItem);
-                    transactionMessage(((TileState)chest.getState()).getPersistentDataContainer(), owner, Bukkit.getOfflinePlayer(player.getUniqueId()), price, true, getFinalItemName(tthatItem), count, chest.getLocation().getBlock());
+                    transactionMessage(((TileState)chest.getState()).getPersistentDataContainer(), owner, Bukkit.getOfflinePlayer(player.getUniqueId()), price, true, Utils.getFinalItemName(tthatItem), count, chest.getLocation().getBlock());
                     player.sendMessage(Utils.color(lm.messageSuccBuy(price)));
                     player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 0.5f, 0.5f);
 
@@ -332,7 +332,7 @@ public class AdminShopGUI {
                     getandgive(owner, price, Bukkit.getOfflinePlayer(player.getUniqueId()));
                     player.getInventory().removeItem(thatItem);
                     Utils.getBlockInventory(chest).addItem(thatItem);
-                    transactionMessage(data, owner, Bukkit.getOfflinePlayer(player.getUniqueId()), price, false, getFinalItemName(tthatItem), count, chest.getLocation().getBlock());
+                    transactionMessage(data, owner, Bukkit.getOfflinePlayer(player.getUniqueId()), price, false, Utils.getFinalItemName(tthatItem), count, chest.getLocation().getBlock());
                     player.sendMessage(lm.messageSuccSell(price));
                     player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 0.5f, 0.5f);
 
@@ -376,14 +376,6 @@ public class AdminShopGUI {
             Bukkit.getPluginManager().callEvent(transactEvent);
 
 
-    }
-
-    private String getFinalItemName(ItemStack item) {
-        if (item.getItemMeta().hasDisplayName()) {
-            return item.getItemMeta().getDisplayName();
-        } else {
-            return item.getType().name();
-        }
     }
 
     private ItemStack disablingCheck(ItemStack mainItem, boolean disabling) {

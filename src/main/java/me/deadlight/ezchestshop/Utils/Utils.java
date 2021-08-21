@@ -339,6 +339,22 @@ public class Utils {
         }
     }
 
+    public static String getFinalItemName(ItemStack item) {
+        String itemname = "Error";
+        if (item.hasItemMeta()) {
+            if (item.getItemMeta().hasDisplayName()) {
+                itemname = Utils.color(item.getItemMeta().getDisplayName());
+            } else if (item.getItemMeta().hasLocalizedName()) {
+                itemname = item.getItemMeta().getLocalizedName();
+            } else {
+                itemname = Utils.capitalizeFirstSplit(item.getType().toString());
+            }
+        } else {
+            itemname = Utils.capitalizeFirstSplit(item.getType().toString());
+        }
+        return Utils.color(itemname);
+    }
+
     public static Location getSpawnLocation(Chest chest) {
         return chest.getLocation().clone().add(0.5, 1, 0.5);
     }

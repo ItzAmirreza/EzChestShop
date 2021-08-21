@@ -256,7 +256,7 @@ public class NonOwnerShopGUI {
                     sharedIncomeCheck(data, price);
                     Utils.getBlockInventory(chest).removeItem(thatItem);
                     player.getInventory().addItem(thatItem);
-                    transactionMessage(data, owner, player, price, true, getFinalItemName(tthatItem), count, chest.getLocation().getBlock());
+                    transactionMessage(data, owner, player, price, true, Utils.getFinalItemName(tthatItem), count, chest.getLocation().getBlock());
                     player.sendMessage(lm.messageSuccBuy(price));
                     player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 0.5f, 0.5f);
 
@@ -292,7 +292,7 @@ public class NonOwnerShopGUI {
                 if (containerHasEnoughSpace(Utils.getBlockInventory(chest), count, thatItem)) {
                     thatItem.setAmount(count);
                     getandgive(owner, price, Bukkit.getOfflinePlayer(player.getUniqueId()));
-                    transactionMessage(data, owner, Bukkit.getOfflinePlayer(player.getUniqueId()), price, false, getFinalItemName(tthatItem), count, chest.getLocation().getBlock());
+                    transactionMessage(data, owner, Bukkit.getOfflinePlayer(player.getUniqueId()), price, false, Utils.getFinalItemName(tthatItem), count, chest.getLocation().getBlock());
                     player.getInventory().removeItem(thatItem);
                     Utils.getBlockInventory(chest).addItem(thatItem);
                     player.sendMessage(lm.messageSuccSell(price));
@@ -341,14 +341,6 @@ public class NonOwnerShopGUI {
             Bukkit.getPluginManager().callEvent(transactEvent);
 
 
-    }
-
-    private String getFinalItemName(ItemStack item) {
-        if (item.getItemMeta().hasDisplayName()) {
-            return item.getItemMeta().getDisplayName();
-        } else {
-            return item.getType().name();
-        }
     }
 
     private ItemStack disablingCheck(ItemStack mainItem, boolean disabling) {
