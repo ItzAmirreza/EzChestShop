@@ -299,6 +299,8 @@ public class Utils {
             fc.set("signEditorGui-sell", "&c^^^^^^^^^ \n &bInsert your \n &bdesired amount");
             fc.set("wrongInput", "&cWrong input, please insert a number!");
             fc.set("enterTheAmount", "&ePlease write your desired amount in the sign");
+            fc.set("unsupportedInteger", "&cHey!, the amount cannot be zero or negative obviously.");
+
             fc.save(new File(EzChestShop.getPlugin().getDataFolder(), "languages.yml"));
             reloadLanguages();
             EzChestShop.getPlugin().logConsole("&c[&eEzChestShop&c]&r &bNew languages.yml generated... (1.4.0V)");
@@ -530,6 +532,17 @@ public class Utils {
         }
 
         return emptySlots >= amount;
+    }
+
+    public static boolean amountCheck(int amount) {
+        if (amount == 0) {
+            return false;
+        }
+
+        if (amount < 0) {
+            return false;
+        }
+        return true;
     }
 
 

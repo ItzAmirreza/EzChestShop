@@ -194,6 +194,10 @@ public class AdminShopGUI {
                         .reopenIfFail(false).response((thatplayer, strings) -> {
                             try {
                                 int amount = Integer.parseInt(strings[0]);
+                                if (!Utils.amountCheck(amount)) {
+                                    player.sendMessage(lm.unsupportedInteger());
+                                    return false;
+                                }
                                 Bukkit.getScheduler().scheduleSyncDelayedTask(EzChestShop.getPlugin(), new Runnable() {
                                     @Override
                                     public void run() {
@@ -223,6 +227,10 @@ public class AdminShopGUI {
                         .reopenIfFail(false).response((thatplayer, strings) -> {
                             try {
                                 int amount = Integer.parseInt(strings[0]);
+                                if (!Utils.amountCheck(amount)) {
+                                    player.sendMessage(lm.unsupportedInteger());
+                                    return false;
+                                }
                                 Bukkit.getScheduler().scheduleSyncDelayedTask(EzChestShop.getPlugin(), new Runnable() {
                                     @Override
                                     public void run() {

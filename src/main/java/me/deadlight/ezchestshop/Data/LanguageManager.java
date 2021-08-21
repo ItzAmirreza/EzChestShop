@@ -462,6 +462,10 @@ public class LanguageManager {
         return colorify(languages.getString("enterTheAmount"));
     }
 
+    public String unsupportedInteger() {
+        return colorify(languages.getString("unsupportedInteger"));
+    }
+
 
 
 

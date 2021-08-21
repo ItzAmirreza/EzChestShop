@@ -106,4 +106,5 @@ signEditorGui-buy: "&a^^^^^^^^^ \n &bInsert your \n &bdesired amount"
 signEditorGui-sell: "&c^^^^^^^^^ \n &bInsert your \n &bdesired amount"
 wrongInput: "&cWrong input, please insert a number!"
 enterTheAmount: "&ePlease write your desired amount in the sign"
+unsupportedInteger: "&cHey!, the amount cannot be zero or negative obviously."
 
