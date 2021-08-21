@@ -163,13 +163,8 @@ public class ServerShopGUI {
 
         ItemStack signItem = new ItemStack(Material.OAK_SIGN, 1);
         ItemMeta signMeta = signItem.getItemMeta();
-        signMeta.setDisplayName(Utils.color("&eCustom Buy/Sell"));
-        List<String> signMetaLores = new ArrayList<>();
-        signMetaLores.add(Utils.color("&7Buy or Sell in custom amount"));
-        signMetaLores.add(Utils.color("&d"));
-        signMetaLores.add(Utils.color("&aLeft click for custom Buy"));
-        signMetaLores.add(Utils.color("&cRight click for custom Sell"));
-        signMeta.setLore(signMetaLores);
+        signMeta.setDisplayName(lm.customAmountSignTitle());
+        signMeta.setLore(lm.customAmountSignLore());
         signItem.setItemMeta(signMeta);
 
         GuiItem guiSignItem = new GuiItem(signItem, event -> {
@@ -183,7 +178,7 @@ public class ServerShopGUI {
                player.closeInventory();
                player.playSound(player.getLocation(), Sound.ITEM_BOOK_PAGE_TURN, 1.0f, 1.0f);
                SignMenuFactory signMenuFactory = new SignMenuFactory(EzChestShop.getPlugin());
-               SignMenuFactory.Menu menu = signMenuFactory.newMenu(Arrays.asList("", Utils.color("&a^^^^^^^^^"), Utils.color("&bInsert your"), Utils.color("&bdesired amount")))
+               SignMenuFactory.Menu menu = signMenuFactory.newMenu(lm.signEditorGuiBuy())
                        .reopenIfFail(false).response((thatplayer, strings) -> {
                            try {
                                int amount = Integer.parseInt(strings[0]);
@@ -195,13 +190,13 @@ public class ServerShopGUI {
                                });
 
                            } catch (Exception e) {
-                               thatplayer.sendMessage(Utils.color("&cWrong input, please insert a number!"));
+                               thatplayer.sendMessage(lm.wrongInput());
                                return false;
                            }
                            return true;
                        });
                menu.open(player);
-               player.sendMessage(Utils.color("&ePlease write your desired amount in the sign"));
+               player.sendMessage(lm.enterTheAmount());
 
 
            } else if (event.isRightClick()) {
@@ -213,7 +208,7 @@ public class ServerShopGUI {
                player.closeInventory();
                player.playSound(player.getLocation(), Sound.ITEM_BOOK_PAGE_TURN, 1.0f, 1.0f);
                SignMenuFactory signMenuFactory = new SignMenuFactory(EzChestShop.getPlugin());
-               SignMenuFactory.Menu menu = signMenuFactory.newMenu(Arrays.asList("", Utils.color("&a^^^^^^^^^"), Utils.color("&bInsert your"), Utils.color("&bdesired amount")))
+               SignMenuFactory.Menu menu = signMenuFactory.newMenu(lm.signEditorGuiSell())
                        .reopenIfFail(false).response((thatplayer, strings) -> {
                            try {
                                int amount = Integer.parseInt(strings[0]);
@@ -225,13 +220,13 @@ public class ServerShopGUI {
                                });
 
                            } catch (Exception e) {
-                               thatplayer.sendMessage(Utils.color("&cWrong input, please insert a number!"));
+                               thatplayer.sendMessage(lm.wrongInput());
                                return false;
                            }
                            return true;
                        });
                menu.open(player);
-               player.sendMessage(Utils.color("&ePlease write your desired amount in the sign"));
+               player.sendMessage(lm.enterTheAmount());
 
 
            }
@@ -275,7 +270,7 @@ public class ServerShopGUI {
 
             if (ifHasMoney(Bukkit.getOfflinePlayer(player.getUniqueId()), price)) {
 
-                if (hasEnoughSpace(player, count, thatItem)) {
+                if (Utils.hasEnoughSpace(player, count, thatItem)) {
 
 
                     thatItem.setAmount(count);
@@ -385,26 +380,5 @@ public class ServerShopGUI {
         }
 
     }
-
-    public boolean hasEnoughSpace(Player player, int amount, ItemStack item) {
-        int emptySlots = 0;
-        for (ItemStack content : player.getInventory().getStorageContents()) {
-            if (content == null || content.getType() == Material.AIR) {
-                emptySlots += item.getMaxStackSize();
-            } else {
-                if (content.isSimilar(item) && !(content.getAmount() >= content.getMaxStackSize())) {
-
-                    int remaining = content.getMaxStackSize() - content.getAmount();
-                    emptySlots += remaining;
-
-                }
-            }
-        }
-
-        return emptySlots >= amount;
-    }
-
-
-
 
 }

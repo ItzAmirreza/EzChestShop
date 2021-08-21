@@ -95,6 +95,15 @@ copiedShopSettings: "&6Copied &7shop settings!"
 pastedShopSettings: "&ePasted &7shop settings!"
 maxShopLimitReached: "&cMaximum shop limit reached: %shoplimit%!"
 clearedAdmins: "&cRemoved all admins from this shop."
+#
 buyingIsDisabled: "&cBuying is disabled in this shop."
 sellingIsDisabled: "&cSelling is disabled in this shop."
+gui-customAmountSign-title: "&eCustom Buy/Sell"
+#for seperating lines in lore, put \n
+gui-customAmountSign-lore: "&7Buy or Sell in custom amount \n &d \n &aLeft click for custom Buy \n &cRight click for custom Sell"
+#15 characters per line (no more) and \n for next line (starting from second line)
+signEditorGui-buy: "&a^^^^^^^^^ \n &bInsert your \n &bdesired amount"
+signEditorGui-sell: "&c^^^^^^^^^ \n &bInsert your \n &bdesired amount"
+wrongInput: "&cWrong input, please insert a number!"
+enterTheAmount: "&ePlease write your desired amount in the sign"
 

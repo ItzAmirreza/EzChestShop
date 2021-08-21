@@ -1,6 +1,7 @@
 package me.deadlight.ezchestshop.Data;
 
 import me.deadlight.ezchestshop.EzChestShop;
+import me.deadlight.ezchestshop.Utils.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 
@@ -408,6 +409,59 @@ public class LanguageManager {
     public String disabledSellingMessage() {
         return colorify(languages.getString("sellingIsDisabled"));
     }
+
+    public String buyingIsDisabled() {
+        return colorify(languages.getString("buyingIsDisabled"));
+    }
+    public String sellingIsDisabled() {
+        return colorify(languages.getString("sellingIsDisabled"));
+    }
+    public String customAmountSignTitle() {
+        return colorify(languages.getString("gui-customAmountSign-title"));
+    }
+    public List<String> customAmountSignLore() {
+        List<String> lores = new ArrayList<>();
+        String[] input = languages.getString("gui-customAmountSign-lore").split("\n");
+        for (String s : input) {
+            lores.add(Utils.color(s));
+        }
+        return lores;
+    }
+    public List<String> signEditorGuiBuy() {
+        List<String> lines = new ArrayList<>();
+        lines.add("");
+        String[] input = languages.getString("signEditorGui-buy").split("\n");
+        int count = 0;
+        for (String s : input) {
+            lines.add(Utils.color(s));
+            count += 1;
+            if (count == 3) {
+                break;
+            }
+        }
+        return lines;
+    }
+    public List<String> signEditorGuiSell() {
+        List<String> lines = new ArrayList<>();
+        lines.add("");
+        String[] input = languages.getString("signEditorGui-sell").split("\n");
+        int count = 0;
+        for (String s : input) {
+            lines.add(Utils.color(s));
+            count += 1;
+            if (count == 3) {
+                break;
+            }
+        }
+        return lines;
+    }
+    public String wrongInput() {
+        return colorify(languages.getString("wrongInput"));
+    }
+    public String enterTheAmount() {
+        return colorify(languages.getString("enterTheAmount"));
+    }
+
 
 
 

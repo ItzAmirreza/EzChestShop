@@ -13,6 +13,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.block.*;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.DoubleChestInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -290,6 +291,14 @@ public class Utils {
             fc.set("pastedShopSettings", "&ePasted &7shop settings!");
             fc.set("clearedAdmins", "&cRemoved all admins from this shop.");
             fc.set("maxShopLimitReached", "&cMaximum shop limit reached: %shoplimit%!");
+            fc.set("buyingIsDisabled", "&cBuying is disabled in this shop.");
+            fc.set("sellingIsDisabled", "&cSelling is disabled in this shop.");
+            fc.set("gui-customAmountSign-title", "&eCustom Buy/Sell");
+            fc.set("gui-customAmountSign-lore", "&7Buy or Sell in custom amount \n &d \n &aLeft click for custom Buy \n &cRight click for custom Sell");
+            fc.set("signEditorGui-buy", "&a^^^^^^^^^ \n &bInsert your \n &bdesired amount");
+            fc.set("signEditorGui-sell", "&c^^^^^^^^^ \n &bInsert your \n &bdesired amount");
+            fc.set("wrongInput", "&cWrong input, please insert a number!");
+            fc.set("enterTheAmount", "&ePlease write your desired amount in the sign");
             fc.save(new File(EzChestShop.getPlugin().getDataFolder(), "languages.yml"));
             reloadLanguages();
             EzChestShop.getPlugin().logConsole("&c[&eEzChestShop&c]&r &bNew languages.yml generated... (1.4.0V)");
@@ -483,6 +492,44 @@ public class Utils {
                     + s.subSequence(1, s.length()).toString().toLowerCase() + " ";
         }
         return n_string;
+    }
+
+
+    public static boolean hasEnoughSpace(Player player, int amount, ItemStack item) {
+        int emptySlots = 0;
+        for (ItemStack content : player.getInventory().getStorageContents()) {
+            if (content == null || content.getType() == Material.AIR) {
+                emptySlots += item.getMaxStackSize();
+            } else {
+                if (content.isSimilar(item) && !(content.getAmount() >= content.getMaxStackSize())) {
+
+                    int remaining = content.getMaxStackSize() - content.getAmount();
+                    emptySlots += remaining;
+
+                }
+            }
+        }
+
+        return emptySlots >= amount;
+    }
+
+
+    public static boolean containerHasEnoughSpace(Inventory container, int amount, ItemStack item) {
+        int emptySlots = 0;
+        for (ItemStack content : container.getStorageContents()) {
+            if (content == null || content.getType() == Material.AIR) {
+                emptySlots += item.getMaxStackSize();
+            } else {
+                if (content.isSimilar(item) && !(content.getAmount() >= content.getMaxStackSize())) {
+
+                    int remaining = content.getMaxStackSize() - content.getAmount();
+                    emptySlots += remaining;
+
+                }
+            }
+        }
+
+        return emptySlots >= amount;
     }
 
 

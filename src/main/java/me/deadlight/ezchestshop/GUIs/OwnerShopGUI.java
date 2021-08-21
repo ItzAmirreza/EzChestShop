@@ -167,13 +167,8 @@ public class OwnerShopGUI {
 
         ItemStack signItem = new ItemStack(Material.OAK_SIGN, 1);
         ItemMeta signMeta = signItem.getItemMeta();
-        signMeta.setDisplayName(Utils.color("&eCustom Buy/Sell"));
-        List<String> signMetaLores = new ArrayList<>();
-        signMetaLores.add(Utils.color("&7Buy or Sell in custom amount"));
-        signMetaLores.add(Utils.color("&d"));
-        signMetaLores.add(Utils.color("&aLeft click for custom Buy"));
-        signMetaLores.add(Utils.color("&cRight click for custom Sell"));
-        signMeta.setLore(signMetaLores);
+        signMeta.setDisplayName(lm.customAmountSignTitle());
+        signMeta.setLore(lm.customAmountSignLore());
         signItem.setItemMeta(signMeta);
 
         GuiItem guiSignItem = new GuiItem(signItem, event -> {
