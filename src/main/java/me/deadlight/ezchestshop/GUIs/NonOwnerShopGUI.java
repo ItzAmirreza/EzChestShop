@@ -155,23 +155,26 @@ public class NonOwnerShopGUI {
                 player.closeInventory();
                 player.playSound(player.getLocation(), Sound.ITEM_BOOK_PAGE_TURN, 1.0f, 1.0f);
                 SignMenuFactory signMenuFactory = new SignMenuFactory(EzChestShop.getPlugin());
-                SignMenuFactory.Menu menu = signMenuFactory.newMenu(lm.signEditorGuiBuy(possibleCounts.get(0), possibleCounts.get(1)))
+                SignMenuFactory.Menu menu = signMenuFactory.newMenu(lm.signEditorGuiBuy(possibleCounts.get(0)))
                         .reopenIfFail(false).response((thatplayer, strings) -> {
                             try {
-                                int amount = Integer.parseInt(strings[0]);
-                                if (!Utils.amountCheck(amount)) {
-                                    player.sendMessage(lm.unsupportedInteger());
-                                    return false;
-                                }
-                                Bukkit.getScheduler().scheduleSyncDelayedTask(EzChestShop.getPlugin(), new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        buyItem(containerBlock, buyPrice * amount, amount, player, mainitem, Bukkit.getOfflinePlayer(shopOwner), data);
+                                if (Utils.isInteger(strings[0])) {
+                                    int amount = Integer.parseInt(strings[0]);
+                                    if (!Utils.amountCheck(amount)) {
+                                        player.sendMessage(lm.unsupportedInteger());
+                                        return false;
                                     }
-                                });
+                                    Bukkit.getScheduler().scheduleSyncDelayedTask(EzChestShop.getPlugin(), new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            buyItem(containerBlock, buyPrice * amount, amount, player, mainitem, Bukkit.getOfflinePlayer(shopOwner), data);
+                                        }
+                                    });
+                                } else {
+                                    thatplayer.sendMessage(lm.wrongInput());
+                                }
 
                             } catch (Exception e) {
-                                thatplayer.sendMessage(lm.wrongInput());
                                 return false;
                             }
                             return true;
@@ -189,23 +192,27 @@ public class NonOwnerShopGUI {
                 player.closeInventory();
                 player.playSound(player.getLocation(), Sound.ITEM_BOOK_PAGE_TURN, 1.0f, 1.0f);
                 SignMenuFactory signMenuFactory = new SignMenuFactory(EzChestShop.getPlugin());
-                SignMenuFactory.Menu menu = signMenuFactory.newMenu(lm.signEditorGuiSell())
+                SignMenuFactory.Menu menu = signMenuFactory.newMenu(lm.signEditorGuiSell(possibleCounts.get(1)))
                         .reopenIfFail(false).response((thatplayer, strings) -> {
                             try {
-                                int amount = Integer.parseInt(strings[0]);
-                                if (!Utils.amountCheck(amount)) {
-                                    player.sendMessage(lm.unsupportedInteger());
-                                    return false;
-                                }
-                                Bukkit.getScheduler().scheduleSyncDelayedTask(EzChestShop.getPlugin(), new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        sellItem(containerBlock, sellPrice * amount, amount, mainitem, Bukkit.getOfflinePlayer(shopOwner), player, data);
+                                if (Utils.isInteger(strings[0])) {
+                                    int amount = Integer.parseInt(strings[0]);
+                                    if (!Utils.amountCheck(amount)) {
+                                        player.sendMessage(lm.unsupportedInteger());
+                                        return false;
                                     }
-                                });
+                                    Bukkit.getScheduler().scheduleSyncDelayedTask(EzChestShop.getPlugin(), new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            sellItem(containerBlock, sellPrice * amount, amount, mainitem, Bukkit.getOfflinePlayer(shopOwner), player, data);
+                                        }
+                                    });
+                                } else {
+                                    thatplayer.sendMessage(lm.wrongInput());
+                                }
+
 
                             } catch (Exception e) {
-                                thatplayer.sendMessage(lm.wrongInput());
                                 return false;
                             }
                             return true;

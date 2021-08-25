@@ -427,13 +427,13 @@ public class LanguageManager {
         }
         return lores;
     }
-    public List<String> signEditorGuiBuy(String maxbuy, String maxsell) {
+    public List<String> signEditorGuiBuy(String max) {
         List<String> lines = new ArrayList<>();
         lines.add("");
         String[] input = languages.getString("signEditorGui-buy").split("\n");
         int count = 0;
         for (String s : input) {
-            lines.add(Utils.color(s.replace("%maxbuy%", maxbuy).replace("%maxsell%", maxsell)));
+            lines.add(Utils.color(s.replace("%maxbuy%", max)));
             count += 1;
             if (count == 3) {
                 break;
@@ -441,13 +441,13 @@ public class LanguageManager {
         }
         return lines;
     }
-    public List<String> signEditorGuiSell() {
+    public List<String> signEditorGuiSell(String max) {
         List<String> lines = new ArrayList<>();
         lines.add("");
         String[] input = languages.getString("signEditorGui-sell").split("\n");
         int count = 0;
         for (String s : input) {
-            lines.add(Utils.color(s));
+            lines.add(Utils.color(s).replace("%max%", max));
             count += 1;
             if (count == 3) {
                 break;

@@ -708,6 +708,14 @@ public class Utils {
         return String.valueOf(result);
     }
 
+    public static boolean isInteger(String str) {
+        try {
+            int num = Integer.parseInt(str);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 
 
 
