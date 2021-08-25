@@ -158,6 +158,9 @@ public class NonOwnerShopGUI {
                 SignMenuFactory.Menu menu = signMenuFactory.newMenu(lm.signEditorGuiBuy(possibleCounts.get(0)))
                         .reopenIfFail(false).response((thatplayer, strings) -> {
                             try {
+                                if (strings[0].equalsIgnoreCase("")) {
+                                    return false;
+                                }
                                 if (Utils.isInteger(strings[0])) {
                                     int amount = Integer.parseInt(strings[0]);
                                     if (!Utils.amountCheck(amount)) {
@@ -195,6 +198,9 @@ public class NonOwnerShopGUI {
                 SignMenuFactory.Menu menu = signMenuFactory.newMenu(lm.signEditorGuiSell(possibleCounts.get(1)))
                         .reopenIfFail(false).response((thatplayer, strings) -> {
                             try {
+                                if (strings[0].equalsIgnoreCase("")) {
+                                    return false;
+                                }
                                 if (Utils.isInteger(strings[0])) {
                                     int amount = Integer.parseInt(strings[0]);
                                     if (!Utils.amountCheck(amount)) {

@@ -409,13 +409,6 @@ public class LanguageManager {
     public String disabledSellingMessage() {
         return colorify(languages.getString("sellingIsDisabled"));
     }
-
-    public String buyingIsDisabled() {
-        return colorify(languages.getString("buyingIsDisabled"));
-    }
-    public String sellingIsDisabled() {
-        return colorify(languages.getString("sellingIsDisabled"));
-    }
     public String customAmountSignTitle() {
         return colorify(languages.getString("gui-customAmountSign-title"));
     }
