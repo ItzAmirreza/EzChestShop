@@ -433,7 +433,7 @@ public class LanguageManager {
         String[] input = languages.getString("signEditorGui-buy").split("\n");
         int count = 0;
         for (String s : input) {
-            lines.add(Utils.color(s.replace("%maxbuy%", max)));
+            lines.add(Utils.color(s.replace("%max%", max)));
             count += 1;
             if (count == 3) {
                 break;
