@@ -183,18 +183,30 @@ public class Utils {
             fc.set("hologram-second-line", null);
             fc.set("hologram-disappearance-delay", null);
 
-            fc.set("hologram.show-holograms", show_holograms);
-            fc.set("hologram.hologram-first-line", hologram_first_line);
-            fc.set("hologram.hologram-second-line", hologram_second_line);
-            fc.set("hologram.hologram-disappearance-delay", hologram_disappearance_delay);
+            fc.set("shops.hologram.show-holograms", show_holograms);
+            fc.set("shops.hologram.hologram-first-line", hologram_first_line);
+            fc.set("shops.hologram.hologram-second-line", hologram_second_line);
+            fc.set("shops.hologram.hologram-disappearance-delay", hologram_disappearance_delay);
+            //new hologram settings:
+            fc.set("shops.hologram.distance.toggled", true);
+            fc.set("shops.hologram.distance.range", 10.0);
+
+            //new containers:
+            fc.set("shops.container.chests", true);
+            fc.set("shops.container.trapped-chests", true);
+            fc.set("shops.container.barrels", true);
+            fc.set("shops.container.shulkers", true);
+
+            //new commands section:
+            fc.set("commands.alias.ecs-shop", true);
+            fc.set("commands.alias.ecsadmin-adminshop", true);
+
+            //new permissions section:
+            fc.set("permissions.create-shops", false);
 
             //new economy config section
             fc.set("economy.server-currency", "$");
 
-            fc.set("container.chests", true);
-            fc.set("container.trapped-chests", true);
-            fc.set("container.barrels", true);
-            fc.set("container.shulkers", true);
             fc.save(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml"));
             Config.loadConfig();
 
@@ -438,6 +450,24 @@ public class Utils {
     private static double round(double value, int precision) {
         int scale = (int) Math.pow(10, precision);
         return (double) Math.round(value * scale) / scale;
+    }
+
+    /**
+     * Check if a String can be safely converted into a numeric value.
+     *
+     * @param strNum
+     * @return
+     */
+    public static boolean isNumeric(String strNum) {
+        if (strNum == null) {
+            return false;
+        }
+        try {
+            Double.parseDouble(strNum);
+        } catch (NumberFormatException nfe) {
+            return false;
+        }
+        return true;
     }
 
     /**

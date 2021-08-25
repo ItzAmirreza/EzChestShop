@@ -171,8 +171,7 @@ public class ShopContainer {
     public static int getShopCount(Player p) {
         Database db = EzChestShop.getPlugin().getDatabase();
         return db.getKeysByExpresiion("location", "owner", "shopdata",
-                "IS \"" + p.getUniqueId().toString()
-                        .replace("-", "") + "\"").size();
+                "IS \"" + p.getUniqueId().toString() + "\"").size();
     }
 
     /**

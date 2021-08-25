@@ -1,5 +1,6 @@
 package me.deadlight.ezchestshop.Commands;
 import com.bgsoftware.wildchests.api.handlers.ChestsManager;
+import me.deadlight.ezchestshop.Data.Config;
 import me.deadlight.ezchestshop.Data.SQLite.Database;
 import me.deadlight.ezchestshop.Data.ShopContainer;
 import me.deadlight.ezchestshop.EzChestShop;
@@ -60,25 +61,31 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                 if (mainarg.equalsIgnoreCase("create")) {
 
                     if (args.length >= 3) {
+                        if (Utils.isNumeric(args[1]) && Utils.isNumeric(args[2])) {
 
                             if (isPositive(Double.parseDouble(args[1])) && isPositive(Double.parseDouble(args[2]))) {
-                                int maxShops = Utils.getMaxPermission(player, "ecs.shops.limit.");
-                                maxShops = maxShops == -1 ? 10000 : maxShops;
-                                int shops = ShopContainer.getShopCount(player);
-                                //EzChestShop.getPlugin().logConsole("Shops: " + shops + ", Max: " + maxShops);
-                                if (shops < maxShops) {
-                                    try {
-                                        createShop(player, args);
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
+                                if (Config.permissions_create_shop_enabled) {
+                                    int maxShops = Utils.getMaxPermission(player, "ecs.shops.limit.");
+                                    maxShops = maxShops == -1 ? 10000 : maxShops;
+                                    int shops = ShopContainer.getShopCount(player);
+                                    if (shops >= maxShops) {
+                                        player.sendMessage(lm.maxShopLimitReached(maxShops));
+                                        return false;
                                     }
-                                } else {
-                                    player.sendMessage(lm.maxShopLimitReached(maxShops));
                                 }
+                                try {
+                                    createShop(player, args);
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+
                             } else {
                                 player.sendMessage(lm.negativePrice());
                             }
 
+                        } else {
+                            sendHelp(player);
+                        }
 
                     } else {
                         player.sendMessage(lm.notenoughARGS());
