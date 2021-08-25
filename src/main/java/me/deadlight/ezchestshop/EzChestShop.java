@@ -12,10 +12,13 @@ import me.deadlight.ezchestshop.Data.SQLite.SQLite;
 import me.deadlight.ezchestshop.Data.ShopContainer;
 import me.deadlight.ezchestshop.Listeners.*;
 import me.deadlight.ezchestshop.Utils.ASHologram;
+import me.deadlight.ezchestshop.Utils.CommandRegister;
 import me.deadlight.ezchestshop.Utils.FloatingItem;
+import me.deadlight.ezchestshop.Utils.Exceptions.CommandFetchException;
 import me.deadlight.ezchestshop.Utils.Utils;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -124,8 +127,21 @@ public final class EzChestShop extends JavaPlugin {
 
     }
     private void registerCommands() {
-        getCommand("ecs").setExecutor(new MainCommands());
-        getCommand("ecsadmin").setExecutor(new Ecsadmin());
+        PluginCommand ecs = getCommand("ecs");
+        PluginCommand ecsadmin = getCommand("ecsadmin");
+        CommandRegister register = new CommandRegister();
+        try {
+            if (Config.command_shop_alias) {
+                register.registerCommandAlias(ecs, "shop");
+            }
+            if (Config.command_adminshop_alias) {
+                register.registerCommandAlias(ecsadmin, "adminshop");
+            }
+        } catch (CommandFetchException e) {
+            e.printStackTrace();
+        }
+        ecs.setExecutor(new MainCommands());
+        ecsadmin.setExecutor(new Ecsadmin());
     }
 
     private void registerTabCompleters() {
