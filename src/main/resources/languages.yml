@@ -95,16 +95,16 @@ copiedShopSettings: "&6Copied &7shop settings!"
 pastedShopSettings: "&ePasted &7shop settings!"
 maxShopLimitReached: "&cMaximum shop limit reached: %shoplimit%!"
 clearedAdmins: "&cRemoved all admins from this shop."
-#
 buyingIsDisabled: "&cBuying is disabled in this shop."
 sellingIsDisabled: "&cSelling is disabled in this shop."
 gui-customAmountSign-title: "&eCustom Buy/Sell"
 #for seperating lines in lore, put \n
-gui-customAmountSign-lore: "&7Buy or Sell in custom amount \n &d \n &aLeft click for custom Buy \n &cRight click for custom Sell"
+gui-customAmountSign-lore: "&7Buy or Sell in custom amount \n &d \n &aLeft click for custom Buy \n &cRight click for custom Sell \n &d \n &7You can totally &abuy &e%buycount%&7 of this item. \n &7You can totally &csell &e%sellcount%&7 of this item."
 #15 characters per line (no more) and \n for next line (starting from second line)
 signEditorGui-buy: "&a^^^^^^^^^ \n &bInsert your \n &bdesired amount"
 signEditorGui-sell: "&c^^^^^^^^^ \n &bInsert your \n &bdesired amount"
-wrongInput: "&cWrong input, please insert a number!"
+wrongInput: "&cWrong input(Or probably a very large number), please insert a number!"
 enterTheAmount: "&ePlease write your desired amount in the sign"
 unsupportedInteger: "&cHey!, the amount cannot be zero or negative obviously."
+openingShopProblem: "&cThere is a problem in opening this chest shop, Please contact administrator and check the console."
 

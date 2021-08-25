@@ -2,6 +2,7 @@ package me.deadlight.ezchestshop.Utils;
 import me.deadlight.ezchestshop.Commands.Ecsadmin;
 import me.deadlight.ezchestshop.Commands.MainCommands;
 import me.deadlight.ezchestshop.Utils.Objects.TransactionLogObject;
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.*;
 import me.deadlight.ezchestshop.Data.Config;
 import me.deadlight.ezchestshop.EzChestShop;
@@ -306,12 +307,13 @@ public class Utils {
             fc.set("buyingIsDisabled", "&cBuying is disabled in this shop.");
             fc.set("sellingIsDisabled", "&cSelling is disabled in this shop.");
             fc.set("gui-customAmountSign-title", "&eCustom Buy/Sell");
-            fc.set("gui-customAmountSign-lore", "&7Buy or Sell in custom amount \n &d \n &aLeft click for custom Buy \n &cRight click for custom Sell");
+            fc.set("gui-customAmountSign-lore", "&7Buy or Sell in custom amount \n &d \n &aLeft click for custom Buy \n &cRight click for custom Sell \n &d \n &7You can totally &abuy &e%buycount%&7 of this item. \n &7You can totally &csell &e%sellcount%&7 of this item.");
             fc.set("signEditorGui-buy", "&a^^^^^^^^^ \n &bInsert your \n &bdesired amount");
             fc.set("signEditorGui-sell", "&c^^^^^^^^^ \n &bInsert your \n &bdesired amount");
-            fc.set("wrongInput", "&cWrong input, please insert a number!");
+            fc.set("wrongInput", "&cWrong input(Or probably a very large number), please insert a number!");
             fc.set("enterTheAmount", "&ePlease write your desired amount in the sign");
             fc.set("unsupportedInteger", "&cHey!, the amount cannot be zero or negative obviously.");
+            fc.set("openingShopProblem", "&cThere is a problem in opening this chest shop, Please contact administrator and check the console.");
 
             fc.save(new File(EzChestShop.getPlugin().getDataFolder(), "languages.yml"));
             reloadLanguages();
@@ -545,6 +547,66 @@ public class Utils {
         return emptySlots >= amount;
     }
 
+    public static int playerEmptyCount(ItemStack[] storageContents, ItemStack item) {
+        int emptySlots = 0;
+        for (ItemStack content : storageContents) {
+            if (content == null || content.getType() == Material.AIR) {
+                emptySlots += item.getMaxStackSize();
+            } else {
+                if (content.isSimilar(item) && !(content.getAmount() >= content.getMaxStackSize())) {
+
+                    int remaining = content.getMaxStackSize() - content.getAmount();
+                    emptySlots += remaining;
+
+                }
+            }
+        }
+        return emptySlots;
+    }
+
+    public static int containerEmptyCount(ItemStack[] storageContents, ItemStack item) {
+
+        if (storageContents == null) {
+            return Integer.MAX_VALUE;
+        }
+
+        int emptySlots = 0;
+        for (ItemStack content : storageContents) {
+            if (content == null || content.getType() == Material.AIR) {
+                emptySlots += item.getMaxStackSize();
+            } else {
+                if (content.isSimilar(item) && !(content.getAmount() >= content.getMaxStackSize())) {
+
+                    int remaining = content.getMaxStackSize() - content.getAmount();
+                    emptySlots += remaining;
+
+                }
+            }
+        }
+        return emptySlots;
+    }
+
+    public static int howManyOfItemExists(ItemStack[] itemStacks, ItemStack mainItem) {
+
+        if (itemStacks == null) {
+            return Integer.MAX_VALUE;
+        }
+
+
+        int amount = 0;
+        for (ItemStack item : itemStacks) {
+            if (item == null || item.getType() == Material.AIR) {
+                continue;
+            }
+            if (item.isSimilar(mainItem)) {
+                amount += item.getAmount();
+            }
+
+        }
+        return amount;
+
+    }
+
 
     public static boolean containerHasEnoughSpace(Inventory container, int amount, ItemStack item) {
         int emptySlots = 0;
@@ -573,6 +635,77 @@ public class Utils {
             return false;
         }
         return true;
+    }
+
+    public static List<String> calculatePossibleAmount(OfflinePlayer offlineCustomer, OfflinePlayer offlineSeller, ItemStack[] playerInventory, ItemStack[] storageInventory, double eachBuyPrice, double eachSellPrice, ItemStack itemStack) {
+
+        List<String> results = new ArrayList<>();
+
+        String buyCount = calculateBuyPossibleAmount(offlineCustomer, playerInventory, storageInventory, eachBuyPrice, itemStack);
+        String sellCount = calculateSellPossibleAmount(offlineSeller, playerInventory, storageInventory, eachSellPrice, itemStack);
+
+        results.add(buyCount);
+        results.add(sellCount);
+        return results;
+    }
+
+
+    public static String calculateBuyPossibleAmount(OfflinePlayer offlinePlayer, ItemStack[] playerInventory, ItemStack[] storageInventory, double eachBuyPrice, ItemStack itemStack) {
+        //I was going to run this in async but maybe later...
+                int possibleCount = 0;
+                double buyerBalance = EzChestShop.getEconomy().getBalance(offlinePlayer);
+                int emptyCount = playerEmptyCount(playerInventory, itemStack);
+                int howManyExists = howManyOfItemExists(storageInventory, itemStack);
+
+                for (int num = 0; num < emptyCount; num++) {
+                    if (possibleCount + 1 > howManyExists) {
+                        break;
+                    }
+                    possibleCount += 1;
+                }
+
+                int result = 0;
+                for (int num = 0; num < possibleCount; num++) {
+                    result += 1;
+                    if ((num + 1) * eachBuyPrice > buyerBalance) {
+                        return String.valueOf(num);
+                    }
+                }
+
+        return String.valueOf(result);
+    }
+    public static String calculateSellPossibleAmount(OfflinePlayer offlinePlayer, ItemStack[] playerInventory, ItemStack[] storageInventory, double eachSellPrice, ItemStack itemStack) {
+
+                int possibleCount = 0;
+                double buyerBalance;
+                if (offlinePlayer == null) {
+                    buyerBalance = Double.MAX_VALUE;
+                } else {
+                    if (offlinePlayer.hasPlayedBefore()) {
+                        buyerBalance = EzChestShop.getEconomy().getBalance(offlinePlayer);
+                    } else {
+                        buyerBalance = 0;
+                    }
+                }
+                int emptyCount = containerEmptyCount(storageInventory, itemStack);
+                int howManyExists = howManyOfItemExists(playerInventory, itemStack);
+
+                for (int num = 0; num < emptyCount; num++) {
+                    if (possibleCount + 1 > howManyExists) {
+                        break;
+                    }
+                    possibleCount += 1;
+                }
+
+                int result = 0;
+                for (int num = 0; num < possibleCount; num++) {
+                    result += 1;
+                    if ((num + 1) * eachSellPrice > buyerBalance) {
+                        return String.valueOf(num);
+                    }
+                }
+
+        return String.valueOf(result);
     }
 
 
