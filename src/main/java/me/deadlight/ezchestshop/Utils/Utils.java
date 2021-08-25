@@ -308,8 +308,8 @@ public class Utils {
             fc.set("sellingIsDisabled", "&cSelling is disabled in this shop.");
             fc.set("gui-customAmountSign-title", "&eCustom Buy/Sell");
             fc.set("gui-customAmountSign-lore", "&7Buy or Sell in custom amount \n &d \n &aLeft click for custom Buy \n &cRight click for custom Sell \n &d \n &7You can totally &abuy &e%buycount%&7 of this item. \n &7You can totally &csell &e%sellcount%&7 of this item.");
-            fc.set("signEditorGui-buy", "&a^^^^^^^^^ \n &bInsert your \n &bdesired amount");
-            fc.set("signEditorGui-sell", "&c^^^^^^^^^ \n &bInsert your \n &bdesired amount");
+            fc.set("signEditorGui-buy", "&a^^ Max: %maxbuy% ^^ \n &bInsert your \n &bdesired amount");
+            fc.set("signEditorGui-sell", "&c^^ Max: %maxsell% ^^ \n &bInsert your \n &bdesired amount");
             fc.set("wrongInput", "&cWrong input(Or probably a very large number), please insert a number!");
             fc.set("enterTheAmount", "&ePlease write your desired amount in the sign");
             fc.set("unsupportedInteger", "&cHey!, the amount cannot be zero or negative obviously.");

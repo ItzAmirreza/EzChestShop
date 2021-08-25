@@ -155,7 +155,7 @@ public class NonOwnerShopGUI {
                 player.closeInventory();
                 player.playSound(player.getLocation(), Sound.ITEM_BOOK_PAGE_TURN, 1.0f, 1.0f);
                 SignMenuFactory signMenuFactory = new SignMenuFactory(EzChestShop.getPlugin());
-                SignMenuFactory.Menu menu = signMenuFactory.newMenu(lm.signEditorGuiBuy())
+                SignMenuFactory.Menu menu = signMenuFactory.newMenu(lm.signEditorGuiBuy(possibleCounts.get(0), possibleCounts.get(1)))
                         .reopenIfFail(false).response((thatplayer, strings) -> {
                             try {
                                 int amount = Integer.parseInt(strings[0]);
