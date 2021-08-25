@@ -35,8 +35,12 @@ public class OwnerShopGUI {
     public void showGUI(Player player, PersistentDataContainer data, Block containerBlock, boolean isAdmin) {
 
         LanguageManager lm = new LanguageManager();
-
-        String shopOwner = Bukkit.getOfflinePlayer(UUID.fromString(data.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING))).getName();
+        OfflinePlayer offlinePlayerOwner = Bukkit.getOfflinePlayer(UUID.fromString(data.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING)));
+        String shopOwner = offlinePlayerOwner.getName();
+        if (shopOwner == null) {
+            player.sendMessage(lm.chestShopProblem());
+            return;
+        }
         double sellPrice = data.get(new NamespacedKey(EzChestShop.getPlugin(), "sell"), PersistentDataType.DOUBLE);
         double buyPrice = data.get(new NamespacedKey(EzChestShop.getPlugin(), "buy"), PersistentDataType.DOUBLE);
         boolean disabledBuy = data.get(new NamespacedKey(EzChestShop.getPlugin(), "dbuy"), PersistentDataType.INTEGER) == 1;
@@ -168,7 +172,8 @@ public class OwnerShopGUI {
         ItemStack signItem = new ItemStack(Material.OAK_SIGN, 1);
         ItemMeta signMeta = signItem.getItemMeta();
         signMeta.setDisplayName(lm.customAmountSignTitle());
-        signMeta.setLore(lm.customAmountSignLore());
+        List<String> possibleCounts = Utils.calculatePossibleAmount(Bukkit.getOfflinePlayer(player.getUniqueId()), offlinePlayerOwner, player.getInventory().getStorageContents(), Utils.getBlockInventory(containerBlock).getStorageContents(), buyPrice, sellPrice, mainitem);
+        signMeta.setLore(lm.customAmountSignLore(possibleCounts.get(0), possibleCounts.get(1)));
         signItem.setItemMeta(signMeta);
 
         GuiItem guiSignItem = new GuiItem(signItem, event -> {

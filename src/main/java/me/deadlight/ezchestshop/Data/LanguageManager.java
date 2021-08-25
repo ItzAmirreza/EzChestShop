@@ -419,11 +419,11 @@ public class LanguageManager {
     public String customAmountSignTitle() {
         return colorify(languages.getString("gui-customAmountSign-title"));
     }
-    public List<String> customAmountSignLore() {
+    public List<String> customAmountSignLore(String possibleBuyAmount, String possibleSellAmount) {
         List<String> lores = new ArrayList<>();
         String[] input = languages.getString("gui-customAmountSign-lore").split("\n");
         for (String s : input) {
-            lores.add(Utils.color(s));
+            lores.add(Utils.color(s.replace("%buycount%", possibleBuyAmount).replace("%sellcount%", possibleSellAmount)));
         }
         return lores;
     }
@@ -464,6 +464,9 @@ public class LanguageManager {
 
     public String unsupportedInteger() {
         return colorify(languages.getString("unsupportedInteger"));
+    }
+    public String chestShopProblem() {
+        return colorify(languages.getString("openingShopProblem"));
     }
 
 
