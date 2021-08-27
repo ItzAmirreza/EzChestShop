@@ -342,9 +342,13 @@ public class Utils {
     }
 
 
-    public static List<TransactionLogObject> getListOfTransactions(PersistentDataContainer data) {
+    public static List<TransactionLogObject> getListOfTransactions(Block containerBlock) {
+        TileState state = ((TileState)containerBlock.getState());
+        PersistentDataContainer data = state.getPersistentDataContainer();
         String wholeString = data.get(new NamespacedKey(EzChestShop.getPlugin(), "trans"), PersistentDataType.STRING);
-        if (wholeString.equalsIgnoreCase("none")) {
+        if (wholeString == null || wholeString.equalsIgnoreCase("none")) {
+            data.set(new NamespacedKey(EzChestShop.getPlugin(), "trans"), PersistentDataType.STRING, "none");
+            state.update();
             return new ArrayList<>();
         } else {
             List<TransactionLogObject> logObjectList = new ArrayList<>();

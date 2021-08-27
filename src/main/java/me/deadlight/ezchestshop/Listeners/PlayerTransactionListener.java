@@ -72,7 +72,7 @@ public class PlayerTransactionListener implements Listener {
         }
         String formattedDateTime = event.getTime().format(formatter);
 
-        List<TransactionLogObject> logObjectList = Utils.getListOfTransactions(data);
+        List<TransactionLogObject> logObjectList = Utils.getListOfTransactions(event.getContainerBlock());
         if (logObjectList.size() == 53) {
             logObjectList.remove(0);
         }

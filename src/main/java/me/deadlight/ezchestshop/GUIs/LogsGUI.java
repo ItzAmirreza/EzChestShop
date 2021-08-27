@@ -53,7 +53,7 @@ public class LogsGUI {
         if (type == LogType.TRANSACTION) {
 
             //trans
-            List<TransactionLogObject> transLogs = Utils.getListOfTransactions(data);
+            List<TransactionLogObject> transLogs = Utils.getListOfTransactions(containerBlock);
             Collections.reverse(transLogs);
 
             for (int count = 1; count <= transLogs.size(); count++) {
