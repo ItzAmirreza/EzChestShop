@@ -7,6 +7,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.Dispenser;
 import org.bukkit.block.TileState;
 import org.bukkit.block.data.Directional;
@@ -30,14 +31,16 @@ public class BlockPlaceListener implements Listener {
 
     @EventHandler
     public void onBlockDispenserPlace(BlockDispenseEvent  event) {
-        Dispenser dispenser = ((Dispenser) event.getBlock().getState());
-        final Directional directional = (Directional) dispenser.getBlockData();
-        Bukkit.getScheduler().scheduleSyncDelayedTask(EzChestShop.getPlugin(), () -> {
-            Block block = event.getBlock().getRelative(directional.getFacing());
-            ItemStack item = event.getItem();
-            placeBlock(block, item);
-        }, 5);
-
+        BlockState state = event.getBlock().getState();
+        if (state instanceof Dispenser) {
+            Dispenser dispenser = ((Dispenser) state);
+            final Directional directional = (Directional) dispenser.getBlockData();
+            Bukkit.getScheduler().scheduleSyncDelayedTask(EzChestShop.getPlugin(), () -> {
+                Block block = event.getBlock().getRelative(directional.getFacing());
+                ItemStack item = event.getItem();
+                placeBlock(block, item);
+            }, 5);
+        }
     }
 
     private void placeBlock(Block block, ItemStack shulker) {
