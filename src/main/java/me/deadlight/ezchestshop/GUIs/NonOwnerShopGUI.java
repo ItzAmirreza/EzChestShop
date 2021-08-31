@@ -79,7 +79,7 @@ public class NonOwnerShopGUI {
             if (disabledSell) {
                 return;
             }
-            sellItem(containerBlock, sellPrice, 1, mainitem, Bukkit.getOfflinePlayer(shopOwner), player, data);
+            sellItem(containerBlock, sellPrice, 1, mainitem, offlinePlayerOwner, player, data);
         });
 
         ItemStack moreSellIS = new ItemStack(Material.RED_DYE, 64);
@@ -97,7 +97,7 @@ public class NonOwnerShopGUI {
             if (disabledSell) {
                 return;
             }
-            sellItem(containerBlock, sellPrice * 64, 64, mainitem, Bukkit.getOfflinePlayer(shopOwner), player, data);
+            sellItem(containerBlock, sellPrice * 64, 64, mainitem, offlinePlayerOwner, player, data);
         });
 
         //buy 1x
@@ -116,7 +116,7 @@ public class NonOwnerShopGUI {
             if (disabledBuy) {
                 return;
             }
-            buyItem(containerBlock, buyPrice, 1, player, mainitem, Bukkit.getOfflinePlayer(shopOwner), data);
+            buyItem(containerBlock, buyPrice, 1, player, mainitem, offlinePlayerOwner, data);
         });
 
 
@@ -134,7 +134,7 @@ public class NonOwnerShopGUI {
             if (disabledBuy) {
                 return;
             }
-            buyItem(containerBlock, buyPrice * 64, 64, player, mainitem, Bukkit.getOfflinePlayer(shopOwner), data);
+            buyItem(containerBlock, buyPrice * 64, 64, player, mainitem, offlinePlayerOwner, data);
         });
 
         ItemStack signItem = new ItemStack(Material.OAK_SIGN, 1);
@@ -170,7 +170,7 @@ public class NonOwnerShopGUI {
                                     Bukkit.getScheduler().scheduleSyncDelayedTask(EzChestShop.getPlugin(), new Runnable() {
                                         @Override
                                         public void run() {
-                                            buyItem(containerBlock, buyPrice * amount, amount, player, mainitem, Bukkit.getOfflinePlayer(shopOwner), data);
+                                            buyItem(containerBlock, buyPrice * amount, amount, player, mainitem, offlinePlayerOwner, data);
                                         }
                                     });
                                 } else {
@@ -210,7 +210,7 @@ public class NonOwnerShopGUI {
                                     Bukkit.getScheduler().scheduleSyncDelayedTask(EzChestShop.getPlugin(), new Runnable() {
                                         @Override
                                         public void run() {
-                                            sellItem(containerBlock, sellPrice * amount, amount, mainitem, Bukkit.getOfflinePlayer(shopOwner), player, data);
+                                            sellItem(containerBlock, sellPrice * amount, amount, mainitem, offlinePlayerOwner, player, data);
                                         }
                                     });
                                 } else {

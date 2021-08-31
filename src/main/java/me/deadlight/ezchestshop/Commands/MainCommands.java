@@ -148,27 +148,28 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                                     if (args.length == 4) {
                                         String adminString = ShopContainer
                                                 .getShopSettings(blockState.getLocation()).getAdmins();
+                                        List<String> adminList = new ArrayList<>();
                                         if (adminString != null && !adminString.equalsIgnoreCase("none")) {
-                                            List<String> adminList = Arrays.asList(adminString
+                                            adminList = Arrays.asList(adminString
                                                     .split("@")).stream().filter(s -> (s != null && !s.trim().equalsIgnoreCase(""))).map(s ->
                                                     Bukkit.getOfflinePlayer(UUID.fromString(s)).getName())
                                                     .collect(Collectors.toList());
-                                            String[] last = args[3].split(",");
-                                            List<String> online = Bukkit.getOnlinePlayers().stream().filter(p -> !player.getUniqueId().equals(p.getUniqueId())).map(HumanEntity::getName).collect(Collectors.toList());
-                                            online.removeAll(Arrays.asList(last));
-                                            online.removeAll(adminList);
+                                        }
+                                        String[] last = args[3].split(",");
+                                        List<String> online = Bukkit.getOnlinePlayers().stream().filter(p -> !player.getUniqueId().equals(p.getUniqueId())).map(HumanEntity::getName).collect(Collectors.toList());
+                                        online.removeAll(Arrays.asList(last));
+                                        online.removeAll(adminList);
 
-                                            if (args[3].endsWith(",")) {
-                                                for (String s : online) {
-                                                    fList.add(Arrays.asList(last).stream().collect(Collectors.joining(",")) + "," + s);
-                                                }
-                                            } else {
-                                                String lastarg = last[last.length -1];
-                                                for (String s : online) {
-                                                    if (s.startsWith(lastarg)) {
-                                                        last[last.length -1] = s;
-                                                        fList.add(Arrays.asList(last).stream().collect(Collectors.joining(",")));
-                                                    }
+                                        if (args[3].endsWith(",")) {
+                                            for (String s : online) {
+                                                fList.add(Arrays.asList(last).stream().collect(Collectors.joining(",")) + "," + s);
+                                            }
+                                        } else {
+                                            String lastarg = last[last.length -1];
+                                            for (String s : online) {
+                                                if (s.startsWith(lastarg)) {
+                                                    last[last.length -1] = s;
+                                                    fList.add(Arrays.asList(last).stream().collect(Collectors.joining(",")));
                                                 }
                                             }
                                         }
@@ -178,23 +179,24 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                                         String[] last = args[3].split(",");
                                         String adminString = ShopContainer
                                                 .getShopSettings(blockState.getLocation()).getAdmins();
+                                        List<String> playerList = new ArrayList<>();
                                         if (adminString != null && !adminString.equalsIgnoreCase("none")) {
-                                            List<String> playerList = Arrays.asList(adminString
+                                            playerList = Arrays.asList(adminString
                                                     .split("@")).stream().filter(s -> (s != null && !s.trim().equalsIgnoreCase(""))).map(s ->
                                                     Bukkit.getOfflinePlayer(UUID.fromString(s)).getName())
                                                     .collect(Collectors.toList());
                                             playerList.removeAll(Arrays.asList(last));
-                                            if (args[3].endsWith(",")) {
-                                                for (String s : playerList) {
-                                                    fList.add(Arrays.asList(last).stream().collect(Collectors.joining(",")) + "," + s);
-                                                }
-                                            } else {
-                                                String lastarg = last[last.length -1];
-                                                for (String s : playerList) {
-                                                    if (s.startsWith(lastarg)) {
-                                                        last[last.length -1] = s;
-                                                        fList.add(Arrays.asList(last).stream().collect(Collectors.joining(",")));
-                                                    }
+                                        }
+                                        if (args[3].endsWith(",")) {
+                                            for (String s : playerList) {
+                                                fList.add(Arrays.asList(last).stream().collect(Collectors.joining(",")) + "," + s);
+                                            }
+                                        } else {
+                                            String lastarg = last[last.length -1];
+                                            for (String s : playerList) {
+                                                if (s.startsWith(lastarg)) {
+                                                    last[last.length -1] = s;
+                                                    fList.add(Arrays.asList(last).stream().collect(Collectors.joining(",")));
                                                 }
                                             }
                                         }
