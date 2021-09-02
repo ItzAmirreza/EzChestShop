@@ -1,8 +1,7 @@
 package me.deadlight.ezchestshop.Utils;
-import me.deadlight.ezchestshop.Commands.Ecsadmin;
+import me.deadlight.ezchestshop.Commands.EcsAdmin;
 import me.deadlight.ezchestshop.Commands.MainCommands;
 import me.deadlight.ezchestshop.Utils.Objects.TransactionLogObject;
-import net.milkbowl.vault.economy.Economy;
 import org.bukkit.*;
 import me.deadlight.ezchestshop.Data.Config;
 import me.deadlight.ezchestshop.EzChestShop;
@@ -15,7 +14,6 @@ import org.bukkit.block.*;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.DoubleChestInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.Permissible;
@@ -159,7 +157,7 @@ public class Utils {
         LanguageManager newLanguage = new LanguageManager();
         MainCommands.updateLM(newLanguage);
         ChatListener.updateLM(newLanguage);
-        Ecsadmin.updateLM(newLanguage);
+        EcsAdmin.updateLM(newLanguage);
     }
 
     //this one checks for the config.yml ima make one for language.yml

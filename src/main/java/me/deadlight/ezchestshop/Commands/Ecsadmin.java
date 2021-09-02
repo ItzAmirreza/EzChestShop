@@ -26,12 +26,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class Ecsadmin implements CommandExecutor, TabCompleter {
+public class EcsAdmin implements CommandExecutor, TabCompleter {
 
     public static LanguageManager lm = new LanguageManager();
 
     public static void updateLM(LanguageManager languageManager) {
-        Ecsadmin.lm = languageManager;
+        EcsAdmin.lm = languageManager;
     }
 
 

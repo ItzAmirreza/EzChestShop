@@ -3,7 +3,7 @@ import com.bgsoftware.wildchests.api.WildChestsAPI;
 import com.bgsoftware.wildchests.api.handlers.ChestsManager;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
-import me.deadlight.ezchestshop.Commands.Ecsadmin;
+import me.deadlight.ezchestshop.Commands.EcsAdmin;
 import me.deadlight.ezchestshop.Commands.MainCommands;
 import me.deadlight.ezchestshop.Data.Config;
 import me.deadlight.ezchestshop.Data.LanguageManager;
@@ -141,12 +141,12 @@ public final class EzChestShop extends JavaPlugin {
             e.printStackTrace();
         }
         ecs.setExecutor(new MainCommands());
-        ecsadmin.setExecutor(new Ecsadmin());
+        ecsadmin.setExecutor(new EcsAdmin());
     }
 
     private void registerTabCompleters() {
         getCommand("ecs").setTabCompleter(new MainCommands());
-        getCommand("ecsadmin").setTabCompleter(new Ecsadmin());
+        getCommand("ecsadmin").setTabCompleter(new EcsAdmin());
     }
 
 
