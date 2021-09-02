@@ -65,30 +65,8 @@ public class ShopContainer {
                                   String trans, boolean adminshop) {
         Database db = EzChestShop.getPlugin().getDatabase();
         String sloc = Utils.LocationtoString(loc);
-        db.prepareColumn("shopdata", "location", sloc);
-        db.setString("location", sloc,
-                "owner", "shopdata", p.getUniqueId().toString());
         String encodedItem = Utils.encodeItem(item);
-        db.setString("location", sloc,
-                "item", "shopdata", encodedItem == null ? "Error" : encodedItem);
-        db.setDouble("location", sloc,
-                "buyPrice", "shopdata", buyprice);
-        db.setDouble("location", sloc,
-                "sellPrice", "shopdata", sellprice);
-        db.setBool("location", sloc,
-                "msgToggle", "shopdata", msgtoggle);
-        db.setBool("location", sloc,
-                "buyDisabled", "shopdata", dbuy);
-        db.setBool("location", sloc,
-                "sellDisabled", "shopdata", dsell);
-        db.setString("location", sloc,
-                "admins", "shopdata", admins);
-        db.setBool("location", sloc,
-                "shareIncome", "shopdata", shareincome);
-        db.setString("location", sloc,
-                "transactions", "shopdata", trans);
-        db.setBool("location", sloc,
-                "adminshop", "shopdata", adminshop);
+        db.insertShop(sloc, p.getUniqueId().toString(), encodedItem == null ? "Error" : encodedItem, buyprice, sellprice, msgtoggle, dbuy, dsell, admins, shareincome, trans, adminshop);
         ShopSettings settings = new ShopSettings(sloc, msgtoggle, dbuy, dsell, admins, shareincome, trans, adminshop);
         shopSettings.put(loc, settings);
         shops.add(loc);
@@ -106,30 +84,12 @@ public class ShopContainer {
         String trans = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "admins"), PersistentDataType.STRING);
         boolean adminshop = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"), PersistentDataType.INTEGER) == 1;
 
-        db.prepareColumn("shopdata", "location", sloc);
-        db.setString("location", sloc,
-                "owner", "shopdata", dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING));
+        String owner = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING);
         String encodedItem = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "item"), PersistentDataType.STRING);
-        db.setString("location", sloc,
-                "item", "shopdata", encodedItem == null ? "Error" : encodedItem);
-        db.setDouble("location", sloc,
-                "buyPrice", "shopdata", dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "buy"), PersistentDataType.DOUBLE));
-        db.setDouble("location", sloc,
-                "sellPrice", "shopdata", dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "sell"), PersistentDataType.DOUBLE));
-        db.setBool("location", sloc,
-                "msgToggle", "shopdata", msgtoggle);
-        db.setBool("location", sloc,
-                "buyDisabled", "shopdata", dbuy);
-        db.setBool("location", sloc,
-                "sellDisabled", "shopdata", dsell);
-        db.setString("location", sloc,
-                "admins", "shopdata", admins);
-        db.setBool("location", sloc,
-                "shareIncome", "shopdata", shareincome);
-        db.setString("location", sloc,
-                "transactions", "shopdata", trans);
-        db.setBool("location", sloc,
-                "adminshop", "shopdata", adminshop);
+        double buyprice = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "buy"), PersistentDataType.DOUBLE);
+        double sellprice = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "sell"), PersistentDataType.DOUBLE);
+        db.insertShop(sloc, owner, encodedItem == null ? "Error" : encodedItem, buyprice, sellprice, msgtoggle, dbuy, dsell, admins, shareincome, trans, adminshop);
+
         ShopSettings settings = new ShopSettings(sloc, msgtoggle, dbuy, dsell, admins, shareincome, trans, adminshop);
         shopSettings.put(loc, settings);
         shops.add(loc);

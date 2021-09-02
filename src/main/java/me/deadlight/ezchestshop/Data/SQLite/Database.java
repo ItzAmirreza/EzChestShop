@@ -667,6 +667,8 @@ public abstract class Database {
         return false;
     }
 
+
+
     /**
      * Adds quotes to a String. Required for certain expressions.
      *
@@ -679,5 +681,45 @@ public abstract class Database {
         if (s.equals(""))
             return null;
         return "'" + s + "'";
+    }
+
+
+    public void insertShop(String sloc, String owner, String item, double buyprice, double sellprice, boolean msgtoggle, boolean dbuy, boolean dsell, String admins, boolean shareincome, String trans, boolean adminshop) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try {
+            conn = getSQLConnection();
+            ps = conn.prepareStatement(
+                    "REPLACE INTO shopdata (location,owner,item,buyPrice,sellPrice,msgToggle,"
+                            + "buyDisabled,sellDisabled,admins,shareIncome,transactions,adminshop) "
+                            + "VALUES(?,?,?,?,?,?,?,?,?,?,?,?)");
+
+            ps.setString(1, sloc);
+            ps.setString(2, owner);
+            ps.setString(3, item);
+            ps.setDouble(4, buyprice);
+            ps.setDouble(5, sellprice);
+            ps.setBoolean(6, msgtoggle);
+            ps.setBoolean(7, dbuy);
+            ps.setBoolean(8, dsell);
+            ps.setString(9, admins);
+            ps.setBoolean(10, shareincome);
+            ps.setString(11, trans);
+            ps.setBoolean(12, adminshop);
+            ps.executeUpdate();
+            return;
+        } catch (SQLException e) {
+            plugin.getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute(), e);
+        } finally {
+            try {
+                if (ps != null)
+                    ps.close();
+                if (conn != null)
+                    conn.close();
+            } catch (SQLException e) {
+                plugin.getLogger().log(Level.SEVERE, Errors.sqlConnectionClose(), e);
+            }
+        }
+        return;
     }
 }
