@@ -1,11 +1,8 @@
 package me.deadlight.ezchestshop.Events;
-
 import org.bukkit.Location;
 import org.bukkit.entity.Item;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 
 public class ShulkerShopDropEvent extends Event {
     //only trigger via piston movement
