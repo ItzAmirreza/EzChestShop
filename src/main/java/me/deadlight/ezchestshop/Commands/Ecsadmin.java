@@ -5,6 +5,7 @@ import me.deadlight.ezchestshop.Data.ShopContainer;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.Data.LanguageManager;
 import me.deadlight.ezchestshop.Utils.Utils;
+import me.mrCookieSlime.Slimefun.api.BlockStorage;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.*;
@@ -19,8 +20,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.StringUtil;
-import org.jetbrains.annotations.NotNull;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,7 +35,7 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
 
 
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 
         if (sender instanceof Player) {
 
@@ -219,6 +218,14 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
         Block block = player.getTargetBlockExact(6);
         if (block != null && block.getType() != Material.AIR) {
             BlockState blockState = block.getState();
+            //slimefun check
+            if (EzChestShop.slimefun) {
+                boolean sfresult = BlockStorage.hasBlockInfo(block.getLocation());
+                if (sfresult) {
+                    player.sendMessage(lm.slimeFunBlockNotSupported());
+                    return;
+                }
+            }
 
             if (blockState instanceof TileState) {
 

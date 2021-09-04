@@ -220,6 +220,7 @@ public class Utils {
         boolean result = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "languages.yml")).isString("commandmsg-negativeprice");
         boolean update1_3_0 = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "languages.yml")).isString("settingsButton");
         boolean update1_4_0 = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "languages.yml")).isString("copiedShopSettings");
+        boolean update1_4_1 = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "languages.yml")).isString("slimeFunBlockNotSupported");
         if (!result) {
             FileConfiguration fc = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "languages.yml"));
             //new values that were added in update 1.2.8
@@ -316,6 +317,13 @@ public class Utils {
             fc.save(new File(EzChestShop.getPlugin().getDataFolder(), "languages.yml"));
             reloadLanguages();
             EzChestShop.getPlugin().logConsole("&c[&eEzChestShop&c]&r &bNew languages.yml generated... (1.4.0V)");
+        }
+        if (!update1_4_1) {
+            FileConfiguration fc = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "languages.yml"));
+            fc.set("slimeFunBlockNotSupported", "&cSorry :(, but you can't execute this command with an slimefun block / please use a normal block as a container");
+            fc.save(new File(EzChestShop.getPlugin().getDataFolder(), "languages.yml"));
+            reloadLanguages();
+            EzChestShop.getPlugin().logConsole("&c[&eEzChestShop&c]&r &bNew languages.yml generated... (1.4.1V)");
         }
     }
 

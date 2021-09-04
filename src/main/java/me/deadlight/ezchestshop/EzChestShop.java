@@ -3,6 +3,8 @@ import com.bgsoftware.wildchests.api.WildChestsAPI;
 import com.bgsoftware.wildchests.api.handlers.ChestsManager;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
 import me.deadlight.ezchestshop.Commands.EcsAdmin;
 import me.deadlight.ezchestshop.Commands.MainCommands;
 import me.deadlight.ezchestshop.Data.Config;
@@ -16,6 +18,7 @@ import me.deadlight.ezchestshop.Utils.CommandRegister;
 import me.deadlight.ezchestshop.Utils.FloatingItem;
 import me.deadlight.ezchestshop.Utils.Exceptions.CommandFetchException;
 import me.deadlight.ezchestshop.Utils.Utils;
+import me.mrCookieSlime.Slimefun.api.BlockStorage;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
@@ -40,12 +43,14 @@ public final class EzChestShop extends JavaPlugin {
     public ChestsManager wchests = null;
 
     public static boolean protocollib = false;
+    public static boolean slimefun = false;
 
     private static ProtocolManager manager;
 
 
     @Override
     public void onEnable() {
+
         plugin = this;
         logConsole("&c[&eEzChestShop&c] &aEnabling EzChestShop - version 1.4.0");
         saveDefaultConfig();
@@ -103,6 +108,11 @@ public final class EzChestShop extends JavaPlugin {
         if (getServer().getPluginManager().getPlugin("WildChests") != null) {
             integrationWildChests = true;
             wchests = WildChestsAPI.getInstance().getChestsManager();
+        }
+
+        if (getServer().getPluginManager().getPlugin("Slimefun") != null) {
+            slimefun = true;
+            logConsole("&c[&eEzChestShop&c] &eSlimefun integration initialized.");
         }
 
         ShopContainer.queryShopsToMemory();

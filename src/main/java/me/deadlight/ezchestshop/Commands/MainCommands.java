@@ -8,10 +8,10 @@ import me.deadlight.ezchestshop.Data.LanguageManager;
 import me.deadlight.ezchestshop.GUIs.SettingsGUI;
 import me.deadlight.ezchestshop.Utils.Objects.ShopSettings;
 import me.deadlight.ezchestshop.Utils.Utils;
+import me.mrCookieSlime.Slimefun.api.BlockStorage;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.*;
 import org.bukkit.block.*;
 import org.bukkit.command.Command;
@@ -27,7 +27,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.StringUtil;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.*;
@@ -48,7 +47,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
 
 
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 
         if (sender instanceof Player) {
 
@@ -232,6 +231,14 @@ public class MainCommands implements CommandExecutor, TabCompleter {
         Block block = player.getTargetBlockExact(6);
         if (block != null && block.getType() != Material.AIR) {
             BlockState blockState = block.getState();
+            //slimefun check
+            if (EzChestShop.slimefun) {
+                boolean sfresult = BlockStorage.hasBlockInfo(block.getLocation());
+                if (sfresult) {
+                    player.sendMessage(lm.slimeFunBlockNotSupported());
+                    return;
+                }
+            }
 
             if (blockState instanceof TileState) {
 

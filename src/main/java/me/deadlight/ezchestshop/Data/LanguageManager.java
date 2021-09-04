@@ -461,6 +461,9 @@ public class LanguageManager {
     public String chestShopProblem() {
         return colorify(languages.getString("openingShopProblem"));
     }
+    public String slimeFunBlockNotSupported() {
+        return colorify(languages.getString("slimeFunBlockNotSupported"));
+    }
 
 
 
