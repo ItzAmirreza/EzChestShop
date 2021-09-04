@@ -107,4 +107,4 @@ wrongInput: "&cWrong input(Or probably a very large number), please insert a num
 enterTheAmount: "&ePlease write your desired amount in the sign"
 unsupportedInteger: "&cHey!, the amount cannot be zero or negative obviously."
 openingShopProblem: "&cThere is a problem in opening this chest shop, Please contact administrator and check the console."
-slimeFunBlockNotSupported: "&cSorry :(, but you can't execute this command with an slimefun block / please use a normal block as a container"
+slimeFunBlockNotSupported: "&cSorry :(, but you can't execute this command with a slimefun block / please use a normal block as a container"
