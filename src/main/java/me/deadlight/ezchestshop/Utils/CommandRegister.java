@@ -1,9 +1,13 @@
 package me.deadlight.ezchestshop.Utils;
 
+import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.Utils.Exceptions.CommandFetchException;
 import org.bukkit.Bukkit;
+import org.bukkit.Server;
 import org.bukkit.command.Command;
+import org.bukkit.command.CommandMap;
 import org.bukkit.command.SimpleCommandMap;
+import org.bukkit.plugin.SimplePluginManager;
 
 import javax.inject.Singleton;
 import java.lang.reflect.Field;
@@ -13,6 +17,17 @@ import java.util.Map;
 
 @Singleton
 public class CommandRegister {
+
+    private static final Field COMMAND_MAP_FIELD;
+
+    static {
+        try {
+            COMMAND_MAP_FIELD = SimplePluginManager.class.getDeclaredField("commandMap");
+            COMMAND_MAP_FIELD.setAccessible(true);
+        } catch (NoSuchFieldException e) {
+            throw new ExceptionInInitializerError(e);
+        }
+    }
 
     public boolean registerCommandAlias(Command command, String alias) throws CommandFetchException{
         // Check if the provided command exists.
@@ -39,11 +54,9 @@ public class CommandRegister {
 
     private SimpleCommandMap getSimpleCommandMap() throws CommandFetchException {
         try {
-            Field field = this.getServerField("commandMap", Bukkit.getServer().getClass());
-            this.makeAccessible(field);
-            this.removeFinalModifier(field);
-            return (SimpleCommandMap) field.get(Bukkit.getServer());
-        } catch (NoSuchFieldException | IllegalAccessException e) {
+            return (SimpleCommandMap) getCommandMap(EzChestShop.getPlugin().getServer());
+        } catch (Exception e) {
+            e.printStackTrace();
             throw new CommandFetchException("commandMap");
         }
     }
@@ -53,7 +66,6 @@ public class CommandRegister {
             SimpleCommandMap commandMap = this.getSimpleCommandMap();
             Field field = this.getServerField("knownCommands", SimpleCommandMap.class);
             this.makeAccessible(field);
-            this.removeFinalModifier(field);
             return (Map<String, Command>) field.get(commandMap);
         } catch (NoSuchFieldException | IllegalAccessException e) {
             throw new CommandFetchException("knownCommands");
@@ -64,10 +76,12 @@ public class CommandRegister {
         field.setAccessible(true);
     }
 
-    private void removeFinalModifier(Field field) throws IllegalAccessException, NoSuchFieldException {
-        Field modifiers = Field.class.getDeclaredField("modifiers");
-        modifiers.setAccessible(true);
-        modifiers.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+    public static CommandMap getCommandMap(Server server) {
+        try {
+            return (CommandMap) COMMAND_MAP_FIELD.get(server.getPluginManager());
+        } catch (Exception e) {
+            throw new RuntimeException("Could not get CommandMap", e);
+        }
     }
 
     private Field getServerField(String name, Class<?> clazz) throws NoSuchFieldException {
