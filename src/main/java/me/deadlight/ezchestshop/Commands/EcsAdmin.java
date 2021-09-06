@@ -135,6 +135,14 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
 
         if (block != null && block.getType() != Material.AIR) {
 
+            //slimefun check
+            if (EzChestShop.slimefun) {
+                boolean sfresult = BlockStorage.hasBlockInfo(block.getLocation());
+                if (sfresult) {
+                    player.sendMessage(lm.slimeFunBlockNotSupported());
+                    return;
+                }
+            }
             BlockState blockState = block.getState();
             if (blockState instanceof TileState) {
 
@@ -218,6 +226,14 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
         Block block = player.getTargetBlockExact(6);
         if (block != null && block.getType() != Material.AIR) {
             BlockState blockState = block.getState();
+            //slimefun check
+            if (EzChestShop.slimefun) {
+                boolean sfresult = BlockStorage.hasBlockInfo(block.getLocation());
+                if (sfresult) {
+                    player.sendMessage(lm.slimeFunBlockNotSupported());
+                    return;
+                }
+            }
             //slimefun check
             if (EzChestShop.slimefun) {
                 boolean sfresult = BlockStorage.hasBlockInfo(block.getLocation());

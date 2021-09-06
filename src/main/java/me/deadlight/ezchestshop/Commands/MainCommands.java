@@ -333,6 +333,14 @@ public class MainCommands implements CommandExecutor, TabCompleter {
     private void removeShop(Player player, String[] args) {
         BlockState blockState = getLookedAtBlockStateIfOwner(player, true, true);
         if (blockState != null) {
+            //slimefun check
+            if (EzChestShop.slimefun) {
+                boolean sfresult = BlockStorage.hasBlockInfo(blockState.getLocation());
+                if (sfresult) {
+                    player.sendMessage(lm.slimeFunBlockNotSupported());
+                    return;
+                }
+            }
             //is the owner remove it
             PersistentDataContainer container = ((TileState) blockState).getPersistentDataContainer();
             container.remove(new NamespacedKey(EzChestShop.getPlugin(), "owner"));
@@ -371,6 +379,14 @@ public class MainCommands implements CommandExecutor, TabCompleter {
     private void changeSettings(Player player, String args[]) {
         if (args.length == 1) {
             BlockState blockState = getLookedAtBlockStateIfOwner(player, true, false);
+            //slimefun check
+            if (EzChestShop.slimefun) {
+                boolean sfresult = BlockStorage.hasBlockInfo(blockState.getLocation());
+                if (sfresult) {
+                    player.sendMessage(lm.slimeFunBlockNotSupported());
+                    return;
+                }
+            }
             if (blockState != null) {
                 SettingsGUI settingsGUI = new SettingsGUI();
                 settingsGUI.showGUI(player, blockState.getBlock(), false);
