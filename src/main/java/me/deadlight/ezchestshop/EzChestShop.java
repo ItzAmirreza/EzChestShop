@@ -52,7 +52,7 @@ public final class EzChestShop extends JavaPlugin {
     public void onEnable() {
 
         plugin = this;
-        logConsole("&c[&eEzChestShop&c] &aEnabling EzChestShop - version 1.4.2");
+        logConsole("&c[&eEzChestShop&c] &aEnabling EzChestShop - version 1.4.3");
         saveDefaultConfig();
 
         this.db = new SQLite(this);

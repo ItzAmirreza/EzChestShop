@@ -28,8 +28,8 @@ economy:
 commands:
   # Register easier to remember alias on server startup: /shop and /adminshop
   alias:
-    ecs-shop: true
-    ecsadmin-adminshop: true
+    ecs-shop: false
+    ecsadmin-adminshop: false
 permissions:
   # If set to true, players require the permission "ecs.shops.limit.X" where X is the maximum amount of shops a player can create.
   create-shops: false
