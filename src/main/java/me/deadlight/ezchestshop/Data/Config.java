@@ -3,13 +3,18 @@ package me.deadlight.ezchestshop.Data;
 import me.deadlight.ezchestshop.EzChestShop;
 import org.bukkit.configuration.file.FileConfiguration;
 
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class Config {
 
     public static String currency;
 
     public static boolean showholo;
-    public static String firstLine;
-    public static String secondLine;
+    public static List<String> holostructure;
+    public static List<String> holostructure_admin;
     public static int holodelay;
     public static boolean holodistancing;
     public static double holodistancing_distance;
@@ -34,8 +39,10 @@ public class Config {
         currency = config.getString("economy.server-currency");
 
         showholo = config.getBoolean("shops.hologram.show-holograms");
-        firstLine = config.getString("shops.hologram.hologram-first-line");
-        secondLine = config.getString("shops.hologram.hologram-second-line").replace("%currency%", Config.currency);
+        holostructure = config.getStringList("shops.hologram.holo-structure");
+        Collections.reverse(holostructure);
+        holostructure_admin = config.getStringList("shops.hologram.holo-structure-adminshop");
+        Collections.reverse(holostructure_admin);
         holodelay = config.getInt("shops.hologram.hologram-disappearance-delay");
         holodistancing = config.getBoolean("shops.hologram.distance.toggled");
         holodistancing_distance = config.getDouble("shops.hologram.distance.range");

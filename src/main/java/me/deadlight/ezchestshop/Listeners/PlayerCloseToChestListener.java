@@ -4,12 +4,9 @@ import me.deadlight.ezchestshop.Data.Config;
 import me.deadlight.ezchestshop.Data.ShopContainer;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.Utils.ASHologram;
-import me.deadlight.ezchestshop.Utils.Objects.ASHologramObject;
 import me.deadlight.ezchestshop.Utils.FloatingItem;
 import me.deadlight.ezchestshop.Utils.Utils;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
+import org.bukkit.*;
 import org.bukkit.block.*;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -23,14 +20,17 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+import oshi.util.tuples.Pair;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 public class PlayerCloseToChestListener implements Listener {
 
-    public static HashMap<Player, List<ASHologramObject>> map = new HashMap<>();
+    public static HashMap<Player, List<Pair<Location, ASHologram>>> HoloTextMap = new HashMap<>();
+    public static HashMap<Player, List<Pair<Location, FloatingItem>>> HoloItemMap = new HashMap<>();
 
     private static HashMap<Location, List<Player>> playershopmap = new HashMap<>();
 
@@ -71,9 +71,17 @@ public class PlayerCloseToChestListener implements Listener {
                                     PersistentDataType.DOUBLE);
                             double sell = container.get(new NamespacedKey(EzChestShop.getPlugin(), "sell"),
                                     PersistentDataType.DOUBLE);
+                            boolean is_adminshop = container.get(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"),
+                                    PersistentDataType.INTEGER) == 1;
+
+                            OfflinePlayer offlinePlayerOwner = Bukkit.getOfflinePlayer(UUID.fromString(container.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING)));
+                            String shopOwner = offlinePlayerOwner.getName();
+                            if (shopOwner == null) {
+                                shopOwner = ChatColor.RED + "Error";
+                            }
 
 
-                            showHologram(holoLoc, sloc, thatItem, buy, sell, event.getPlayer());
+                            showHologram(holoLoc, sloc, thatItem, buy, sell, event.getPlayer(), is_adminshop, shopOwner);
                             //mark the shop as visible
                             List<Player> players = playershopmap.get(sloc);
                             if (players == null)
@@ -118,58 +126,76 @@ public class PlayerCloseToChestListener implements Listener {
     }
 
     private void showHologram(Location spawnLocation, Location shopLocation, ItemStack thatItem, double buy,
-                              double sell, Player player) {
+                              double sell, Player player, boolean is_adminshop, String shop_owner) {
 
-        Location secondLineLocation = spawnLocation.clone().add(0, 1.3, 0).subtract(0, 1, 0);
-
-        Location thirdLocation = secondLineLocation.clone().subtract(0, 0.4, 0);
-
-        Location floatingItemLocation = thirdLocation.clone().add(0, 1, 0);
-
+        List<Pair<Location, ASHologram>> holoTextList = HoloTextMap.containsKey(player) ? HoloTextMap.get(player) : new ArrayList<>();
+        List<Pair<Location, FloatingItem>> holoItemList = HoloItemMap.containsKey(player) ? HoloItemMap.get(player) : new ArrayList<>();
+        Location lineLocation = spawnLocation.clone().subtract(0, 0.1, 0);
         String itemname = "Error";
-
-
-        //using ASHologram class
         itemname = Utils.getFinalItemName(thatItem);
-        String finalfirstline = Utils.color(Config.firstLine.replace("%item%", itemname).replace("%buy%", String.valueOf(buy)).replace("%sell%", String.valueOf(sell)));
-
-        ASHologram hologram = new ASHologram(player, finalfirstline, EntityType.ARMOR_STAND, secondLineLocation, false);
-        hologram.spawn();
-        Utils.onlinePackets.add(hologram);
-
-        ASHologram hologram2 = new ASHologram(player, Utils.color(Config.secondLine.replace("%buy%", String.valueOf(buy)).replace("%sell%", String.valueOf(sell)).replace("%item%", itemname)), EntityType.ARMOR_STAND, thirdLocation, false);
-        hologram2.spawn();
-        Utils.onlinePackets.add(hologram2);
-
-        FloatingItem floatingItem = new FloatingItem(player, thatItem, floatingItemLocation);
-        Utils.onlinePackets.add(floatingItem);
+        for (String element : is_adminshop ? Config.holostructure_admin : Config.holostructure) {
+            if (element.equalsIgnoreCase("[Item]")) {
+                lineLocation.add(0, 0.15, 0);
+                FloatingItem floatingItem = new FloatingItem(player, thatItem, lineLocation);
+                Utils.onlinePackets.add(floatingItem);
+                holoItemList.add(new Pair<>(shopLocation, floatingItem));
+                lineLocation.add(0, 0.35, 0);
+            } else {
+                String line = Utils.color(element.replace("%item%", itemname).replace("%buy%", String.valueOf(buy)).
+                        replace("%sell%", String.valueOf(sell)).replace("%currency%", Config.currency).replace("%owner%", shop_owner));
+                ASHologram hologram = new ASHologram(player, line, EntityType.ARMOR_STAND, lineLocation, false);
+                hologram.spawn();
+                Utils.onlinePackets.add(hologram);
+                holoTextList.add(new Pair<>(shopLocation, hologram));
+                lineLocation.add(0, 0.3, 0);
+            }
+        }
         //FakeAdvancement outOfStock = new FakeAdvancement(player, thatItem);
 
         //Save the Hologram Data so it can be removed later
-        List<ASHologramObject> holoList = map.containsKey(player) ? map.get(player) : new ArrayList<>();
-        holoList.add(new ASHologramObject(hologram, hologram2, floatingItem, shopLocation));
-        map.put(player, holoList);
+        HoloTextMap.put(player, holoTextList);
+        HoloItemMap.put(player, holoItemList);
 
     }
 
     public static void hideHologram(Player p, Location loc) {
-        if (map.containsKey(p) && map.get(p).size() > 0) {
-            map.get(p).stream().filter(holo -> loc.equals(holo.getLocation()))
-                    .findFirst().ifPresent(holo -> {
-                holo.getHologram().destroy();
-                Utils.onlinePackets.remove(holo.getHologram());
-                holo.getHologram2().destroy();
-                Utils.onlinePackets.remove(holo.getHologram2());
-                holo.getFloatingItem().destroy();
-                Utils.onlinePackets.remove(holo.getFloatingItem());
+        if (HoloTextMap.containsKey(p) && HoloTextMap.get(p).size() > 0) {
+            new ArrayList<>(HoloTextMap.get(p)).stream().filter(holo -> loc.equals(holo.getA()))
+                    .forEach(holo -> {
+                holo.getB().destroy();
+                Utils.onlinePackets.remove(holo.getB());
 
                 List<Player> players = playershopmap.get(loc);
-                players.remove(p);
-                if (players.isEmpty())
+                if (players != null) {
+                    players.remove(p);
+                    if (players.isEmpty())
+                        playershopmap.remove(loc);
+                } else {
                     playershopmap.remove(loc);
-                List<ASHologramObject> holoList = map.get(p);
+                }
+
+                List<Pair<Location, ASHologram>> holoList = HoloTextMap.get(p);
                 holoList.remove(holo);
-                map.put(p, holoList);
+                HoloTextMap.put(p, holoList);
+            });
+        }
+        if (HoloItemMap.containsKey(p) && HoloItemMap.get(p).size() > 0) {
+            new ArrayList<>(HoloItemMap.get(p)).stream().filter(holo -> loc.equals(holo.getA()))
+                    .forEach(holo -> {
+                holo.getB().destroy();
+                Utils.onlinePackets.remove(holo.getB());
+
+                List<Player> players = playershopmap.get(loc);
+                if (players != null) {
+                    players.remove(p);
+                    if (players.isEmpty())
+                        playershopmap.remove(loc);
+                } else {
+                    playershopmap.remove(loc);
+                }
+                List<Pair<Location, FloatingItem>> holoList = HoloItemMap.get(p);
+                holoList.remove(holo);
+                HoloItemMap.put(p, holoList);
             });
         }
     }
