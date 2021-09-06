@@ -333,14 +333,6 @@ public class MainCommands implements CommandExecutor, TabCompleter {
     private void removeShop(Player player, String[] args) {
         BlockState blockState = getLookedAtBlockStateIfOwner(player, true, true);
         if (blockState != null) {
-            //slimefun check
-            if (EzChestShop.slimefun) {
-                boolean sfresult = BlockStorage.hasBlockInfo(blockState.getLocation());
-                if (sfresult) {
-                    player.sendMessage(lm.slimeFunBlockNotSupported());
-                    return;
-                }
-            }
             //is the owner remove it
             PersistentDataContainer container = ((TileState) blockState).getPersistentDataContainer();
             container.remove(new NamespacedKey(EzChestShop.getPlugin(), "owner"));
@@ -364,7 +356,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                 //logs [list of infos seperated by @ in string form]
                 //trans [list of infos seperated by @ in string form]
                 //adminshop 0/1
-            }catch (Exception ex) {
+            } catch (Exception ex) {
                 //nothing really worrying...
             }
 
@@ -373,20 +365,16 @@ public class MainCommands implements CommandExecutor, TabCompleter {
 
             blockState.update();
             player.sendMessage(lm.chestShopRemoved());
+        } else {
+            player.sendMessage(lm.lookAtChest());
         }
     }
+
 
     private void changeSettings(Player player, String args[]) {
         if (args.length == 1) {
             BlockState blockState = getLookedAtBlockStateIfOwner(player, true, false);
-            //slimefun check
-            if (EzChestShop.slimefun) {
-                boolean sfresult = BlockStorage.hasBlockInfo(blockState.getLocation());
-                if (sfresult) {
-                    player.sendMessage(lm.slimeFunBlockNotSupported());
-                    return;
-                }
-            }
+
             if (blockState != null) {
                 SettingsGUI settingsGUI = new SettingsGUI();
                 settingsGUI.showGUI(player, blockState.getBlock(), false);
@@ -716,7 +704,13 @@ public class MainCommands implements CommandExecutor, TabCompleter {
         Block block = player.getTargetBlockExact(6);
         if (block != null && block.getType() != Material.AIR) {
             BlockState blockState = block.getState();
-
+            if (EzChestShop.slimefun) {
+                boolean sfresult = BlockStorage.hasBlockInfo(blockState.getBlock().getLocation());
+                if (sfresult) {
+                    player.sendMessage(lm.slimeFunBlockNotSupported());
+                    return null;
+                }
+            }
             if (blockState instanceof TileState) {
 
                 if (Utils.isApplicableContainer(block)) {
