@@ -27,7 +27,7 @@ public class PlayerLookingAtChestShop implements Listener {
     private HashMap<Player, Block> map = new HashMap<>();
 
 
-    private HashMap<Location, String> playershopmap = new HashMap<>();
+    private static HashMap<Location, List<Player>> playershopmap = new HashMap<>();
 
     @EventHandler
     public void onLook(PlayerMoveEvent event) {
@@ -45,7 +45,8 @@ public class PlayerLookingAtChestShop implements Listener {
                     Chest leftchest = (Chest) doubleChest.getLeftSide();
                     Chest rightchest = (Chest) doubleChest.getRightSide();
 
-                    if (leftchest.getPersistentDataContainer().has(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING) || rightchest.getPersistentDataContainer().has(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING)) {
+                    if (leftchest.getPersistentDataContainer().has(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING)
+                            || rightchest.getPersistentDataContainer().has(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING)) {
 
                         PersistentDataContainer rightone = null;
 
@@ -70,7 +71,7 @@ public class PlayerLookingAtChestShop implements Listener {
                         Location holoLoc = leftchest.getLocation().add(0.5D, 0, 0.5D).add(rightchest.getLocation().add(0.5D, 0, 0.5D)).multiply(0.5).add(0, 1, 0);
 
                         if (!isAlreadyLooking(event.getPlayer(), target) && Config.showholo && !isAlreadyPresenting(holoLoc, event.getPlayer().getName())) {
-                            showHologram(holoLoc,thatItem, buy, sell, event.getPlayer(), is_adminshop, shopOwner);
+                            showHologram(holoLoc, target.getLocation().clone(), thatItem, buy, sell, event.getPlayer(), is_adminshop, shopOwner);
                         }
 
                     }
@@ -96,7 +97,7 @@ public class PlayerLookingAtChestShop implements Listener {
                         Location holoLoc = target.getLocation().clone().add(0.5, 1, 0.5);
 
                         if (!isAlreadyLooking(event.getPlayer(), target) && Config.showholo && !isAlreadyPresenting(holoLoc, event.getPlayer().getName())) {
-                            showHologram(holoLoc,thatItem, buy, sell, event.getPlayer(), is_adminshop, shopOwner);
+                            showHologram(holoLoc, target.getLocation().clone(), thatItem, buy, sell, event.getPlayer(), is_adminshop, shopOwner);
                         }
 
                     }
@@ -111,7 +112,7 @@ public class PlayerLookingAtChestShop implements Listener {
 
 
 
-    private void showHologram(Location spawnLocation, ItemStack thatItem, double buy, double sell, Player player, boolean is_adminshop, String shop_owner) {
+    private void showHologram(Location spawnLocation, Location shopLocation, ItemStack thatItem, double buy, double sell, Player player, boolean is_adminshop, String shop_owner) {
 
         List<ASHologram> holoTextList = new ArrayList<>();
         List<FloatingItem> holoItemList = new ArrayList<>();
@@ -138,7 +139,11 @@ public class PlayerLookingAtChestShop implements Listener {
             }
         }
 
-        playershopmap.put(spawnLocation, player.getName());
+        List<Player> players = playershopmap.get(shopLocation);
+        if (players == null)
+            players = new ArrayList<>();
+        players.add(player);
+        playershopmap.put(shopLocation, players);
 
 
 
@@ -181,7 +186,7 @@ public class PlayerLookingAtChestShop implements Listener {
 
         if (playershopmap.containsKey(location)) {
 
-            if (playershopmap.get(location).equalsIgnoreCase(playername)) {
+            if (playershopmap.get(location).contains(playername)) {
                 return true;
             } else {
                 return false;

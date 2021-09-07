@@ -8,6 +8,7 @@ import me.deadlight.ezchestshop.Utils.FloatingItem;
 import me.deadlight.ezchestshop.Utils.Utils;
 import org.bukkit.*;
 import org.bukkit.block.*;
+import org.bukkit.craftbukkit.libs.org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -20,7 +21,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
-import oshi.util.tuples.Pair;
+import org.bukkit.util.RayTraceResult;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,74 +34,126 @@ public class PlayerCloseToChestListener implements Listener {
     public static HashMap<Player, List<Pair<Location, FloatingItem>>> HoloItemMap = new HashMap<>();
 
     private static HashMap<Location, List<Player>> playershopmap = new HashMap<>();
+    private static HashMap<Location, List<Player>> playershopTextmap = new HashMap<>();
 
     @EventHandler
     public void onMove(PlayerMoveEvent event) {
-        Player player = event.getPlayer();
-        Location loc = player.getLocation();
-        if (!hasMovedXYZ(event))
-            return;
-        ShopContainer.getShops().stream()
-                .filter(sloc -> sloc != null && loc.getWorld().equals(sloc.getWorld()) && loc.distance(sloc) < Config.holodistancing_distance + 5)
-                .forEach(sloc -> {
-                    double dist = loc.distance(sloc);
-            //Show the Hologram if Player close enough
-            if (dist < Config.holodistancing_distance) {
-                if (isAlreadyPresenting(sloc, player))
-                    return; //forEach -> acts as continue;
+        if (Config.showholo) {
+            Player player = event.getPlayer();
+            if (Config.holodistancing_show_item_first) {
+                RayTraceResult result =player.rayTraceBlocks(5);
+                if (result != null) {
+                    Block target = result.getHitBlock();
+                    Location loc = target.getLocation();
+                    if (Utils.isApplicableContainer(target)) {
+                        if (!isAlreadyPresentingText(loc, player)) {
+                            if (ShopContainer.isShop(loc)) {
+                                Inventory inventory = Utils.getBlockInventory(target);
+                                Location holoLoc;
+                                if (inventory instanceof DoubleChestInventory) {
+                                    DoubleChest doubleChest = (DoubleChest) inventory.getHolder();
+                                    Chest leftchest = (Chest) doubleChest.getLeftSide();
+                                    Chest rightchest = (Chest) doubleChest.getRightSide();
+                                    holoLoc = leftchest.getLocation().add(0.5D, 0, 0.5D).add(rightchest.getLocation().add(0.5D, 0, 0.5D)).multiply(0.5).add(0, 1, 0);
+                                } else {
+                                    holoLoc = target.getLocation().clone().add(0.5, 1, 0.5);
+                                }
 
-                    Block target = sloc.getWorld().getBlockAt(sloc);
-                    if (target != null) {
-                        if (Utils.isApplicableContainer(target)) {
-                            Inventory inventory = Utils.getBlockInventory(target);
-                            Location holoLoc;
-                            if (inventory instanceof DoubleChestInventory) {
-                                DoubleChest doubleChest = (DoubleChest) inventory.getHolder();
-                                Chest leftchest = (Chest) doubleChest.getLeftSide();
-                                Chest rightchest = (Chest) doubleChest.getRightSide();
-                                holoLoc = leftchest.getLocation().add(0.5D, 0, 0.5D).add(rightchest.getLocation().add(0.5D, 0, 0.5D)).multiply(0.5).add(0, 1, 0);
+                                PersistentDataContainer container = ((TileState) target.getState()).getPersistentDataContainer();
+                                ItemStack thatItem = Utils.getItem(container.get(new NamespacedKey(EzChestShop.getPlugin(),
+                                        "item"), PersistentDataType.STRING));
+
+                                double buy = container.get(new NamespacedKey(EzChestShop.getPlugin(), "buy"),
+                                        PersistentDataType.DOUBLE);
+                                double sell = container.get(new NamespacedKey(EzChestShop.getPlugin(), "sell"),
+                                        PersistentDataType.DOUBLE);
+                                boolean is_adminshop = container.get(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"),
+                                        PersistentDataType.INTEGER) == 1;
+
+                                OfflinePlayer offlinePlayerOwner = Bukkit.getOfflinePlayer(UUID.fromString(container.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING)));
+                                String shopOwner = offlinePlayerOwner.getName();
+                                if (shopOwner == null) {
+                                    shopOwner = ChatColor.RED + "Error";
+                                }
+
+                                //showHologramText(holoLoc, loc, thatItem, buy, sell, player, is_adminshop, shopOwner);
+                                showHologramTextOnHover(holoLoc, loc, thatItem, buy, sell, player, is_adminshop, shopOwner);
                             } else {
-                                holoLoc = target.getLocation().clone().add(0.5, 1, 0.5);
+                                hideHologramText(player);
                             }
+                        }
+                    } else {
+                        hideHologramText(player);
+                    }
+                } else {
+                    hideHologramText(player);
+                }
+            }
 
-                            PersistentDataContainer container = ((TileState)target.getState()).getPersistentDataContainer();
-                            ItemStack thatItem = Utils.getItem(container.get(new NamespacedKey(EzChestShop.getPlugin(),
-                                    "item"), PersistentDataType.STRING));
+            if (!hasMovedXYZ(event))
+                return;
 
-                            double buy = container.get(new NamespacedKey(EzChestShop.getPlugin(), "buy"),
-                                    PersistentDataType.DOUBLE);
-                            double sell = container.get(new NamespacedKey(EzChestShop.getPlugin(), "sell"),
-                                    PersistentDataType.DOUBLE);
-                            boolean is_adminshop = container.get(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"),
-                                    PersistentDataType.INTEGER) == 1;
+            Location loc = player.getLocation();
+            ShopContainer.getShops().stream()
+                    .filter(sloc -> sloc != null && loc.getWorld().equals(sloc.getWorld()) && loc.distance(sloc) < Config.holodistancing_distance + 5)
+                    .forEach(sloc -> {
+                        double dist = loc.distance(sloc);
+                        //Show the Hologram if Player close enough
+                        if (dist < Config.holodistancing_distance) {
+                            if (isAlreadyPresenting(sloc, player))
+                                return; //forEach -> acts as continue;
 
-                            OfflinePlayer offlinePlayerOwner = Bukkit.getOfflinePlayer(UUID.fromString(container.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING)));
-                            String shopOwner = offlinePlayerOwner.getName();
-                            if (shopOwner == null) {
-                                shopOwner = ChatColor.RED + "Error";
+                            Block target = sloc.getWorld().getBlockAt(sloc);
+                            if (target != null) {
+                                if (Utils.isApplicableContainer(target)) {
+                                    Inventory inventory = Utils.getBlockInventory(target);
+                                    Location holoLoc;
+                                    if (inventory instanceof DoubleChestInventory) {
+                                        DoubleChest doubleChest = (DoubleChest) inventory.getHolder();
+                                        Chest leftchest = (Chest) doubleChest.getLeftSide();
+                                        Chest rightchest = (Chest) doubleChest.getRightSide();
+                                        holoLoc = leftchest.getLocation().add(0.5D, 0, 0.5D).add(rightchest.getLocation().add(0.5D, 0, 0.5D)).multiply(0.5).add(0, 1, 0);
+                                    } else {
+                                        holoLoc = target.getLocation().clone().add(0.5, 1, 0.5);
+                                    }
+
+                                    PersistentDataContainer container = ((TileState)target.getState()).getPersistentDataContainer();
+                                    ItemStack thatItem = Utils.getItem(container.get(new NamespacedKey(EzChestShop.getPlugin(),
+                                            "item"), PersistentDataType.STRING));
+
+                                    double buy = container.get(new NamespacedKey(EzChestShop.getPlugin(), "buy"),
+                                            PersistentDataType.DOUBLE);
+                                    double sell = container.get(new NamespacedKey(EzChestShop.getPlugin(), "sell"),
+                                            PersistentDataType.DOUBLE);
+                                    boolean is_adminshop = container.get(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"),
+                                            PersistentDataType.INTEGER) == 1;
+
+                                    OfflinePlayer offlinePlayerOwner = Bukkit.getOfflinePlayer(UUID.fromString(container.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING)));
+                                    String shopOwner = offlinePlayerOwner.getName();
+                                    if (shopOwner == null) {
+                                        shopOwner = ChatColor.RED + "Error";
+                                    }
+
+
+                                    showHologram(holoLoc, sloc, thatItem, buy, sell, event.getPlayer(), is_adminshop, shopOwner);
+                                    //mark the shop as visible
+                                    List<Player> players = playershopmap.get(sloc);
+                                    if (players == null)
+                                        players = new ArrayList<>();
+                                    players.add(player);
+                                    playershopmap.put(sloc, players);
+
+                                }
                             }
-
-
-                            showHologram(holoLoc, sloc, thatItem, buy, sell, event.getPlayer(), is_adminshop, shopOwner);
-                            //mark the shop as visible
-                            List<Player> players = playershopmap.get(sloc);
-                            if (players == null)
-                                players = new ArrayList<>();
-                            players.add(player);
-                            playershopmap.put(sloc, players);
 
                         }
-                    }
-
-            }
-            //Hide the Hologram that is too far away from the player
-            else if (dist > Config.holodistancing_distance + 1 && dist < Config.holodistancing_distance + 3){
-                //Hide the Hologram - requires spawn Position of the Hologram and Position of the Shop
-                hideHologram(player, sloc);
-            }
-        });
-
-
+                        //Hide the Hologram that is too far away from the player
+                        else if (dist > Config.holodistancing_distance + 1 && dist < Config.holodistancing_distance + 3){
+                            //Hide the Hologram - requires spawn Position of the Hologram and Position of the Shop
+                            hideHologram(player, sloc);
+                        }
+                    });
+        }
     }
 
     @EventHandler
@@ -128,7 +181,78 @@ public class PlayerCloseToChestListener implements Listener {
     private void showHologram(Location spawnLocation, Location shopLocation, ItemStack thatItem, double buy,
                               double sell, Player player, boolean is_adminshop, String shop_owner) {
 
+        showHologramItem(spawnLocation, shopLocation, thatItem, player, is_adminshop);
+        if (!Config.holodistancing_show_item_first)
+            showHologramText(spawnLocation, shopLocation, thatItem, buy, sell, player, is_adminshop, shop_owner);
+
+    }
+
+    private void showHologramText(Location spawnLocation, Location shopLocation, ItemStack thatItem, double buy,
+                                  double sell, Player player, boolean is_adminshop, String shop_owner) {
         List<Pair<Location, ASHologram>> holoTextList = HoloTextMap.containsKey(player) ? HoloTextMap.get(player) : new ArrayList<>();
+        Location lineLocation = spawnLocation.clone().subtract(0, 0.1, 0);
+        String itemname = "Error";
+        itemname = Utils.getFinalItemName(thatItem);
+        for (String element : is_adminshop ? Config.holostructure_admin : Config.holostructure) {
+            if (element.equalsIgnoreCase("[Item]")) {
+                lineLocation.add(0, 0.15, 0);
+                lineLocation.add(0, 0.35, 0);
+            } else {
+                String line = Utils.color(element.replace("%item%", itemname).replace("%buy%", String.valueOf(buy)).
+                        replace("%sell%", String.valueOf(sell)).replace("%currency%", Config.currency).replace("%owner%", shop_owner));
+                ASHologram hologram = new ASHologram(player, line, EntityType.ARMOR_STAND, lineLocation, false);
+                hologram.spawn();
+                Utils.onlinePackets.add(hologram);
+                holoTextList.add(Pair.of(shopLocation, hologram));
+                lineLocation.add(0, 0.3, 0);
+            }
+        }
+        //FakeAdvancement outOfStock = new FakeAdvancement(player, thatItem);
+
+        //Save the Hologram Data so it can be removed later
+        HoloTextMap.put(player, holoTextList);
+    }
+
+    private void showHologramTextOnHover(Location spawnLocation, Location shopLocation, ItemStack thatItem, double buy, double sell, Player player, boolean is_adminshop, String shop_owner) {
+
+        List<Pair<Location, ASHologram>> holoTextList = HoloTextMap.containsKey(player) ? HoloTextMap.get(player) : new ArrayList<>();
+
+        if (!holoTextList.isEmpty()) {
+            hideHologramText(player);
+            holoTextList = new ArrayList<>();
+        }
+
+        Location lineLocation = spawnLocation.clone().subtract(0, 0.1, 0);
+        String itemname = "Error";
+        itemname = Utils.getFinalItemName(thatItem);
+        for (String element : is_adminshop ? Config.holostructure_admin : Config.holostructure) {
+            if (element.equalsIgnoreCase("[Item]")) {
+                lineLocation.add(0, 0.15, 0);
+                lineLocation.add(0, 0.35, 0);
+            } else {
+                String line = Utils.color(element.replace("%item%", itemname).replace("%buy%", String.valueOf(buy)).
+                        replace("%sell%", String.valueOf(sell)).replace("%currency%", Config.currency).replace("%owner%", shop_owner));
+                ASHologram hologram = new ASHologram(player, line, EntityType.ARMOR_STAND, lineLocation, false);
+                hologram.spawn();
+                Utils.onlinePackets.add(hologram);
+                holoTextList.add(Pair.of(shopLocation, hologram));
+                lineLocation.add(0, 0.3, 0);
+            }
+        }
+
+        List<Player> players = playershopTextmap.get(shopLocation);
+        if (players == null)
+            players = new ArrayList<>();
+        players.add(player);
+        playershopTextmap.put(shopLocation, players);
+
+
+        //Save the Hologram Data so it can be removed later
+        HoloTextMap.put(player, holoTextList);
+
+    }
+
+    private void showHologramItem(Location spawnLocation, Location shopLocation, ItemStack thatItem, Player player, boolean is_adminshop) {
         List<Pair<Location, FloatingItem>> holoItemList = HoloItemMap.containsKey(player) ? HoloItemMap.get(player) : new ArrayList<>();
         Location lineLocation = spawnLocation.clone().subtract(0, 0.1, 0);
         String itemname = "Error";
@@ -138,38 +262,35 @@ public class PlayerCloseToChestListener implements Listener {
                 lineLocation.add(0, 0.15, 0);
                 FloatingItem floatingItem = new FloatingItem(player, thatItem, lineLocation);
                 Utils.onlinePackets.add(floatingItem);
-                holoItemList.add(new Pair<>(shopLocation, floatingItem));
+                holoItemList.add(Pair.of(shopLocation, floatingItem));
                 lineLocation.add(0, 0.35, 0);
             } else {
-                String line = Utils.color(element.replace("%item%", itemname).replace("%buy%", String.valueOf(buy)).
-                        replace("%sell%", String.valueOf(sell)).replace("%currency%", Config.currency).replace("%owner%", shop_owner));
-                ASHologram hologram = new ASHologram(player, line, EntityType.ARMOR_STAND, lineLocation, false);
-                hologram.spawn();
-                Utils.onlinePackets.add(hologram);
-                holoTextList.add(new Pair<>(shopLocation, hologram));
                 lineLocation.add(0, 0.3, 0);
             }
         }
         //FakeAdvancement outOfStock = new FakeAdvancement(player, thatItem);
 
         //Save the Hologram Data so it can be removed later
-        HoloTextMap.put(player, holoTextList);
         HoloItemMap.put(player, holoItemList);
-
     }
+
+
 
     public static void hideHologram(Player p, Location loc) {
         if (HoloTextMap.containsKey(p) && HoloTextMap.get(p).size() > 0) {
-            new ArrayList<>(HoloTextMap.get(p)).stream().filter(holo -> loc.equals(holo.getA()))
+            new ArrayList<>(HoloTextMap.get(p)).stream().filter(holo -> loc.equals(holo.getLeft()))
                     .forEach(holo -> {
-                holo.getB().destroy();
-                Utils.onlinePackets.remove(holo.getB());
+                holo.getValue().destroy();
+                Utils.onlinePackets.remove(holo.getValue());
 
                 List<Player> players = playershopmap.get(loc);
                 if (players != null) {
                     players.remove(p);
-                    if (players.isEmpty())
+                    if (players.isEmpty()) {
                         playershopmap.remove(loc);
+                    } else {
+                        playershopmap.put(loc, players);
+                    }
                 } else {
                     playershopmap.remove(loc);
                 }
@@ -180,16 +301,19 @@ public class PlayerCloseToChestListener implements Listener {
             });
         }
         if (HoloItemMap.containsKey(p) && HoloItemMap.get(p).size() > 0) {
-            new ArrayList<>(HoloItemMap.get(p)).stream().filter(holo -> loc.equals(holo.getA()))
+            new ArrayList<>(HoloItemMap.get(p)).stream().filter(holo -> loc.equals(holo.getKey()))
                     .forEach(holo -> {
-                holo.getB().destroy();
-                Utils.onlinePackets.remove(holo.getB());
+                holo.getValue().destroy();
+                Utils.onlinePackets.remove(holo.getValue());
 
                 List<Player> players = playershopmap.get(loc);
                 if (players != null) {
                     players.remove(p);
-                    if (players.isEmpty())
+                    if (players.isEmpty()) {
                         playershopmap.remove(loc);
+                    } else {
+                        playershopmap.put(loc, players);
+                    }
                 } else {
                     playershopmap.remove(loc);
                 }
@@ -200,11 +324,51 @@ public class PlayerCloseToChestListener implements Listener {
         }
     }
 
+    private void hideHologramText(Player player) {
+        if (HoloTextMap.containsKey(player) && HoloTextMap.get(player).size() > 0) {
+            new ArrayList<>(HoloTextMap.get(player)).stream()
+                    .forEach(holo -> {
+                        holo.getValue().destroy();
+                        Utils.onlinePackets.remove(holo.getValue());
+                        Location loc = holo.getKey();
+                        List<Player> players = playershopTextmap.get(loc);
+                        if (players != null) {
+                            players.remove(player);
+                            if (players.isEmpty()) {
+                                playershopTextmap.remove(loc);
+                            } else {
+                                playershopTextmap.put(loc, players);
+                            }
+                        } else {
+                            playershopTextmap.remove(loc);
+                        }
+                    });
+            HoloTextMap.clear();
+
+        }
+    }
+
     private boolean isAlreadyPresenting(Location location, Player player) {
 
         if (playershopmap.containsKey(location)) {
 
             if (playershopmap.get(location).contains(player)) {
+                return true;
+            } else {
+                return false;
+            }
+
+        } else {
+            return false;
+        }
+
+    }
+
+    private boolean isAlreadyPresentingText(Location location, Player player) {
+
+        if (playershopTextmap.containsKey(location)) {
+
+            if (playershopTextmap.get(location).contains(player)) {
                 return true;
             } else {
                 return false;

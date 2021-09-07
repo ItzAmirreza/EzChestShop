@@ -18,6 +18,8 @@ public class Config {
     public static int holodelay;
     public static boolean holodistancing;
     public static double holodistancing_distance;
+    public static boolean holodistancing_show_item_first;
+
 
     public static boolean container_chests;
     public static boolean container_trapped_chests;
@@ -46,6 +48,7 @@ public class Config {
         holodelay = config.getInt("shops.hologram.hologram-disappearance-delay");
         holodistancing = config.getBoolean("shops.hologram.distance.toggled");
         holodistancing_distance = config.getDouble("shops.hologram.distance.range");
+        holodistancing_show_item_first = config.getBoolean("shops.hologram.distance.show-items-first");
 
         container_chests = config.getBoolean("shops.container.chests");
         container_trapped_chests = config.getBoolean("shops.container.trapped-chests");

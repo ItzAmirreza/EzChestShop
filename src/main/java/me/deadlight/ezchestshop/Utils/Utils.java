@@ -223,6 +223,7 @@ public class Utils {
 
             fc.set("shops.hologram.holo-structure", holo);
             fc.set("shops.hologram.holo-structure-adminshop", new ArrayList<>(holo));
+            fc.set("shops.hologram.distance.show-items-first", true);
 
             fc.save(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml"));
             Config.loadConfig();
