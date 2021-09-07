@@ -197,8 +197,8 @@ public class Utils {
             fc.set("shops.container.shulkers", true);
 
             //new commands section:
-            fc.set("commands.alias.ecs-shop", true);
-            fc.set("commands.alias.ecsadmin-adminshop", true);
+            fc.set("commands.alias.ecs-shop", false);
+            fc.set("commands.alias.ecsadmin-adminshop", false);
 
             //new permissions section:
             fc.set("permissions.create-shops", false);
