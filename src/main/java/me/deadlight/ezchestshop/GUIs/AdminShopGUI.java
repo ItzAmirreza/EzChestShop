@@ -182,7 +182,10 @@ public class AdminShopGUI {
         ItemStack signItem = new ItemStack(Material.OAK_SIGN, 1);
         ItemMeta signMeta = signItem.getItemMeta();
         signMeta.setDisplayName(lm.customAmountSignTitle());
-        List<String> possibleCounts = Utils.calculatePossibleAmount(Bukkit.getOfflinePlayer(player.getUniqueId()), offlinePlayerOwner, player.getInventory().getStorageContents(), Utils.getBlockInventory(containerBlock).getStorageContents(), buyPrice, sellPrice, mainitem);
+        List<String> possibleCounts = Utils.calculatePossibleAmount(Bukkit.getOfflinePlayer(player.getUniqueId()),
+                offlinePlayerOwner, player.getInventory().getStorageContents(),
+                Utils.getBlockInventory(containerBlock).getStorageContents(),
+                buyPrice, sellPrice, mainitem);
         signMeta.setLore(lm.customAmountSignLore(possibleCounts.get(0), possibleCounts.get(1)));
         signItem.setItemMeta(signMeta);
 
@@ -318,7 +321,8 @@ public class AdminShopGUI {
                     sharedIncomeCheck(((TileState)chest.getState()).getPersistentDataContainer(), price);
                     Utils.getBlockInventory(chest).removeItem(thatItem);
                     player.getInventory().addItem(thatItem);
-                    transactionMessage(((TileState)chest.getState()).getPersistentDataContainer(), owner, Bukkit.getOfflinePlayer(player.getUniqueId()), price, true, Utils.getFinalItemName(tthatItem), count, chest.getLocation().getBlock());
+                    transactionMessage(((TileState)chest.getState()).getPersistentDataContainer(), owner, Bukkit.getOfflinePlayer(player.getUniqueId()),
+                            price, true, Utils.getFinalItemName(tthatItem), count, chest.getLocation().getBlock());
                     player.sendMessage(Utils.color(lm.messageSuccBuy(price)));
                     player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 0.5f, 0.5f);
 
@@ -356,7 +360,8 @@ public class AdminShopGUI {
                     getandgive(owner, price, Bukkit.getOfflinePlayer(player.getUniqueId()));
                     player.getInventory().removeItem(thatItem);
                     Utils.getBlockInventory(chest).addItem(thatItem);
-                    transactionMessage(data, owner, Bukkit.getOfflinePlayer(player.getUniqueId()), price, false, Utils.getFinalItemName(tthatItem), count, chest.getLocation().getBlock());
+                    transactionMessage(data, owner, Bukkit.getOfflinePlayer(player.getUniqueId()), price, false,
+                            Utils.getFinalItemName(tthatItem), count, chest.getLocation().getBlock());
                     player.sendMessage(lm.messageSuccSell(price));
                     player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 0.5f, 0.5f);
 

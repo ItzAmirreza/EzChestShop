@@ -32,6 +32,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class Utils {
 
     public static List<Object> onlinePackets = new ArrayList<>();
+    public static List<String> rotations = Arrays.asList("up", "north", "east", "south", "west", "down");
 
     public static String color(String str) {
         return ChatColor.translateAlternateColorCodes('&', str);
@@ -96,7 +97,7 @@ public class Utils {
      * @return
      */
     public static Inventory getBlockInventory(Block block) {
-        if (block.getType() == Material.CHEST) {
+        if (block.getType() == Material.CHEST || block.getType() == Material.TRAPPED_CHEST) {
             return  ((Chest) block.getState()).getInventory();
         } else if (block.getType() == Material.BARREL) {
             return  ((Barrel) block.getState()).getInventory();
@@ -219,11 +220,13 @@ public class Utils {
             fc.set("shops.hologram.hologram-first-line", null);
             fc.set("shops.hologram.hologram-second-line", null);
 
-            List<String> holo = Arrays.asList("[item]", hologram_first_line, hologram_second_line);
+            List<String> holo = Arrays.asList(hologram_second_line, hologram_first_line, "[item]");
 
             fc.set("shops.hologram.holo-structure", holo);
             fc.set("shops.hologram.holo-structure-adminshop", new ArrayList<>(holo));
             fc.set("shops.hologram.distance.show-items-first", true);
+
+            fc.set("shops.hologram.allow-rotation", true);
 
             fc.save(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml"));
             Config.loadConfig();
@@ -241,6 +244,7 @@ public class Utils {
         boolean update1_3_0 = fc.isString("settingsButton");
         boolean update1_4_0 = fc.isString("copiedShopSettings");
         boolean update1_4_1 = fc.isString("slimeFunBlockNotSupported");
+        boolean update1_4_4 = fc.isString("rotateHologramButtonTitle");
         if (!result) {
             //new values that were added in update 1.2.8
             fc.set("commandmsg-negativeprice", "&cNegative price? but you have to use positive price...");
@@ -340,6 +344,20 @@ public class Utils {
             fc.save(new File(EzChestShop.getPlugin().getDataFolder(), "languages.yml"));
             reloadLanguages();
             EzChestShop.getPlugin().logConsole("&c[&eEzChestShop&c]&r &bNew languages.yml generated... (1.4.1V)");
+        }
+        if (!update1_4_4) {
+            fc.set("rotateHologramButtonTitle", "&eHologram Rotation");
+            fc.set("rotateHologramButtonLore", "&7Rotation: %rotations%\n &aLeft&7/&cRight&7-click to cycle\n &7through all rotations!");
+            fc.set("rotateHologramInChat", "&7Hologram Rotation: %rotation%");
+            fc.set("rotationUp", "&aUp");
+            fc.set("rotationNorth", "&aNorth");
+            fc.set("rotationEast", "&aEast");
+            fc.set("rotationSouth", "&aSouth");
+            fc.set("rotationWest", "&aWest");
+            fc.set("rotationDown", "&aDown");
+            fc.save(new File(EzChestShop.getPlugin().getDataFolder(), "languages.yml"));
+            reloadLanguages();
+            EzChestShop.getPlugin().logConsole("&c[&eEzChestShop&c]&r &bNew languages.yml generated... (1.4.4V)");
         }
     }
 
@@ -741,6 +759,20 @@ public class Utils {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    public static String getNextRotation(String current) {
+        if (current == null) return "north";
+        int i = rotations.indexOf(current);
+        String result = i == rotations.size() - 1 ? rotations.get(0) : rotations.get(i + 1);
+        return result;
+    }
+
+    public static String getPreviousRotation(String current) {
+        if (current == null) return "down";
+        int i = rotations.indexOf(current);
+        String result = i == 0 ? rotations.get(rotations.size() - 1) : rotations.get(i - 1);
+        return result;
     }
 
 

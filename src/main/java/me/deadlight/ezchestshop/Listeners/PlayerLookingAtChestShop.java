@@ -15,6 +15,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.util.Vector;
 import oshi.util.tuples.Pair;
 
 import java.util.ArrayList;
@@ -24,7 +25,7 @@ import java.util.UUID;
 
 public class PlayerLookingAtChestShop implements Listener {
 
-    private HashMap<Player, Block> map = new HashMap<>();
+    private HashMap<Player, Location> map = new HashMap<>();
 
 
     private static HashMap<Location, List<Player>> playershopmap = new HashMap<>();
@@ -51,8 +52,10 @@ public class PlayerLookingAtChestShop implements Listener {
                         PersistentDataContainer rightone = null;
 
                         if (!leftchest.getPersistentDataContainer().isEmpty()) {
+                            target = leftchest.getBlock();
                             rightone = leftchest.getPersistentDataContainer();
                         } else {
+                            target = rightchest.getBlock();
                             rightone = rightchest.getPersistentDataContainer();
                         }
 
@@ -68,12 +71,12 @@ public class PlayerLookingAtChestShop implements Listener {
                             shopOwner = ChatColor.RED + "Error";
                         }
 
-                        Location holoLoc = leftchest.getLocation().add(0.5D, 0, 0.5D).add(rightchest.getLocation().add(0.5D, 0, 0.5D)).multiply(0.5).add(0, 1, 0);
+                        Location holoLoc = getHoloLoc(target);
 
-                        if (!isAlreadyLooking(event.getPlayer(), target) && Config.showholo && !isAlreadyPresenting(holoLoc, event.getPlayer().getName())) {
+                        if (!isAlreadyLooking(event.getPlayer(), target) && Config.showholo && !isAlreadyPresenting(target.getLocation(), event.getPlayer())) {
                             showHologram(holoLoc, target.getLocation().clone(), thatItem, buy, sell, event.getPlayer(), is_adminshop, shopOwner);
                         }
-
+                        map.put(event.getPlayer(), target.getLocation());
                     }
 
                 } else {
@@ -94,19 +97,18 @@ public class PlayerLookingAtChestShop implements Listener {
                         if (shopOwner == null) {
                             shopOwner = ChatColor.RED + "Error";
                         }
-                        Location holoLoc = target.getLocation().clone().add(0.5, 1, 0.5);
+                        Location holoLoc = getHoloLoc(target);
 
-                        if (!isAlreadyLooking(event.getPlayer(), target) && Config.showholo && !isAlreadyPresenting(holoLoc, event.getPlayer().getName())) {
+                        if (!isAlreadyLooking(event.getPlayer(), target) && Config.showholo && !isAlreadyPresenting(target.getLocation(), event.getPlayer())) {
                             showHologram(holoLoc, target.getLocation().clone(), thatItem, buy, sell, event.getPlayer(), is_adminshop, shopOwner);
                         }
 
+                        map.put(event.getPlayer(), target.getLocation());
                     }
-
                 }
 
             }
         }
-        map.put(event.getPlayer(), target);
 
     }
 
@@ -158,7 +160,17 @@ public class PlayerLookingAtChestShop implements Listener {
                     item.destroy();
                     Utils.onlinePackets.remove(item);
                 }
-                playershopmap.remove(spawnLocation);
+                List<Player> players = playershopmap.get(shopLocation);
+                if (players == null || players.isEmpty()) {
+                    playershopmap.remove(shopLocation);
+                } else {
+                    players.remove(player);
+                    if (players.isEmpty()) {
+                        playershopmap.remove(shopLocation);
+                    } else {
+                        playershopmap.put(shopLocation, players);
+                    }
+                }
 
             }
         }, 20 * Config.holodelay);
@@ -170,7 +182,7 @@ public class PlayerLookingAtChestShop implements Listener {
 
     private boolean isAlreadyLooking(Player player, Block block) {
         if (map.get(player) != null) {
-            if (block.getType() == map.get(player).getType()) {
+            if (block.getLocation().equals(map.get(player))) {
 
                 return true;
             } else {
@@ -182,11 +194,11 @@ public class PlayerLookingAtChestShop implements Listener {
         }
     }
 
-    private boolean isAlreadyPresenting(Location location, String playername) {
+    private boolean isAlreadyPresenting(Location location, Player player) {
 
         if (playershopmap.containsKey(location)) {
 
-            if (playershopmap.get(location).contains(playername)) {
+            if (playershopmap.get(location).contains(player)) {
                 return true;
             } else {
                 return false;
@@ -196,6 +208,70 @@ public class PlayerLookingAtChestShop implements Listener {
             return false;
         }
 
+    }
+
+    private Location getHoloLoc(Block containerBlock) {
+        Location holoLoc;
+        Inventory inventory = Utils.getBlockInventory(containerBlock);
+        PersistentDataContainer container = ((TileState) containerBlock.getState()).getPersistentDataContainer();
+        String rotation = container.get(new NamespacedKey(EzChestShop.getPlugin(), "rotation"), PersistentDataType.STRING);
+        rotation = rotation == null ? "up" : rotation;
+        if (Config.holo_rotation) {
+            //Add rotation checks
+            switch (rotation) {
+                case "north":
+                    holoLoc = getCentralLocation(containerBlock, inventory, new Vector(0, 0, -0.8));
+                    break;
+                case "east":
+                    holoLoc = getCentralLocation(containerBlock, inventory, new Vector(0.8, 0, 0));
+                    break;
+                case "south":
+                    holoLoc = getCentralLocation(containerBlock, inventory, new Vector(0, 0, 0.8));
+                    break;
+                case "west":
+                    holoLoc = getCentralLocation(containerBlock, inventory, new Vector(-0.8, 0, 0));
+                    break;
+                case "down":
+                    holoLoc = getCentralLocation(containerBlock, inventory, new Vector(0, -1.5, 0));
+                    break;
+                default:
+                    holoLoc = getCentralLocation(containerBlock, inventory, new Vector(0, 1, 0));
+                    break;
+            }
+        } else {
+            holoLoc = getCentralLocation(containerBlock, inventory, new Vector(0, 1, 0));
+        }
+        return holoLoc;
+    }
+
+    private Location getCentralLocation(Block containerBlock, Inventory inventory, Vector direction) {
+        Location holoLoc;
+        if (inventory instanceof DoubleChestInventory) {
+            DoubleChest doubleChest = (DoubleChest) inventory.getHolder();
+            Chest leftchest = (Chest) doubleChest.getLeftSide();
+            Chest rightchest = (Chest) doubleChest.getRightSide();
+            holoLoc = leftchest.getLocation().clone().add(0.5D, 0, 0.5D).add(rightchest.getLocation().add(0.5D, 0, 0.5D)).multiply(0.5);
+            if (direction.getY() == 0) {
+                Location lloc = leftchest.getLocation().clone().add(0.5D, 0, 0.5D);
+                Location hloc = holoLoc.clone();
+                double angle = (Math.atan2(hloc.getX() - lloc.getX(), hloc.getZ() - lloc.getZ()));
+                angle = (-(angle / Math.PI) * 360.0d) / 2.0d + 180.0d;
+                hloc = hloc.add(direction);
+                double angle2 = (Math.atan2(hloc.getX() - lloc.getX(), hloc.getZ() - lloc.getZ()));
+                angle2 = (-(angle2 / Math.PI) * 360.0d) / 2.0d + 180.0d;
+                if (angle == angle2 || angle == angle2 - 180 || angle == angle2 + 180) {
+                    holoLoc.add(direction.multiply(1.625));
+                } else {
+                    holoLoc.add(direction);
+                }
+            } else {
+                holoLoc.add(direction);
+            }
+
+        } else {
+            holoLoc = containerBlock.getLocation().clone().add(0.5D, 0, 0.5D).add(direction);
+        }
+        return holoLoc;
     }
 
 

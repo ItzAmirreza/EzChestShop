@@ -13,9 +13,10 @@ public class ShopSettings {
     private boolean shareincome;
     private String trans;
     private boolean adminshop;
+    private String rotation;
 
     public ShopSettings(String sloc, boolean msgtoggle, boolean dbuy, boolean dsell, String admins, boolean shareincome,
-                        String trans, boolean adminshop) {
+                        String trans, boolean adminshop, String rotation) {
         this.sloc = sloc;
         this.msgtoggle = msgtoggle;
         this.dbuy = dbuy;
@@ -24,6 +25,7 @@ public class ShopSettings {
         this.shareincome = shareincome;
         this.trans = trans;
         this.adminshop = adminshop;
+        this.rotation = rotation;
     }
 
     private ShopSettings(ShopSettings settings) {
@@ -35,6 +37,7 @@ public class ShopSettings {
         this.shareincome = settings.shareincome;
         this.trans = settings.trans;
         this.adminshop = settings.adminshop;
+        this.rotation = settings.rotation;
     }
 
     public ShopSettings clone() {
@@ -122,6 +125,18 @@ public class ShopSettings {
         Database db = EzChestShop.getPlugin().getDatabase();
         db.setBool("location", sloc,
                 "adminshop", "shopdata", adminshop);
+        return this;
+    }
+
+    public String getRotation() {
+        return rotation == null ? "up" : rotation;
+    }
+
+    public ShopSettings setRotation(String rotation) {
+        this.rotation = rotation;
+        Database db = EzChestShop.getPlugin().getDatabase();
+        db.setString("location", sloc,
+                "rotation", "shopdata", rotation);
         return this;
     }
 }

@@ -22,11 +22,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.RayTraceResult;
+import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+
 
 public class PlayerCloseToChestListener implements Listener {
 
@@ -46,18 +45,24 @@ public class PlayerCloseToChestListener implements Listener {
                     Block target = result.getHitBlock();
                     Location loc = target.getLocation();
                     if (Utils.isApplicableContainer(target)) {
+                        Inventory inventory = Utils.getBlockInventory(target);
+                        if (inventory instanceof DoubleChestInventory) {
+                            DoubleChest doubleChest = (DoubleChest) inventory.getHolder();
+                            Chest leftchest = (Chest) doubleChest.getLeftSide();
+                            Chest rightchest = (Chest) doubleChest.getRightSide();
+
+                            if (leftchest.getPersistentDataContainer().has(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING)) {
+                                target = leftchest.getBlock();
+                                loc = leftchest.getLocation();
+                            }
+                            else if (rightchest.getPersistentDataContainer().has(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING)){
+                                target = rightchest.getBlock();
+                                loc = rightchest.getLocation();
+                            }
+                        }
                         if (!isAlreadyPresentingText(loc, player)) {
                             if (ShopContainer.isShop(loc)) {
-                                Inventory inventory = Utils.getBlockInventory(target);
-                                Location holoLoc;
-                                if (inventory instanceof DoubleChestInventory) {
-                                    DoubleChest doubleChest = (DoubleChest) inventory.getHolder();
-                                    Chest leftchest = (Chest) doubleChest.getLeftSide();
-                                    Chest rightchest = (Chest) doubleChest.getRightSide();
-                                    holoLoc = leftchest.getLocation().add(0.5D, 0, 0.5D).add(rightchest.getLocation().add(0.5D, 0, 0.5D)).multiply(0.5).add(0, 1, 0);
-                                } else {
-                                    holoLoc = target.getLocation().clone().add(0.5, 1, 0.5);
-                                }
+                                Location holoLoc = getHoloLoc(target);
 
                                 PersistentDataContainer container = ((TileState) target.getState()).getPersistentDataContainer();
                                 ItemStack thatItem = Utils.getItem(container.get(new NamespacedKey(EzChestShop.getPlugin(),
@@ -106,16 +111,8 @@ public class PlayerCloseToChestListener implements Listener {
                             Block target = sloc.getWorld().getBlockAt(sloc);
                             if (target != null) {
                                 if (Utils.isApplicableContainer(target)) {
-                                    Inventory inventory = Utils.getBlockInventory(target);
-                                    Location holoLoc;
-                                    if (inventory instanceof DoubleChestInventory) {
-                                        DoubleChest doubleChest = (DoubleChest) inventory.getHolder();
-                                        Chest leftchest = (Chest) doubleChest.getLeftSide();
-                                        Chest rightchest = (Chest) doubleChest.getRightSide();
-                                        holoLoc = leftchest.getLocation().add(0.5D, 0, 0.5D).add(rightchest.getLocation().add(0.5D, 0, 0.5D)).multiply(0.5).add(0, 1, 0);
-                                    } else {
-                                        holoLoc = target.getLocation().clone().add(0.5, 1, 0.5);
-                                    }
+                                    Location holoLoc = getHoloLoc(target);
+
 
                                     PersistentDataContainer container = ((TileState)target.getState()).getPersistentDataContainer();
                                     ItemStack thatItem = Utils.getItem(container.get(new NamespacedKey(EzChestShop.getPlugin(),
@@ -193,7 +190,9 @@ public class PlayerCloseToChestListener implements Listener {
         Location lineLocation = spawnLocation.clone().subtract(0, 0.1, 0);
         String itemname = "Error";
         itemname = Utils.getFinalItemName(thatItem);
-        for (String element : is_adminshop ? Config.holostructure_admin : Config.holostructure) {
+        List<String> structure = new ArrayList<>(is_adminshop ? Config.holostructure_admin : Config.holostructure);
+        if (ShopContainer.getShopSettings(shopLocation).getRotation().equals("down")) Collections.reverse(structure);
+        for (String element : structure) {
             if (element.equalsIgnoreCase("[Item]")) {
                 lineLocation.add(0, 0.15, 0);
                 lineLocation.add(0, 0.35, 0);
@@ -225,7 +224,9 @@ public class PlayerCloseToChestListener implements Listener {
         Location lineLocation = spawnLocation.clone().subtract(0, 0.1, 0);
         String itemname = "Error";
         itemname = Utils.getFinalItemName(thatItem);
-        for (String element : is_adminshop ? Config.holostructure_admin : Config.holostructure) {
+        List<String> structure = new ArrayList<>(is_adminshop ? Config.holostructure_admin : Config.holostructure);
+        if (ShopContainer.getShopSettings(shopLocation).getRotation().equals("down")) Collections.reverse(structure);
+        for (String element : structure) {
             if (element.equalsIgnoreCase("[Item]")) {
                 lineLocation.add(0, 0.15, 0);
                 lineLocation.add(0, 0.35, 0);
@@ -255,9 +256,9 @@ public class PlayerCloseToChestListener implements Listener {
     private void showHologramItem(Location spawnLocation, Location shopLocation, ItemStack thatItem, Player player, boolean is_adminshop) {
         List<Pair<Location, FloatingItem>> holoItemList = HoloItemMap.containsKey(player) ? HoloItemMap.get(player) : new ArrayList<>();
         Location lineLocation = spawnLocation.clone().subtract(0, 0.1, 0);
-        String itemname = "Error";
-        itemname = Utils.getFinalItemName(thatItem);
-        for (String element : is_adminshop ? Config.holostructure_admin : Config.holostructure) {
+        List<String> structure = new ArrayList<>(is_adminshop ? Config.holostructure_admin : Config.holostructure);
+        if (ShopContainer.getShopSettings(shopLocation).getRotation().equals("down")) Collections.reverse(structure);
+        for (String element : structure) {
             if (element.equalsIgnoreCase("[Item]")) {
                 lineLocation.add(0, 0.15, 0);
                 FloatingItem floatingItem = new FloatingItem(player, thatItem, lineLocation);
@@ -275,6 +276,26 @@ public class PlayerCloseToChestListener implements Listener {
     }
 
 
+    public static void hideHologram(Location loc) {
+        if (Config.holodistancing) {
+            Bukkit.getOnlinePlayers().stream().filter(p -> p.getLocation().distance(loc) < Config.holodistancing_distance + 5).forEach(p -> {
+                hideHologram(p, loc);
+                if (Config.holo_rotation) {
+                    List<Player> players = playershopTextmap.get(loc);
+                    if (players != null) {
+                        players.remove(p);
+                        if (players.isEmpty()) {
+                            playershopTextmap.remove(loc);
+                        } else {
+                            playershopTextmap.put(loc, players);
+                        }
+                    } else {
+                        playershopTextmap.remove(loc);
+                    }
+                }
+            });
+        }
+    }
 
     public static void hideHologram(Player p, Location loc) {
         if (HoloTextMap.containsKey(p) && HoloTextMap.get(p).size() > 0) {
@@ -391,5 +412,71 @@ public class PlayerCloseToChestListener implements Listener {
             return true;
         return false;
     }
+
+    private Location getHoloLoc(Block containerBlock) {
+        Location holoLoc;
+        Inventory inventory = Utils.getBlockInventory(containerBlock);
+        PersistentDataContainer container = ((TileState) containerBlock.getState()).getPersistentDataContainer();
+        String rotation = container.get(new NamespacedKey(EzChestShop.getPlugin(), "rotation"), PersistentDataType.STRING);
+        rotation = rotation == null ? "up" : rotation;
+        if (Config.holo_rotation) {
+            //Add rotation checks
+            switch (rotation) {
+                case "north":
+                    holoLoc = getCentralLocation(containerBlock, inventory, new Vector(0, 0, -0.8));
+                    break;
+                case "east":
+                    holoLoc = getCentralLocation(containerBlock, inventory, new Vector(0.8, 0, 0));
+                    break;
+                case "south":
+                    holoLoc = getCentralLocation(containerBlock, inventory, new Vector(0, 0, 0.8));
+                    break;
+                case "west":
+                    holoLoc = getCentralLocation(containerBlock, inventory, new Vector(-0.8, 0, 0));
+                    break;
+                case "down":
+                    holoLoc = getCentralLocation(containerBlock, inventory, new Vector(0, -1.5, 0));
+                    break;
+                default:
+                    holoLoc = getCentralLocation(containerBlock, inventory, new Vector(0, 1, 0));
+                    break;
+            }
+        } else {
+            holoLoc = getCentralLocation(containerBlock, inventory, new Vector(0, 1, 0));
+        }
+        return holoLoc;
+    }
+
+    private Location getCentralLocation(Block containerBlock, Inventory inventory, Vector direction) {
+        Location holoLoc;
+        if (inventory instanceof DoubleChestInventory) {
+            DoubleChest doubleChest = (DoubleChest) inventory.getHolder();
+            Chest leftchest = (Chest) doubleChest.getLeftSide();
+            Chest rightchest = (Chest) doubleChest.getRightSide();
+            holoLoc = leftchest.getLocation().clone().add(0.5D, 0, 0.5D).add(rightchest.getLocation().add(0.5D, 0, 0.5D)).multiply(0.5);
+            if (direction.getY() == 0) {
+                Location lloc = leftchest.getLocation().clone().add(0.5D, 0, 0.5D);
+                Location hloc = holoLoc.clone();
+                double angle = (Math.atan2(hloc.getX() - lloc.getX(), hloc.getZ() - lloc.getZ()));
+                angle = (-(angle / Math.PI) * 360.0d) / 2.0d + 180.0d;
+                hloc = hloc.add(direction);
+                double angle2 = (Math.atan2(hloc.getX() - lloc.getX(), hloc.getZ() - lloc.getZ()));
+                angle2 = (-(angle2 / Math.PI) * 360.0d) / 2.0d + 180.0d;
+                if (angle == angle2 || angle == angle2 - 180 || angle == angle2 + 180) {
+                    holoLoc.add(direction.multiply(1.625));
+                } else {
+                    holoLoc.add(direction);
+                }
+            } else {
+                holoLoc.add(direction);
+            }
+
+        } else {
+            holoLoc = containerBlock.getLocation().clone().add(0.5D, 0, 0.5D).add(direction);
+        }
+        return holoLoc;
+    }
+
+
 
 }

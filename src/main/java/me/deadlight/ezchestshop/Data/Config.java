@@ -16,6 +16,7 @@ public class Config {
     public static List<String> holostructure;
     public static List<String> holostructure_admin;
     public static int holodelay;
+    public static boolean holo_rotation;
     public static boolean holodistancing;
     public static double holodistancing_distance;
     public static boolean holodistancing_show_item_first;
@@ -46,6 +47,7 @@ public class Config {
         holostructure_admin = config.getStringList("shops.hologram.holo-structure-adminshop");
         Collections.reverse(holostructure_admin);
         holodelay = config.getInt("shops.hologram.hologram-disappearance-delay");
+        holo_rotation = config.getBoolean("shops.hologram.allow-rotation");
         holodistancing = config.getBoolean("shops.hologram.distance.toggled");
         holodistancing_distance = config.getDouble("shops.hologram.distance.range");
         holodistancing_show_item_first = config.getBoolean("shops.hologram.distance.show-items-first");

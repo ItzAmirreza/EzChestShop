@@ -684,15 +684,16 @@ public abstract class Database {
     }
 
 
-    public void insertShop(String sloc, String owner, String item, double buyprice, double sellprice, boolean msgtoggle, boolean dbuy, boolean dsell, String admins, boolean shareincome, String trans, boolean adminshop) {
+    public void insertShop(String sloc, String owner, String item, double buyprice, double sellprice, boolean msgtoggle,
+                           boolean dbuy, boolean dsell, String admins, boolean shareincome, String trans, boolean adminshop, String rotation) {
         Connection conn = null;
         PreparedStatement ps = null;
         try {
             conn = getSQLConnection();
             ps = conn.prepareStatement(
                     "REPLACE INTO shopdata (location,owner,item,buyPrice,sellPrice,msgToggle,"
-                            + "buyDisabled,sellDisabled,admins,shareIncome,transactions,adminshop) "
-                            + "VALUES(?,?,?,?,?,?,?,?,?,?,?,?)");
+                            + "buyDisabled,sellDisabled,admins,shareIncome,transactions,adminshop,rotation) "
+                            + "VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)");
 
             ps.setString(1, sloc);
             ps.setString(2, owner);
@@ -706,6 +707,7 @@ public abstract class Database {
             ps.setBoolean(10, shareincome);
             ps.setString(11, trans);
             ps.setBoolean(12, adminshop);
+            ps.setString(13, rotation);
             ps.executeUpdate();
             return;
         } catch (SQLException e) {

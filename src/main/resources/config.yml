@@ -5,19 +5,21 @@ shops:
   hologram:
     # holograms are all shown in the async way and they won't waste a single tick / nor they are buggy like some other plugins
     show-holograms: true
-    # represents the first line of chest shop hologram | use %item% to display the item's display name.
-    # Use [item] for 1 Line to display the item. Use %buy% for buy price and %sell% for sell price.
-    # %currency% is defined under economy.server-currency
+    # represents the holographic texts of chestshops. Use %item% to display the item's display name.
+    # Use [item] for 1 Line to display the floating item. Use %buy% for buy price and %sell% for sell price.
+    # %currency% is defined under economy.server-currency and %owner% represents the shops creator.
     holo-structure:
-      - "[item]"
-      - "&d%item%"
       - "&fBuy: &a%buy% %currency% &f| Sell: &c%sell% %currency%"
+      - "&d%item%"
+      - "[item]"
     holo-structure-adminshop:
-      - "[item]"
-      - "&d%item%"
       - "&fBuy: &a%buy% %currency% &f| Sell: &c%sell% %currency%"
+      - "&d%item%"
+      - "[item]"
     # hologram will get removed after x seconds if plugin doesn't detect any movement toward chest shop (default: 10)
     hologram-disappearance-delay: 10
+    # Allows players to rotate their Holograms to be displayed on different sides of the Block.
+    allow-rotation: true
     # an alternative hologram display system, which is slower but provides easier visibility of nearby shops.
     distance:
       toggled: true
