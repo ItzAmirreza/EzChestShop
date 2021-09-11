@@ -1,5 +1,6 @@
 package me.deadlight.ezchestshop.Listeners;
 
+import me.deadlight.ezchestshop.Data.Config;
 import me.deadlight.ezchestshop.Data.ShopContainer;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.Utils.Utils;
@@ -62,6 +63,9 @@ public class BlockBreakListener implements Listener {
                             container = ShopContainer.copyContainerData(bcontainer, container);
                             shulker.setItemMeta(meta);
                             loc.getWorld().dropItemNaturally(loc, shulker);
+                            if (Config.holodistancing) {
+                                PlayerCloseToChestListener.hideHologram(event.getBlock().getLocation());
+                            }
                         }
                     }
                 }

@@ -6,6 +6,7 @@ import me.deadlight.ezchestshop.Data.ShopContainer;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.Data.LanguageManager;
 import me.deadlight.ezchestshop.GUIs.SettingsGUI;
+import me.deadlight.ezchestshop.Listeners.PlayerCloseToChestListener;
 import me.deadlight.ezchestshop.Utils.Objects.ShopSettings;
 import me.deadlight.ezchestshop.Utils.Utils;
 import me.mrCookieSlime.Slimefun.api.BlockStorage;
@@ -38,7 +39,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
 
     public static LanguageManager lm = new LanguageManager();
     public static HashMap<UUID, ShopSettings> settingsHashMap = new HashMap<>();
-    private enum SettingType {TOGGLE_MSG, DBUY, DSELL, ADMINS, SHAREINCOME};
+    private enum SettingType {TOGGLE_MSG, DBUY, DSELL, ADMINS, SHAREINCOME, ROTATION};
 
     public static void updateLM(LanguageManager languageManager) {
         MainCommands.lm = languageManager;
@@ -117,12 +118,14 @@ public class MainCommands implements CommandExecutor, TabCompleter {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
-        List<String> fList = new ArrayList<String>();
+        List<String> fList = new ArrayList<>();
         List<String> list_mainarg = Arrays.asList("create", "remove", "settings");
         List<String> list_create_1 = Arrays.asList("[BuyPrice]");
         List<String> list_create_2 = Arrays.asList("[SellPrice]");
-        List<String> list_settings_1 = Arrays.asList("copy", "paste", "toggle-message", "toggle-buying", "toggle-selling", "admins", "toggle-shared-income");
-        List<String> list_settings_2 = Arrays.asList("add", "remove", "list", "clear");
+        List<String> list_settings_1 = Arrays.asList("copy", "paste", "toggle-message", "toggle-buying", "toggle-selling", "admins", "toggle-shared-income", "change-rotation");
+        List<String> list_settings_admins_2 = Arrays.asList("add", "remove", "list", "clear");
+        List<String> list_settings_paste_2 = Arrays.asList("toggle-message", "toggle-buying", "toggle-selling", "admins", "toggle-shared-income", "change-rotation");
+        List<String> list_settings_change_rotation_2 = new ArrayList<>(Utils.rotations);
         if (sender instanceof Player) {
             Player player = (Player) sender;
             if (args.length == 1)
@@ -136,10 +139,34 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                 } else if (args[0].equalsIgnoreCase("settings")) {
                     if (args.length == 2)
                         StringUtil.copyPartialMatches(args[1], list_settings_1, fList);
+                    if (args[1].equalsIgnoreCase("change-rotation")) {
+                        if (args.length == 3)
+                            StringUtil.copyPartialMatches(args[2], list_settings_change_rotation_2, fList);
+                    }
+                    if (args[1].equalsIgnoreCase("paste")) {
+                        if (args.length == 3) {
+                            String[] last = args[2].split(",");
+                            List<String> pasteList = new ArrayList<>(list_settings_paste_2);
+                            pasteList.removeAll(Arrays.asList(last));
+                            if (args[2].endsWith(",")) {
+                                for (String s : pasteList) {
+                                    fList.add(Arrays.asList(last).stream().collect(Collectors.joining(",")) + "," + s);
+                                }
+                            } else {
+                                String lastarg = last[last.length -1];
+                                for (String s : pasteList) {
+                                    if (s.startsWith(lastarg)) {
+                                        last[last.length -1] = s;
+                                        fList.add(Arrays.asList(last).stream().collect(Collectors.joining(",")));
+                                    }
+                                }
+                            }
+                        }
+                    }
                     if (args[1].equalsIgnoreCase("admins")) {
                         if (args.length > 2) {
                             if (args.length == 3) {
-                                StringUtil.copyPartialMatches(args[2], list_settings_2, fList);
+                                StringUtil.copyPartialMatches(args[2], list_settings_admins_2, fList);
                             }
                             BlockState blockState = getLookedAtBlockStateIfOwner(player, false, false);
                             if (blockState != null) {
@@ -282,6 +309,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                             container.set(new NamespacedKey(EzChestShop.getPlugin(), "shareincome"), PersistentDataType.INTEGER, 1);
                             container.set(new NamespacedKey(EzChestShop.getPlugin(), "trans"), PersistentDataType.STRING, "none");
                             container.set(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"), PersistentDataType.INTEGER, 0);
+                            container.set(new NamespacedKey(EzChestShop.getPlugin(), "rotation"), PersistentDataType.STRING, "up");
 
 
 
@@ -296,7 +324,8 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                             //adminshop 0/1
                             Utils.storeItem(thatItem, container);
                             state.update();
-                            ShopContainer.createShop(block.getLocation(), player, thatItem, buyprice, sellprice, false, false, false, "none", true, "none", false);
+                            ShopContainer.createShop(block.getLocation(), player, thatItem, buyprice, sellprice, false,
+                                    false, false, "none", true, "none", false, "up");
 
                             player.sendMessage(lm.shopCreated());
 
@@ -387,7 +416,11 @@ public class MainCommands implements CommandExecutor, TabCompleter {
             if (settingarg.equalsIgnoreCase("copy")) {
                 copyShopSettings(player);
             } else if (settingarg.equalsIgnoreCase("paste")) {
-                pasteShopSettings(player);
+                if (args.length == 3) {
+                    pasteShopSettings(player, args[2]);
+                } else {
+                    pasteShopSettings(player);
+                }
             } else if (settingarg.equalsIgnoreCase("toggle-message")) {
                 modifyShopSettings(player, SettingType.TOGGLE_MSG, "");
             } else if (settingarg.equalsIgnoreCase("toggle-buying")) {
@@ -396,6 +429,12 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                 modifyShopSettings(player, SettingType.DSELL, "");
             } else if (settingarg.equalsIgnoreCase("toggle-shared-income")) {
                 modifyShopSettings(player, SettingType.SHAREINCOME, "");
+            } else if (settingarg.equalsIgnoreCase("change-rotation")) {
+                if (args.length == 3) {
+                    modifyShopSettings(player, SettingType.ROTATION, args[2]);
+                } else {
+                    modifyShopSettings(player, SettingType.ROTATION, "");
+                }
             }
 
             if (settingarg.equalsIgnoreCase("admins")) {
@@ -443,13 +482,15 @@ public class MainCommands implements CommandExecutor, TabCompleter {
             } else {
                 adminString = adminList.stream().map(id -> Bukkit.getOfflinePlayer(UUID.fromString(id)).getName()).collect(Collectors.joining(", "));
             }
+            settings.setRotation(settings.getRotation() == null ? "up" : settings.getRotation());
             settingsHashMap.put(player.getUniqueId(), settings.clone());
             player.spigot().sendMessage(new ComponentBuilder(lm.copiedShopSettings()).event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(
                 lm.toggleTransactionMessageButton() + ": "  + (settings.isMsgtoggle() ? lm.statusOn() : lm.statusOff()) + "\n" +
                 lm.disableBuyingButtonTitle() + ": "  + (settings.isDbuy() ? lm.statusOn() : lm.statusOff()) + "\n" +
                 lm.disableSellingButtonTitle() + ": "  + (settings.isDsell() ? lm.statusOn() : lm.statusOff()) + "\n" +
                 lm.shopAdminsButtonTitle() + ": " + net.md_5.bungee.api.ChatColor.GREEN + adminString + "\n" +
-                lm.shareIncomeButtonTitle() + ": "  + (settings.isShareincome() ? lm.statusOn() : lm.statusOff())
+                lm.shareIncomeButtonTitle() + ": "  + (settings.isShareincome() ? lm.statusOn() : lm.statusOff()) + "\n" +
+                lm.rotateHologramButtonTitle() + ": " + lm.rotationFromData(settings.getRotation())
             ))).create());
         }
     }
@@ -473,6 +514,8 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                     "admins", "shopdata", admins);
             db.setBool("location", sloc,
                     "shareIncome", "shopdata", settings.isShareincome());
+            db.setString("location", sloc,
+                    "rotation", "shopdata", settings.getRotation());
             container.set(new NamespacedKey(EzChestShop.getPlugin(), "msgtoggle"), PersistentDataType.INTEGER,
                     settings.isMsgtoggle() ? 1 : 0);
             container.set(new NamespacedKey(EzChestShop.getPlugin(), "dbuy"), PersistentDataType.INTEGER,
@@ -483,15 +526,88 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                     admins);
             container.set(new NamespacedKey(EzChestShop.getPlugin(), "shareincome"), PersistentDataType.INTEGER,
                     settings.isShareincome() ? 1 : 0);
+            container.set(new NamespacedKey(EzChestShop.getPlugin(), "rotation"), PersistentDataType.STRING,
+                    settings.getRotation());
+            PlayerCloseToChestListener.hideHologram(blockState.getLocation());
             ShopSettings newSettings = ShopContainer.getShopSettings(blockState.getLocation());
             newSettings.setMsgtoggle(settings.isMsgtoggle());
             newSettings.setDbuy(settings.isDbuy());
             newSettings.setDsell(settings.isDsell());
             newSettings.setAdmins(settings.getAdmins());
             newSettings.setShareincome(settings.isShareincome());
+            newSettings.setRotation(settings.getRotation());
             blockState.update();
             player.sendMessage(lm.pastedShopSettings());
 
+        }
+    }
+
+    private void pasteShopSettings(Player player, String args) {
+        BlockState blockState = getLookedAtBlockStateIfOwner(player, true, false);
+        if (blockState != null) {
+            // owner confirmed
+            PersistentDataContainer container = ((TileState) blockState).getPersistentDataContainer();
+            ShopSettings settings = settingsHashMap.get(player.getUniqueId());
+            Database db = EzChestShop.getPlugin().getDatabase();
+            String sloc = Utils.LocationtoString(blockState.getLocation());
+
+            for (String arg : args.split(",")) {
+                ShopSettings newSettings = ShopContainer.getShopSettings(blockState.getLocation());
+                switch (arg) {
+                    case "toggle-message": {
+                        db.setBool("location", sloc,
+                                "msgToggle", "shopdata", settings.isMsgtoggle());
+                        container.set(new NamespacedKey(EzChestShop.getPlugin(), "msgtoggle"), PersistentDataType.INTEGER,
+                                settings.isMsgtoggle() ? 1 : 0);
+                        newSettings.setMsgtoggle(settings.isMsgtoggle());
+                        break;
+                    }
+                    case "toggle-buying": {
+                        db.setBool("location", sloc,
+                                "buyDisabled", "shopdata", settings.isDbuy());
+                        container.set(new NamespacedKey(EzChestShop.getPlugin(), "dbuy"), PersistentDataType.INTEGER,
+                                settings.isDbuy() ? 1 : 0);
+                        newSettings.setDbuy(settings.isDbuy());
+                        break;
+                    }
+                    case "toggle-selling": {
+                        db.setBool("location", sloc,
+                                "sellDisabled", "shopdata", settings.isDsell());
+                        container.set(new NamespacedKey(EzChestShop.getPlugin(), "dsell"), PersistentDataType.INTEGER,
+                                settings.isDsell() ? 1 : 0);
+                        newSettings.setDsell(settings.isDsell());
+                        break;
+                    }
+                    case "admins": {
+                        String admins = settings.getAdmins() == null ? "none" : settings.getAdmins();
+                        db.setString("location", sloc,
+                                "admins", "shopdata", admins);
+                        container.set(new NamespacedKey(EzChestShop.getPlugin(), "admins"), PersistentDataType.STRING,
+                                admins);
+                        newSettings.setAdmins(settings.getAdmins());
+                        break;
+                    }
+                    case "toggle-shared-income": {
+                        db.setBool("location", sloc,
+                                "shareIncome", "shopdata", settings.isShareincome());
+                        container.set(new NamespacedKey(EzChestShop.getPlugin(), "shareincome"), PersistentDataType.INTEGER,
+                                settings.isShareincome() ? 1 : 0);
+                        newSettings.setShareincome(settings.isShareincome());
+                        break;
+                    }
+                    case "change-rotation": {
+                        db.setString("location", sloc,
+                                "rotation", "shopdata", settings.getRotation());
+                        container.set(new NamespacedKey(EzChestShop.getPlugin(), "rotation"), PersistentDataType.STRING,
+                                settings.getRotation());
+                        PlayerCloseToChestListener.hideHologram(blockState.getLocation());
+                        newSettings.setRotation(settings.getRotation());
+                        break;
+                    }
+                }
+            }
+            blockState.update();
+            player.sendMessage(lm.pastedShopSettings());
         }
 
     }
@@ -615,6 +731,15 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                     } else {
                         player.sendMessage(lm.sharedIncomeOffInChat());
                     }
+                    break;
+                case ROTATION:
+                    settings.setRotation(Utils.rotations.contains(data) ? data : Utils.getNextRotation(settings.getRotation()));
+                    db.setString("location", sloc,
+                            "rotation", "shopdata", settings.getRotation());
+                    container.set(new NamespacedKey(EzChestShop.getPlugin(), "rotation"), PersistentDataType.STRING,
+                            settings.getRotation());
+                    player.sendMessage(lm.rotateHologramInChat(settings.getRotation()));
+                    PlayerCloseToChestListener.hideHologram(blockState.getLocation());
                     break;
             }
 

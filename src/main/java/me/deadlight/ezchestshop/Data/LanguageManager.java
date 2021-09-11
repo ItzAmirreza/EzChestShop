@@ -465,6 +465,51 @@ public class LanguageManager {
         return colorify(languages.getString("slimeFunBlockNotSupported"));
     }
 
+    public String rotateHologramButtonTitle() {return colorify(languages.getString("rotateHologramButtonTitle"));}
+    public List<String> rotateHologramButtonLore(String rotation) {
+        String lm = languages.getString("rotateHologramButtonLore");
+        List<String> list = Arrays.asList(lm.split("\n"));
+        List<String> finalList = new ArrayList<>();
+        for (String str : list) {
+            finalList.add(colorify(str.replace("%rotations%", formatRotations(rotation)).replace("%rotation%", rotationFromData(rotation))));
+        }
+        return finalList;
+    }
+    public String rotateHologramInChat(String rotation) {return colorify(languages.getString("rotateHologramInChat").replace("%rotation%", rotationFromData(rotation)));}
+    public String formatRotations(String rotation) {
+        if (rotation == null) rotation = "up";
+        String result = "";
+        for (String option : Utils.rotations) {
+            if (option.equalsIgnoreCase(rotation)) {
+                result += ChatColor.GOLD + "" + ChatColor.UNDERLINE + ChatColor.stripColor(rotationFromData(option)) + ChatColor.RESET + " ";
+            } else {
+                result += rotationFromData(option) + " ";
+            }
+        }
+        return result;
+    }
+    public String rotationFromData(String rotation) {
+        switch (rotation) {
+            case "north":
+                return rotationNorth();
+            case "east":
+                return rotationEast();
+            case "south":
+                return rotationSouth();
+            case "west":
+                return rotationWest();
+            case "down":
+                return rotationDown();
+            default:
+                return rotationUp();
+        }
+    }
+    public String rotationUp() {return colorify(languages.getString("rotationUp"));}
+    public String rotationNorth() {return colorify(languages.getString("rotationNorth"));}
+    public String rotationEast() {return colorify(languages.getString("rotationEast"));}
+    public String rotationSouth() {return colorify(languages.getString("rotationSouth"));}
+    public String rotationWest() {return colorify(languages.getString("rotationWest"));}
+    public String rotationDown() {return colorify(languages.getString("rotationDown"));}
 
 
 

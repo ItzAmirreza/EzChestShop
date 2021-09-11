@@ -103,6 +103,7 @@ public class SQLite extends Database {
                     put("shareIncome", new SQLColumn("BOOLEAN", false, false));
                     put("transactions", new SQLColumn("STRING (32)", false, false));
                     put("adminshop", new SQLColumn("BOOLEAN", false, false));
+                    put("rotation", new SQLColumn("STRING (32)", false, false));
 
                 }
             }));

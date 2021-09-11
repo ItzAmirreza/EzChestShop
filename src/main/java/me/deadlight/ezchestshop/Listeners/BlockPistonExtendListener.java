@@ -1,4 +1,5 @@
 package me.deadlight.ezchestshop.Listeners;
+import me.deadlight.ezchestshop.Data.Config;
 import me.deadlight.ezchestshop.Data.ShopContainer;
 import me.deadlight.ezchestshop.Events.ShulkerShopDropEvent;
 import me.deadlight.ezchestshop.EzChestShop;
@@ -54,6 +55,9 @@ public class BlockPistonExtendListener implements Listener {
                         state.update();
 
                         ShopContainer.deleteShop(shulkerLoc);
+                        if (Config.holodistancing) {
+                            PlayerCloseToChestListener.hideHologram(shulkerLoc);
+                        }
                         Bukkit.getScheduler().scheduleSyncDelayedTask(EzChestShop.getPlugin(), () -> {
 
                             Collection<Entity> entitiyList = block.getWorld().getNearbyEntities(shulkerLoc, 2, 2, 2);

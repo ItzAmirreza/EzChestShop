@@ -121,9 +121,10 @@ public class ChestOpeningListener implements Listener {
         }
     }
 
-    private void insertNewValues(Block chest) {
+    private void insertNewValues(Block containerBlock) {
         //1.3.0 new values
-        PersistentDataContainer data = ((TileState)chest.getState()).getPersistentDataContainer();
+        TileState state = ((TileState)containerBlock.getState());
+        PersistentDataContainer data = state.getPersistentDataContainer();
         if (!data.has(new NamespacedKey(EzChestShop.getPlugin(), "msgtoggle"), PersistentDataType.INTEGER)) {
             data.set(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"), PersistentDataType.INTEGER, 0);
             data.set(new NamespacedKey(EzChestShop.getPlugin(), "msgtoggle"), PersistentDataType.INTEGER, 0);
@@ -132,7 +133,12 @@ public class ChestOpeningListener implements Listener {
             data.set(new NamespacedKey(EzChestShop.getPlugin(), "admins"), PersistentDataType.STRING, "none");
             data.set(new NamespacedKey(EzChestShop.getPlugin(), "shareincome"), PersistentDataType.INTEGER, 1);
             data.set(new NamespacedKey(EzChestShop.getPlugin(), "trans"), PersistentDataType.STRING, "none");
-            chest.getState().update();
+            state.update();
+        }
+        //hologram update values
+        if (!data.has(new NamespacedKey(EzChestShop.getPlugin(), "rotation"), PersistentDataType.STRING)) {
+            data.set(new NamespacedKey(EzChestShop.getPlugin(), "rotation"), PersistentDataType.STRING, "up");
+            state.update();
         }
     }
 

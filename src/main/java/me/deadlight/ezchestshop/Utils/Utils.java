@@ -32,6 +32,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class Utils {
 
     public static List<Object> onlinePackets = new ArrayList<>();
+    public static List<String> rotations = Arrays.asList("up", "north", "east", "south", "west", "down");
 
     public static String color(String str) {
         return ChatColor.translateAlternateColorCodes('&', str);
@@ -96,7 +97,7 @@ public class Utils {
      * @return
      */
     public static Inventory getBlockInventory(Block block) {
-        if (block.getType() == Material.CHEST) {
+        if (block.getType() == Material.CHEST || block.getType() == Material.TRAPPED_CHEST) {
             return  ((Chest) block.getState()).getInventory();
         } else if (block.getType() == Material.BARREL) {
             return  ((Barrel) block.getState()).getInventory();
@@ -163,18 +164,19 @@ public class Utils {
     //this one checks for the config.yml ima make one for language.yml
     public static void checkForConfigYMLupdate() throws IOException {
 
+        YamlConfiguration fc = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml"));
         //update 1.3.3 new config file model update constructed by ElitoGame
-        boolean isOldConfigModel = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml")).isBoolean("show-holograms");
+        boolean isOldConfigModel = fc.isBoolean("show-holograms");
+        boolean isUsingOldhologramLineSystem = fc.isString("shops.hologram.hologram-first-line");
         //if true, then we have to implement the new config model and delete old ones
         if (isOldConfigModel) {
             //getting current values of configs
             //show-holograms
-            boolean show_holograms = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml")).getBoolean("show-holograms");
-            String hologram_first_line = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml")).getString("hologram-first-line");
-            String hologram_second_line = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml")).getString("hologram-second-line");
-            int hologram_disappearance_delay = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml")).getInt("hologram-disappearance-delay");
+            boolean show_holograms = fc.getBoolean("show-holograms");
+            String hologram_first_line = fc.getString("hologram-first-line");
+            String hologram_second_line = fc.getString("hologram-second-line");
+            int hologram_disappearance_delay = fc.getInt("hologram-disappearance-delay");
 
-            FileConfiguration fc = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml"));
 
             fc.set("show-holograms", null);
             fc.set("hologram-first-line", null);
@@ -210,19 +212,40 @@ public class Utils {
 
         }
 
+        if (isUsingOldhologramLineSystem) {
+            EzChestShop.getPlugin().logConsole("Updated Hologram List!");
+            String hologram_first_line = fc.getString("shops.hologram.hologram-first-line");
+            String hologram_second_line = fc.getString("shops.hologram.hologram-second-line");
+
+            fc.set("shops.hologram.hologram-first-line", null);
+            fc.set("shops.hologram.hologram-second-line", null);
+
+            List<String> holo = Arrays.asList(hologram_second_line, hologram_first_line, "[item]");
+
+            fc.set("shops.hologram.holo-structure", holo);
+            fc.set("shops.hologram.holo-structure-adminshop", new ArrayList<>(holo));
+            fc.set("shops.hologram.distance.show-items-first", true);
+
+            fc.set("shops.hologram.allow-rotation", true);
+
+            fc.save(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml"));
+            Config.loadConfig();
+        }
+
         //well then its already an updated config, no need to change
 
     }
 
     public static void checkForLanguagesYMLupdate() throws IOException {
 
+        FileConfiguration fc = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "languages.yml"));
         //update 1.2.8 Languages
-        boolean result = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "languages.yml")).isString("commandmsg-negativeprice");
-        boolean update1_3_0 = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "languages.yml")).isString("settingsButton");
-        boolean update1_4_0 = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "languages.yml")).isString("copiedShopSettings");
-        boolean update1_4_1 = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "languages.yml")).isString("slimeFunBlockNotSupported");
+        boolean result = fc.isString("commandmsg-negativeprice");
+        boolean update1_3_0 = fc.isString("settingsButton");
+        boolean update1_4_0 = fc.isString("copiedShopSettings");
+        boolean update1_4_1 = fc.isString("slimeFunBlockNotSupported");
+        boolean update1_4_4 = fc.isString("rotateHologramButtonTitle");
         if (!result) {
-            FileConfiguration fc = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "languages.yml"));
             //new values that were added in update 1.2.8
             fc.set("commandmsg-negativeprice", "&cNegative price? but you have to use positive price...");
             fc.set("commandmsg-notenoughargs", "&cYou haven't provided enough arguments! \\n &cCorrect usage: /ecs create (Buy price) (Sell price)");
@@ -244,7 +267,6 @@ public class Utils {
         }
 
         if (!update1_3_0) {
-            FileConfiguration fc = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "languages.yml"));
             //for update 1.3.0
             fc.set("settingsButton", "&b&lSettings");
             fc.set("disabledButtonTitle", "&cDisabled");
@@ -297,7 +319,6 @@ public class Utils {
             EzChestShop.getPlugin().logConsole("&c[&eEzChestShop&c]&r &bNew languages.yml generated... (1.3.0V)");
         }
         if (!update1_4_0) {
-            FileConfiguration fc = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "languages.yml"));
             //for update 1.4.0
             fc.set("copiedShopSettings", "&6Copied &7shop settings!");
             fc.set("pastedShopSettings", "&ePasted &7shop settings!");
@@ -319,11 +340,24 @@ public class Utils {
             EzChestShop.getPlugin().logConsole("&c[&eEzChestShop&c]&r &bNew languages.yml generated... (1.4.0V)");
         }
         if (!update1_4_1) {
-            FileConfiguration fc = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "languages.yml"));
             fc.set("slimeFunBlockNotSupported", "&cSorry :(, but you can't execute this command with an slimefun block / please use a normal block as a container");
             fc.save(new File(EzChestShop.getPlugin().getDataFolder(), "languages.yml"));
             reloadLanguages();
             EzChestShop.getPlugin().logConsole("&c[&eEzChestShop&c]&r &bNew languages.yml generated... (1.4.1V)");
+        }
+        if (!update1_4_4) {
+            fc.set("rotateHologramButtonTitle", "&eHologram Rotation");
+            fc.set("rotateHologramButtonLore", "&7Rotation: %rotations%\n &aLeft&7/&cRight&7-click to cycle\n &7through all rotations!");
+            fc.set("rotateHologramInChat", "&7Hologram Rotation: %rotation%");
+            fc.set("rotationUp", "&aUp");
+            fc.set("rotationNorth", "&aNorth");
+            fc.set("rotationEast", "&aEast");
+            fc.set("rotationSouth", "&aSouth");
+            fc.set("rotationWest", "&aWest");
+            fc.set("rotationDown", "&aDown");
+            fc.save(new File(EzChestShop.getPlugin().getDataFolder(), "languages.yml"));
+            reloadLanguages();
+            EzChestShop.getPlugin().logConsole("&c[&eEzChestShop&c]&r &bNew languages.yml generated... (1.4.4V)");
         }
     }
 
@@ -725,6 +759,20 @@ public class Utils {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    public static String getNextRotation(String current) {
+        if (current == null) return "north";
+        int i = rotations.indexOf(current);
+        String result = i == rotations.size() - 1 ? rotations.get(0) : rotations.get(i + 1);
+        return result;
+    }
+
+    public static String getPreviousRotation(String current) {
+        if (current == null) return "down";
+        int i = rotations.indexOf(current);
+        String result = i == 0 ? rotations.get(rotations.size() - 1) : rotations.get(i - 1);
+        return result;
     }
 
 
