@@ -16,7 +16,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Vector;
-import oshi.util.tuples.Pair;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -60,7 +59,7 @@ public class PlayerLookingAtChestShop implements Listener {
                         }
 
                         //show the hologram
-                        ItemStack thatItem = Utils.getItem(rightone.get(new NamespacedKey(EzChestShop.getPlugin(), "item"), PersistentDataType.STRING));
+                        ItemStack thatItem = Utils.decodeItem(rightone.get(new NamespacedKey(EzChestShop.getPlugin(), "item"), PersistentDataType.STRING));
                         double buy = rightone.get(new NamespacedKey(EzChestShop.getPlugin(), "buy"), PersistentDataType.DOUBLE);
                         double sell = rightone.get(new NamespacedKey(EzChestShop.getPlugin(), "sell"), PersistentDataType.DOUBLE);
                         boolean is_adminshop = rightone.get(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"),
@@ -87,7 +86,7 @@ public class PlayerLookingAtChestShop implements Listener {
 
 
                         //show the hologram
-                        ItemStack thatItem = Utils.getItem(container.get(new NamespacedKey(EzChestShop.getPlugin(), "item"), PersistentDataType.STRING));
+                        ItemStack thatItem = Utils.decodeItem(container.get(new NamespacedKey(EzChestShop.getPlugin(), "item"), PersistentDataType.STRING));
                         double buy = container.get(new NamespacedKey(EzChestShop.getPlugin(), "buy"), PersistentDataType.DOUBLE);
                         double sell = container.get(new NamespacedKey(EzChestShop.getPlugin(), "sell"), PersistentDataType.DOUBLE);
                         boolean is_adminshop = container.get(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"),
@@ -131,7 +130,7 @@ public class PlayerLookingAtChestShop implements Listener {
                 holoItemList.add(floatingItem);
                 lineLocation.add(0, 0.35, 0);
             } else {
-                String line = Utils.color(element.replace("%item%", itemname).replace("%buy%", String.valueOf(buy)).
+                String line = Utils.colorify(element.replace("%item%", itemname).replace("%buy%", String.valueOf(buy)).
                         replace("%sell%", String.valueOf(sell)).replace("%currency%", Config.currency).replace("%owner%", shop_owner));
                 ASHologram hologram = new ASHologram(player, line, EntityType.ARMOR_STAND, lineLocation, false);
                 hologram.spawn();

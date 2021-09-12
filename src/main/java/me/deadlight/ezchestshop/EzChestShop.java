@@ -87,10 +87,15 @@ public final class EzChestShop extends JavaPlugin {
             return;
         }
 
-        loadLanguages();
         try {
-            Utils.checkForConfigYMLupdate();
-            Utils.checkForLanguagesYMLupdate();
+            Config.checkForConfigYMLupdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        LanguageManager.loadLanguages();
+        try {
+            LanguageManager.checkForLanguagesYMLupdate();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -157,26 +162,6 @@ public final class EzChestShop extends JavaPlugin {
     }
 
 
-    public void loadLanguages() {
-        LanguageManager lm = new LanguageManager();
-        File customConfigFile = new File(getDataFolder(), "languages.yml");
-        if (!customConfigFile.exists()) {
-            logConsole("&c[&eEzChestShop&c] &eGenerating languages.yml file...");
-            customConfigFile.getParentFile().mkdirs();
-            saveResource("languages.yml", false);
-            languages = YamlConfiguration.loadConfiguration(customConfigFile);
-            lm.setLanguageConfig(languages);
-            logConsole("&c[&eEzChestShop&c] &elanguages.yml successfully loaded");
-        } else {
-            languages = YamlConfiguration.loadConfiguration(customConfigFile);
-            lm.setLanguageConfig(languages);
-            logConsole("&c[&eEzChestShop&c] &elanguages.yml successfully loaded");
-        }
-    }
-
-
-
-
 
     @Override
     public void onDisable() {
@@ -214,8 +199,13 @@ public final class EzChestShop extends JavaPlugin {
         return manager;
     }
 
-    public void logConsole(String str) {
-        getServer().getConsoleSender().sendMessage(Utils.color(str));
+    public static void logConsole(String str) {
+        EzChestShop.getPlugin().getServer().getConsoleSender().sendMessage(Utils.colorify(str));
+    }
+
+    public static void logDebug(String str) {
+        if (Config.debug_logging)
+            EzChestShop.getPlugin().getServer().getConsoleSender().sendMessage("[Debug] " + Utils.colorify(str));
     }
 
     private boolean setupEconomy() {
@@ -236,14 +226,6 @@ public final class EzChestShop extends JavaPlugin {
 
     public Database getDatabase() {
         return this.db;
-    }
-
-    public static FileConfiguration getLanguages() {
-        return languages;
-    }
-
-    public static void setLanguages(FileConfiguration file) {
-        languages = file;
     }
 
 

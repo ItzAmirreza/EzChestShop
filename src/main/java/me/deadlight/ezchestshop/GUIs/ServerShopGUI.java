@@ -1,14 +1,5 @@
 package me.deadlight.ezchestshop.GUIs;
 
-import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.ProtocolManager;
-import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.wrappers.BlockPosition;
-import com.comphenix.protocol.wrappers.WrappedBlockData;
-import com.comphenix.protocol.wrappers.nbt.NbtBase;
-import com.comphenix.protocol.wrappers.nbt.NbtCompound;
-import com.comphenix.protocol.wrappers.nbt.NbtFactory;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.Data.LanguageManager;
 import me.deadlight.ezchestshop.Events.PlayerTransactEvent;
@@ -26,7 +17,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 public class ServerShopGUI {
@@ -52,7 +42,7 @@ public class ServerShopGUI {
         boolean disabledSell = data.get(new NamespacedKey(EzChestShop.getPlugin(), "dsell"), PersistentDataType.INTEGER) == 1;
 
 
-        ItemStack mainitem = Utils.getItem(data.get(new NamespacedKey(EzChestShop.getPlugin(), "item"), PersistentDataType.STRING));
+        ItemStack mainitem = Utils.decodeItem(data.get(new NamespacedKey(EzChestShop.getPlugin(), "item"), PersistentDataType.STRING));
         ItemStack guiMainItem = mainitem.clone();
         ItemMeta mainmeta = guiMainItem.getItemMeta();
         List<String> mainItemLore = Arrays.asList(lm.initialBuyPrice(buyPrice), lm.initialSellPrice(sellPrice));
@@ -65,7 +55,7 @@ public class ServerShopGUI {
         Gui gui = new Gui(3, lm.adminshopguititle());
         ItemStack glassis = new ItemStack(Material.BLACK_STAINED_GLASS_PANE, 1);
         ItemMeta glassmeta = glassis.getItemMeta();
-        glassmeta.setDisplayName(Utils.color("&d"));
+        glassmeta.setDisplayName(Utils.colorify("&d"));
         glassis.setItemMeta(glassmeta);
 
         GuiItem glasses = new GuiItem(glassis, event -> {

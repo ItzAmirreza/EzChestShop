@@ -57,8 +57,8 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
                     } else if (firstarg.equalsIgnoreCase("reload")) {
 
                         Config.loadConfig();
-                        Utils.reloadLanguages();
-                        player.sendMessage(Utils.color("&aEzChestShop successfully reloaded!"));
+                        LanguageManager.reloadLanguages();
+                        player.sendMessage(Utils.colorify("&aEzChestShop successfully reloaded!"));
 
                     } else if (firstarg.equalsIgnoreCase("create")) {
 
@@ -88,7 +88,7 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
 
             } else {
 
-                player.sendMessage(Utils.color("&bEz Chest Shop By Dead_Light \n &6Spigot page: https://www.spigotmc.org/resources/ez-chest-shop-ecs-1-14-x-1-16-x.90411/"));
+                player.sendMessage(Utils.colorify("&bEz Chest Shop By Dead_Light \n &6Spigot page: https://www.spigotmc.org/resources/ez-chest-shop-ecs-1-14-x-1-16-x.90411/"));
 
             }
 
@@ -121,7 +121,7 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
 
 
     private void sendHelp(Player player) {
-        String msg = Utils.color("&cAdmin help: \n " +
+        String msg = Utils.colorify("&cAdmin help: \n " +
                 "&7- &c/&eecsadmin remove &7| removes the shop that you are looking at (although u can remove it by breaking it) \n" +
                 "&7- &c/&eecsadmin reload &7| reload the plugin configurations \n" +
                 "&7- &c/&eecsadmin create (buy) (sell) &7| create an admin shop");

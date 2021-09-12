@@ -34,7 +34,7 @@ public class LogsGUI {
             guititle = "&aAction logs";
         }
 
-        Gui gui = new Gui(6, Utils.color(guititle));
+        Gui gui = new Gui(6, Utils.colorify(guititle));
 
         ItemStack door = new ItemStack(Material.DARK_OAK_DOOR, 1);
         ItemMeta doorMeta = door.getItemMeta();
