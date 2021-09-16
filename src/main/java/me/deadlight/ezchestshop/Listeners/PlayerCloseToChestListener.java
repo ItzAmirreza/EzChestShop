@@ -65,7 +65,7 @@ public class PlayerCloseToChestListener implements Listener {
                                 Location holoLoc = getHoloLoc(target);
 
                                 PersistentDataContainer container = ((TileState) target.getState()).getPersistentDataContainer();
-                                ItemStack thatItem = Utils.getItem(container.get(new NamespacedKey(EzChestShop.getPlugin(),
+                                ItemStack thatItem = Utils.decodeItem(container.get(new NamespacedKey(EzChestShop.getPlugin(),
                                         "item"), PersistentDataType.STRING));
 
                                 double buy = container.get(new NamespacedKey(EzChestShop.getPlugin(), "buy"),
@@ -115,7 +115,7 @@ public class PlayerCloseToChestListener implements Listener {
 
 
                                     PersistentDataContainer container = ((TileState)target.getState()).getPersistentDataContainer();
-                                    ItemStack thatItem = Utils.getItem(container.get(new NamespacedKey(EzChestShop.getPlugin(),
+                                    ItemStack thatItem = Utils.decodeItem(container.get(new NamespacedKey(EzChestShop.getPlugin(),
                                             "item"), PersistentDataType.STRING));
 
                                     double buy = container.get(new NamespacedKey(EzChestShop.getPlugin(), "buy"),
@@ -197,7 +197,7 @@ public class PlayerCloseToChestListener implements Listener {
                 lineLocation.add(0, 0.15, 0);
                 lineLocation.add(0, 0.35, 0);
             } else {
-                String line = Utils.color(element.replace("%item%", itemname).replace("%buy%", String.valueOf(buy)).
+                String line = Utils.colorify(element.replace("%item%", itemname).replace("%buy%", String.valueOf(buy)).
                         replace("%sell%", String.valueOf(sell)).replace("%currency%", Config.currency).replace("%owner%", shop_owner));
                 ASHologram hologram = new ASHologram(player, line, EntityType.ARMOR_STAND, lineLocation, false);
                 hologram.spawn();
@@ -231,7 +231,7 @@ public class PlayerCloseToChestListener implements Listener {
                 lineLocation.add(0, 0.15, 0);
                 lineLocation.add(0, 0.35, 0);
             } else {
-                String line = Utils.color(element.replace("%item%", itemname).replace("%buy%", String.valueOf(buy)).
+                String line = Utils.colorify(element.replace("%item%", itemname).replace("%buy%", String.valueOf(buy)).
                         replace("%sell%", String.valueOf(sell)).replace("%currency%", Config.currency).replace("%owner%", shop_owner));
                 ASHologram hologram = new ASHologram(player, line, EntityType.ARMOR_STAND, lineLocation, false);
                 hologram.spawn();

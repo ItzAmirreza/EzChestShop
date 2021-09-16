@@ -12,13 +12,11 @@ import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -44,7 +42,7 @@ public class NonOwnerShopGUI {
         boolean disabledBuy = data.get(new NamespacedKey(EzChestShop.getPlugin(), "dbuy"), PersistentDataType.INTEGER) == 1;
         boolean disabledSell = data.get(new NamespacedKey(EzChestShop.getPlugin(), "dsell"), PersistentDataType.INTEGER) == 1;
 
-        ItemStack mainitem = Utils.getItem(data.get(new NamespacedKey(EzChestShop.getPlugin(), "item"), PersistentDataType.STRING));
+        ItemStack mainitem = Utils.decodeItem(data.get(new NamespacedKey(EzChestShop.getPlugin(), "item"), PersistentDataType.STRING));
         ItemStack guiMainItem = mainitem.clone();
         ItemMeta mainmeta = guiMainItem.getItemMeta();
         List<String> mainItemLore = Arrays.asList(lm.initialBuyPrice(buyPrice), lm.initialSellPrice(sellPrice));
@@ -57,7 +55,7 @@ public class NonOwnerShopGUI {
         Gui gui = new Gui(3, lm.guiNonOwnerTitle(shopOwner));
         ItemStack glassis = new ItemStack(Material.BLACK_STAINED_GLASS_PANE, 1);
         ItemMeta glassmeta = glassis.getItemMeta();
-        glassmeta.setDisplayName(Utils.color("&d"));
+        glassmeta.setDisplayName(Utils.colorify("&d"));
         glassis.setItemMeta(glassmeta);
 
         GuiItem glasses = new GuiItem(glassis, event -> {

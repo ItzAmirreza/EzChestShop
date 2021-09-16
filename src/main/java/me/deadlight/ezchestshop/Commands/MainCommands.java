@@ -243,11 +243,11 @@ public class MainCommands implements CommandExecutor, TabCompleter {
     private void sendHelp(Player player) {
         String help = "&bEz&cChestShop &7Plugin By Dead_Light© \n" +
                 lm.cmdHelp();
-        player.sendMessage(Utils.color(help));
+        player.sendMessage(Utils.colorify(help));
         if (player.hasPermission("admin")) {
             String ahelp = "&cAdmin Help: \n " +
                     "&7- &c/ecsadmin";
-            player.sendMessage(Utils.color(ahelp));
+            player.sendMessage(Utils.colorify(ahelp));
         }
     }
 
@@ -755,7 +755,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
         if (plugin.integrationWildChests) { // Start of WildChests integration
             ChestsManager cm = plugin.wchests;
             if (cm.getChest(location) != null) {
-                player.sendMessage(Utils.color("&cSorry, but we don't support WildChests yet..."));
+                player.sendMessage(Utils.colorify("&cSorry, but we don't support WildChests yet..."));
                 return false;
 //                Chest schest = cm.getChest(location);
 //                if (schest.getPlacer().equals(player.getUniqueId())) {

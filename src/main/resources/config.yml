@@ -1,6 +1,7 @@
 # EzChestShop plugin configuration
 # Before starting to config, please note that any usage of TABs in the config file may break the plugin so avoid using tabs and use space.
 # If you need help/found a bug, contact me on Discord: Dead_Light#5608
+language: Loacle_EN
 shops:
   hologram:
     # holograms are all shown in the async way and they won't waste a single tick / nor they are buggy like some other plugins

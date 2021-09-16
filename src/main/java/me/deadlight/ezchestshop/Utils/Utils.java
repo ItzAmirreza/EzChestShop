@@ -28,16 +28,27 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Utils {
 
     public static List<Object> onlinePackets = new ArrayList<>();
     public static List<String> rotations = Arrays.asList("up", "north", "east", "south", "west", "down");
 
-    public static String color(String str) {
-        return ChatColor.translateAlternateColorCodes('&', str);
-    }
+    public static HashMap<String, Block> blockBreakMap = new HashMap<>();
 
+    public static boolean is1_17 = false;
+    public static boolean is1_17_1 = false;
+    public static boolean family1_17 = false;
+
+
+    /**
+     * Store a ItemStack into a persistent Data Container using Base64 encoding.
+     * @param item
+     * @param data
+     * @throws IOException
+     */
     public static void storeItem(ItemStack item, PersistentDataContainer data) throws IOException {
 
         String encodedItem = encodeItem(item);
@@ -48,6 +59,11 @@ public class Utils {
 
     }
 
+    /**
+     * Encode a ItemStack into a Base64 encoded String
+     * @param item
+     * @return
+     */
     public static String encodeItem(ItemStack item) {
         try {
             ByteArrayOutputStream io = new ByteArrayOutputStream();
@@ -69,7 +85,12 @@ public class Utils {
         }
     }
 
-    public static ItemStack getItem(String encodedItem) {
+    /**
+     * Decode a ItemStack from Base64 into a ItemStack
+     * @param encodedItem
+     * @return
+     */
+    public static ItemStack decodeItem(String encodedItem) {
 
         byte[] rawData = Base64.getDecoder().decode(encodedItem);
 
@@ -152,218 +173,7 @@ public class Utils {
     }
 
 
-    public static void reloadLanguages() {
-        FileConfiguration fc = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "languages.yml"));
-        EzChestShop.setLanguages(fc);
-        LanguageManager newLanguage = new LanguageManager();
-        MainCommands.updateLM(newLanguage);
-        ChatListener.updateLM(newLanguage);
-        EcsAdmin.updateLM(newLanguage);
-    }
 
-    //this one checks for the config.yml ima make one for language.yml
-    public static void checkForConfigYMLupdate() throws IOException {
-
-        YamlConfiguration fc = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml"));
-        //update 1.3.3 new config file model update constructed by ElitoGame
-        boolean isOldConfigModel = fc.isBoolean("show-holograms");
-        boolean isUsingOldhologramLineSystem = fc.isString("shops.hologram.hologram-first-line");
-        //if true, then we have to implement the new config model and delete old ones
-        if (isOldConfigModel) {
-            //getting current values of configs
-            //show-holograms
-            boolean show_holograms = fc.getBoolean("show-holograms");
-            String hologram_first_line = fc.getString("hologram-first-line");
-            String hologram_second_line = fc.getString("hologram-second-line");
-            int hologram_disappearance_delay = fc.getInt("hologram-disappearance-delay");
-
-
-            fc.set("show-holograms", null);
-            fc.set("hologram-first-line", null);
-            fc.set("hologram-second-line", null);
-            fc.set("hologram-disappearance-delay", null);
-
-            fc.set("shops.hologram.show-holograms", show_holograms);
-            fc.set("shops.hologram.hologram-first-line", hologram_first_line);
-            fc.set("shops.hologram.hologram-second-line", hologram_second_line);
-            fc.set("shops.hologram.hologram-disappearance-delay", hologram_disappearance_delay);
-            //new hologram settings:
-            fc.set("shops.hologram.distance.toggled", true);
-            fc.set("shops.hologram.distance.range", 10.0);
-
-            //new containers:
-            fc.set("shops.container.chests", true);
-            fc.set("shops.container.trapped-chests", true);
-            fc.set("shops.container.barrels", true);
-            fc.set("shops.container.shulkers", true);
-
-            //new commands section:
-            fc.set("commands.alias.ecs-shop", false);
-            fc.set("commands.alias.ecsadmin-adminshop", false);
-
-            //new permissions section:
-            fc.set("permissions.create-shops", false);
-
-            //new economy config section
-            fc.set("economy.server-currency", "$");
-
-            fc.save(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml"));
-            Config.loadConfig();
-
-        }
-
-        if (isUsingOldhologramLineSystem) {
-            EzChestShop.getPlugin().logConsole("Updated Hologram List!");
-            String hologram_first_line = fc.getString("shops.hologram.hologram-first-line");
-            String hologram_second_line = fc.getString("shops.hologram.hologram-second-line");
-
-            fc.set("shops.hologram.hologram-first-line", null);
-            fc.set("shops.hologram.hologram-second-line", null);
-
-            List<String> holo = Arrays.asList(hologram_second_line, hologram_first_line, "[item]");
-
-            fc.set("shops.hologram.holo-structure", holo);
-            fc.set("shops.hologram.holo-structure-adminshop", new ArrayList<>(holo));
-            fc.set("shops.hologram.distance.show-items-first", true);
-
-            fc.set("shops.hologram.allow-rotation", true);
-
-            fc.save(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml"));
-            Config.loadConfig();
-        }
-
-        //well then its already an updated config, no need to change
-
-    }
-
-    public static void checkForLanguagesYMLupdate() throws IOException {
-
-        FileConfiguration fc = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "languages.yml"));
-        //update 1.2.8 Languages
-        boolean result = fc.isString("commandmsg-negativeprice");
-        boolean update1_3_0 = fc.isString("settingsButton");
-        boolean update1_4_0 = fc.isString("copiedShopSettings");
-        boolean update1_4_1 = fc.isString("slimeFunBlockNotSupported");
-        boolean update1_4_4 = fc.isString("rotateHologramButtonTitle");
-        if (!result) {
-            //new values that were added in update 1.2.8
-            fc.set("commandmsg-negativeprice", "&cNegative price? but you have to use positive price...");
-            fc.set("commandmsg-notenoughargs", "&cYou haven't provided enough arguments! \\n &cCorrect usage: /ecs create (Buy price) (Sell price)");
-            fc.set("commandmsg-consolenotallowed", "&cYou are not allowed to execute any command from console.");
-            fc.set("commandmsg-help", "&7- &c/ecs create (Buy Price) (Sell Price) &7| Create a chest shop by looking at a chest and having the item that you want to sell in your hand. \n &7- &c/ecs remove &7| Removes the chest shop that you are looking at \n &7Eazy right? :)");
-            fc.set("commandmsg-alreadyashop", "&cThis chest is already a shop!");
-            fc.set("commandmsg-shopcreated", "&aYou have successfully created a chest shop!");
-            fc.set("commandmsg-holdsomething", "&cPlease hold something in your main hand!");
-            fc.set("commandmsg-notallowdtocreate", "&cYou are not allowed to create/remove a chest shop in this location.");
-            fc.set("commandmsg-notchest", "&cThe block that you are looking at is not supported type of chest/is not a chest.");
-            fc.set("commandmsg-lookatchest", "&cPlease look at a chest.");
-            fc.set("commandmsg-csremoved", "&eThis chest shop successfully removed.");
-            fc.set("commandmsg-notowner", "&aYou are not the owner of this chest shop!");
-            fc.set("commandmsg-notachestorcs", "&cThe block that you are looking at is not a chest/or this is not a chest shop.");
-            fc.save(new File(EzChestShop.getPlugin().getDataFolder(), "languages.yml"));
-
-            reloadLanguages();
-            EzChestShop.getPlugin().logConsole("&c[&eEzChestShop&c]&r &bNew languages.yml generated...");
-        }
-
-        if (!update1_3_0) {
-            //for update 1.3.0
-            fc.set("settingsButton", "&b&lSettings");
-            fc.set("disabledButtonTitle", "&cDisabled");
-            fc.set("disabledButtonLore", "&7This option is disabled by \n &7the shop owner.");
-            fc.set("transactionButtonTitle", "&aTransaction logs");
-            fc.set("backToSettingsButton", "&eBack to settings");
-            fc.set("transactionPaperTitleBuy", "&aBuy | %player%");
-            fc.set("transactionPaperTitleSell", "&cSell | %player%");
-            fc.set("transactionPaperLoreBuy", "&7Total Price: %price% \n &7Quantity: %count% \n &7Transaction Type: &aBought from you \n &e%time%");
-            fc.set("transactionPaperLoreSell", "&7Total Price: %price% \n &7Quantity: %count% \n &7Transaction Type: &cSold to you \n &e%time%");
-            fc.set("lessthanminute", "&eless than a minute ago");
-            fc.set("minutesago", "&e%minutes% minute(s) ago");
-            fc.set("hoursago", "&e%hours% hour(s) ago");
-            fc.set("daysago", "&e%days% days ago");
-            fc.set("adminshopguititle", "&cAdmin shop");
-            fc.set("settingsGuiTitle", "&b&lSettings");
-            fc.set("latestTransactionsButton", "&aLatest Transactions");
-            fc.set("toggleTransactionMessageButton", "&eToggle Transaction Message");
-            fc.set("statusOn", "&aOn");
-            fc.set("statusOff", "&cOff");
-            fc.set("toggleTransactionMessageButtonLore", "&7Current status: %status% \n &7If you keep this option on, \n &7you will recieve transaction \n &7messages in chat whenever someone \n &7buy/sell something from this shop");
-            fc.set("toggleTransactionMessageOnInChat", "&7Toggle Transaction Messages: &aON");
-            fc.set("toggleTransactionMessageOffInChat", "&7Toggle Transaction Messages: &cOFF");
-            fc.set("disableBuyingButtonTitle", "&eDisable Buying");
-            fc.set("disableBuyingButtonLore", "&7Current status: %status% \n &7If you keep this option on, \n &7the shop won't let anyone buy \n &7from your chest shop.");
-            fc.set("disableBuyingOnInChat", "&7Disable Buying: &aON");
-            fc.set("disableBuyingOffInChat", "&7Disable Buying: &cOFF");
-            fc.set("disableSellingButtonTitle", "&eDisable Selling");
-            fc.set("disableSellingButtonLore", "&7Current status: %status% \n &7If you keep this option on, \n &7the shop won't let anyone sell \n &7anything to the shop.");
-            fc.set("disableSellingOnInChat", "&7Disable Selling: &aON");
-            fc.set("disableSellingOffInChat", "&7Disable Selling: &cOFF");
-            fc.set("shopAdminsButtonTitle", "&eShop admins");
-            fc.set("nobodyStatusAdmins", "&aNobody");
-            fc.set("shopAdminsButtonLore", "&7You can add/remove admins to \n &7your chest shop. Admins are able to \n &7access the shop storage & access certain \n &7settings (everything except share income \n &7and add/remove-ing admins). \n &aLeft Click &7to add an admin \n &cRight Click &7to remove an admin \n &7Current admins: %admins%");
-            fc.set("addingAdminWaiting", "&ePlease enter the name of the person you want to add to the list of admins.");
-            fc.set("removingAdminWaiting", "&ePlease enter the name of the person you want to remove from the list of admins.");
-            fc.set("shareIncomeButtonTitle", "&eShared income");
-            fc.set("shareIncomeButtonLore", "&7Current status: %status% \n &7If you keep this option on, \n &7the profit of ONLY sales, will be \n &7shared with admins as well.");
-            fc.set("sharedIncomeOnInChat", "&7Shared income: &aON");
-            fc.set("sharedIncomeOffInChat", "&7Shared income: &cOFF");
-            fc.set("backToShopGuiButton", "&eBack to shop");
-            fc.set("selfAdmin", "&cYou can't add or remove yourself in the admins list!");
-            fc.set("noPlayer", "&cThis player doesn't exist or haven't played here before.");
-            fc.set("sucAdminAdded", "&e%player% &asuccessfully added to the admins list.");
-            fc.set("alreadyAdmin", "&cThis player is already in the admins list!");
-            fc.set("sucAdminRemoved", "&e%player% &asuccessfully removed from the admins list.");
-            fc.set("notInAdminList", "&cThis player is not in the admins list!");
-            fc.save(new File(EzChestShop.getPlugin().getDataFolder(), "languages.yml"));
-            reloadLanguages();
-            EzChestShop.getPlugin().logConsole("&c[&eEzChestShop&c]&r &bNew languages.yml generated... (1.3.0V)");
-        }
-        if (!update1_4_0) {
-            //for update 1.4.0
-            fc.set("copiedShopSettings", "&6Copied &7shop settings!");
-            fc.set("pastedShopSettings", "&ePasted &7shop settings!");
-            fc.set("clearedAdmins", "&cRemoved all admins from this shop.");
-            fc.set("maxShopLimitReached", "&cMaximum shop limit reached: %shoplimit%!");
-            fc.set("buyingIsDisabled", "&cBuying is disabled in this shop.");
-            fc.set("sellingIsDisabled", "&cSelling is disabled in this shop.");
-            fc.set("gui-customAmountSign-title", "&eCustom Buy/Sell");
-            fc.set("gui-customAmountSign-lore", "&7Buy or Sell in custom amount \n &d \n &aLeft click for custom Buy \n &cRight click for custom Sell \n &d \n &7You can totally &abuy &e%buycount%&7 of this item. \n &7You can totally &csell &e%sellcount%&7 of this item.");
-            fc.set("signEditorGui-buy", "&a^^ Max: %max% ^^ \n &bInsert your \n &bdesired amount");
-            fc.set("signEditorGui-sell", "&c^^ Max: %max% ^^ \n &bInsert your \n &bdesired amount");
-            fc.set("wrongInput", "&cWrong input(Or probably a very large number), please insert a number!");
-            fc.set("enterTheAmount", "&ePlease write your desired amount in the sign");
-            fc.set("unsupportedInteger", "&cHey!, the amount cannot be zero or negative obviously.");
-            fc.set("openingShopProblem", "&cThere is a problem in opening this chest shop, Please contact administrator and check the console.");
-
-            fc.save(new File(EzChestShop.getPlugin().getDataFolder(), "languages.yml"));
-            reloadLanguages();
-            EzChestShop.getPlugin().logConsole("&c[&eEzChestShop&c]&r &bNew languages.yml generated... (1.4.0V)");
-        }
-        if (!update1_4_1) {
-            fc.set("slimeFunBlockNotSupported", "&cSorry :(, but you can't execute this command with an slimefun block / please use a normal block as a container");
-            fc.save(new File(EzChestShop.getPlugin().getDataFolder(), "languages.yml"));
-            reloadLanguages();
-            EzChestShop.getPlugin().logConsole("&c[&eEzChestShop&c]&r &bNew languages.yml generated... (1.4.1V)");
-        }
-        if (!update1_4_4) {
-            fc.set("rotateHologramButtonTitle", "&eHologram Rotation");
-            fc.set("rotateHologramButtonLore", "&7Rotation: %rotations%\n &aLeft&7/&cRight&7-click to cycle\n &7through all rotations!");
-            fc.set("rotateHologramInChat", "&7Hologram Rotation: %rotation%");
-            fc.set("rotationUp", "&aUp");
-            fc.set("rotationNorth", "&aNorth");
-            fc.set("rotationEast", "&aEast");
-            fc.set("rotationSouth", "&aSouth");
-            fc.set("rotationWest", "&aWest");
-            fc.set("rotationDown", "&aDown");
-            fc.save(new File(EzChestShop.getPlugin().getDataFolder(), "languages.yml"));
-            reloadLanguages();
-            EzChestShop.getPlugin().logConsole("&c[&eEzChestShop&c]&r &bNew languages.yml generated... (1.4.4V)");
-        }
-    }
-
-    public static HashMap<String, Block> blockBreakMap = new HashMap<>();
-
-    public static LanguageManager lm;
 
     public static List<UUID> getAdminsList(PersistentDataContainer data) {
 
@@ -412,7 +222,7 @@ public class Utils {
         String itemname = "Error";
         if (item.hasItemMeta()) {
             if (item.getItemMeta().hasDisplayName()) {
-                itemname = Utils.color(item.getItemMeta().getDisplayName());
+                itemname = colorify(item.getItemMeta().getDisplayName());
             } else if (item.getItemMeta().hasLocalizedName()) {
                 itemname = item.getItemMeta().getLocalizedName();
             } else {
@@ -421,17 +231,9 @@ public class Utils {
         } else {
             itemname = Utils.capitalizeFirstSplit(item.getType().toString());
         }
-        return Utils.color(itemname);
+        return colorify(itemname);
     }
 
-    public static Location getSpawnLocation(Chest chest) {
-        return chest.getLocation().clone().add(0.5, 1, 0.5);
-    }
-
-
-    public static boolean is1_17 = false;
-    public static boolean is1_17_1 = false;
-    public static boolean family1_17 = false;
 
     /**
      * Convert a Location to a String
@@ -773,6 +575,42 @@ public class Utils {
         int i = rotations.indexOf(current);
         String result = i == 0 ? rotations.get(rotations.size() - 1) : rotations.get(i - 1);
         return result;
+    }
+
+    /**
+     * Apply & color translating, as well as #ffffff hex color encoding to a String.
+     * Versions below 1.16 will only get the last hex color symbol applied to them.
+     * @param str
+     * @return
+     */
+    public static String colorify(String str) {
+        return translateHexColorCodes("#", "", ChatColor.translateAlternateColorCodes('&', str));
+    }
+
+    /**
+     * Apply hex color coding to a String. possibility to add a special start or end tag to the String.
+     * Versions below 1.16 will only get the last hex color symbol applied to them.
+     * @param startTag
+     * @param endTag
+     * @param message
+     * @return
+     */
+    public static  String translateHexColorCodes(String startTag, String endTag, String message)
+    {
+        final Pattern hexPattern = Pattern.compile(startTag + "([A-Fa-f0-9]{6})" + endTag);
+        final char COLOR_CHAR = ChatColor.COLOR_CHAR;
+        Matcher matcher = hexPattern.matcher(message);
+        StringBuffer buffer = new StringBuffer(message.length() + 4 * 8);
+        while (matcher.find())
+        {
+            String group = matcher.group(1);
+            matcher.appendReplacement(buffer, COLOR_CHAR + "x"
+                    + COLOR_CHAR + group.charAt(0) + COLOR_CHAR + group.charAt(1)
+                    + COLOR_CHAR + group.charAt(2) + COLOR_CHAR + group.charAt(3)
+                    + COLOR_CHAR + group.charAt(4) + COLOR_CHAR + group.charAt(5)
+            );
+        }
+        return matcher.appendTail(buffer).toString();
     }
 
 

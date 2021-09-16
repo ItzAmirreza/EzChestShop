@@ -49,7 +49,7 @@ public class SettingsGUI {
         Gui gui = new Gui(3, lm.settingsGuiTitle());
         ItemStack glassis = new ItemStack(Material.BLACK_STAINED_GLASS_PANE, 1);
         ItemMeta glassmeta = glassis.getItemMeta();
-        glassmeta.setDisplayName(Utils.color("&d"));
+        glassmeta.setDisplayName(Utils.colorify("&d"));
         glassis.setItemMeta(glassmeta);
         GuiItem glasses = new GuiItem(glassis, event -> {
             event.setCancelled(true);
