@@ -1,6 +1,7 @@
 package me.deadlight.ezchestshop.Listeners;
 
 import me.deadlight.ezchestshop.Data.Config;
+import me.deadlight.ezchestshop.Data.LanguageManager;
 import me.deadlight.ezchestshop.Data.ShopContainer;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.Utils.ASHologram;
@@ -29,6 +30,7 @@ import java.util.*;
 
 public class PlayerCloseToChestListener implements Listener {
 
+    private static LanguageManager lm = new LanguageManager();
     public static HashMap<Player, List<Pair<Location, ASHologram>>> HoloTextMap = new HashMap<>();
     public static HashMap<Player, List<Pair<Location, FloatingItem>>> HoloItemMap = new HashMap<>();
 
@@ -74,6 +76,10 @@ public class PlayerCloseToChestListener implements Listener {
                                         PersistentDataType.DOUBLE);
                                 boolean is_adminshop = container.get(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"),
                                         PersistentDataType.INTEGER) == 1;
+                                boolean is_dbuy = container.get(new NamespacedKey(EzChestShop.getPlugin(), "dbuy"),
+                                        PersistentDataType.INTEGER) == 1;
+                                boolean is_dsell = container.get(new NamespacedKey(EzChestShop.getPlugin(), "dsell"),
+                                        PersistentDataType.INTEGER) == 1;
 
                                 OfflinePlayer offlinePlayerOwner = Bukkit.getOfflinePlayer(UUID.fromString(container.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING)));
                                 String shopOwner = offlinePlayerOwner.getName();
@@ -82,7 +88,7 @@ public class PlayerCloseToChestListener implements Listener {
                                 }
 
                                 //showHologramText(holoLoc, loc, thatItem, buy, sell, player, is_adminshop, shopOwner);
-                                showHologramTextOnHover(holoLoc, loc, thatItem, buy, sell, player, is_adminshop, shopOwner);
+                                showHologramTextOnHover(holoLoc, loc, thatItem, buy, sell, player, is_adminshop, shopOwner, is_dbuy, is_dsell);
                             } else {
                                 hideHologramText(player);
                             }
@@ -124,6 +130,10 @@ public class PlayerCloseToChestListener implements Listener {
                                             PersistentDataType.DOUBLE);
                                     boolean is_adminshop = container.get(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"),
                                             PersistentDataType.INTEGER) == 1;
+                                    boolean is_dbuy = container.get(new NamespacedKey(EzChestShop.getPlugin(), "dbuy"),
+                                            PersistentDataType.INTEGER) == 1;
+                                    boolean is_dsell = container.get(new NamespacedKey(EzChestShop.getPlugin(), "dsell"),
+                                            PersistentDataType.INTEGER) == 1;
 
                                     OfflinePlayer offlinePlayerOwner = Bukkit.getOfflinePlayer(UUID.fromString(container.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING)));
                                     String shopOwner = offlinePlayerOwner.getName();
@@ -132,7 +142,7 @@ public class PlayerCloseToChestListener implements Listener {
                                     }
 
 
-                                    showHologram(holoLoc, sloc, thatItem, buy, sell, event.getPlayer(), is_adminshop, shopOwner);
+                                    showHologram(holoLoc, sloc, thatItem, buy, sell, event.getPlayer(), is_adminshop, shopOwner, is_dbuy, is_dsell);
                                     //mark the shop as visible
                                     List<Player> players = playershopmap.get(sloc);
                                     if (players == null)
@@ -176,16 +186,16 @@ public class PlayerCloseToChestListener implements Listener {
     }
 
     private void showHologram(Location spawnLocation, Location shopLocation, ItemStack thatItem, double buy,
-                              double sell, Player player, boolean is_adminshop, String shop_owner) {
+                              double sell, Player player, boolean is_adminshop, String shop_owner, boolean is_dbuy, boolean is_dsell) {
 
         showHologramItem(spawnLocation, shopLocation, thatItem, player, is_adminshop);
         if (!Config.holodistancing_show_item_first)
-            showHologramText(spawnLocation, shopLocation, thatItem, buy, sell, player, is_adminshop, shop_owner);
+            showHologramText(spawnLocation, shopLocation, thatItem, buy, sell, player, is_adminshop, shop_owner, is_dbuy, is_dsell);
 
     }
 
     private void showHologramText(Location spawnLocation, Location shopLocation, ItemStack thatItem, double buy,
-                                  double sell, Player player, boolean is_adminshop, String shop_owner) {
+                                  double sell, Player player, boolean is_adminshop, String shop_owner, boolean is_dbuy, boolean is_dsell) {
         List<Pair<Location, ASHologram>> holoTextList = HoloTextMap.containsKey(player) ? HoloTextMap.get(player) : new ArrayList<>();
         Location lineLocation = spawnLocation.clone().subtract(0, 0.1, 0);
         String itemname = "Error";
@@ -194,16 +204,28 @@ public class PlayerCloseToChestListener implements Listener {
         if (ShopContainer.getShopSettings(shopLocation).getRotation().equals("down")) Collections.reverse(structure);
         for (String element : structure) {
             if (element.equalsIgnoreCase("[Item]")) {
-                lineLocation.add(0, 0.15, 0);
-                lineLocation.add(0, 0.35, 0);
+                lineLocation.add(0, 0.15 * Config.holo_linespacing, 0);
+                lineLocation.add(0, 0.35 * Config.holo_linespacing, 0);
             } else {
-                String line = Utils.colorify(element.replace("%item%", itemname).replace("%buy%", String.valueOf(buy)).
-                        replace("%sell%", String.valueOf(sell)).replace("%currency%", Config.currency).replace("%owner%", shop_owner));
+                String line = Utils.colorify(element.replace("%item%", itemname).replace("%buy%", Utils.formatNumber(buy, Utils.FormatType.HOLOGRAM)).
+                        replace("%sell%", Utils.formatNumber(sell, Utils.FormatType.HOLOGRAM)).replace("%currency%", Config.currency).replace("%owner%", shop_owner));
+                if (is_dbuy || is_dsell) {
+                    line = line.replaceAll("<separator>.*?<\\/separator>", "");
+                    if (is_dbuy && is_dsell) {
+                        line = lm.disabledButtonTitle();
+                    } else if (is_dbuy) {
+                        line = line.replaceAll("<buy>.*?<\\/buy>", "").replaceAll("<sell>|<\\/sell>", "");
+                    } else if (is_dsell) {
+                        line = line.replaceAll("<sell>.*?<\\/sell>", "").replaceAll("<buy>|<\\/buy>", "");
+                    }
+                } else {
+                    line = line.replaceAll("<separator>|<\\/separator>", "").replaceAll("<buy>|<\\/buy>", "").replaceAll("<sell>|<\\/sell>", "");
+                }
                 ASHologram hologram = new ASHologram(player, line, EntityType.ARMOR_STAND, lineLocation, false);
                 hologram.spawn();
                 Utils.onlinePackets.add(hologram);
                 holoTextList.add(Pair.of(shopLocation, hologram));
-                lineLocation.add(0, 0.3, 0);
+                lineLocation.add(0, 0.3 * Config.holo_linespacing, 0);
             }
         }
         //FakeAdvancement outOfStock = new FakeAdvancement(player, thatItem);
@@ -212,7 +234,8 @@ public class PlayerCloseToChestListener implements Listener {
         HoloTextMap.put(player, holoTextList);
     }
 
-    private void showHologramTextOnHover(Location spawnLocation, Location shopLocation, ItemStack thatItem, double buy, double sell, Player player, boolean is_adminshop, String shop_owner) {
+    private void showHologramTextOnHover(Location spawnLocation, Location shopLocation, ItemStack thatItem, double buy,
+                                         double sell, Player player, boolean is_adminshop, String shop_owner, boolean is_dbuy, boolean is_dsell) {
 
         List<Pair<Location, ASHologram>> holoTextList = HoloTextMap.containsKey(player) ? HoloTextMap.get(player) : new ArrayList<>();
 
@@ -228,16 +251,28 @@ public class PlayerCloseToChestListener implements Listener {
         if (ShopContainer.getShopSettings(shopLocation).getRotation().equals("down")) Collections.reverse(structure);
         for (String element : structure) {
             if (element.equalsIgnoreCase("[Item]")) {
-                lineLocation.add(0, 0.15, 0);
-                lineLocation.add(0, 0.35, 0);
+                lineLocation.add(0, 0.15 * Config.holo_linespacing, 0);
+                lineLocation.add(0, 0.35 * Config.holo_linespacing, 0);
             } else {
-                String line = Utils.colorify(element.replace("%item%", itemname).replace("%buy%", String.valueOf(buy)).
-                        replace("%sell%", String.valueOf(sell)).replace("%currency%", Config.currency).replace("%owner%", shop_owner));
+                String line = Utils.colorify(element.replace("%item%", itemname).replace("%buy%", Utils.formatNumber(buy, Utils.FormatType.HOLOGRAM)).
+                        replace("%sell%", Utils.formatNumber(sell, Utils.FormatType.HOLOGRAM)).replace("%currency%", Config.currency).replace("%owner%", shop_owner));
+                if (is_dbuy || is_dsell) {
+                    line = line.replaceAll("<separator>.*?<\\/separator>", "");
+                    if (is_dbuy && is_dsell) {
+                        line = lm.disabledButtonTitle();
+                    } else if (is_dbuy) {
+                        line = line.replaceAll("<buy>.*?<\\/buy>", "").replaceAll("<sell>|<\\/sell>", "");
+                    } else if (is_dsell) {
+                        line = line.replaceAll("<sell>.*?<\\/sell>", "").replaceAll("<buy>|<\\/buy>", "");
+                    }
+                } else {
+                    line = line.replaceAll("<separator>|<\\/separator>", "").replaceAll("<buy>|<\\/buy>", "").replaceAll("<sell>|<\\/sell>", "");
+                }
                 ASHologram hologram = new ASHologram(player, line, EntityType.ARMOR_STAND, lineLocation, false);
                 hologram.spawn();
                 Utils.onlinePackets.add(hologram);
                 holoTextList.add(Pair.of(shopLocation, hologram));
-                lineLocation.add(0, 0.3, 0);
+                lineLocation.add(0, 0.3 * Config.holo_linespacing, 0);
             }
         }
 
@@ -260,13 +295,13 @@ public class PlayerCloseToChestListener implements Listener {
         if (ShopContainer.getShopSettings(shopLocation).getRotation().equals("down")) Collections.reverse(structure);
         for (String element : structure) {
             if (element.equalsIgnoreCase("[Item]")) {
-                lineLocation.add(0, 0.15, 0);
+                lineLocation.add(0, 0.15 * Config.holo_linespacing, 0);
                 FloatingItem floatingItem = new FloatingItem(player, thatItem, lineLocation);
                 Utils.onlinePackets.add(floatingItem);
                 holoItemList.add(Pair.of(shopLocation, floatingItem));
-                lineLocation.add(0, 0.35, 0);
+                lineLocation.add(0, 0.35 * Config.holo_linespacing, 0);
             } else {
-                lineLocation.add(0, 0.3, 0);
+                lineLocation.add(0, 0.3 * Config.holo_linespacing, 0);
             }
         }
         //FakeAdvancement outOfStock = new FakeAdvancement(player, thatItem);
@@ -418,31 +453,28 @@ public class PlayerCloseToChestListener implements Listener {
         Inventory inventory = Utils.getBlockInventory(containerBlock);
         PersistentDataContainer container = ((TileState) containerBlock.getState()).getPersistentDataContainer();
         String rotation = container.get(new NamespacedKey(EzChestShop.getPlugin(), "rotation"), PersistentDataType.STRING);
-        rotation = rotation == null ? "up" : rotation;
-        if (Config.holo_rotation) {
-            //Add rotation checks
-            switch (rotation) {
-                case "north":
-                    holoLoc = getCentralLocation(containerBlock, inventory, new Vector(0, 0, -0.8));
-                    break;
-                case "east":
-                    holoLoc = getCentralLocation(containerBlock, inventory, new Vector(0.8, 0, 0));
-                    break;
-                case "south":
-                    holoLoc = getCentralLocation(containerBlock, inventory, new Vector(0, 0, 0.8));
-                    break;
-                case "west":
-                    holoLoc = getCentralLocation(containerBlock, inventory, new Vector(-0.8, 0, 0));
-                    break;
-                case "down":
-                    holoLoc = getCentralLocation(containerBlock, inventory, new Vector(0, -1.5, 0));
-                    break;
-                default:
-                    holoLoc = getCentralLocation(containerBlock, inventory, new Vector(0, 1, 0));
-                    break;
-            }
-        } else {
-            holoLoc = getCentralLocation(containerBlock, inventory, new Vector(0, 1, 0));
+        rotation = rotation == null ? Config.settings_defaults_rotation : rotation;
+        rotation = Config.holo_rotation ? rotation : Config.settings_defaults_rotation;
+        //Add rotation checks
+        switch (rotation) {
+            case "north":
+                holoLoc = getCentralLocation(containerBlock, inventory, new Vector(0, 0, -0.8));
+                break;
+            case "east":
+                holoLoc = getCentralLocation(containerBlock, inventory, new Vector(0.8, 0, 0));
+                break;
+            case "south":
+                holoLoc = getCentralLocation(containerBlock, inventory, new Vector(0, 0, 0.8));
+                break;
+            case "west":
+                holoLoc = getCentralLocation(containerBlock, inventory, new Vector(-0.8, 0, 0));
+                break;
+            case "down":
+                holoLoc = getCentralLocation(containerBlock, inventory, new Vector(0, -1.5, 0));
+                break;
+            default:
+                holoLoc = getCentralLocation(containerBlock, inventory, new Vector(0, 1, 0));
+                break;
         }
         return holoLoc;
     }

@@ -1,5 +1,6 @@
 package me.deadlight.ezchestshop.Utils.Objects;
 
+import me.deadlight.ezchestshop.Data.Config;
 import me.deadlight.ezchestshop.Data.SQLite.Database;
 import me.deadlight.ezchestshop.EzChestShop;
 
@@ -129,7 +130,7 @@ public class ShopSettings {
     }
 
     public String getRotation() {
-        return rotation == null ? "up" : rotation;
+        return rotation == null ? Config.settings_defaults_rotation : rotation;
     }
 
     public ShopSettings setRotation(String rotation) {

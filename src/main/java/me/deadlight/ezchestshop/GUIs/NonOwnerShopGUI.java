@@ -1,5 +1,6 @@
 package me.deadlight.ezchestshop.GUIs;
 
+import me.deadlight.ezchestshop.Data.ShopContainer;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.Data.LanguageManager;
 import me.deadlight.ezchestshop.Events.PlayerTransactEvent;
@@ -66,7 +67,7 @@ public class NonOwnerShopGUI {
         ItemStack oneSellIS = new ItemStack(Material.RED_DYE, 1);
         ItemMeta meta = oneSellIS.getItemMeta();
         meta.setDisplayName(lm.buttonSell1Title());
-        List<String> lores = Arrays.asList(lm.buttonSell1Lore(roundDecimals(sellPrice)));
+        List<String> lores = lm.buttonSell1Lore(sellPrice);
         meta.setLore(lores);
         oneSellIS.setItemMeta(meta);
 
@@ -77,13 +78,13 @@ public class NonOwnerShopGUI {
             if (disabledSell) {
                 return;
             }
-            sellItem(containerBlock, sellPrice, 1, mainitem, offlinePlayerOwner, player, data);
+            ShopContainer.sellItem(containerBlock, sellPrice, 1, mainitem, player, offlinePlayerOwner, data);
         });
 
         ItemStack moreSellIS = new ItemStack(Material.RED_DYE, 64);
         ItemMeta meta2 = moreSellIS.getItemMeta();
         meta2.setDisplayName(lm.buttonSell64Title());
-        List<String> lores2 = Arrays.asList(lm.buttonSell64Lore(roundDecimals(sellPrice * 64)));
+        List<String> lores2 = lm.buttonSell64Lore(sellPrice * 64);
         meta2.setLore(lores2);
         moreSellIS.setItemMeta(meta2);
 
@@ -95,7 +96,7 @@ public class NonOwnerShopGUI {
             if (disabledSell) {
                 return;
             }
-            sellItem(containerBlock, sellPrice * 64, 64, mainitem, offlinePlayerOwner, player, data);
+            ShopContainer.sellItem(containerBlock, sellPrice * 64, 64, mainitem, player, offlinePlayerOwner, data);
         });
 
         //buy 1x
@@ -103,7 +104,7 @@ public class NonOwnerShopGUI {
         ItemStack oneBuyIS = new ItemStack(Material.LIME_DYE, 1);
         ItemMeta meta3 = oneBuyIS.getItemMeta();
         meta3.setDisplayName(lm.buttonBuy1Title());
-        List<String> lores3 = Arrays.asList(lm.buttonBuy64Lore(roundDecimals(buyPrice)));
+        List<String> lores3 = lm.buttonBuy1Lore(buyPrice);
         meta3.setLore(lores3);
         oneBuyIS.setItemMeta(meta3);
 
@@ -114,14 +115,14 @@ public class NonOwnerShopGUI {
             if (disabledBuy) {
                 return;
             }
-            buyItem(containerBlock, buyPrice, 1, player, mainitem, offlinePlayerOwner, data);
+            ShopContainer.buyItem(containerBlock, buyPrice, 1, mainitem, player, offlinePlayerOwner, data);
         });
 
 
         ItemStack moreBuyIS = new ItemStack(Material.LIME_DYE, 64);
         ItemMeta meta4 = moreBuyIS.getItemMeta();
         meta4.setDisplayName(lm.buttonBuy64Title());
-        List<String> lores4 = Arrays.asList(lm.buttonBuy64Lore(roundDecimals(buyPrice * 64)));
+        List<String> lores4 = lm.buttonBuy64Lore(buyPrice * 64);
         meta4.setLore(lores4);
         moreBuyIS.setItemMeta(meta4);
 
@@ -132,7 +133,7 @@ public class NonOwnerShopGUI {
             if (disabledBuy) {
                 return;
             }
-            buyItem(containerBlock, buyPrice * 64, 64, player, mainitem, offlinePlayerOwner, data);
+            ShopContainer.buyItem(containerBlock, buyPrice * 64, 64, mainitem, player, offlinePlayerOwner, data);
         });
 
         ItemStack signItem = new ItemStack(Material.OAK_SIGN, 1);
@@ -168,7 +169,7 @@ public class NonOwnerShopGUI {
                                     Bukkit.getScheduler().scheduleSyncDelayedTask(EzChestShop.getPlugin(), new Runnable() {
                                         @Override
                                         public void run() {
-                                            buyItem(containerBlock, buyPrice * amount, amount, player, mainitem, offlinePlayerOwner, data);
+                                            ShopContainer.buyItem(containerBlock, buyPrice * amount, amount, mainitem, player, offlinePlayerOwner, data);
                                         }
                                     });
                                 } else {
@@ -208,7 +209,7 @@ public class NonOwnerShopGUI {
                                     Bukkit.getScheduler().scheduleSyncDelayedTask(EzChestShop.getPlugin(), new Runnable() {
                                         @Override
                                         public void run() {
-                                            sellItem(containerBlock, sellPrice * amount, amount, mainitem, offlinePlayerOwner, player, data);
+                                            ShopContainer.sellItem(containerBlock, sellPrice * amount, amount, mainitem, player, offlinePlayerOwner, data);
                                         }
                                     });
                                 } else {
@@ -252,115 +253,7 @@ public class NonOwnerShopGUI {
 
     }
 
-    private long roundDecimals(double num) {
-        return (long) (((long)(num * 1e1)) / 1e1);
-    }
-
-
-
-    private void buyItem(Block chest, double price, int count, Player player, ItemStack tthatItem, OfflinePlayer owner, PersistentDataContainer data) {
-        ItemStack thatItem = tthatItem.clone();
-
-        LanguageManager lm = new LanguageManager();
-        //check for money
-
-        if (Utils.getBlockInventory(chest).containsAtLeast(thatItem , count)) {
-
-            if (ifHasMoney(Bukkit.getOfflinePlayer(player.getUniqueId()), price)) {
-
-                if (Utils.hasEnoughSpace(player, count, thatItem)) {
-
-                    thatItem.setAmount(count);
-                    getandgive(Bukkit.getOfflinePlayer(player.getUniqueId()), price, owner);
-                    sharedIncomeCheck(data, price);
-                    Utils.getBlockInventory(chest).removeItem(thatItem);
-                    player.getInventory().addItem(thatItem);
-                    transactionMessage(data, owner, player, price, true, Utils.getFinalItemName(tthatItem), count, chest.getLocation().getBlock());
-                    player.sendMessage(lm.messageSuccBuy(price));
-                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 0.5f, 0.5f);
-
-                } else {
-                    player.sendMessage(lm.fullinv());
-                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_IRON_XYLOPHONE, 0.5f, 0.5f);
-                }
-
-            } else {
-
-                player.sendMessage(lm.cannotAfford());
-                player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_IRON_XYLOPHONE, 0.5f, 0.5f);
-
-            }
-
-        } else {
-            player.sendMessage(lm.outofStock());
-            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_IRON_XYLOPHONE, 0.5f, 0.5f);
-        }
-
-    }
-
-    private void sellItem(Block chest, double price, int count, ItemStack tthatItem , OfflinePlayer owner, Player player, PersistentDataContainer data) {
-
-        LanguageManager lm = new LanguageManager();
-
-        ItemStack thatItem = tthatItem.clone();
-
-        if (player.getInventory().containsAtLeast(thatItem, count)) {
-
-            if (ifHasMoney(owner, price)) {
-
-                if (Utils.containerHasEnoughSpace(Utils.getBlockInventory(chest), count, thatItem)) {
-                    thatItem.setAmount(count);
-                    getandgive(owner, price, Bukkit.getOfflinePlayer(player.getUniqueId()));
-                    transactionMessage(data, owner, Bukkit.getOfflinePlayer(player.getUniqueId()), price, false, Utils.getFinalItemName(tthatItem), count, chest.getLocation().getBlock());
-                    player.getInventory().removeItem(thatItem);
-                    Utils.getBlockInventory(chest).addItem(thatItem);
-                    player.sendMessage(lm.messageSuccSell(price));
-                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 0.5f, 0.5f);
-
-                } else {
-                    player.sendMessage(lm.chestIsFull());
-                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_IRON_XYLOPHONE, 0.5f, 0.5f);
-                }
-
-            } else {
-
-                player.sendMessage(lm.shopCannotAfford());
-                player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_IRON_XYLOPHONE, 0.5f, 0.5f);
-
-            }
-        } else {
-            player.sendMessage(lm.notEnoughItemToSell());
-            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_IRON_XYLOPHONE, 0.5f, 0.5f);
-        }
-
-    }
-
-
-
-
-    private boolean ifHasMoney(OfflinePlayer player, double price) {
-        if (econ.has(player, price)) {
-            return true;
-        }
-        return false;
-    }
-
-    private void getandgive(OfflinePlayer withdraw, double price, OfflinePlayer deposit) {
-
-        econ.withdrawPlayer(withdraw, price);
-        econ.depositPlayer(deposit, price);
-
-
-    }
-
-    private void transactionMessage(PersistentDataContainer data, OfflinePlayer owner, OfflinePlayer customer, double price, boolean isBuy, String itemName, int count, Block chest) {
-
-            //kharidan? true forokhtan? false
-            PlayerTransactEvent transactEvent = new PlayerTransactEvent(owner, customer, price, isBuy, itemName, count, Utils.getAdminsList(data), chest);
-            Bukkit.getPluginManager().callEvent(transactEvent);
-
-
-    }
+    
 
     private ItemStack disablingCheck(ItemStack mainItem, boolean disabling) {
         LanguageManager lm = new LanguageManager();

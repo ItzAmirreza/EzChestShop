@@ -3,6 +3,7 @@ import com.bgsoftware.wildchests.api.WildChestsAPI;
 import com.bgsoftware.wildchests.api.handlers.ChestsManager;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
+import me.deadlight.ezchestshop.Commands.CommandCheckProfits;
 import me.deadlight.ezchestshop.Commands.EcsAdmin;
 import me.deadlight.ezchestshop.Commands.MainCommands;
 import me.deadlight.ezchestshop.Data.Config;
@@ -128,6 +129,8 @@ public final class EzChestShop extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PlayerTransactionListener(), this);
         getServer().getPluginManager().registerEvents(new ChatListener(), this);
         getServer().getPluginManager().registerEvents(new BlockPistonExtendListener(), this);
+        getServer().getPluginManager().registerEvents(new SQLite(this), this);
+        getServer().getPluginManager().registerEvents(new CommandCheckProfits(), this);
         //Add Config check over here, to change the Shop display varient.
         //PlayerLooking is less laggy but probably harder to spot.
         if (Config.holodistancing) {
@@ -154,11 +157,13 @@ public final class EzChestShop extends JavaPlugin {
         }
         ecs.setExecutor(new MainCommands());
         ecsadmin.setExecutor(new EcsAdmin());
+        getCommand("checkprofits").setExecutor(new CommandCheckProfits());
     }
 
     private void registerTabCompleters() {
         getCommand("ecs").setTabCompleter(new MainCommands());
         getCommand("ecsadmin").setTabCompleter(new EcsAdmin());
+        getCommand("checkprofits").setTabCompleter(new CommandCheckProfits());
     }
 
 
@@ -205,7 +210,7 @@ public final class EzChestShop extends JavaPlugin {
 
     public static void logDebug(String str) {
         if (Config.debug_logging)
-            EzChestShop.getPlugin().getServer().getConsoleSender().sendMessage("[Debug] " + Utils.colorify(str));
+            EzChestShop.getPlugin().getServer().getConsoleSender().sendMessage("[Ecs-Debug] " + Utils.colorify(str));
     }
 
     private boolean setupEconomy() {

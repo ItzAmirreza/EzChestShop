@@ -2,6 +2,7 @@ package me.deadlight.ezchestshop.Utils;
 import me.deadlight.ezchestshop.Commands.EcsAdmin;
 import me.deadlight.ezchestshop.Commands.MainCommands;
 import me.deadlight.ezchestshop.Utils.Objects.TransactionLogObject;
+import net.minecraft.nbt.NBTTagCompound;
 import org.bukkit.*;
 import me.deadlight.ezchestshop.Data.Config;
 import me.deadlight.ezchestshop.EzChestShop;
@@ -13,6 +14,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.block.*;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.craftbukkit.v1_17_R1.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -26,6 +28,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
@@ -110,6 +113,23 @@ public class Utils {
             return null;
         }
 
+    }
+
+    /**
+     * Convert a Item to a Text Compount. Used in Text Component Builders to show
+     * items in chat.
+     *
+     * @category ItemUtils
+     * @param itemStack
+     * @return
+     */
+    public static String ItemToTextCompoundString(ItemStack itemStack) {
+        // First we convert the item stack into an NMS itemstack
+        net.minecraft.world.item.ItemStack nmsItemStack = CraftItemStack.asNMSCopy(itemStack);
+        NBTTagCompound compound = new NBTTagCompound();
+        compound = nmsItemStack.save(compound);
+
+        return compound.toString();
     }
 
     /**
@@ -564,14 +584,14 @@ public class Utils {
     }
 
     public static String getNextRotation(String current) {
-        if (current == null) return "north";
+        if (current == null) current = Config.settings_defaults_rotation;
         int i = rotations.indexOf(current);
         String result = i == rotations.size() - 1 ? rotations.get(0) : rotations.get(i + 1);
         return result;
     }
 
     public static String getPreviousRotation(String current) {
-        if (current == null) return "down";
+        if (current == null) current = Config.settings_defaults_rotation;
         int i = rotations.indexOf(current);
         String result = i == 0 ? rotations.get(rotations.size() - 1) : rotations.get(i - 1);
         return result;
@@ -613,6 +633,26 @@ public class Utils {
         return matcher.appendTail(buffer).toString();
     }
 
+    public enum FormatType {GUI, CHAT, HOLOGRAM}
+    public static String formatNumber(double number, FormatType type) {
+        String result = "Error";
+        DecimalFormat decimalFormat;
+        switch (type) {
+            case GUI:
+                decimalFormat = new DecimalFormat(Config.display_numberformat_gui);
+                result = decimalFormat.format(number);
+                break;
+            case CHAT:
+                decimalFormat = new DecimalFormat(Config.display_numberformat_chat);
+                result = decimalFormat.format(number);
+                break;
+            case HOLOGRAM:
+                decimalFormat = new DecimalFormat(Config.display_numberformat_holo);
+                result = decimalFormat.format(number);
+                break;
+        }
+        return result;
+    }
 
 
 

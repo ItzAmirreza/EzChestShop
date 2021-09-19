@@ -1,6 +1,7 @@
 package me.deadlight.ezchestshop.Listeners;
 import me.deadlight.ezchestshop.*;
 import me.deadlight.ezchestshop.Data.Config;
+import me.deadlight.ezchestshop.Data.LanguageManager;
 import me.deadlight.ezchestshop.Utils.ASHologram;
 import me.deadlight.ezchestshop.Utils.FloatingItem;
 import me.deadlight.ezchestshop.Utils.Utils;
@@ -25,6 +26,7 @@ import java.util.UUID;
 public class PlayerLookingAtChestShop implements Listener {
 
     private HashMap<Player, Location> map = new HashMap<>();
+    private static LanguageManager lm = new LanguageManager();
 
 
     private static HashMap<Location, List<Player>> playershopmap = new HashMap<>();
@@ -64,6 +66,10 @@ public class PlayerLookingAtChestShop implements Listener {
                         double sell = rightone.get(new NamespacedKey(EzChestShop.getPlugin(), "sell"), PersistentDataType.DOUBLE);
                         boolean is_adminshop = rightone.get(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"),
                                 PersistentDataType.INTEGER) == 1;
+                        boolean is_dbuy = rightone.get(new NamespacedKey(EzChestShop.getPlugin(), "dbuy"),
+                                PersistentDataType.INTEGER) == 1;
+                        boolean is_dsell = rightone.get(new NamespacedKey(EzChestShop.getPlugin(), "dsell"),
+                                PersistentDataType.INTEGER) == 1;
                         OfflinePlayer offlinePlayerOwner = Bukkit.getOfflinePlayer(UUID.fromString(rightone.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING)));
                         String shopOwner = offlinePlayerOwner.getName();
                         if (shopOwner == null) {
@@ -73,7 +79,7 @@ public class PlayerLookingAtChestShop implements Listener {
                         Location holoLoc = getHoloLoc(target);
 
                         if (!isAlreadyLooking(event.getPlayer(), target) && Config.showholo && !isAlreadyPresenting(target.getLocation(), event.getPlayer())) {
-                            showHologram(holoLoc, target.getLocation().clone(), thatItem, buy, sell, event.getPlayer(), is_adminshop, shopOwner);
+                            showHologram(holoLoc, target.getLocation().clone(), thatItem, buy, sell, event.getPlayer(), is_adminshop, shopOwner, is_dbuy, is_dsell);
                         }
                         map.put(event.getPlayer(), target.getLocation());
                     }
@@ -91,6 +97,10 @@ public class PlayerLookingAtChestShop implements Listener {
                         double sell = container.get(new NamespacedKey(EzChestShop.getPlugin(), "sell"), PersistentDataType.DOUBLE);
                         boolean is_adminshop = container.get(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"),
                                 PersistentDataType.INTEGER) == 1;
+                        boolean is_dbuy = container.get(new NamespacedKey(EzChestShop.getPlugin(), "dbuy"),
+                                PersistentDataType.INTEGER) == 1;
+                        boolean is_dsell = container.get(new NamespacedKey(EzChestShop.getPlugin(), "dsell"),
+                                PersistentDataType.INTEGER) == 1;
                         OfflinePlayer offlinePlayerOwner = Bukkit.getOfflinePlayer(UUID.fromString(container.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING)));
                         String shopOwner = offlinePlayerOwner.getName();
                         if (shopOwner == null) {
@@ -99,7 +109,7 @@ public class PlayerLookingAtChestShop implements Listener {
                         Location holoLoc = getHoloLoc(target);
 
                         if (!isAlreadyLooking(event.getPlayer(), target) && Config.showholo && !isAlreadyPresenting(target.getLocation(), event.getPlayer())) {
-                            showHologram(holoLoc, target.getLocation().clone(), thatItem, buy, sell, event.getPlayer(), is_adminshop, shopOwner);
+                            showHologram(holoLoc, target.getLocation().clone(), thatItem, buy, sell, event.getPlayer(), is_adminshop, shopOwner, is_dbuy, is_dsell);
                         }
 
                         map.put(event.getPlayer(), target.getLocation());
@@ -113,7 +123,8 @@ public class PlayerLookingAtChestShop implements Listener {
 
 
 
-    private void showHologram(Location spawnLocation, Location shopLocation, ItemStack thatItem, double buy, double sell, Player player, boolean is_adminshop, String shop_owner) {
+    private void showHologram(Location spawnLocation, Location shopLocation, ItemStack thatItem, double buy, double sell,
+                              Player player, boolean is_adminshop, String shop_owner, boolean is_dbuy, boolean is_dsell) {
 
         List<ASHologram> holoTextList = new ArrayList<>();
         List<FloatingItem> holoItemList = new ArrayList<>();
@@ -124,19 +135,31 @@ public class PlayerLookingAtChestShop implements Listener {
         itemname = Utils.getFinalItemName(thatItem);
         for (String element : is_adminshop ? Config.holostructure_admin : Config.holostructure) {
             if (element.equalsIgnoreCase("[Item]")) {
-                lineLocation.add(0, 0.15, 0);
+                lineLocation.add(0, 0.15 * Config.holo_linespacing, 0);
                 FloatingItem floatingItem = new FloatingItem(player, thatItem, lineLocation);
                 Utils.onlinePackets.add(floatingItem);
                 holoItemList.add(floatingItem);
-                lineLocation.add(0, 0.35, 0);
+                lineLocation.add(0, 0.35 * Config.holo_linespacing, 0);
             } else {
-                String line = Utils.colorify(element.replace("%item%", itemname).replace("%buy%", String.valueOf(buy)).
-                        replace("%sell%", String.valueOf(sell)).replace("%currency%", Config.currency).replace("%owner%", shop_owner));
+                String line = Utils.colorify(element.replace("%item%", itemname).replace("%buy%", Utils.formatNumber(buy, Utils.FormatType.HOLOGRAM)).
+                        replace("%sell%", Utils.formatNumber(sell, Utils.FormatType.HOLOGRAM)).replace("%currency%", Config.currency).replace("%owner%", shop_owner));
+                if (is_dbuy || is_dsell) {
+                    line = line.replaceAll("<separator>.*?<\\/separator>", "");
+                    if (is_dbuy && is_dsell) {
+                        line = lm.disabledButtonTitle();
+                    } else if (is_dbuy) {
+                        line = line.replaceAll("<buy>.*?<\\/buy>", "").replaceAll("<sell>|<\\/sell>", "");
+                    } else if (is_dsell) {
+                        line = line.replaceAll("<sell>.*?<\\/sell>", "").replaceAll("<buy>|<\\/buy>", "");
+                    }
+                } else {
+                    line = line.replaceAll("<separator>|<\\/separator>", "").replaceAll("<buy>|<\\/buy>", "").replaceAll("<sell>|<\\/sell>", "");
+                }
                 ASHologram hologram = new ASHologram(player, line, EntityType.ARMOR_STAND, lineLocation, false);
                 hologram.spawn();
                 Utils.onlinePackets.add(hologram);
                 holoTextList.add(hologram);
-                lineLocation.add(0, 0.3, 0);
+                lineLocation.add(0, 0.3 * Config.holo_linespacing, 0);
             }
         }
 
@@ -214,31 +237,28 @@ public class PlayerLookingAtChestShop implements Listener {
         Inventory inventory = Utils.getBlockInventory(containerBlock);
         PersistentDataContainer container = ((TileState) containerBlock.getState()).getPersistentDataContainer();
         String rotation = container.get(new NamespacedKey(EzChestShop.getPlugin(), "rotation"), PersistentDataType.STRING);
-        rotation = rotation == null ? "up" : rotation;
-        if (Config.holo_rotation) {
-            //Add rotation checks
-            switch (rotation) {
-                case "north":
-                    holoLoc = getCentralLocation(containerBlock, inventory, new Vector(0, 0, -0.8));
-                    break;
-                case "east":
-                    holoLoc = getCentralLocation(containerBlock, inventory, new Vector(0.8, 0, 0));
-                    break;
-                case "south":
-                    holoLoc = getCentralLocation(containerBlock, inventory, new Vector(0, 0, 0.8));
-                    break;
-                case "west":
-                    holoLoc = getCentralLocation(containerBlock, inventory, new Vector(-0.8, 0, 0));
-                    break;
-                case "down":
-                    holoLoc = getCentralLocation(containerBlock, inventory, new Vector(0, -1.5, 0));
-                    break;
-                default:
-                    holoLoc = getCentralLocation(containerBlock, inventory, new Vector(0, 1, 0));
-                    break;
-            }
-        } else {
-            holoLoc = getCentralLocation(containerBlock, inventory, new Vector(0, 1, 0));
+        rotation = rotation == null ? Config.settings_defaults_rotation : rotation;
+        rotation = Config.holo_rotation ? rotation : Config.settings_defaults_rotation;
+        //Add rotation checks
+        switch (rotation) {
+            case "north":
+                holoLoc = getCentralLocation(containerBlock, inventory, new Vector(0, 0, -0.8));
+                break;
+            case "east":
+                holoLoc = getCentralLocation(containerBlock, inventory, new Vector(0.8, 0, 0));
+                break;
+            case "south":
+                holoLoc = getCentralLocation(containerBlock, inventory, new Vector(0, 0, 0.8));
+                break;
+            case "west":
+                holoLoc = getCentralLocation(containerBlock, inventory, new Vector(-0.8, 0, 0));
+                break;
+            case "down":
+                holoLoc = getCentralLocation(containerBlock, inventory, new Vector(0, -1.5, 0));
+                break;
+            default:
+                holoLoc = getCentralLocation(containerBlock, inventory, new Vector(0, 1, 0));
+                break;
         }
         return holoLoc;
     }

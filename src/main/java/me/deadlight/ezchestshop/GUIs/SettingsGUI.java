@@ -61,7 +61,7 @@ public class SettingsGUI {
         //trans
         ItemStack lastTransItem = new ItemStack(Material.PAPER, 1);
         ItemMeta lastTransMeta = lastTransItem.getItemMeta();
-        lastTransMeta.setDisplayName(lm.latestTransactionsButton());
+        lastTransMeta.setDisplayName(lm.latestTransactionsTitle());
         lastTransItem.setItemMeta(lastTransMeta);
         GuiItem lastTrans = new GuiItem(lastTransItem, event -> {
            event.setCancelled(true);
@@ -260,7 +260,7 @@ public class SettingsGUI {
 
 
         String rotation = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "rotation"), PersistentDataType.STRING);
-        rotation = rotation == null ? "up" : rotation;
+        rotation = rotation == null ? Config.settings_defaults_rotation : rotation;
         ItemStack rotationItemStack= new ItemStack(Material.COMPASS, 1);
         ItemMeta rotationItemMeta = rotationItemStack.getItemMeta();
         rotationItemMeta.setDisplayName(lm.rotateHologramButtonTitle());

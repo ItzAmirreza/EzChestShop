@@ -3,6 +3,10 @@ package me.deadlight.ezchestshop.Data.SQLite;
 import me.deadlight.ezchestshop.Data.SQLite.Structure.SQLColumn;
 import me.deadlight.ezchestshop.Data.SQLite.Structure.SQLTable;
 import me.deadlight.ezchestshop.EzChestShop;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,7 +18,7 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
-public class SQLite extends Database {
+public class SQLite extends Database implements Listener {
 
         String dbname;
 
@@ -83,31 +87,59 @@ public class SQLite extends Database {
         }
 
 
+    //TODO Don't forget to change this when adding a new database table that works with Player data!
+    public static List<String> playerTables = Arrays.asList("playerdata");
+
+    /**
+     * Prepare the database player values.
+     *
+     * @param evt
+     */
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onJoin(PlayerJoinEvent evt) { // prepare the db for future data insertion!
+        Database db = EzChestShop.getPlugin().getDatabase();
+        UUID uuid = evt.getPlayer().getUniqueId();
+        SQLite.playerTables.forEach(t -> {
+            if (db.hasTable(t)) {
+                if (!db.hasPlayer(t, uuid)) {
+                    db.PreparePlayerdata(t, uuid.toString());
+                }
+            }
+        });
+    }
+
     /**************************************
      *         DATABASE STRUCTURE         *
      *           Very Important           *
      **************************************/
     public LinkedHashMap<String, SQLTable> getTableObjects() {
-            LinkedHashMap<String, SQLTable> tables = new LinkedHashMap<>();
-            tables.put("shopdata", new SQLTable(new LinkedHashMap<String, SQLColumn>() {
-                {
-                    put("location", new SQLColumn("STRING (32)", true, false));
-                    put("owner", new SQLColumn("STRING (32)", false, false));
-                    put("item", new SQLColumn("STRING (32)", false, false));
-                    put("buyPrice", new SQLColumn("DOUBLE", false, false));
-                    put("sellPrice", new SQLColumn("DOUBLE", false, false));
-                    put("msgToggle", new SQLColumn("BOOLEAN", false, false));
-                    put("buyDisabled", new SQLColumn("BOOLEAN", false, false));
-                    put("sellDisabled", new SQLColumn("BOOLEAN", false, false));
-                    put("admins", new SQLColumn("STRING (32)", false, false));
-                    put("shareIncome", new SQLColumn("BOOLEAN", false, false));
-                    put("transactions", new SQLColumn("STRING (32)", false, false));
-                    put("adminshop", new SQLColumn("BOOLEAN", false, false));
-                    put("rotation", new SQLColumn("STRING (32)", false, false));
+        LinkedHashMap<String, SQLTable> tables = new LinkedHashMap<>();
+        tables.put("shopdata", new SQLTable(new LinkedHashMap<String, SQLColumn>() {
+            {
+                put("location", new SQLColumn("STRING (32)", true, false));
+                put("owner", new SQLColumn("STRING (32)", false, false));
+                put("item", new SQLColumn("STRING (32)", false, false));
+                put("buyPrice", new SQLColumn("DOUBLE", false, false));
+                put("sellPrice", new SQLColumn("DOUBLE", false, false));
+                put("msgToggle", new SQLColumn("BOOLEAN", false, false));
+                put("buyDisabled", new SQLColumn("BOOLEAN", false, false));
+                put("sellDisabled", new SQLColumn("BOOLEAN", false, false));
+                put("admins", new SQLColumn("STRING (32)", false, false));
+                put("shareIncome", new SQLColumn("BOOLEAN", false, false));
+                put("transactions", new SQLColumn("STRING (32)", false, false));
+                put("adminshop", new SQLColumn("BOOLEAN", false, false));
+                put("rotation", new SQLColumn("STRING (32)", false, false));
 
-                }
-            }));
-            return tables;
+            }
+        }));
+        tables.put("playerdata", new SQLTable(new LinkedHashMap<String, SQLColumn>() {
+            {
+                put("uuid", new SQLColumn("STRING (32)", true, false));
+                put("checkprofits", new SQLColumn("STRING (32)", false, false));
+            }
+        }));
+
+        return tables;
         }
 
 

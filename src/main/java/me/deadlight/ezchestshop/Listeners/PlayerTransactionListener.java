@@ -1,4 +1,5 @@
 package me.deadlight.ezchestshop.Listeners;
+import me.deadlight.ezchestshop.Data.PlayerContainer;
 import me.deadlight.ezchestshop.Data.ShopContainer;
 import me.deadlight.ezchestshop.Events.PlayerTransactEvent;
 import me.deadlight.ezchestshop.EzChestShop;
@@ -10,6 +11,7 @@ import org.bukkit.block.TileState;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
@@ -24,6 +26,7 @@ public class PlayerTransactionListener implements Listener {
     @EventHandler
     public void onTransaction(PlayerTransactEvent event) {
         log(event);
+        logProfits(event);
         if (((TileState)event.getContainerBlock().getState()).getPersistentDataContainer().get(new NamespacedKey(EzChestShop.getPlugin(), "msgtoggle"), PersistentDataType.INTEGER) == 1) {
 
             List<UUID> getters = event.getAdminsUUID();
@@ -99,6 +102,35 @@ public class PlayerTransactionListener implements Listener {
 
     }
 
+
+    private void logProfits(PlayerTransactEvent event) {
+        Double price = event.getPrice();
+        Integer count = event.getCount();
+        // These next 4 are interesting:
+        //Integer count = amount / defaultAmount; // How many times were items bought. Considers Stack buying.
+        // Double single_price = price / count;
+        String id = Utils.LocationtoString(event.getContainerBlock().getLocation());
+        ItemStack item = event.getItem(); // Item shop sells
+        PlayerContainer owner = PlayerContainer.get(event.getOwner());
+        if (event.isBuy()) {
+            if (event.isShareIncome()) {
+                int admin_count = event.getAdminsUUID().size();
+                for (UUID uuid : event.getAdminsUUID()) {
+                    if (uuid.equals(event.getOwner().getUniqueId()))
+                        continue;
+                    PlayerContainer admin = PlayerContainer.get(Bukkit.getOfflinePlayer(uuid));
+                    admin.updateProfits(id, item, count, price / (admin_count + 1), price / count, 0, 0.0, 0.0);
+                }
+
+                owner.updateProfits(id, item, count, price / (admin_count + 1), event.getBuyPrice(), 0, 0.0, event.getSellPrice());
+            } else {
+                owner.updateProfits(id, item, count, price, event.getBuyPrice(), 0, 0.0, event.getSellPrice());
+            }
+        } else {
+            owner.updateProfits(id, item, 0, 0.0, event.getBuyPrice(), count, price, event.getSellPrice());
+        }
+            // ItemStack,BuyAmount,BuyPrice,SellAmount,SellPrice
+    }
 
 
 }

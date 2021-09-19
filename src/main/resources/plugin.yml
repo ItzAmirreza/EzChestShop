@@ -17,3 +17,7 @@ commands:
       - ezchestshop
   ecsadmin:
     description: commands designed for admins to moderate
+  checkprofits:
+    description: Check all your shop profits that you made offline!
+    aliases:
+      - cp

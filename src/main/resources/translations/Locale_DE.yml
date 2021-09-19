@@ -5,118 +5,241 @@
 # Vergiss nicht das plugin zu liken falls du EzChestShop magst!
 # Übersetzung von ElitoGame
 # ======================================================================================================================
-gui-initialbuyprice: "&aUrsprünglicher Kaufpreis: &e%buyprice% $"
-gui-initialsellprice: "&cUrsprünglicher Verkaufspreis: &e%sellprice% $"
-gui-admin-title: "&c%shopowner%'s Kistenshop &4(Admin Sicht)"
-gui-nonowner-title: "&c%shopowner%'s Kistenshop"
-gui-owner-title: "&c%shopowner%'s Kistenshop"
-gui-button-sellone-title: "&cVerkauf 1x"
-gui-button-sellone-lore: "&7Verkauf für &e%price% $"
-gui-button-sell64-title: "&7Verkauf 64x"
-gui-button-sell64-lore: "&7Verkauf für &e%price% $"
-gui-button-buyone-title: "&aKauf 1x"
-gui-button-buyone-lore: "&7Kauf für &e%price% $"
-gui-button-buy64-title: "&aKauf 64x"
-gui-button-buy64-lore: "&7Kauf für &e%price% $"
-gui-button-adminview: "&c&lAdmin Sicht"
-gui-button-storage: "&e&lLager"
-message-successful-buy: "&aDu hast diesen Gegenstand erfolgreich für &e%price% $ gekauft."
-message-fullinv: "&cDein Inventar ist voll!"
-message-cannotafford: "&cDu kannst dir das nicht leisten..."
-message-outofstock: "&cDieser Shop ist ausgekauft!"
-message-successful-sell: "&aDu hast diesen Gegenstand erfolgreich für &e%price% $ verkauft"
-message-shopcannotafford: "&cDer Shopbesitzer hat kein Geld mehr."
-message-notenoughitemtosell: "&cDu hast nicht genug Gegenstände um dies zu verkaufen!"
-message-chestisFull: "Die Kiste ist voll."
-message-selftransaction: "&cDu kannst nicht an dich selbst verkaufen oder von dir kaufen!"
-# Update 1.2.8 neue Nachrichten (Verwende \n für neue Zeilen)
-commandmsg-negativeprice: "&cNegativer Preis? Aber er muss positiv sein..."
-commandmsg-notenoughargs: "&cDu hast nicht genügend Argumente verwendet! \n &cRichtige Verwendung: /ecs create (Kaufpreis) (Verkaufspreis)"
-commandmsg-consolenotallowed: "&cDu hast nicht genügend Rechte um Befehle von der Konsole auszuführen."
-commandmsg-help: "&7- &c/ecs create (Kaufpreis) (Verkaufspreis) &7| Erstelle einen Shop indem du die gewünschten Gegenstände in der Hand hältst und auf die Kiste schaust. \n &7- &c/ecs remove &7| Entfernt den Shop auf den du schaust. \n &7- &c/ecs settings (setting) &7| Einstellungen kopieren/einfügen/bearbeiten \n &eEinstellungen: &7[copy, paste, admins, toggle-buying, toggle-selling, toggle-message, toggle-shared-income] \n &7Eazy nicht? :)"
-commandmsg-shopcreated: "&aDu hast erfolgreich einen Kistenshop erstellt!"
-commandmsg-holdsomething: "&cBitte halte etwas in deiner Haupthand!"
-commandmsg-notallowdtocreate: "&cDu hast nicht genügend Rechte um hier einen Shop zu erstellen oder entfernen."
-commandmsg-notchest: "&cDer Block auf den du schaust ist keine unterstützte Kiste/keine Kiste."
-commandmsg-lookatchest: "&cBitte schau auf eine Kiste."
-commandmsg-csremoved: "&eThis chest shop successfully removed."
-commandmsg-notowner: "&aYou are not the owner of this chest shop!"
-commandmsg-notachestorcs: "&cDer Block auf den du schaust ist keine Kiste/kein Kistenshop."
-# Update 1.3.0 fügt neue Nachrichten bezüglich Chat und GUI hinzu.
-settingsButton: "&b&lEinstellungen"
-disabledButtonTitle: "&cDeaktiviert"
-# Verwende \n für eine neue Lorezeile (Bedenke neue Farben für jede Zeile zu verwenden)
-disabledButtonLore: "&7Diese Option ist vom \n &7Shopbesitzer deaktiviert."
-transactionButtonTitle: "&aProfit Berichte"
-backToSettingsButton: "&eZurück zu den Einstellungen"
-transactionPaperTitleBuy: "&aKauf | %player%"
-transactionPaperTitleSell: "&cVerkauf | %player%"
-transactionPaperLoreBuy: "&7Totaler Preis: %price% \n &7Anzahl: %count% \n &7Transaktionstyp: &aGekauft von dir \n &e%time%"
-transactionPaperLoreSell: "&7Totaler Preis: %price% \n &7Anzahl: %count% \n &7Transaktionstyp: &cVerkauft an dich \n &e%time%"
-lessthanminute: "&evor weniger als einer Minute"
-minutesago: "&evar %minutes% Minuten"
-hoursago: "&evor %hours% Stunde(n)"
-daysago: "&evor %days% Tagen"
-adminshopguititle: "&cAdminshop"
-# Einstellungen GUI Sektion
-settingsGuiTitle: "&b&lEinstellungen"
-latestTransactionsButton: "&aLetzte Transaktionen"
-toggleTransactionMessageButton: "&eTransaktionsnachreicht ein/aus schalten"
-statusOn: "&aEin"
-statusOff: "&cAus"
-toggleTransactionMessageButtonLore: "&7Momentaner Status: %status% \n &7Falls du diese Nachricht an lässt, \n &7wirst du Benachrichtigugnen \n &7erhalten wann immer jemand etwas \n &7an deinen Shop kauft oder verkauft"
-toggleTransactionMessageOnInChat: "&7Transaktionsnachreicht: &aEIN"
-toggleTransactionMessageOffInChat: "&7Transaktionsnachreicht: &cAUS"
-disableBuyingButtonTitle: "&eDeaktiviere Kaufoption"
-disableBuyingButtonLore: "&7Momentaner Status: %status% \n &7Falls du diese Option EIN lässt, \n &7wird der Shop niemandem von deinem \n &7Shop kaufen lassen."
-disableBuyingOnInChat: "&7Deaktiviere Kaufoption: &aEIN"
-disableBuyingOffInChat: "&7Deaktiviere Kaufoption: &cAUS"
-disableSellingButtonTitle: "&eDeaktiviere Verkaufoption"
-disableSellingButtonLore: "&7Momentaner Status: %status% \n &7Falls du diese Option EIN lässt, \n &7wird der Shop niemandem an deinen \n &7Shop verkaufen lassen."
-disableSellingOnInChat: "&7Deaktiviere Verkaufoption: &aEIN"
-disableSellingOffInChat: "&7Deaktiviere Verkaufoption: &cAUS"
-shopAdminsButtonTitle: "&eShop Admins"
-nobodyStatusAdmins: "&aNiemand"
-shopAdminsButtonLore: "&7Du kannst Admins zu deinem \n &7Shop hinzufügen/entfernen. Admins haben Zugriff auf \n &7das Lager des Shops und einige \n &7Einstellungen(alles außer geteiltes Einkommen \n &7und hinzufügen/entfernen von Admins). \n &aLinksclick &7um einen Admin hinzuzufügen \n &cRechtsclick &7um einen Admin zu entfernen \n &7Momentane Admins: %admins%"
-addingAdminWaiting: "&eGib bitte den Namen des Admins ein der zu der Adminliste hinzugefügt werden soll."
-removingAdminWaiting: "&eGib bitte den Namen des Admins ein der von der Adminliste entfernt werden soll."
-shareIncomeButtonTitle: "&eGeteiltes Einkommen"
-shareIncomeButtonLore: "&7Momentaner Status: %status% \n &7Falls du diese Option EIN lässt, \n &7wird der Profit der VERKÄUFE \n &7zwischen den Admins aufgeteilt."
-sharedIncomeOnInChat: "&7Geteiltes Einkommen: &aEIN"
-sharedIncomeOffInChat: "&7Geteiltes Einkommen: &cAUS"
-backToShopGuiButton: "&eZurück zum Shop"
-selfAdmin: "&cDu kannst dich nicht selbst zur Adminliste hinzufügen/entfernen!"
-noPlayer: "&cDieser Spieler existiert nicht oder hat hier noch nicht gespielt."
-sucAdminAdded: "&e%player% &awurde erfolgreich zur Adminliste hinzugefügt."
-alreadyAdmin: "&cDieser Spieler ist bereits ein Admin!"
-sucAdminRemoved: "&e%player% &awurde erfolgreich von der Adminliste entfernt."
-notInAdminList: "&cDieser Spieler ist nicht in der Adminliste!"
-# Update 1.4.0
-copiedShopSettings: "&7Shop Einstellungen &6kopiert!"
-pastedShopSettings: "&7Shop Einstellungen &fübertragen!"
-maxShopLimitReached: "&cMaximale Shop Anzahl erreicht: %shoplimit%!"
-clearedAdmins: "&cAlle Admins wurden von diesem Shop entfernt."
-buyingIsDisabled: "&cDu kannst in diesem Shop nichts kaufen."
-sellingIsDisabled: "&cDu kannst in diesem Shop nichts verkaufen."
-gui-customAmountSign-title: "&eBenutzerdefierter Kauf/Verkauf"
-# Verwende \n für eine neue Lorezeile (Bedenke neue Farben für jede Zeile zu verwenden)
-gui-customAmountSign-lore: "&7Kauf oder Verkauf einer\n&7benutzerdefinierten Menge\n &d \n &aLinksclick für benutzerdefinierten Kauf \n &cRechtsclick für benutzerdefinierten Verkauf \n &d \n &7Du kannst insgesamt &e%buycount%&7 von diesem Item &akaufen. \n &7Du kannst insgesamt &e%sellcount%&7 von diesem Item &cverkaufen."
-# 15 Zeichen pro Zeile (\n) ohne Farb-codes, startend ab der zweiten Zeile.
-signEditorGui-buy: "&a^^ Max: %max% ^^ \n &bGib eine Kauf\n &bMenge an"
-signEditorGui-sell: "&c^^ Max: %max% ^^ \n &bGib eine Verkaufs\n &bMenge an"
-wrongInput: "&cFalsche Eingabe(oder eine zu große Menge), gib bitte eine Nummer ein!"
-enterTheAmount: "&eSchreib die gewünschte Menge bitte auf das Schild."
-unsupportedInteger: "&cHey! Die Menga kann offensichtlich nicht null oder kleiner sein."
-openingShopProblem: "&cBeim öffnen dieses Shops ist ein Problem aufgetreten. Bitte kontaktiere einen Administrator um in der Konsole nachzusehen."
-# Update 1.4.2
-slimeFunBlockNotSupported: "&cLeider sind slimefun kisten nicht unterstützt! Bitte verwende einen anderen Container!"
-# Update 1.4.4 Hologram Rotationen, individuelles Kopieren->Einfügen und Sprachdatein Update.
-rotateHologramButtonTitle: "&eHologram Rotation"
-rotateHologramButtonLore: "&7Rotation: \n%rotations%\n &aLinks&7/&cRechts&7-click um zwischen\n &7den Rotationen zu wechseln!"
-rotateHologramInChat: "&7Hologram Rotation: %rotation%"
-rotationUp: "&aOben"
-rotationNorth: "&aNorden"
-rotationEast: "&aOsten"
-rotationSouth: "&aSüden"
-rotationWest: "&aWested"
-rotationDown: "&aUnten"
+shop-gui:
+  initialbuyprice: "&aUrsprünglicher Kaufpreis: &e%buyprice% $"
+  initialsellprice: "&cUrsprünglicher Verkaufspreis: &e%sellprice% $"
+  admin-title: "&c%shopowner%'s Kistenshop &4(Admin Sicht)"
+  nonowner-title: "&c%shopowner%'s Kistenshop"
+  owner-title: "&c%shopowner%'s Kistenshop"
+  adminshop-title: "&cAdminshop"
+  buttons:
+    sellone-title: "&cVerkauf 1x"
+    sellone-lore:
+      - "&7Verkauf für &e%price% $"
+    sell64-title: "&7Verkauf 64x"
+    sell64-lore:
+      - "&7Verkauf für &e%price% $"
+    buyone-title: "&aKauf 1x"
+    buyone-lore:
+      - "&7Kauf für &e%price% $"
+    buy64-title: "&aKauf 64x"
+    buy64-lore:
+      - "&7Kauf für &e%price% $"
+    adminview: "&c&lAdmin Sicht"
+    storage: "&e&lLager"
+    settings: "&b&lEinstellungen"
+    disabled-title: "&cDeaktiviert"
+    # Verwende \n für eine neue Lorezeile (Bedenke neue Farben für jede Zeile zu verwenden)
+    disabled-lore:
+      - "&7Diese Option ist vom "
+      - " &7Shopbesitzer deaktiviert."
+transactions:
+  transactionButtonTitle: "&aProfit Berichte"
+  backToSettingsButton: "&eZurück zu den Einstellungen"
+  PaperTitleBuy: "&aKauf | %player%"
+  PaperTitleSell: "&cVerkauf | %player%"
+  PaperLoreBuy:
+    - "&7Totaler Preis: %price% "
+    - " &7Anzahl: %count% "
+    - " &7Transaktionstyp: &aGekauft von dir "
+    - " &e%time%"
+  PaperLoreSell:
+    - "&7Totaler Preis: %price% "
+    - " &7Anzahl: %count% "
+    - " &7Transaktionstyp: &cVerkauft an dich "
+    - " &e%time%"
+  lessthanminute: "&evor weniger als einer Minute"
+  minutesago: "&evar %minutes% Minuten"
+  hoursago: "&evor %hours% Stunde(n)"
+  daysago: "&evor %days% Tagen"
+settings:
+  GuiTitle: "&b&lEinstellungen"
+  statusOn: "&aEin"
+  statusOff: "&cAus"
+  buttons:
+    toggleTransactions:
+      Title: "&eTransaktionsnachreicht ein/aus schalten"
+      Lore: 
+        - "&7Momentaner Status: %status% "
+        - " &7Falls du diese Nachricht an lässt, "
+        - " &7wirst du Benachrichtigugnen "
+        - " &7erhalten wann immer jemand etwas "
+        - " &7an deinen Shop kauft oder verkauft"
+    disableBuying:
+      Title: "&eDeaktiviere Kaufoption"
+      Lore: 
+        - "&7Momentaner Status: %status% "
+        - " &7Falls du diese Option EIN lässt, "
+        - " &7wird der Shop niemandem von deinem "
+        - " &7Shop kaufen lassen."
+    disableSelling:
+      Title: "&eDeaktiviere Verkaufoption"
+      Lore: 
+        - "&7Momentaner Status: %status% "
+        - " &7Falls du diese Option EIN lässt, "
+        - " &7wird der Shop niemandem an deinen "
+        - " &7Shop verkaufen lassen."
+    shopAdmins:
+      Title: "&eShop Admins"
+      nobodyStatusAdmins: "&aNiemand"
+      Lore: 
+        - "&7Du kannst Admins zu deinem "
+        - " &7Shop hinzufügen/entfernen. Admins haben Zugriff auf "
+        - " &7das Lager des Shops und einige "
+        - " &7Einstellungen(alles außer geteiltes Einkommen "
+        - " &7und hinzufügen/entfernen von Admins). "
+        - " &aLinksclick &7um einen Admin hinzuzufügen "
+        - " &cRechtsclick &7um einen Admin zu entfernen "
+        - " &7Momentane Admins: %admins%"
+    sharedIncome:
+      Title: "&eGeteiltes Einkommen"
+      Lore: 
+        - "&7Momentaner Status: %status% "
+        - " &7Falls du diese Option EIN lässt, "
+        - " &7wird der Profit der VERKÄUFE "
+        - " &7zwischen den Admins aufgeteilt."
+    hologramRotation:
+      Title: "&eHologram Rotation"
+      Lore:
+        - "&7Rotation: "
+        - "%rotations%"
+        - " &aLinks&7/&cRechts&7-click um zwischen"
+        - " &7den Rotationen zu wechseln!"
+    other:
+      backToShopGuiButton: "&eZurück zum Shop"
+      latestTransactionsTitle: "&aLetzte Transaktionen"
+  chat:
+    toggleTransactions:
+      MessageOn: "&7Transaktionsnachreicht: &aEIN"
+      MessageOff: "&7Transaktionsnachreicht: &cAUS"
+    disableBuying:
+      MessageOn: "&7Deaktiviere Kaufoption: &aEIN"
+      MessageOff: "&7Deaktiviere Kaufoption: &cAUS"
+    disableSelling:
+      MessageOn: "&7Deaktiviere Verkaufoption: &aEIN"
+      MessageOff: "&7Deaktiviere Verkaufoption: &cAUS"
+    shopAdmins:
+      addingAdminWaiting: "&eGib bitte den Namen des Admins ein der zu der Adminliste hinzugefügt werden soll."
+      removingAdminWaiting: "&eGib bitte den Namen des Admins ein der von der Adminliste entfernt werden soll."
+      selfAdmin: "&cDu kannst dich nicht selbst zur Adminliste hinzufügen/entfernen!"
+      sucAdminAdded: "&e%player% &awurde erfolgreich zur Adminliste hinzugefügt."
+      alreadyAdmin: "&cDieser Spieler ist bereits ein Admin!"
+      noPlayer: "&cDieser Spieler existiert nicht oder hat hier noch nicht gespielt."
+      sucAdminRemoved: "&e%player% &awurde erfolgreich von der Adminliste entfernt."
+      notInAdminList: "&cDieser Spieler ist nicht in der Adminliste!"
+      clearedAdmins: "&cAlle Admins wurden von diesem Shop entfernt."
+    sharedIncome:
+      MessageOn: "&7Geteiltes Einkommen: &aEIN"
+      MessageOff: "&7Geteiltes Einkommen: &cAUS"
+    copy-paste:
+      copiedShopSettings: "&7Shop Einstellungen &6kopiert!"
+      pastedShopSettings: "&7Shop Einstellungen &fübertragen!"
+    hologramRotation:
+      rotateHologramInChat: "&7Hologram Rotation: %rotation%"
+      rotation:
+        Up: "&aOben"
+        North: "&aNorden"
+        East: "&aOsten"
+        South: "&aSüden"
+        West: "&aWested"
+        Down: "&aUnten"
+customBuySell:
+  gui-customAmountSign-title: "&eBenutzerdefierter Kauf/Verkauf"
+  gui-customAmountSign-lore:
+    - "&7Kauf oder Verkauf einer"
+    - "&7benutzerdefinierten Menge"
+    - " &d "
+    - " &aLinksclick für benutzerdefinierten Kauf "
+    - " &cRechtsclick für benutzerdefinierten Verkauf "
+    - " &d "
+    - " &7Du kannst insgesamt &e%buycount%&7 von diesem Item &akaufen. "
+    - " &7Du kannst insgesamt &e%sellcount%&7 von diesem Item &cverkaufen."
+  # 15 Zeichen pro Zeile (\n) ohne Farb-codes, startend ab der zweiten Zeile.
+  signEditorGui:
+    buy:
+      - "&a^^ Max: %max% ^^ "
+      - " &bGib eine Kauf"
+      - " &bMenge an"
+    sell:
+      - "&c^^ Max: %max% ^^ "
+      - " &bGib eine Verkaufs"
+      - " &bMenge an"
+  errors:
+    buyingIsDisabled: "&cDu kannst in diesem Shop nichts kaufen."
+    sellingIsDisabled: "&cDu kannst in diesem Shop nichts verkaufen."
+    wrongInput: "&cFalsche Eingabe(oder eine zu große Menge), gib bitte eine Nummer ein!"
+    enterTheAmount: "&eSchreib die gewünschte Menge bitte auf das Schild."
+    unsupportedInteger: "&cHey! Die Menga kann offensichtlich nicht null oder kleiner sein."
+shop-messages:
+  successful-buy: "&aDu hast diesen Gegenstand erfolgreich für &e%price% $ gekauft."
+  fullinv: "&cDein Inventar ist voll!"
+  cannotafford: "&cDu kannst dir das nicht leisten..."
+  outofstock: "&cDieser Shop ist ausgekauft!"
+  successful-sell: "&aDu hast diesen Gegenstand erfolgreich für &e%price% $ verkauft"
+  shopcannotafford: "&cDer Shopbesitzer hat kein Geld mehr."
+  notenoughitemtosell: "&cDu hast nicht genug Gegenstände um dies zu verkaufen!"
+  chestisFull: "Die Kiste ist voll."
+  selftransaction: "&cDu kannst nicht an dich selbst verkaufen oder von dir kaufen!"
+  openingShopProblem: "&cBeim öffnen dieses Shops ist ein Problem aufgetreten. Bitte kontaktiere einen Administrator um in der Konsole nachzusehen."
+command-messages:
+  negativeprice: "&cNegativer Preis? Aber er muss positiv sein..."
+  notenoughargs: "&cDu hast nicht genügend Argumente verwendet! \n &cRichtige Verwendung: /ecs create (Kaufpreis) (Verkaufspreis)"
+  consolenotallowed: "&cDu hast nicht genügend Rechte um Befehle von der Konsole auszuführen."
+  help:
+    - "&bEz&cChestShop &7Plugin von Dead_Light©"
+    - "&7- &c/ecs create (Kaufpreis) (Verkaufspreis) &7| Erstelle einen Shop indem du die gewünschten Gegenstände in der Hand hältst und auf die Kiste schaust. "
+    - " &7- &c/ecs remove &7| Entfernt den Shop auf den du schaust. "
+    - " &7- &c/ecs settings (setting) &7| Einstellungen kopieren/einfügen/bearbeiten "
+    - " &eEinstellungen: &7[copy, paste, admins, toggle-buying, toggle-selling, toggle-message, toggle-shared-income] "
+    - " &7Einfach oder? :)"
+  help-admin-view-addition:
+    - "&cAdmin Hilfe: "
+    - "&7- &c/ecsadmin"
+  adminhelp:
+    - "&cAdmin Hilfe: "
+    - "&7- &c/&eecsadmin remove &7| Entfernt den Shop auf den du schaust. (Alternativ kann der Shop auc abgebaut werden) "
+    - "&7- &c/&eecsadmin reload &7| Lädt die Konfigurationen des Plugins neu"
+    - "&7- &c/&eecsadmin create (buy) (sell) &7| Erstelle einen Adminshop!"
+  alreadyashop: "&cDieser container ist bereits ein Shop!"
+  shopcreated: "&aDu hast erfolgreich einen Kistenshop erstellt!"
+  holdsomething: "&cBitte halte etwas in deiner Haupthand!"
+  notallowdtocreate: "&cDu hast nicht genügend Rechte um hier einen Shop zu erstellen oder entfernen."
+  notchest: "&cDer Block auf den du schaust ist keine unterstützte Kiste/keine Kiste."
+  lookatchest: "&cBitte schau auf eine Kiste."
+  csremoved: "&eTDieser Shop wurde erfolgreich entfernt!."
+  notowner: "&aDu bist nicht der Besitzer dieses Shops!"
+  notachestorcs: "&cDer Block auf den du schaust ist keine Kiste/kein Kistenshop."
+  maxShopLimitReached: "&cMaximale Shop Anzahl erreicht: %shoplimit%!"
+  slimeFunBlockNotSupported: "&cLeider sind slimefun kisten nicht unterstützt! Bitte verwende einen anderen Container!"
+  buypriceGreaterThenSellRequired: "&cDer Kaufpreis muss größer als der Verkaufspreis sein!"
+checkprofits:
+  landing-menu:
+    - '&e========================================'
+    - '&7Totales Verkaufs-einkommen: &6%currency%%income% &7von &6%sales% &7Verkauf/Verkäufen.'
+    - '&7Totale Kauf-kosten: &6%currency%%cost% &7von &6%purchases% &7Kauf/Käufen.'
+    - '&7Total: &6%currency%%total%'
+    - '&7Kontostand: &6%currency%%balance%'
+    - '&7Klick [&b&lHIER](Klick for details! run_command=/checkprofits p 1) &7für einen detailierten Bericht!'
+    - '&7Klick hier um den Bericht zu löschen [&c&l[X]](Klick zum Löschen! run_command=/checkprofits clear)'
+  details-menu:
+    header:
+      - "&e----- &6Shop Einkommen Bericht &e-----"
+    content:
+      - " &e- &6%item%"
+      - "    &7Verkäufe: [&e%sales%x %currency%%income%](Einheitspreis: %unit_income%) &7Einkäufe: [&e%purchases%x %currency%%cost%](Einheitspreis: %unit_cost%)"
+    footer:
+      - "&6%button_previous%&7Seite %page%/%pages%&6%button_next%&7 | Um eine Seite auszuwählen, tipp \"[&6/cp p <page>](Klick um in diesen Befehl in deine Chatbox einzufügen suggest_command=/cp p )&7\""
+    hover-extra:
+      button-next: "Nächste Seite"
+      button-previous: "Vorherige Seite"
+  confirm-clear:
+    - "&eWillst die deinen Einkommensbericht wirklich löschen? [&2&l[✔]](Klicke zum bestätigen! run_command=/checkprofits clear -confirm)"
+  confirm-clear-success: "&cDu hast deinen Einkommensbericht gelöscht!"
+  join-notification:
+    - "&eSchau dir deine Einkommen [&b&lHIER](Klick zum anzeigen! run_command=/checkprofits) &ean!"
+shulkershop-dropped-lore:
+  - "&eShulkerbox Shop:"
+  - " &7Besitzer: &6%owner%"
+  - " &7Item: &6%item%"
+  - " &7kaufpreis: &6%currency%%buy_price%"
+  - " &7Verkaufspreis: &6%currency%%sell_price%"

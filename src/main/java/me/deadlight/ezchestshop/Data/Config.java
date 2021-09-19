@@ -16,6 +16,7 @@ public class Config {
     public static boolean showholo;
     public static List<String> holostructure;
     public static List<String> holostructure_admin;
+    public static double holo_linespacing;
     public static int holodelay;
     public static boolean holo_rotation;
     public static boolean holodistancing;
@@ -28,8 +29,23 @@ public class Config {
     public static boolean container_barrels;
     public static boolean container_shulkers;
 
+    public static String display_numberformat_gui;
+    public static String display_numberformat_chat;
+    public static String display_numberformat_holo;
+
+    public static boolean settings_defaults_transactions;
+    public static boolean settings_defaults_dbuy;
+    public static boolean settings_defaults_dsell;
+    public static String settings_defaults_rotation;
+    public static boolean settings_defaults_shareprofits;
+
+    public static boolean settings_zero_equals_disabled;
+    public static boolean settings_buy_greater_then_sell;
+    public static boolean settings_add_shulkershop_lore;
+
     public static boolean command_shop_alias;
     public static boolean command_adminshop_alias;
+    public static int command_checkprofit_lines_pp;
 
     public static boolean permissions_create_shop_enabled;
 
@@ -50,6 +66,7 @@ public class Config {
         Collections.reverse(holostructure);
         holostructure_admin = config.getStringList("shops.hologram.holo-structure-adminshop");
         Collections.reverse(holostructure_admin);
+        holo_linespacing = config.getDouble("shops.hologram.holo-line-spacing");
         holodelay = config.getInt("shops.hologram.hologram-disappearance-delay");
         holo_rotation = config.getBoolean("shops.hologram.allow-rotation");
         holodistancing = config.getBoolean("shops.hologram.distance.toggled");
@@ -61,15 +78,34 @@ public class Config {
         container_barrels = config.getBoolean("shops.container.barrels");
         container_shulkers = config.getBoolean("shops.container.shulkers");
 
+        display_numberformat_gui = config.getString("shops.display.number-format.gui");
+        display_numberformat_chat = config.getString("shops.display.number-format.chat");
+        display_numberformat_holo = config.getString("shops.display.number-format.hologram");
+
+        settings_defaults_transactions = config.getBoolean("shops.settings.defaults.transaction-message");
+        settings_defaults_dbuy = config.getBoolean("shops.settings.defaults.disable-buying");
+        settings_defaults_dsell = config.getBoolean("shops.settings.defaults.disable-selling");
+        settings_defaults_rotation = config.getString("shops.settings.defaults.rotation");
+        settings_defaults_shareprofits = config.getBoolean("shops.settings.defaults.share-profit");
+
+        settings_zero_equals_disabled = config.getBoolean("shops.settings.zero-price-equals-disabled");
+        settings_buy_greater_then_sell = config.getBoolean("shops.settings.buy-greater-then-sell");
+        settings_add_shulkershop_lore = config.getBoolean("shops.settings.add-shulkershop-lore");
+
         command_shop_alias = config.getBoolean("commands.alias.ecs-shop");
         command_adminshop_alias = config.getBoolean("commands.alias.ecsadmin-adminshop");
+        command_checkprofit_lines_pp = config.getInt("commands.checkprofit-lines-per-page");
 
         permissions_create_shop_enabled = config.getBoolean("permissions.create-shops");
 
         language = config.getString("language");
         if (!LanguageManager.getSupportedLanguages().contains(language)) {
-            EzChestShop.logConsole("&c[&eEzChestShop&c] Error. Non supported language: " + language + ". Switching to Locale_EN.");
-            language = "Locale_EN";
+            if (LanguageManager.getFoundlanguages().contains(language + ".yml")) {
+                EzChestShop.logConsole("&c[&eEzChestShop&c]&e Using externally created language: " + language + ".");
+            } else {
+                EzChestShop.logConsole("&c[&eEzChestShop&c] Error. Non supported language: " + language + ". Switching to Locale_EN.");
+                language = "Locale_EN";
+            }
         }
         debug_logging = config.getBoolean("debug.logging");
     }
@@ -128,19 +164,34 @@ public class Config {
 
         if (isUsingOldhologramLineSystem) {
             EzChestShop.getPlugin().logConsole("Updated Hologram List!");
-            String hologram_first_line = fc.getString("shops.hologram.hologram-first-line");
-            String hologram_second_line = fc.getString("shops.hologram.hologram-second-line");
 
             fc.set("shops.hologram.hologram-first-line", null);
             fc.set("shops.hologram.hologram-second-line", null);
 
-            List<String> holo = Arrays.asList(hologram_second_line, hologram_first_line, "[item]");
+            List<String> holo = Arrays.asList("<buy>&fBuy: &a%buy% %currency%</buy><separator> &f| </separator><sell>&fSell: &c%sell% %currency%</sell>", "&d%item%", "[item]");
 
             fc.set("shops.hologram.holo-structure", holo);
             fc.set("shops.hologram.holo-structure-adminshop", new ArrayList<>(holo));
+            fc.set("shops.hologram.holo-line-spacing", 1);
             fc.set("shops.hologram.distance.show-items-first", true);
 
             fc.set("shops.hologram.allow-rotation", true);
+
+            fc.set("shops.display.number-format.gui", "###,###.##");
+            fc.set("shops.display.number-format.chat", "###,###.##");
+            fc.set("shops.display.number-format.hologram", "###,###.##");
+
+            fc.set("shops.settings.defaults.transaction-message", false);
+            fc.set("shops.settings.defaults.disable-buying", false);
+            fc.set("shops.settings.defaults.disable-selling", false);
+            fc.set("shops.settings.defaults.rotation", "up");
+            fc.set("shops.settings.defaults.share-profit", false);
+
+            fc.set("shops.settings.zero-price-equals-disabled", true);
+            fc.set("shops.settings.buy-greater-then-sell", true);
+            fc.set("shops.settings.add-shulkershop-lore", true);
+
+            fc.set("commands.checkprofit-lines-per-page", 4);
 
             fc.set("language", "Locale_EN");
 
