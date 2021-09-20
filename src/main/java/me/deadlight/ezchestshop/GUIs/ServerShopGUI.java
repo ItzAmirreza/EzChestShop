@@ -1,8 +1,8 @@
 package me.deadlight.ezchestshop.GUIs;
 
+import me.deadlight.ezchestshop.Data.ShopContainer;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.Data.LanguageManager;
-import me.deadlight.ezchestshop.Events.PlayerTransactEvent;
 import me.deadlight.ezchestshop.Utils.SignMenuFactory;
 import me.deadlight.ezchestshop.Utils.Utils;
 import dev.triumphteam.gui.guis.Gui;
@@ -22,13 +22,11 @@ import java.util.*;
 public class ServerShopGUI {
 
     private Economy econ = EzChestShop.getEconomy();
-    private Block containerBlock;
     public ServerShopGUI() {
 
     }
 
     public void showGUI(Player player, PersistentDataContainer data, Block containerBlock) {
-        this.containerBlock = containerBlock;
         LanguageManager lm = new LanguageManager();
         OfflinePlayer offlinePlayerOwner = Bukkit.getOfflinePlayer(UUID.fromString(data.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING)));
         String shopOwner = offlinePlayerOwner.getName();
@@ -66,7 +64,7 @@ public class ServerShopGUI {
         ItemStack oneSellIS = new ItemStack(Material.RED_DYE, 1);
         ItemMeta meta = oneSellIS.getItemMeta();
         meta.setDisplayName(lm.buttonSell1Title());
-        List<String> lores = Arrays.asList(lm.buttonSell1Lore(roundDecimals(sellPrice)));
+        List<String> lores = lm.buttonSell1Lore(sellPrice);
         meta.setLore(lores);
         oneSellIS.setItemMeta(meta);
 
@@ -76,13 +74,13 @@ public class ServerShopGUI {
             if (disabledSell) {
                 return;
             }
-            sellItem(sellPrice, 1, mainitem, player, data);
+            ShopContainer.sellServerItem(containerBlock, sellPrice, 1, mainitem, player, data);
         });
 
         ItemStack moreSellIS = new ItemStack(Material.RED_DYE, 64);
         ItemMeta meta2 = moreSellIS.getItemMeta();
         meta2.setDisplayName(lm.buttonSell64Title());
-        List<String> lores2 = Arrays.asList(lm.buttonSell64Lore(roundDecimals(sellPrice * 64)));
+        List<String> lores2 = lm.buttonSell64Lore(sellPrice * 64);
         meta2.setLore(lores2);
         moreSellIS.setItemMeta(meta2);
 
@@ -93,7 +91,7 @@ public class ServerShopGUI {
             if (disabledSell) {
                 return;
             }
-            sellItem(sellPrice * 64, 64, mainitem, player, data);
+            ShopContainer.sellServerItem(containerBlock, sellPrice * 64, 64, mainitem, player, data);
         });
 
         //buy 1x
@@ -101,7 +99,7 @@ public class ServerShopGUI {
         ItemStack oneBuyIS = new ItemStack(Material.LIME_DYE, 1);
         ItemMeta meta3 = oneBuyIS.getItemMeta();
         meta3.setDisplayName(lm.buttonBuy1Title());
-        List<String> lores3 = Arrays.asList(lm.buttonBuy64Lore(roundDecimals(buyPrice)));
+        List<String> lores3 = lm.buttonBuy1Lore(buyPrice);
         meta3.setLore(lores3);
         oneBuyIS.setItemMeta(meta3);
 
@@ -111,14 +109,14 @@ public class ServerShopGUI {
             if (disabledBuy) {
                 return;
             }
-            buyItem(buyPrice, 1, player, mainitem, data);
+            ShopContainer.buyServerItem(containerBlock, buyPrice, 1, player, mainitem, data);
         });
 
 
         ItemStack moreBuyIS = new ItemStack(Material.LIME_DYE, 64);
         ItemMeta meta4 = moreBuyIS.getItemMeta();
         meta4.setDisplayName(lm.buttonBuy64Title());
-        List<String> lores4 = Arrays.asList(lm.buttonBuy64Lore(roundDecimals(buyPrice * 64)));
+        List<String> lores4 = lm.buttonBuy64Lore(buyPrice * 64);
         meta4.setLore(lores4);
         moreBuyIS.setItemMeta(meta4);
 
@@ -128,7 +126,7 @@ public class ServerShopGUI {
             if (disabledBuy) {
                 return;
             }
-            buyItem(buyPrice * 64, 64, player, mainitem, data);
+            ShopContainer.buyServerItem(containerBlock, buyPrice * 64, 64, player, mainitem, data);
         });
 
         //settings item
@@ -188,7 +186,7 @@ public class ServerShopGUI {
                                    Bukkit.getScheduler().scheduleSyncDelayedTask(EzChestShop.getPlugin(), new Runnable() {
                                        @Override
                                        public void run() {
-                                           buyItem(buyPrice * amount, amount, thatplayer, mainitem, data);
+                                           ShopContainer.buyServerItem(containerBlock, buyPrice * amount, amount, thatplayer, mainitem, data);
                                        }
                                    });
                                } else {
@@ -228,7 +226,7 @@ public class ServerShopGUI {
                                    Bukkit.getScheduler().scheduleSyncDelayedTask(EzChestShop.getPlugin(), new Runnable() {
                                        @Override
                                        public void run() {
-                                           sellItem(sellPrice * amount, amount, mainitem, thatplayer, data);
+                                           ShopContainer.sellServerItem(containerBlock, sellPrice * amount, amount, mainitem, thatplayer, data);
                                        }
                                    });
                                } else {
@@ -271,101 +269,8 @@ public class ServerShopGUI {
 
     }
 
-    private long roundDecimals(double num) {
-        return (long) (((long)(num * 1e1)) / 1e1);
-    }
 
 
-
-    private void buyItem(double price, int count, Player player, ItemStack tthatItem, PersistentDataContainer data) {
-        ItemStack thatItem = tthatItem.clone();
-
-        LanguageManager lm = new LanguageManager();
-        //check for money
-
-            if (ifHasMoney(Bukkit.getOfflinePlayer(player.getUniqueId()), price)) {
-
-                if (Utils.hasEnoughSpace(player, count, thatItem)) {
-
-
-                    thatItem.setAmount(count);
-                    take(price, Bukkit.getOfflinePlayer(player.getUniqueId()));
-                    transactionMessage(data, Bukkit.getOfflinePlayer(UUID.fromString(
-                            data.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING))),
-                            Bukkit.getOfflinePlayer(player.getUniqueId()), price, true, Utils.getFinalItemName(tthatItem), count);
-                    player.getInventory().addItem(thatItem);
-                    player.sendMessage(lm.messageSuccBuy(price));
-                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 0.5f, 0.5f);
-
-                } else {
-                    player.sendMessage(lm.fullinv());
-                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_IRON_XYLOPHONE, 0.5f, 0.5f);
-                }
-
-            } else {
-
-                player.sendMessage(lm.cannotAfford());
-                player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_IRON_XYLOPHONE, 0.5f, 0.5f);
-
-            }
-
-
-
-    }
-
-    private void sellItem(double price, int count, ItemStack tthatItem, Player player, PersistentDataContainer data) {
-
-        LanguageManager lm = new LanguageManager();
-
-        ItemStack thatItem = tthatItem.clone();
-
-        if (player.getInventory().containsAtLeast(thatItem, count)) {
-
-            thatItem.setAmount(count);
-            deposit(price, Bukkit.getOfflinePlayer(player.getUniqueId()));
-            transactionMessage(data, Bukkit.getOfflinePlayer(UUID.fromString(
-                    data.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING))),
-                    Bukkit.getOfflinePlayer(player.getUniqueId()), price, false, Utils.getFinalItemName(tthatItem), count);
-            player.getInventory().removeItem(thatItem);
-            player.sendMessage(lm.messageSuccSell(price));
-            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 0.5f, 0.5f);
-
-        } else {
-            player.sendMessage(lm.notEnoughItemToSell());
-            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_IRON_XYLOPHONE, 0.5f, 0.5f);
-        }
-
-    }
-
-
-
-
-    private boolean ifHasMoney(OfflinePlayer player, double price) {
-        if (econ.has(player, price)) {
-            return true;
-        }
-        return false;
-    }
-
-    private void deposit(double price, OfflinePlayer deposit) {
-
-        econ.depositPlayer(deposit, price);
-
-    }
-    private void take(double price, OfflinePlayer deposit) {
-
-        econ.withdrawPlayer(deposit, price);
-
-    }
-
-    private void transactionMessage(PersistentDataContainer data, OfflinePlayer owner, OfflinePlayer customer, double price, boolean isBuy, String itemName, int count) {
-        if (data.get(new NamespacedKey(EzChestShop.getPlugin(), "msgtoggle"), PersistentDataType.INTEGER) == 1) {
-            //kharidan? true forokhtan? false
-            PlayerTransactEvent transactEvent = new PlayerTransactEvent(owner, customer, price, isBuy, itemName, count, Utils.getAdminsList(data), containerBlock);
-            Bukkit.getPluginManager().callEvent(transactEvent);
-
-        }
-    }
 
     private ItemStack disablingCheck(ItemStack mainItem, boolean disabling) {
         if (disabling){

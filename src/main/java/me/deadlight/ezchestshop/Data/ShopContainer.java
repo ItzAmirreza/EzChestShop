@@ -1,13 +1,15 @@
 package me.deadlight.ezchestshop.Data;
 
 import me.deadlight.ezchestshop.Data.SQLite.Database;
+import me.deadlight.ezchestshop.Events.PlayerTransactEvent;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.Listeners.PlayerCloseToChestListener;
 import me.deadlight.ezchestshop.Utils.Objects.ShopSettings;
 import me.deadlight.ezchestshop.Utils.Utils;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.NamespacedKey;
+import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.economy.EconomyResponse;
+import org.bukkit.*;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -16,6 +18,7 @@ import org.bukkit.persistence.PersistentDataType;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * ShopContainer - a tool to retrieve and store data regarding shops,
@@ -24,6 +27,7 @@ import java.util.List;
 
 public class ShopContainer {
 
+    private static Economy econ = EzChestShop.getEconomy();
     private static List<Location> shops = new ArrayList<>();
     private static HashMap<Location, ShopSettings> shopSettings = new HashMap<>();
 
@@ -122,7 +126,7 @@ public class ShopContainer {
         newContainer.set(new NamespacedKey(EzChestShop.getPlugin(), "item"), PersistentDataType.STRING,
                 oldContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "item"), PersistentDataType.STRING));
         String rotation = oldContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "rotation"), PersistentDataType.STRING);
-        rotation = rotation == null ? "up" : rotation;
+        rotation = rotation == null ? Config.settings_defaults_rotation : rotation;
         newContainer.set(new NamespacedKey(EzChestShop.getPlugin(), "rotation"), PersistentDataType.STRING, rotation);
         return newContainer;
     }
@@ -180,11 +184,233 @@ public class ShopContainer {
                     "adminshop", "shopdata");
             String rotation = db.getString("location", sloc,
                     "rotation", "shopdata");
-            rotation = rotation == null ? "up" : rotation;
+            rotation = rotation == null ? Config.settings_defaults_rotation : rotation;
             ShopSettings settings = new ShopSettings(sloc, msgtoggle, dbuy, dsell, admins, shareincome, trans, adminshop, rotation);
             shopSettings.put(loc, settings);
             return settings;
         }
+    }
+
+    public static void buyItem(Block containerBlock, double price, int count, ItemStack tthatItem, Player player, OfflinePlayer owner, PersistentDataContainer data) {
+        ItemStack thatItem = tthatItem.clone();
+
+        LanguageManager lm = new LanguageManager();
+        //check for money
+
+        if (Utils.getBlockInventory(containerBlock).containsAtLeast(thatItem , count)) {
+
+            if (ifHasMoney(Bukkit.getOfflinePlayer(player.getUniqueId()), price)) {
+
+                if (Utils.hasEnoughSpace(player, count, thatItem)) {
+
+                    int stacks = (int) Math.ceil(count / (double) thatItem.getMaxStackSize());
+                    int max_size = thatItem.getMaxStackSize();
+                    for (int i = 0; i < stacks; i++) {
+                        if (i + 1 == stacks) {
+                            thatItem.setAmount(count % max_size == 0 ? max_size : count % max_size);
+                        } else {
+                            thatItem.setAmount(max_size);
+                        }
+                        player.getInventory().addItem(thatItem);
+                    }
+                    //For the transaction event
+                    thatItem.setAmount(count);
+                    Utils.getBlockInventory(containerBlock).removeItem(thatItem);
+                    getandgive(Bukkit.getOfflinePlayer(player.getUniqueId()), price, owner);
+                    sharedIncomeCheck(data, price);
+                    transactionMessage(data, owner, player, price, true, tthatItem, count, containerBlock.getLocation().getBlock());
+                    player.sendMessage(lm.messageSuccBuy(price));
+                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 0.5f, 0.5f);
+
+
+                } else {
+                    player.sendMessage(lm.fullinv());
+                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_IRON_XYLOPHONE, 0.5f, 0.5f);
+                }
+
+            } else {
+
+                player.sendMessage(lm.cannotAfford());
+                player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_IRON_XYLOPHONE, 0.5f, 0.5f);
+
+            }
+
+        } else {
+            player.sendMessage(lm.outofStock());
+            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_IRON_XYLOPHONE, 0.5f, 0.5f);
+        }
+    }
+
+    public static void sellItem(Block containerBlock, double price, int count, ItemStack tthatItem, Player player, OfflinePlayer owner, PersistentDataContainer data) {
+
+        LanguageManager lm = new LanguageManager();
+
+        ItemStack thatItem = tthatItem.clone();
+
+        if (player.getInventory().containsAtLeast(thatItem, count)) {
+
+            if (ifHasMoney(owner, price)) {
+
+                if (Utils.containerHasEnoughSpace(Utils.getBlockInventory(containerBlock), count, thatItem)) {
+                    int stacks = (int) Math.ceil(count / (double) thatItem.getMaxStackSize());
+                    int max_size = thatItem.getMaxStackSize();
+                    for (int i = 0; i < stacks; i++) {
+                        if (i + 1 == stacks) {
+                            thatItem.setAmount(count % max_size == 0 ? max_size : count % max_size);
+                        } else {
+                            thatItem.setAmount(max_size);
+                        }
+                        Utils.getBlockInventory(containerBlock).addItem(thatItem);
+                    }
+                    //For the transaction event
+                    thatItem.setAmount(count);
+                    player.getInventory().removeItem(thatItem);
+                    getandgive(owner, price, Bukkit.getOfflinePlayer(player.getUniqueId()));
+                    transactionMessage(data, owner, Bukkit.getOfflinePlayer(player.getUniqueId()), price, false, tthatItem, count, containerBlock.getLocation().getBlock());
+                    player.sendMessage(lm.messageSuccSell(price));
+                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 0.5f, 0.5f);
+
+                } else {
+                    player.sendMessage(lm.chestIsFull());
+                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_IRON_XYLOPHONE, 0.5f, 0.5f);
+                }
+
+            } else {
+
+                player.sendMessage(lm.shopCannotAfford());
+                player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_IRON_XYLOPHONE, 0.5f, 0.5f);
+
+            }
+        } else {
+            player.sendMessage(lm.notEnoughItemToSell());
+            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_IRON_XYLOPHONE, 0.5f, 0.5f);
+        }
+
+    }
+
+    public static void buyServerItem(Block containerBlock, double price, int count, Player player, ItemStack tthatItem, PersistentDataContainer data) {
+        ItemStack thatItem = tthatItem.clone();
+
+        LanguageManager lm = new LanguageManager();
+        //check for money
+
+        if (ifHasMoney(Bukkit.getOfflinePlayer(player.getUniqueId()), price)) {
+
+            if (Utils.hasEnoughSpace(player, count, thatItem)) {
+
+                int stacks = (int) Math.ceil(count / (double) thatItem.getMaxStackSize());
+                int max_size = thatItem.getMaxStackSize();
+                for (int i = 0; i < stacks; i++) {
+                    if (i + 1 == stacks) {
+                        thatItem.setAmount(count % max_size == 0 ? max_size : count % max_size);
+                    } else {
+                        thatItem.setAmount(max_size);
+                    }
+                    player.getInventory().addItem(thatItem);
+                }
+                //For the transaction event
+                thatItem.setAmount(count);
+                take(price, Bukkit.getOfflinePlayer(player.getUniqueId()));
+                transactionMessage(data, Bukkit.getOfflinePlayer(UUID.fromString(
+                        data.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING))),
+                        Bukkit.getOfflinePlayer(player.getUniqueId()), price, true, tthatItem, count, containerBlock);
+                player.sendMessage(lm.messageSuccBuy(price));
+                player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 0.5f, 0.5f);
+
+            } else {
+                player.sendMessage(lm.fullinv());
+                player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_IRON_XYLOPHONE, 0.5f, 0.5f);
+            }
+
+        } else {
+
+            player.sendMessage(lm.cannotAfford());
+            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_IRON_XYLOPHONE, 0.5f, 0.5f);
+
+        }
+
+
+
+    }
+
+    public static void sellServerItem(Block containerBlock, double price, int count, ItemStack tthatItem, Player player, PersistentDataContainer data) {
+
+        LanguageManager lm = new LanguageManager();
+
+        ItemStack thatItem = tthatItem.clone();
+
+        if (player.getInventory().containsAtLeast(thatItem, count)) {
+
+            thatItem.setAmount(count);
+            deposit(price, Bukkit.getOfflinePlayer(player.getUniqueId()));
+            transactionMessage(data, Bukkit.getOfflinePlayer(UUID.fromString(
+                    data.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING))),
+                    Bukkit.getOfflinePlayer(player.getUniqueId()), price, false, tthatItem, count, containerBlock);
+            player.getInventory().removeItem(thatItem);
+            player.sendMessage(lm.messageSuccSell(price));
+            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 0.5f, 0.5f);
+
+        } else {
+            player.sendMessage(lm.notEnoughItemToSell());
+            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_IRON_XYLOPHONE, 0.5f, 0.5f);
+        }
+
+    }
+
+
+    private static void deposit(double price, OfflinePlayer deposit) {
+
+        econ.depositPlayer(deposit, price);
+
+    }
+    private static void take(double price, OfflinePlayer deposit) {
+
+        econ.withdrawPlayer(deposit, price);
+
+    }
+
+    private static boolean ifHasMoney(OfflinePlayer player, double price) {
+        if (econ.has(player, price)) {
+            return true;
+        }
+        return false;
+    }
+
+    private static void getandgive(OfflinePlayer withdraw, double price, OfflinePlayer deposit) {
+
+        econ.withdrawPlayer(withdraw, price);
+        econ.depositPlayer(deposit, price);
+
+
+    }
+
+    private static void transactionMessage(PersistentDataContainer data, OfflinePlayer owner, OfflinePlayer customer, double price, boolean isBuy, ItemStack item, int count, Block containerBlock) {
+
+        //kharidan? true forokhtan? false
+        PlayerTransactEvent transactEvent = new PlayerTransactEvent(owner, customer, price, isBuy, item, count, Utils.getAdminsList(data), containerBlock);
+        Bukkit.getPluginManager().callEvent(transactEvent);
+
+    }
+
+    private static void sharedIncomeCheck(PersistentDataContainer data, double price) {
+        boolean isSharedIncome = data.get(new NamespacedKey(EzChestShop.getPlugin(), "shareincome"), PersistentDataType.INTEGER) == 1;
+        if (isSharedIncome) {
+            UUID ownerUUID = UUID.fromString(data.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING));
+            List<UUID> adminsList = Utils.getAdminsList(data);
+            double profit = price/(adminsList.size() + 1);
+            if (adminsList.size() > 0) {
+                if (econ.has(Bukkit.getOfflinePlayer(ownerUUID), profit * adminsList.size())) {
+                    EconomyResponse details = econ.withdrawPlayer(Bukkit.getOfflinePlayer(ownerUUID), profit * adminsList.size());
+                    if (details.transactionSuccess()) {
+                        for (UUID adminUUID : adminsList) {
+                            econ.depositPlayer(Bukkit.getOfflinePlayer(adminUUID), profit);
+                        }
+                    }
+                }
+
+            }
+        }
+
     }
 /*
 

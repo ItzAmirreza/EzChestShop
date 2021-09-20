@@ -600,6 +600,61 @@ public abstract class Database {
         return keys;
     }
 
+    public void PreparePlayerdata(String table, String uuid) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try {
+            conn = getSQLConnection();
+            ps = conn.prepareStatement("REPLACE INTO " + table + " (uuid) VALUES(?)");
+
+            ps.setString(1, uuid);
+            ps.executeUpdate();
+            return;
+        } catch (SQLException e) {
+            plugin.getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute(), e);
+        } finally {
+            try {
+                if (ps != null)
+                    ps.close();
+                if (conn != null)
+                    conn.close();
+            } catch (SQLException e) {
+                plugin.getLogger().log(Level.SEVERE, Errors.sqlConnectionClose(), e);
+            }
+        }
+        return;
+    }
+
+    // Check if Player is in DB:
+    public boolean hasPlayer(String table, UUID key) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            conn = getSQLConnection();
+            ps = conn.prepareStatement("SELECT * FROM " + table + " WHERE uuid = ?;");
+            ps.setString(1, (key.toString()));
+
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                return true;
+            } else
+                return false;
+        } catch (SQLException e) {
+            plugin.getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute(), e);
+        } finally {
+            try {
+                if (ps != null)
+                    ps.close();
+                if (conn != null)
+                    conn.close();
+            } catch (SQLException e) {
+                plugin.getLogger().log(Level.SEVERE, Errors.sqlConnectionClose(), e);
+            }
+        }
+        return false;
+    }
+
     /**
      * Check if the Database contains a given primary key.
      *

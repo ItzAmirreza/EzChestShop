@@ -1,7 +1,7 @@
 # EzChestShop plugin configuration
 # Before starting to config, please note that any usage of TABs in the config file may break the plugin so avoid using tabs and use space.
 # If you need help/found a bug, contact me on Discord: Dead_Light#5608
-language: Loacle_EN
+language: Locale_EN
 shops:
   hologram:
     # holograms are all shown in the async way and they won't waste a single tick / nor they are buggy like some other plugins
@@ -10,13 +10,15 @@ shops:
     # Use [item] for 1 Line to display the floating item. Use %buy% for buy price and %sell% for sell price.
     # %currency% is defined under economy.server-currency and %owner% represents the shops creator.
     holo-structure:
-      - "&fBuy: &a%buy% %currency% &f| Sell: &c%sell% %currency%"
+      - "<buy>&fBuy: &a%buy% %currency%</buy><separator> &f| </separator><sell>&fSell: &c%sell% %currency%</sell>"
       - "&d%item%"
       - "[item]"
     holo-structure-adminshop:
-      - "&fBuy: &a%buy% %currency% &f| Sell: &c%sell% %currency%"
+      - "<buy>&fBuy: &a%buy% %currency%</buy><separator> &f| </separator><sell>&fSell: &c%sell% %currency%</sell>"
       - "&d%item%"
       - "[item]"
+    # Define a custom Linespacing multiplier. 1 is default.
+    holo-line-spacing: 1
     # hologram will get removed after x seconds if plugin doesn't detect any movement toward chest shop (default: 10)
     hologram-disappearance-delay: 10
     # Allows players to rotate their Holograms to be displayed on different sides of the Block.
@@ -34,6 +36,26 @@ shops:
     trapped-chests: true
     barrels: true
     shulkers: true
+  display:
+    # define how the plugin should format displayed numbers, use: https://docs.oracle.com/en/java/javase/14/docs/api/java.base/java/text/DecimalFormat.html
+    number-format:
+      gui: "###,###.##"
+      chat: "###,###.##"
+      hologram: "###,###.##"
+  settings:
+    # Define the default settings when creating a shop:
+    defaults:
+      transaction-message: false
+      disable-buying: false
+      disable-selling: false
+      rotation: "up"
+      share-profit: true
+    # If set to true, "/ecs create 12 0" will automatically disable selling(or buying if "/ecs create 0 12")
+    zero-price-equals-disabled: true
+    # If set to true, this setting will require players to use a buy price that is greater than the sell price.
+    buy-greater-than-sell: true
+    # If set to true Shulker shops will be given some Lore when mined (Set inside the language files)
+    add-shulkershop-lore: true
 economy:
   # Used to replace %currency% for the language files and the 2nd hologram line.
   server-currency: $
@@ -42,6 +64,7 @@ commands:
   alias:
     ecs-shop: false
     ecsadmin-adminshop: false
+  checkprofit-lines-per-page: 4
 permissions:
   # If set to true, players require the permission "ecs.shops.limit.X" where X is the maximum amount of shops a player can create.
   create-shops: false

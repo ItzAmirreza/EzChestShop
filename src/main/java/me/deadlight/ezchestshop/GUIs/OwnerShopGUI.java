@@ -68,7 +68,7 @@ public class OwnerShopGUI {
         ItemStack oneSellIS = new ItemStack(Material.RED_DYE, 1);
         ItemMeta meta = oneSellIS.getItemMeta();
         meta.setDisplayName(lm.buttonSell1Title());
-        List<String> lores = Arrays.asList(lm.buttonSell1Lore(roundDecimals(sellPrice)));
+        List<String> lores = lm.buttonSell1Lore(roundDecimals(sellPrice));
         meta.setLore(lores);
         oneSellIS.setItemMeta(meta);
 
@@ -85,7 +85,7 @@ public class OwnerShopGUI {
         ItemStack moreSellIS = new ItemStack(Material.RED_DYE, 64);
         ItemMeta meta2 = moreSellIS.getItemMeta();
         meta2.setDisplayName(lm.buttonSell64Title());
-        List<String> lores2 = Arrays.asList(lm.buttonSell64Lore(roundDecimals(sellPrice * 64)));
+        List<String> lores2 = lm.buttonSell64Lore(roundDecimals(sellPrice * 64));
         meta2.setLore(lores2);
         moreSellIS.setItemMeta(meta2);
 
@@ -105,7 +105,7 @@ public class OwnerShopGUI {
         ItemStack oneBuyIS = new ItemStack(Material.LIME_DYE, 1);
         ItemMeta meta3 = oneBuyIS.getItemMeta();
         meta3.setDisplayName(lm.buttonBuy1Title());
-        List<String> lores3 = Arrays.asList(lm.buttonBuy1Lore(roundDecimals(buyPrice)));
+        List<String> lores3 = lm.buttonBuy1Lore(roundDecimals(buyPrice));
         meta3.setLore(lores3);
         oneBuyIS.setItemMeta(meta3);
 
@@ -123,7 +123,7 @@ public class OwnerShopGUI {
         ItemStack moreBuyIS = new ItemStack(Material.LIME_DYE, 64);
         ItemMeta meta4 = moreBuyIS.getItemMeta();
         meta4.setDisplayName(lm.buttonBuy64Title());
-        List<String> lores4 = Arrays.asList(lm.buttonBuy64Lore(roundDecimals(buyPrice * 64)));
+        List<String> lores4 = lm.buttonBuy64Lore(roundDecimals(buyPrice * 64));
         meta4.setLore(lores4);
         moreBuyIS.setItemMeta(meta4);
 

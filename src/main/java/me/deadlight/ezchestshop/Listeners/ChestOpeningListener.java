@@ -1,4 +1,5 @@
 package me.deadlight.ezchestshop.Listeners;
+import me.deadlight.ezchestshop.Data.Config;
 import me.deadlight.ezchestshop.Data.ShopContainer;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.GUIs.AdminShopGUI;
@@ -137,7 +138,7 @@ public class ChestOpeningListener implements Listener {
         }
         //hologram update values
         if (!data.has(new NamespacedKey(EzChestShop.getPlugin(), "rotation"), PersistentDataType.STRING)) {
-            data.set(new NamespacedKey(EzChestShop.getPlugin(), "rotation"), PersistentDataType.STRING, "up");
+            data.set(new NamespacedKey(EzChestShop.getPlugin(), "rotation"), PersistentDataType.STRING, Config.settings_defaults_rotation);
             state.update();
         }
     }

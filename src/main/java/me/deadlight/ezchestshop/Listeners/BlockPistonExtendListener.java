@@ -1,11 +1,13 @@
 package me.deadlight.ezchestshop.Listeners;
 import me.deadlight.ezchestshop.Data.Config;
+import me.deadlight.ezchestshop.Data.LanguageManager;
 import me.deadlight.ezchestshop.Data.ShopContainer;
 import me.deadlight.ezchestshop.Events.ShulkerShopDropEvent;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.Utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.ShulkerBox;
@@ -20,12 +22,15 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class BlockPistonExtendListener implements Listener {
 
+
+    private static LanguageManager lm = new LanguageManager();
     private static HashMap<String, String> lockMap = new HashMap<>();
     private static List<String> lockList = new ArrayList<>();
     private static HashMap<String, PersistentDataContainer> lockContainerMap = new HashMap<>();
@@ -87,6 +92,7 @@ public class BlockPistonExtendListener implements Listener {
                                             ItemMeta meta = itemStack.getItemMeta();
                                             PersistentDataContainer metaContainer = meta.getPersistentDataContainer();
                                             metaContainer = ShopContainer.copyContainerData(container, metaContainer);
+                                            meta = addLore(meta, metaContainer);
                                             itemStack.setItemMeta(meta);
 
                                             //Call the Event
@@ -137,6 +143,7 @@ public class BlockPistonExtendListener implements Listener {
                 ItemMeta meta = itemStack.getItemMeta();
                 PersistentDataContainer metaContainer = meta.getPersistentDataContainer();
                 metaContainer = ShopContainer.copyContainerData(container, metaContainer);
+                meta = addLore(meta, metaContainer);
                 itemStack.setItemMeta(meta);
 
                 //Call the Event
@@ -150,6 +157,24 @@ public class BlockPistonExtendListener implements Listener {
     }
 
 
+    private ItemMeta addLore(ItemMeta meta, PersistentDataContainer container) {
+        if (Config.settings_add_shulkershop_lore) {
+            List<String> nlore = lm.shulkerboxLore(Bukkit.getOfflinePlayer(UUID.fromString(getContainerString(container, "owner"))).getName(),
+                    Utils.getFinalItemName(Utils.decodeItem(getContainerString(container, "item"))),
+                    getContainerDouble(container, "buy"),
+                    getContainerDouble(container, "sell"));
+            meta.setLore(nlore);
+        }
+        return meta;
+    }
+
+    private String getContainerString(PersistentDataContainer container, String key) {
+        return container.get(new NamespacedKey(EzChestShop.getPlugin(), key), PersistentDataType.STRING);
+    }
+
+    private Double getContainerDouble(PersistentDataContainer container, String key) {
+        return container.get(new NamespacedKey(EzChestShop.getPlugin(), key), PersistentDataType.DOUBLE);
+    }
 
 
 }
