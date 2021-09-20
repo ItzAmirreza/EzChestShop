@@ -98,6 +98,11 @@ public class MainCommands implements CommandExecutor, TabCompleter {
 
                     changeSettings(player, args, target);
 
+
+                } else if (mainarg.equalsIgnoreCase("version")) {
+
+                    player.sendMessage(Utils.colorify("&aEz Chest Shop plugin, version 1.4.4 \n &eGitHub: &7https://github.com/ItzAmirreza/EzChestShop"));
+
                 } else {
                     sendHelp(player);
                 }
@@ -118,7 +123,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
         List<String> fList = new ArrayList<>();
-        List<String> list_mainarg = Arrays.asList("create", "remove", "settings");
+        List<String> list_mainarg = Arrays.asList("create", "remove", "settings", "version");
         List<String> list_create_1 = Arrays.asList("[BuyPrice]");
         List<String> list_create_2 = Arrays.asList("[SellPrice]");
         List<String> list_settings_1 = Arrays.asList("copy", "paste", "toggle-message", "toggle-buying", "toggle-selling", "admins", "toggle-shared-income", "change-rotation");
