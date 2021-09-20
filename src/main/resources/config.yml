@@ -52,8 +52,8 @@ shops:
       share-profit: true
     # If set to true, "/ecs create 12 0" will automatically disable selling(or buying if "/ecs create 0 12")
     zero-price-equals-disabled: true
-    # If set to true, this setting will require players to use a buy price that is greater then the sell price.
-    buy-greater-then-sell: true
+    # If set to true, this setting will require players to use a buy price that is greater than the sell price.
+    buy-greater-than-sell: true
     # If set to true Shulker shops will be given some Lore when mined (Set inside the language files)
     add-shulkershop-lore: true
 economy:
