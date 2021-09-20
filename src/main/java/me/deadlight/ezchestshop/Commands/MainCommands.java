@@ -10,10 +10,7 @@ import me.deadlight.ezchestshop.Listeners.PlayerCloseToChestListener;
 import me.deadlight.ezchestshop.Utils.Objects.ShopSettings;
 import me.deadlight.ezchestshop.Utils.Utils;
 import me.mrCookieSlime.Slimefun.api.BlockStorage;
-import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
 import org.bukkit.block.*;
 import org.bukkit.command.Command;
@@ -297,8 +294,8 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                             double buyprice = Double.parseDouble(args[1]);
                             double sellprice = Double.parseDouble(args[2]);
 
-                            if (Config.settings_buy_greater_then_sell && (sellprice > buyprice && buyprice != 0)) {
-                                player.sendMessage(lm.buyGreaterThenSellRequired());
+                            if (Config.settings_buy_greater_than_sell && (sellprice > buyprice && buyprice != 0)) {
+                                player.sendMessage(lm.buyGreaterThanSellRequired());
                                 return;
                             }
 

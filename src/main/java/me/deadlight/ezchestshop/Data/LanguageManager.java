@@ -620,8 +620,8 @@ public class LanguageManager {
     public String slimeFunBlockNotSupported() {
         return Utils.colorify(getString("command-messages.slimeFunBlockNotSupported"));
     }
-    public String buyGreaterThenSellRequired() {
-        return Utils.colorify(getString("command-messages.buypriceGreaterThenSellRequired"));
+    public String buyGreaterThanSellRequired() {
+        return Utils.colorify(getString("command-messages.buypriceGreaterThanSellRequired"));
     }
 
 
