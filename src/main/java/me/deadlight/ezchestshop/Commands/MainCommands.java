@@ -101,7 +101,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
 
                 } else if (mainarg.equalsIgnoreCase("version")) {
 
-                    player.sendMessage(Utils.colorify("&aEz Chest Shop plugin, version 1.4.4 \n &eGitHub: &7https://github.com/ItzAmirreza/EzChestShop"));
+                    player.sendMessage(Utils.colorify("&aEz Chest Shop plugin," + EzChestShop.getPlugin().getDescription().getVersion() + "\n &6Spigot: &7https://www.spigotmc.org/resources/ez-chest-shop-ecs-1-14-x-1-17-x.90411/"));
 
                 } else {
                     sendHelp(player);
