@@ -40,7 +40,7 @@ public class Config {
     public static boolean settings_defaults_shareprofits;
 
     public static boolean settings_zero_equals_disabled;
-    public static boolean settings_buy_greater_then_sell;
+    public static boolean settings_buy_greater_than_sell;
     public static boolean settings_add_shulkershop_lore;
 
     public static boolean command_shop_alias;
@@ -89,7 +89,7 @@ public class Config {
         settings_defaults_shareprofits = config.getBoolean("shops.settings.defaults.share-profit");
 
         settings_zero_equals_disabled = config.getBoolean("shops.settings.zero-price-equals-disabled");
-        settings_buy_greater_then_sell = config.getBoolean("shops.settings.buy-greater-then-sell");
+        settings_buy_greater_than_sell = config.getBoolean("shops.settings.buy-greater-than-sell");
         settings_add_shulkershop_lore = config.getBoolean("shops.settings.add-shulkershop-lore");
 
         command_shop_alias = config.getBoolean("commands.alias.ecs-shop");
@@ -188,7 +188,7 @@ public class Config {
             fc.set("shops.settings.defaults.share-profit", false);
 
             fc.set("shops.settings.zero-price-equals-disabled", true);
-            fc.set("shops.settings.buy-greater-then-sell", true);
+            fc.set("shops.settings.buy-greater-than-sell", true);
             fc.set("shops.settings.add-shulkershop-lore", true);
 
             fc.set("commands.checkprofit-lines-per-page", 4);
