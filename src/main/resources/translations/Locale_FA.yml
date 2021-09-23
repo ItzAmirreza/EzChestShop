@@ -1,7 +1,7 @@
-# plugin uses this file in order to display messages in plugin
-# For hologram messages, you have to check config.yml
-# NOTE: DO NOT USE TAB in yml file as it can cause serious performance problems and it sometimes can break the plugin
-# Don't forget to rate if you liked EzChestShop
+# EzChestShop Az In File Baraye Namayesh Message Ha Estefade Mikonad
+# Baraye Message Haye Hologram, Be Config.yml Beravid.
+# Az TAB az Message Ha Use Nakonid. ( Baes Ijad Moshkel Dar Performance Plugin Mishavad. )
+# Be EzChestShop Dar Soorat Rezayat Rate Dahid.
 shop-gui:
   initialbuyprice: "&aGheymat kharid 1 adad: &e%buyprice% %currency%"
   initialsellprice: "&cGheymat forosh 1 adad: &e%sellprice% %currency%"
@@ -26,7 +26,7 @@ shop-gui:
     storage: "&e&lAnbar"
     settings: "&b&lTanzimat"
     disabled-title: "&cGheyre fa'al"
-    #use \n for next line in lore (remember to include color code in every line)
+    #Baraye Line Badi Az "\n" Estefade Konid. (remember to include color code in every line)
     disabled-lore:
       - "&7In ghabeliat tavasot owner in shop "
       - " &7gheyre fa'al shode ast."
@@ -49,7 +49,7 @@ transactions:
   minutesago: "&e%minutes% daghighe pish"
   hoursago: "&e%hours% saat pish"
   daysago: "&e%days% roz pish"
-#settings gui section
+# Bakhsh Settings GUI
 settings:
   GuiTitle: "&b&lTanzimat"
   statusOn: "&aRoshan"
@@ -151,7 +151,7 @@ customBuySell:
     - " &d "
     - " &7Shoma ghader be &akharid &e%buycount%&7 az in item hastid. "
     - " &7Shoma ghader be &cforosh &e%sellcount%&7 az in item hastid. "
-  #15 characters per line (without color codes) and "\n" for next line (starting from second line)
+  # Shoma Az 15 Character Dar Har Line (Bedone Hesabe Chat Colors) Mitonid Estefade Konid, Baraye Line Badi az "\n" Estefade Konid. (starting from second line)
   signEditorGui:
     buy:
       - "&a^^ Max: %max% ^^ "
