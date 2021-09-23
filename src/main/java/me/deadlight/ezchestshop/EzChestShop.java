@@ -18,6 +18,7 @@ import me.deadlight.ezchestshop.Utils.CommandRegister;
 import me.deadlight.ezchestshop.Utils.FloatingItem;
 import me.deadlight.ezchestshop.Utils.Exceptions.CommandFetchException;
 import me.deadlight.ezchestshop.Utils.Utils;
+import me.deadlight.ezchestshop.Utils.WorldGuard.FlagRegistry;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
@@ -43,15 +44,25 @@ public final class EzChestShop extends JavaPlugin {
 
     public static boolean protocollib = false;
     public static boolean slimefun = false;
+    public static boolean worldguard = false;
 
     private static ProtocolManager manager;
 
 
     @Override
+    public void onLoad() {
+        // Adds Custom Flags to WorldGuard!
+        if (getServer().getPluginManager().getPlugin("WorldGuard") != null) {
+            worldguard = true;
+            FlagRegistry.onLoad();
+        }
+    }
+
+    @Override
     public void onEnable() {
 
         plugin = this;
-        logConsole("&c[&eEzChestShop&c] &aEnabling EzChestShop - version 1.4.3");
+        logConsole("&c[&eEzChestShop&c] &aEnabling EzChestShop - version " + this.getDescription().getVersion());
         saveDefaultConfig();
 
         this.db = new SQLite(this);

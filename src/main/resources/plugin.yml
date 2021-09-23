@@ -5,6 +5,7 @@ api-version: 1.14
 depend: [Vault, ProtocolLib]
 softdepend:
   - WildChests
+  - WorldGuard
 authors: [ Dead_Light ]
 description: Easy Chest Shop that any server owner wants that for his players
 commands:

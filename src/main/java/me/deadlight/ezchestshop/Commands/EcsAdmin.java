@@ -4,7 +4,10 @@ import me.deadlight.ezchestshop.Data.Config;
 import me.deadlight.ezchestshop.Data.ShopContainer;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.Data.LanguageManager;
+import me.deadlight.ezchestshop.Listeners.PlayerCloseToChestListener;
 import me.deadlight.ezchestshop.Utils.Utils;
+import me.deadlight.ezchestshop.Utils.WorldGuard.FlagRegistry;
+import me.deadlight.ezchestshop.Utils.WorldGuard.WorldGuardUtils;
 import me.mrCookieSlime.Slimefun.api.BlockStorage;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -43,7 +46,8 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
 
             int size = args.length;
 
-            if (player.hasPermission("ecs.admin")) {
+            if (player.hasPermission("ecs.admin") || player.hasPermission("ecs.admin.remove") ||
+                    player.hasPermission("ecs.admin.reload") || player.hasPermission("ecs.admin.create")) {
 
                 if (size == 0) {
                     sendHelp(player);
@@ -51,35 +55,41 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
 
 
                     String firstarg = args[0];
-                    if (firstarg.equalsIgnoreCase("remove")) {
+                    if (firstarg.equalsIgnoreCase("remove") && (player.hasPermission("ecs.admin.remove") || player.hasPermission("ecs.admin"))) {
                         Block target = getCorrectBlock(player.getTargetBlockExact(6));
+                        if (target != null) {
+                            removeShop(player, args, target);
+                        } else {
+                            player.sendMessage(lm.lookAtChest());
+                        }
 
-                        removeShop(player, args, target);
-
-                    } else if (firstarg.equalsIgnoreCase("reload")) {
+                    } else if (firstarg.equalsIgnoreCase("reload") && (player.hasPermission("ecs.admin.reload") || player.hasPermission("ecs.admin"))) {
 
                         Config.loadConfig();
                         LanguageManager.reloadLanguages();
                         player.sendMessage(Utils.colorify("&aEzChestShop successfully reloaded!"));
 
-                    } else if (firstarg.equalsIgnoreCase("create")) {
+                    } else if (firstarg.equalsIgnoreCase("create") && (player.hasPermission("ecs.admin.create") || player.hasPermission("ecs.admin"))) {
                         Block target = getCorrectBlock(player.getTargetBlockExact(6));
+                        if (target != null) {
+                            if (size >= 3) {
 
-                        if (args.length >= 3) {
-
-                            if (isPositive(Double.parseDouble(args[1])) && isPositive(Double.parseDouble(args[2]))) {
-                                try {
-                                    createShop(player, args, target);
-                                } catch (IOException e) {
-                                    e.printStackTrace();
+                                if (isPositive(Double.parseDouble(args[1])) && isPositive(Double.parseDouble(args[2]))) {
+                                    try {
+                                        createShop(player, args, target);
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+                                } else {
+                                    player.sendMessage(lm.negativePrice());
                                 }
+
+
                             } else {
-                                player.sendMessage(lm.negativePrice());
+                                player.sendMessage(lm.notenoughARGS());
                             }
-
-
                         } else {
-                            player.sendMessage(lm.notenoughARGS());
+                            player.sendMessage(lm.lookAtChest());
                         }
 
                     } else {
@@ -91,7 +101,7 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
 
             } else {
 
-                player.sendMessage(Utils.colorify("&bEz Chest Shop By Dead_Light \n &6Spigot page: https://www.spigotmc.org/resources/ez-chest-shop-ecs-1-14-x-1-16-x.90411/"));
+                Utils.sendVersionMessage(player);
 
             }
 
@@ -152,6 +162,20 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
 
                         if (container.has(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING)) {
 
+                            if (EzChestShop.worldguard) {
+                                if (container.get(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"), PersistentDataType.INTEGER) == 1) {
+                                    if (!WorldGuardUtils.queryStateFlag(FlagRegistry.REMOVE_ADMIN_SHOP, player)) {
+                                        player.sendMessage(lm.notAllowedToCreateOrRemove());
+                                        return;
+                                    }
+                                } else {
+                                    if (!WorldGuardUtils.queryStateFlag(FlagRegistry.REMOVE_SHOP, player)) {
+                                        player.sendMessage(lm.notAllowedToCreateOrRemove());
+                                        return;
+                                    }
+                                }
+                            }
+
                                 container.remove(new NamespacedKey(EzChestShop.getPlugin(), "owner"));
                                 container.remove(new NamespacedKey(EzChestShop.getPlugin(), "buy"));
                                 container.remove(new NamespacedKey(EzChestShop.getPlugin(), "sell"));
@@ -181,6 +205,7 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
                                 }
 
                                 ShopContainer.deleteShop(blockState.getLocation());
+                                PlayerCloseToChestListener.hideHologram(blockState.getLocation());
                                 state.update();
 
                                 player.sendMessage(lm.chestShopRemoved());
@@ -230,6 +255,13 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
                 boolean sfresult = BlockStorage.hasBlockInfo(target.getLocation());
                 if (sfresult) {
                     player.sendMessage(lm.slimeFunBlockNotSupported());
+                    return;
+                }
+            }
+
+            if (EzChestShop.worldguard) {
+                if (!WorldGuardUtils.queryStateFlag(FlagRegistry.CREATE_ADMIN_SHOP, player)) {
+                    player.sendMessage(lm.notAllowedToCreateOrRemove());
                     return;
                 }
             }
@@ -328,6 +360,7 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
 
 
     private Block getCorrectBlock(Block target) {
+        if (target == null) return null;
         Inventory inventory = Utils.getBlockInventory(target);
         if (inventory instanceof DoubleChestInventory) {
             //double chest

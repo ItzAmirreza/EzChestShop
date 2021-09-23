@@ -7,8 +7,11 @@ import me.deadlight.ezchestshop.GUIs.NonOwnerShopGUI;
 import me.deadlight.ezchestshop.GUIs.OwnerShopGUI;
 import me.deadlight.ezchestshop.GUIs.ServerShopGUI;
 import me.deadlight.ezchestshop.Utils.Utils;
+import me.deadlight.ezchestshop.Utils.WorldGuard.FlagRegistry;
+import me.deadlight.ezchestshop.Utils.WorldGuard.WorldGuardUtils;
 import org.bukkit.*;
 import org.bukkit.block.*;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
@@ -79,26 +82,38 @@ public class ChestOpeningListener implements Listener {
                 String owneruuid = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING);
                 boolean isAdminShop = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"), PersistentDataType.INTEGER) == 1;
 
+                Player player = event.getPlayer();
+                
                 if (isAdminShop) {
+                    if (EzChestShop.worldguard) {
+                        if (!WorldGuardUtils.queryStateFlag(FlagRegistry.USE_ADMIN_SHOP, player) && !player.isOp()) {
+                            return;
+                        }
+                    }
                     ServerShopGUI serverShopGUI = new ServerShopGUI();
-                    serverShopGUI.showGUI(event.getPlayer(), dataContainer, chestblock);
+                    serverShopGUI.showGUI(player, dataContainer, chestblock);
                     return;
                 }
-                boolean isAdmin = isAdmin(dataContainer, event.getPlayer().getUniqueId().toString());
-
-                if (event.getPlayer().hasPermission("ecs.admin")) {
-                    adminShopGUI.showGUI(event.getPlayer(), dataContainer, chestblock);
+                boolean isAdmin = isAdmin(dataContainer, player.getUniqueId().toString());
+                
+                if (EzChestShop.worldguard) {
+                    if (!WorldGuardUtils.queryStateFlag(FlagRegistry.USE_SHOP, player) && !player.isOp() && !(isAdmin || player.getUniqueId().toString().equalsIgnoreCase(owneruuid))) {
+                        return;
+                    }
+                }
+                if (player.hasPermission("ecs.admin") || player.hasPermission("ecs.admin.view")) {
+                    adminShopGUI.showGUI(player, dataContainer, chestblock);
                     return;
                 }
 
-                if (event.getPlayer().getUniqueId().toString().equalsIgnoreCase(owneruuid) || isAdmin) {
+                if (player.getUniqueId().toString().equalsIgnoreCase(owneruuid) || isAdmin) {
 
-                    ownerShopGUI.showGUI(event.getPlayer(), dataContainer, chestblock, isAdmin);
+                    ownerShopGUI.showGUI(player, dataContainer, chestblock, isAdmin);
 
                 } else {
 
                     //not owner show default
-                    nonOwnerShopGUI.showGUI(event.getPlayer(), dataContainer, chestblock);
+                    nonOwnerShopGUI.showGUI(player, dataContainer, chestblock);
 
                 }
 

@@ -9,6 +9,8 @@ import me.deadlight.ezchestshop.GUIs.SettingsGUI;
 import me.deadlight.ezchestshop.Listeners.PlayerCloseToChestListener;
 import me.deadlight.ezchestshop.Utils.Objects.ShopSettings;
 import me.deadlight.ezchestshop.Utils.Utils;
+import me.deadlight.ezchestshop.Utils.WorldGuard.FlagRegistry;
+import me.deadlight.ezchestshop.Utils.WorldGuard.WorldGuardUtils;
 import me.mrCookieSlime.Slimefun.api.BlockStorage;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.*;
@@ -101,7 +103,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
 
                 } else if (mainarg.equalsIgnoreCase("version")) {
 
-                    player.sendMessage(Utils.colorify("&aEz Chest Shop plugin," + EzChestShop.getPlugin().getDescription().getVersion() + "\n &6Spigot: &7https://www.spigotmc.org/resources/ez-chest-shop-ecs-1-14-x-1-17-x.90411/"));
+                Utils.sendVersionMessage(player);
 
                 } else {
                     sendHelp(player);
@@ -267,6 +269,13 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                 }
             }
 
+            if (EzChestShop.worldguard) {
+                if (!WorldGuardUtils.queryStateFlag(FlagRegistry.CREATE_SHOP, player)) {
+                    player.sendMessage(lm.notAllowedToCreateOrRemove());
+                    return;
+                }
+            }
+
             if (blockState instanceof TileState) {
 
                 if (Utils.isApplicableContainer(target)) {
@@ -372,6 +381,12 @@ public class MainCommands implements CommandExecutor, TabCompleter {
     private void removeShop(Player player, String[] args, Block target) {
         BlockState blockState = getLookedAtBlockStateIfOwner(player, true, true, target);
         if (blockState != null) {
+            if (EzChestShop.worldguard) {
+                if (!WorldGuardUtils.queryStateFlag(FlagRegistry.REMOVE_SHOP, player)) {
+                    player.sendMessage(lm.notAllowedToCreateOrRemove());
+                    return;
+                }
+            }
             //is the owner remove it
             PersistentDataContainer container = ((TileState) blockState).getPersistentDataContainer();
             container.remove(new NamespacedKey(EzChestShop.getPlugin(), "owner"));
@@ -401,6 +416,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
             }
 
             ShopContainer.deleteShop(blockState.getLocation());
+            PlayerCloseToChestListener.hideHologram(blockState.getLocation());
 
 
             blockState.update();
@@ -758,8 +774,6 @@ public class MainCommands implements CommandExecutor, TabCompleter {
 
 
     private boolean checkIfLocation(Location location, Player player) {
-
-
 
         if (plugin.integrationWildChests) { // Start of WildChests integration
             ChestsManager cm = plugin.wchests;

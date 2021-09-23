@@ -207,7 +207,7 @@ command-messages:
   notachestorcs: "&cBlocki darid negah mikonid yek chest ya yek chest shop nist."
   maxShopLimitReached: "&cShoma az in bishtar nemitavanid shop besazid. Hade aksar: %shoplimit% shop!"
   slimeFunBlockNotSupported: "&cBebakhshid :(, Shoma ghader be estefade az block haye slimefun baraye chest shop nistid, az yek block mamoli estefade konid."
-  buypriceGreaterThenSellRequired: "&cGheymate kharid az shoma bayad bozorg tar az gheymate forosh be shoma bashad."
+  buypriceGreaterThanSellRequired: "&cGheymate kharid az shoma bayad bozorg tar az gheymate forosh be shoma bashad."
 checkprofits:
   landing-menu:
     - '&e========================================'
