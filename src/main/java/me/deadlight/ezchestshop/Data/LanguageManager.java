@@ -31,7 +31,7 @@ public class LanguageManager {
     private static FileConfiguration languageConfig;
     private static Economy econ = EzChestShop.getEconomy();
 
-    private static List<String> supported_locales = Arrays.asList("Locale_EN", "Locale_DE", "Locale_ES", "Locale_CN");
+    private static List<String> supported_locales = Arrays.asList("Locale_EN", "Locale_DE", "Locale_ES", "Locale_CN", "Locale_FA");
     private static List<String> found_locales = new ArrayList<>();
 
     public static List<String> getSupportedLanguages() {

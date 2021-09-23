@@ -1,0 +1,241 @@
+# plugin uses this file in order to display messages in plugin
+# For hologram messages, you have to check config.yml
+# NOTE: DO NOT USE TAB in yml file as it can cause serious performance problems and it sometimes can break the plugin
+# Don't forget to rate if you liked EzChestShop
+shop-gui:
+  initialbuyprice: "&aGheymat kharid 1 adad: &e%buyprice% %currency%"
+  initialsellprice: "&cGheymat forosh 1 adad: &e%sellprice% %currency%"
+  admin-title: "&cChest shope %shopowner% &4(Admin view)"
+  nonowner-title: "&cChest shope %shopowner%"
+  owner-title: "&cChest shope %shopowner%"
+  adminshop-title: "&cShope admin"
+  buttons:
+    sellone-title: "&cForosh 1x"
+    sellone-lore:
+      - "&7Forosh be gheymate &e%price% %currency%"
+    sell64-title: "&cForosh 64x"
+    sell64-lore:
+      - "&7Forosh be gheymat &e%price% %currency%"
+    buyone-title: "&aKharid 1x"
+    buyone-lore:
+      - "&7Kharid be gheymate &e%price% %currency%"
+    buy64-title: "&aKharid 64x"
+    buy64-lore:
+      - "&7Kharid be gheymate &e%price% %currency%"
+    adminview: "&c&lAdmin View"
+    storage: "&e&lAnbar"
+    settings: "&b&lTanzimat"
+    disabled-title: "&cGheyre fa'al"
+    #use \n for next line in lore (remember to include color code in every line)
+    disabled-lore:
+      - "&7In ghabeliat tavasot owner in shop "
+      - " &7gheyre fa'al shode ast."
+transactions:
+  transactionButtonTitle: "&aGozareshe Tarakonesh ha"
+  backToSettingsButton: "&eBargasht be tanzimat"
+  PaperTitleBuy: "&aKharid | %player%"
+  PaperTitleSell: "&cForosh | %player%"
+  PaperLoreBuy:
+    - "&7Gheymate kol: %price% "
+    - " &7Meghdar: %count% "
+    - " &7Modele tarakonesh: &aKharid az shoma "
+    - " &e%time%"
+  PaperLoreSell:
+    - "&7Gheymate kol: %price% "
+    - " &7Meghdar: %count% "
+    - " &7Modele tarakonesh &cForosh be shoma "
+    - " &e%time%"
+  lessthanminute: "&eKam tar az 1 daghighe pish"
+  minutesago: "&e%minutes% daghighe pish"
+  hoursago: "&e%hours% saat pish"
+  daysago: "&e%days% roz pish"
+#settings gui section
+settings:
+  GuiTitle: "&b&lTanzimat"
+  statusOn: "&aRoshan"
+  statusOff: "&cKhamosh"
+  buttons:
+    toggleTransactions:
+      Title: "&eRoshan/Khamosh kardane payame tarakonesh"
+      Lore:
+        - "&7Vaziat: %status% "
+        - " &7Agar in ghabeliat ra roshan bezarid, "
+        - " &7dar zamane kharid ya forosh be shoma "
+        - " &7payame tarakonesh be shoma ersal "
+        - " &7migardad."
+    disableBuying:
+      Title: "&eGheyre fa'al sazi kharid"
+      Lore:
+        - "&7Vaziat: %status% "
+        - " &7Agar in ghabeliat ra roshan bezarid, "
+        - " &7kasi az chest shop shoma nemitavanad  "
+        - " &7kharid anjam dahad."
+    disableSelling:
+      Title: "&eGheyre fa'al sazi forosh"
+      Lore:
+        - "&7Vaziat: %status% "
+        - " &7Agar in ghabeliat ra roshan bezarid, "
+        - " &7kasi be shop shoma nemitavanad "
+        - " &7foroshi anjam dahad."
+    shopAdmins:
+      Title: "&eAdmin shop shoma"
+      nobodyStatusAdmins: "&aHichkas"
+      Lore:
+        - "&7Shoma mitavanid admin be shop "
+        - " &7khod ezafe konid. admin ha shop ghader "
+        - " &7be dastresi be anbar(makhzan) va bazi az "
+        - " &7tanzimat ra darand (bejoz ghabeliat taghsime sood "
+        - " &7va kam ya ezafe kardane admin be shop). "
+        - " &aChap Click &7baraye ezafe kardan admin "
+        - " &cRast Click &7baraye hazf kardan admin "
+        - " &7Admin haye hale hazer: %admins%"
+    sharedIncome:
+      Title: "&eTaghsime sood"
+      Lore:
+        - "&7Vaziat: %status% "
+        - " &7Agar in ghabeliat ra roshan bezarid, "
+        - " &7sood faghat FOROSH ha(kharid az shoma) "
+        - " &7ba shoma va admin ha taghsim mishavad."
+    hologramRotation:
+      Title: "&eCharkheshe Hologram"
+      Lore:
+        - "&7Charkhesh be samte: "
+        - "%rotations%"
+        - " &aChap&7/&cRast&7-click baraye taghir"
+        - " &7beyne charkhesh ha"
+    other:
+      backToShopGuiButton: "&eBargasht be shop"
+      latestTransactionsTitle: "&aAkharin tarakonesh ha"
+  chat:
+    toggleTransactions:
+      MessageOn: "&7Vaziat payame tarakonesh: &aRoshan"
+      MessageOff: "&7Vaziat payame tarakonesh: &cKhamosh"
+    disableBuying:
+      MessageOn: "&7Gheyre fa'al shodane kharid: &aRoshan"
+      MessageOff: "&7Gheyre fa'al shodane kharid: &cKhamosh"
+    disableSelling:
+      MessageOn: "&7Gheyre fa'al shodane forosh: &aRoshan"
+      MessageOff: "&7Gheyre fa'al shodane forosh: &cKhamosh"
+    shopAdmins:
+      addingAdminWaiting: "&eLotfan esme fardi ke shoma mikhadi be list admin ezafe konid ra dar chat type konid."
+      removingAdminWaiting: "&eLotfan esme fardi ke shoma mikhaid az list admin ha hazf konid ra dar chat type konid."
+      selfAdmin: "&cShoma nemitonid khodeton ro ezafe ya kam konid!"
+      sucAdminAdded: "&e%player% &aba movafaghiat be list admin ha ezafe shod."
+      alreadyAdmin: "&cIn player ghablan ham dakhele list admin ha bode ast."
+      noPlayer: "&cIn player vojod nadarad ya ghablan dar in server bazi nakarde ast."
+      sucAdminRemoved: "&e%player% &aba movafaghiat az list admin ha hazf shod."
+      notInAdminList: "&cIn player dakhele list admin ha nist."
+      clearedAdmins: "&cHameye admin ha hazf shodand."
+    sharedIncome:
+      MessageOn: "&7Vaziat taghsime sood: &aRoshan"
+      MessageOff: "&7Vaziat taghsime sood: &cKhamosh"
+    copy-paste:
+      copiedShopSettings: "[&7Tanzimat shop &6Copy shod](%settings%)"
+      pastedShopSettings: "&7Tanzimate shop &epaste shod"
+    hologramRotation:
+      rotateHologramInChat: "&7Charkheshe hologram: %rotation%"
+      rotation:
+        Up: "&aBala"
+        North: "&aShomal"
+        East: "&aShargh"
+        South: "&aJonub"
+        West: "&aGharb"
+        Down: "&aPayin"
+customBuySell:
+  gui-customAmountSign-title: "&eKharid/Forosh meghdar delkhah"
+  gui-customAmountSign-lore:
+    - "&7Kharid ya forosh dar meghdar delkhah "
+    - " &d "
+    - " &aChap click baraye kharid meghdar delkhah "
+    - " &cRast click baraye foroshe meghdar delkhah "
+    - " &d "
+    - " &7Shoma ghader be &akharid &e%buycount%&7 az in item hastid. "
+    - " &7Shoma ghader be &cforosh &e%sellcount%&7 az in item hastid. "
+  #15 characters per line (without color codes) and "\n" for next line (starting from second line)
+  signEditorGui:
+    buy:
+      - "&a^^ Max: %max% ^^ "
+      - " &bMeghdar delkhah"
+      - " &bra benevisid"
+    sell:
+      - "&c^^ Max: %max% ^^ "
+      - " &bMeghdar delkhah "
+      - " &bra benevisid"
+  errors:
+    buyingIsDisabled: "&cKharid dar in shop gheyre faal shode ast."
+    sellingIsDisabled: "&cForosh dar in shop gheyre faal shode ast."
+    wrongInput: "&cMeghdar nadorost(Ya shayad meghar kheyli ziad), lotfan yek adad type konid."
+    enterTheAmount: "&eLotfan meghdare delkhahe khod ra dar tablo benevisid."
+    unsupportedInteger: "&cHoy!, meghadr nemitone 0 ya adad manfi bashe -_-"
+shop-messages:
+  successful-buy: "&aShoma ba movafaghiat in meghar az item ra be arzeshe &e%price% %currency% kharidid."
+  fullinv: "&cInventory shoma por mibashad."
+  cannotafford: "&cShoma be andaze kafi pol nadarid."
+  outofstock: "&cShop az in item be in meghdar nadarad."
+  successful-sell: "&aShoma item haye khod ra be gheymat &e%price% %currency% forokhtid."
+  shopcannotafford: "&cShop be meghdar kafi pol baraye pardakht be shoma nadarad."
+  notenoughitemtosell: "&cShoma be andaze kafi in item ra nadarid ke beforoshid."
+  chestisFull: "Inventory shop full mibashad."
+  selftransaction: "&cShoma nemitonid az khodeton kharid ya forosh konid."
+  openingShopProblem: "&cMoteasefane moshkeli dar baz kardan in shop vojod darad. Be admin ha etela dahid."
+command-messages:
+  negativeprice: "&cMeghdare manfi? vali shoma bayad yek adad balaye 0 entekhab konid."
+  notenoughargs: "&cCommand be dorosti ersal nashode \n &cRavesh dorost: /ecs create (Gheymate kharid az shoma) (Gheymat forosh be shoma)"
+  consolenotallowed: "&cShoma ghader be ersal hich commandi az console nistid."
+  help:
+    - "&bEz&cChestShop &7Plugin By Dead_Light©"
+    - "&7- &c/ecs create (Gheymate kharid az shoma) (Gheymat forosh be shoma) &7| Be yek chest/shulker/barrel negah kon va itemi ke mikhay beforshi ro dastet begir "
+    - "&7- &c/ecs remove &7| Hazf kardan shopi ke dar hale negah kardan be un hastid "
+    - "&7- &c/ecs settings (setting) &7| Copy/Paste/Taghir vaziate tanzimate shopi ke dar hale negah kardan hastid. "
+    - "&eTanzimat: &7[copy, paste, admins, toggle-buying, toggle-selling, toggle-message, toggle-shared-income]"
+  help-admin-view-addition:
+    - "&cAdmin Help: "
+    - "&7- &c/ecsadmin"
+  adminhelp:
+    - "&cAdmin help: "
+    - "&7- &c/&eecsadmin remove &7| Hazf shopi ke dar hale negah kardan be un hastid. "
+    - "&7- &c/&eecsadmin reload &7| reload kardan confige ez chest shop"
+    - "&7- &c/&eecsadmin create (buy) (sell) &7| dorost kardan admin chest shop"
+  alreadyashop: "&cIn block ghablan ham shop bode! va hast."
+  shopcreated: "&aShoma ba movafaghiat shop khod ra dorost kardid."
+  holdsomething: "&cLotfan itemi ra dar dast asli khod begirid."
+  notallowdtocreate: "&cShoma ghader be dorost/hazf kardan shop dar in makan nistid."
+  notchest: "&cIn block yek chest/barrel/shulker nist."
+  lookatchest: "&cLotfan be yek chest negah konid."
+  csremoved: "&eShop va movafaghiat hazf shod."
+  notowner: "&aShoma ownere in shop nistid."
+  notachestorcs: "&cBlocki darid negah mikonid yek chest ya yek chest shop nist."
+  maxShopLimitReached: "&cShoma az in bishtar nemitavanid shop besazid. Hade aksar: %shoplimit% shop!"
+  slimeFunBlockNotSupported: "&cBebakhshid :(, Shoma ghader be estefade az block haye slimefun baraye chest shop nistid, az yek block mamoli estefade konid."
+  buypriceGreaterThenSellRequired: "&cGheymate kharid az shoma bayad bozorg tar az gheymate forosh be shoma bashad."
+checkprofits:
+  landing-menu:
+    - '&e========================================'
+    - '&7Kole meghdare daramad: &6%currency%%income% &7from &6%sales% &7sale(s).'
+    - '&7Kole meghdare hazine baraye kharid az fard: &6%currency%%cost% &7from &6%purchases% &7purchase(s).'
+    - '&7Jame kol: &6%currency%%total%'
+    - '&7Balance: &6%currency%%balance%'
+    - '&7Click [&b&lHERE](Click for details! run_command=/checkprofits p 1) &7for a detailed report!'
+    - '&7Click to clear the report [&c&l[X]](Click to clear! run_command=/checkprofits clear)'
+  details-menu:
+    header:
+      - "&e----- &6Gozareshe daramad shop &e-----"
+    content:
+      - " &e- &6%item%"
+      - "    &7Forosh ha: [&e%sales%x %currency%%income%](Unit price: %unit_income%) &7Kharid ha: [&e%purchases%x %currency%%cost%](Unit price: %unit_cost%)"
+    footer:
+      - "&6%button_previous%&7Page %page%/%pages%&6%button_next%&7 | To view a page, type \"[&6/cp p <page>](Click to paste in chat suggest_command=/cp p )&7\""
+    hover-extra:
+      button-next: "Next"
+      button-previous: "Previous"
+  confirm-clear:
+    - "&eDo you really want to clear all profit data? [&2&l[✔]](Click to confirm clear! run_command=/checkprofits clear -confirm)"
+  confirm-clear-success: "&cYou've cleared all profit data!"
+  join-notification:
+    - "&eCheck your Shop profits [&b&lHERE](Click to show run_command=/checkprofits)"
+shulkershop-dropped-lore:
+  - "&eShulkerbox Shop:"
+  - " &7Owner: &6%owner%"
+  - " &7Item: &6%item%"
+  - " &7Buy: &6%currency%%buy_price%"
+  - " &7Sell: &6%currency%%sell_price%"

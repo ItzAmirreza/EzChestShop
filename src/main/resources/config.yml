@@ -1,6 +1,6 @@
 # EzChestShop plugin configuration
 # Before starting to config, please note that any usage of TABs in the config file may break the plugin so avoid using tabs and use space.
-# If you need help/found a bug, contact me on Discord: Dead_Light#5608
+# If you need help/found a bug, please join our Discord: https://discord.gg/AQdWzUsuNz
 language: Locale_EN
 shops:
   hologram:
