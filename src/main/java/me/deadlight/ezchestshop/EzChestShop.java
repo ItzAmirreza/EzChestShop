@@ -49,14 +49,11 @@ public final class EzChestShop extends JavaPlugin {
     private static ProtocolManager manager;
 
 
-    @Override
-    public void onLoad() {
-        // Adds Custom Flags to WorldGuard!
-        if (getServer().getPluginManager().getPlugin("WorldGuard") != null) {
-            worldguard = true;
-            FlagRegistry.onLoad();
-        }
-    }
+//    @Override
+//    public void onLoad() {
+//        // Adds Custom Flags to WorldGuard!
+//
+//    }
 
     @Override
     public void onEnable() {
@@ -130,8 +127,14 @@ public final class EzChestShop extends JavaPlugin {
             logConsole("&c[&eEzChestShop&c] &eSlimefun integration initialized.");
         }
 
+
         ShopContainer.queryShopsToMemory();
         LoadedChunksTask.startTask();
+
+//        if (getServer().getPluginManager().getPlugin("WorldGuard") != null) {
+//            worldguard = true;
+//            FlagRegistry.onLoad();
+//        }
 
     }
 
