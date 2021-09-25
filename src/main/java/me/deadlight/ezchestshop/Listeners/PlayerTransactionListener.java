@@ -37,7 +37,9 @@ public class PlayerTransactionListener implements Listener {
                     Player admin = Bukkit.getPlayer(adminUUID);
                     if (admin != null) {
                         if (admin.isOnline()) {
-                            event.getOwner().getPlayer().sendMessage(Utils.colorify("&7[&aECS&7] &b" + event.getCustomer().getName() + " &7has bought &e" + event.getCount() + "x &7of &d" + event.getItemName() + "&7 with the worth of &a" + event.getPrice() + "$"));
+                            if (event.getOwner().isOnline()) {
+                                event.getOwner().getPlayer().sendMessage(Utils.colorify("&7[&aECS&7] &b" + event.getCustomer().getName() + " &7has bought &e" + event.getCount() + "x &7of &d" + event.getItemName() + "&7 with the worth of &a" + event.getPrice() + "$"));
+                            }
                         }
                     }
                 }
@@ -46,7 +48,9 @@ public class PlayerTransactionListener implements Listener {
                     Player admin = Bukkit.getPlayer(adminUUID);
                     if (admin != null) {
                         if (admin.isOnline()) {
-                            event.getOwner().getPlayer().sendMessage(Utils.colorify("&7[&aECS&7] &b" + event.getCustomer().getName() + " &7has sold &e" + event.getCount() + "x &7of &d" + event.getItemName() + "&7 with the worth of &a" + event.getPrice() + "$"));
+                            if (event.getOwner().isOnline()) {
+                                event.getOwner().getPlayer().sendMessage(Utils.colorify("&7[&aECS&7] &b" + event.getCustomer().getName() + " &7has sold &e" + event.getCount() + "x &7of &d" + event.getItemName() + "&7 with the worth of &a" + event.getPrice() + "$"));
+                            }
                         }
                     }
                 }

@@ -32,14 +32,14 @@ shop-gui:
 transactions:
   transactionButtonTitle: "&aRegistro de transacciones"
   backToSettingsButton: "&eVolver a los ajustes"
-  transactionPaperTitleBuy: "&aCompra | %player%"
-  transactionPaperTitleSell: "&cVenta | %player%"
-  transactionPaperLoreBuy:
+  PaperTitleBuy: "&aCompra | %player%"
+  PaperTitleSell: "&cVenta | %player%"
+  PaperLoreBuy:
     -  "&7Precio Total: %price% "
     - " &7Cantidad: %count% "
     - " &7Tipo de Transacción: &aComprado de ti "
     - " &e%time%"
-  transactionPaperLoreSell:
+  PaperLoreSell:
     -  "&7Precio Total: %price% "
     - " &7Cantidad: %count% "
     - " &7Tipo de Transacción: &cVendido a ti "
@@ -95,6 +95,13 @@ settings:
       - " &7Si mantiene esta opción activada, "
       - " &7ÚNICAMENTE el beneficio de ventas, será "
       - " &7compartido con los administradores también."
+    hologramRotation:
+      Title: "&eHologram Rotation"
+      Lore:
+        - "&7Rotation: "
+        - "%rotations%"
+        - " &aLeft&7/&cRight&7-click to cycle"
+        - " &7through all rotations!"
     other:
       backToShopGuiButton: "&eVolver a la tienda"
       latestTransactionsButton: "&aÚltimas Transacciones"
@@ -117,9 +124,48 @@ settings:
       alreadyAdmin: "&cEste jugador ya está en la lista de administradores!"
       sucAdminRemoved: "&e%player% &afue eliminado exitosamente de la lista de administradores."
       notInAdminList: "&cEste jugador no está en la lista de administradores!"
+      clearedAdmins: "&cRemoved all admins from this shop."
     sharedIncome:
       MessageOn: "&7Ingresos compartidos: &aACTIVADO"
       MessageOff: "&7Ingresos compartidos: &cDESACTIVADO"
+    copy-paste:
+      copiedShopSettings: "[&6Copied &7shop settings!](%settings%)"
+      pastedShopSettings: "&ePasted &7shop settings!"
+    hologramRotation:
+      rotateHologramInChat: "&7Hologram Rotation: %rotation%"
+      rotation:
+        Up: "&aUp"
+        North: "&aNorth"
+        East: "&aEast"
+        South: "&aSouth"
+        West: "&aWest"
+        Down: "&aDown"
+customBuySell:
+  gui-customAmountSign-title: "&eCustom Buy/Sell"
+  gui-customAmountSign-lore:
+    - "&7Buy or Sell in custom amount "
+    - " &d "
+    - " &aLeft click for custom Buy "
+    - " &cRight click for custom Sell "
+    - " &d "
+    - " &7You can totally &abuy &e%buycount%&7 of this item. "
+    - " &7You can totally &csell &e%sellcount%&7 of this item."
+  #15 characters per line (without color codes) and "\n" for next line (starting from second line)
+  signEditorGui:
+    buy:
+      - "&a^^ Max: %max% ^^ "
+      - " &bInsert your "
+      - " &bdesired amount"
+    sell:
+      - "&c^^ Max: %max% ^^ "
+      - " &bInsert your "
+      - " &bdesired amount"
+  errors:
+    buyingIsDisabled: "&cBuying is disabled in this shop."
+    sellingIsDisabled: "&cSelling is disabled in this shop."
+    wrongInput: "&cWrong input(Or probably a very large number), please insert a number!"
+    enterTheAmount: "&ePlease write your desired amount in the sign"
+    unsupportedInteger: "&cHey!, the amount cannot be zero or negative obviously."
 shop-messages:
   successful-buy: "&aHas comprado exitosamente este artículo por &e%price% $"
   fullinv: "&cTu inventario está lleno!"
@@ -130,6 +176,7 @@ shop-messages:
   notenoughitemtosell: "&cNo tienes suficiente de este artículo para vender!"
   chestisFull: "El cofre esta lleno."
   selftransaction: "&cNo puedes comprarte ni venderte a ti mismo!"
+  openingShopProblem: "&cThere is a problem in opening this chest shop, Please contact administrator and check the console."
 command-messages:
   negativeprice: "&cPrecio negativo? pero tienes que usar un precio positivo..."
   notenoughargs: "&cNo has proporcionado suficientes argumentos! \n &cUso correcto: /ecs create (Precio de compra) (Precio de venta)"
@@ -139,6 +186,14 @@ command-messages:
     - "&7- &c/ecs create (Precio de compra) (Precio de venta) &7| Crea una tienda en cofre mirando un cofre y teniendo el artículo que quieres vender en tu mano.. "
     - " &7- &c/ecs remove &7| Elimina la tienda del cofre al que estás mirando. "
     - " &7Fácil ¿verdad? :)"
+  help-admin-view-addition:
+    - "&cAdmin Help: "
+    - "&7- &c/ecsadmin"
+  adminhelp:
+    - "&cAdmin help: "
+    - "&7- &c/&eecsadmin remove &7| removes the shop that you are looking at (although u can remove it by breaking it) "
+    - "&7- &c/&eecsadmin reload &7| reload the plugin configurations"
+    - "&7- &c/&eecsadmin create (buy) (sell) &7| create an admin shop"
   alreadyashop: "&cEste cofre ya es una tienda!"
   shopcreated: "&aYou have successfully created a chest shop!"
   holdsomething: "&cHas creado exitosamente una tienda de cofres!"
@@ -148,4 +203,38 @@ command-messages:
   csremoved: "&eLa tienda del cofre fue eliminada con éxito."
   notowner: "&aNo eres el dueño de esta tienda!"
   notachestorcs: "&cEl bloque que estás mirando no es un cofre / o esta no es una tienda.."
+  maxShopLimitReached: "&cMaximum shop limit reached: %shoplimit%!"
+  slimeFunBlockNotSupported: "&cSorry :(, but you can't execute this command with a slimefun block / please use a normal block as a container"
+  buypriceGreaterThanSellRequired: "&cBuyPrice has to be greater then the SellPrice!"
+checkprofits:
+  landing-menu:
+    - '&e========================================'
+    - '&7Total sales income: &6%currency%%income% &7from &6%sales% &7sale(s).'
+    - '&7Total buy cost: &6%currency%%cost% &7from &6%purchases% &7purchase(s).'
+    - '&7Total: &6%currency%%total%'
+    - '&7Balance: &6%currency%%balance%'
+    - '&7Click [&b&lHERE](Click for details! run_command=/checkprofits p 1) &7for a detailed report!'
+    - '&7Click to clear the report [&c&l[X]](Click to clear! run_command=/checkprofits clear)'
+  details-menu:
+    header:
+      - "&e----- &6Shop Profits Report &e-----"
+    content:
+      - " &e- &6%item%"
+      - "    &7Sales: [&e%sales%x %currency%%income%](Unit price: %unit_income%) &7Purchases: [&e%purchases%x %currency%%cost%](Unit price: %unit_cost%)"
+    footer:
+      - "&6%button_previous%&7Page %page%/%pages%&6%button_next%&7 | To view a page, type \"[&6/cp p <page>](Click to paste in chat suggest_command=/cp p )&7\""
+    hover-extra:
+      button-next: "Next"
+      button-previous: "Previous"
+  confirm-clear:
+    - "&eDo you really want to clear all profit data? [&2&l[✔]](Click to confirm clear! run_command=/checkprofits clear -confirm)"
+  confirm-clear-success: "&cYou've cleared all profit data!"
+  join-notification:
+    - "&eCheck your Shop profits [&b&lHERE](Click to show run_command=/checkprofits)"
+shulkershop-dropped-lore:
+  - "&eShulkerbox Shop:"
+  - " &7Owner: &6%owner%"
+  - " &7Item: &6%item%"
+  - " &7Buy: &6%currency%%buy_price%"
+  - " &7Sell: &6%currency%%sell_price%"
 

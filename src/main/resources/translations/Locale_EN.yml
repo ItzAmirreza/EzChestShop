@@ -26,7 +26,6 @@ shop-gui:
     storage: "&e&lStorage"
     settings: "&b&lSettings"
     disabled-title: "&cDisabled"
-    #use \n for next line in lore (remember to include color code in every line)
     disabled-lore:
       - "&7This option is disabled by "
       - " &7the shop owner."
@@ -187,7 +186,8 @@ command-messages:
     - "&7- &c/ecs create (Buy Price) (Sell Price) &7| Create a chest shop by looking at a chest and having the item that you want to sell in your hand. "
     - "&7- &c/ecs remove &7| Removes the chest shop that you are looking at "
     - "&7- &c/ecs settings (setting) &7| Copy/Paste/Toggle settings related to the chest shop "
-    - "&eSettings: &7[copy, paste, admins, toggle-buying, toggle-selling, toggle-message, toggle-shared-income] \n &7Eazy right? :)"
+    - "&eSettings: &7[copy, paste, admins, toggle-buying, toggle-selling, toggle-message, toggle-shared-income] "
+    - "&7 Eazy right? :)"
   help-admin-view-addition:
     - "&cAdmin Help: "
     - "&7- &c/ecsadmin"
