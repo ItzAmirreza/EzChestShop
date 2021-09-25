@@ -207,7 +207,7 @@ command-messages:
   notachestorcs: "&cThe block that you are looking at is not a chest/or this is not a chest shop."
   maxShopLimitReached: "&cMaximum shop limit reached: %shoplimit%!"
   slimeFunBlockNotSupported: "&cSorry :(, but you can't execute this command with a slimefun block / please use a normal block as a container"
-  buypriceGreaterThanSellRequired: "&cBuyPrice has to be greater then the SellPrice!"
+  buypriceGreaterThanSellRequired: "&cBuyPrice has to be greater than the SellPrice!"
 checkprofits:
   landing-menu:
     - '&e========================================'
