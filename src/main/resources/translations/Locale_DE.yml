@@ -211,7 +211,7 @@ command-messages:
   notachestorcs: "&cDer Block auf den du schaust ist keine Kiste/kein Kistenshop."
   maxShopLimitReached: "&cMaximale Shop Anzahl erreicht: %shoplimit%!"
   slimeFunBlockNotSupported: "&cLeider sind slimefun kisten nicht unterstützt! Bitte verwende einen anderen Container!"
-  buypriceGreaterThenSellRequired: "&cDer Kaufpreis muss größer als der Verkaufspreis sein!"
+  buypriceGreaterThanSellRequired: "&cDer Kaufpreis muss größer als der Verkaufspreis sein!"
 checkprofits:
   landing-menu:
     - '&e========================================'

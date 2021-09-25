@@ -2,6 +2,7 @@ package me.deadlight.ezchestshop.Listeners;
 import me.deadlight.ezchestshop.*;
 import me.deadlight.ezchestshop.Data.Config;
 import me.deadlight.ezchestshop.Data.LanguageManager;
+import me.deadlight.ezchestshop.Data.ShopContainer;
 import me.deadlight.ezchestshop.Utils.ASHologram;
 import me.deadlight.ezchestshop.Utils.FloatingItem;
 import me.deadlight.ezchestshop.Utils.Utils;
@@ -18,10 +19,7 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class PlayerLookingAtChestShop implements Listener {
 
@@ -133,7 +131,15 @@ public class PlayerLookingAtChestShop implements Listener {
         Location lineLocation = spawnLocation.clone().subtract(0, 0.1, 0);
         String itemname = "Error";
         itemname = Utils.getFinalItemName(thatItem);
-        for (String element : is_adminshop ? Config.holostructure_admin : Config.holostructure) {
+        List<String> possibleCounts = Utils.calculatePossibleAmount(Bukkit.getOfflinePlayer(player.getUniqueId()),
+                Bukkit.getOfflinePlayer(UUID.fromString(((TileState) shopLocation.getBlock().getState()).getPersistentDataContainer()
+                        .get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING))), player.getInventory().getStorageContents(),
+                Utils.getBlockInventory(shopLocation.getBlock()).getStorageContents(),
+                buy, sell, thatItem);
+
+        List<String> structure = new ArrayList<>(is_adminshop ? Config.holostructure_admin : Config.holostructure);
+        if (ShopContainer.getShopSettings(shopLocation).getRotation().equals("down")) Collections.reverse(structure);
+        for (String element : structure) {
             if (element.equalsIgnoreCase("[Item]")) {
                 lineLocation.add(0, 0.15 * Config.holo_linespacing, 0);
                 FloatingItem floatingItem = new FloatingItem(player, thatItem, lineLocation);
@@ -141,8 +147,10 @@ public class PlayerLookingAtChestShop implements Listener {
                 holoItemList.add(floatingItem);
                 lineLocation.add(0, 0.35 * Config.holo_linespacing, 0);
             } else {
+
                 String line = Utils.colorify(element.replace("%item%", itemname).replace("%buy%", Utils.formatNumber(buy, Utils.FormatType.HOLOGRAM)).
-                        replace("%sell%", Utils.formatNumber(sell, Utils.FormatType.HOLOGRAM)).replace("%currency%", Config.currency).replace("%owner%", shop_owner));
+                        replace("%sell%", Utils.formatNumber(sell, Utils.FormatType.HOLOGRAM)).replace("%currency%", Config.currency)
+                        .replace("%owner%", shop_owner).replace("%maxbuy%", possibleCounts.get(0)).replace("%maxsell%", possibleCounts.get(1)));
                 if (is_dbuy || is_dsell) {
                     line = line.replaceAll("<separator>.*?<\\/separator>", "");
                     if (is_dbuy && is_dsell) {

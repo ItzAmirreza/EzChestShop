@@ -9,6 +9,8 @@ shops:
     # represents the holographic texts of chestshops. Use %item% to display the item's display name.
     # Use [item] for 1 Line to display the floating item. Use %buy% for buy price and %sell% for sell price.
     # %currency% is defined under economy.server-currency and %owner% represents the shops creator.
+    # %maxbuy% & %maxsell% can be used to define the maximum amount a player can buy/sell to a shop at this time.
+    # The HTML like <buy></buy> Syntax allows the plugin to remove parts of the message if buy/sell are disabled.
     holo-structure:
       - "<buy>&fBuy: &a%buy% %currency%</buy><separator> &f| </separator><sell>&fSell: &c%sell% %currency%</sell>"
       - "&d%item%"

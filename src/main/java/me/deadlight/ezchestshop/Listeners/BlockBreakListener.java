@@ -1,17 +1,22 @@
 package me.deadlight.ezchestshop.Listeners;
 
+import com.comphenix.protocol.PacketType;
 import me.deadlight.ezchestshop.Data.Config;
 import me.deadlight.ezchestshop.Data.LanguageManager;
 import me.deadlight.ezchestshop.Data.ShopContainer;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.Utils.Utils;
+import me.deadlight.ezchestshop.Utils.WorldGuard.FlagRegistry;
+import me.deadlight.ezchestshop.Utils.WorldGuard.WorldGuardUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.block.Block;
 import org.bukkit.block.TileState;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -56,6 +61,8 @@ public class BlockBreakListener implements Listener {
             }
         }
         if (!event.isCancelled()) {
+            preventShopBreak(event);
+
             Location loc = event.getBlock().getLocation();
             if (ShopContainer.isShop(loc)) {
                 ShopContainer.deleteShop(loc);
@@ -99,4 +106,28 @@ public class BlockBreakListener implements Listener {
     private Double getContainerDouble(PersistentDataContainer container, String key) {
         return container.get(new NamespacedKey(EzChestShop.getPlugin(), key), PersistentDataType.DOUBLE);
     }
+
+    private void preventShopBreak(BlockBreakEvent event) {
+        Block block = event.getBlock();
+        Location loc = block.getLocation();
+        if (ShopContainer.isShop(loc)) {
+            PersistentDataContainer container = ((TileState) block.getState()).getPersistentDataContainer();
+            boolean adminshop = container.get(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"), PersistentDataType.INTEGER) == 1;
+            Player player = event.getPlayer();
+            if (EzChestShop.worldguard) {
+                if (adminshop) {
+                    if (!WorldGuardUtils.queryStateFlag(FlagRegistry.REMOVE_ADMIN_SHOP, player)) {
+                        player.sendMessage(lm.notAllowedToCreateOrRemove());
+                        event.setCancelled(true);
+                    }
+                } else {
+                    if (!WorldGuardUtils.queryStateFlag(FlagRegistry.REMOVE_SHOP, player)) {
+                        player.sendMessage(lm.notAllowedToCreateOrRemove());
+                        event.setCancelled(true);
+                    }
+                }
+            }
+        }
+    }
+
 }

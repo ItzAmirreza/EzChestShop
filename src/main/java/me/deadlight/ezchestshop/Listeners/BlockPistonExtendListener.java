@@ -5,6 +5,8 @@ import me.deadlight.ezchestshop.Data.ShopContainer;
 import me.deadlight.ezchestshop.Events.ShulkerShopDropEvent;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.Utils.Utils;
+import me.deadlight.ezchestshop.Utils.WorldGuard.FlagRegistry;
+import me.deadlight.ezchestshop.Utils.WorldGuard.WorldGuardUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
@@ -49,6 +51,20 @@ public class BlockPistonExtendListener implements Listener {
                     //it is a shulkerbox, now checking if its a shop
                     Location shulkerLoc = block.getLocation();
                     if (ShopContainer.isShop(shulkerLoc)) {
+                        boolean adminshop = container.get(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"), PersistentDataType.INTEGER) == 1;
+                        if (EzChestShop.worldguard) {
+                            if (adminshop) {
+                                if (!WorldGuardUtils.queryStateFlag(FlagRegistry.REMOVE_ADMIN_SHOP, shulkerLoc)) {
+                                    event.setCancelled(true);
+                                    return;
+                                }
+                            } else {
+                                if (!WorldGuardUtils.queryStateFlag(FlagRegistry.REMOVE_SHOP, shulkerLoc)) {
+                                    event.setCancelled(true);
+                                    return;
+                                }
+                            }
+                        }
                         //congrats
                         //Add the Lock for dropped item recognition later
                         UUID uuid = UUID.randomUUID();

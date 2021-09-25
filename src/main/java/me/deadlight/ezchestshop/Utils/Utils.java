@@ -1,5 +1,7 @@
 package me.deadlight.ezchestshop.Utils;
 import me.deadlight.ezchestshop.Utils.Objects.TransactionLogObject;
+import net.md_5.bungee.api.chat.*;
+import net.md_5.bungee.api.chat.hover.content.Text;
 import net.minecraft.nbt.NBTTagCompound;
 import org.bukkit.*;
 import me.deadlight.ezchestshop.Data.Config;
@@ -244,7 +246,7 @@ public class Utils {
         } else {
             itemname = Utils.capitalizeFirstSplit(item.getType().toString());
         }
-        return colorify(itemname);
+        return colorify(itemname).trim();
     }
 
 
@@ -645,6 +647,17 @@ public class Utils {
                 break;
         }
         return result;
+    }
+
+    public static void sendVersionMessage(Player player) {
+        player.spigot().sendMessage(new ComponentBuilder("Ez Chest Shop plugin, " + EzChestShop.getPlugin().getDescription().getVersion())
+                .color(net.md_5.bungee.api.ChatColor.GREEN)
+                .append("\nSpigot: ").color(net.md_5.bungee.api.ChatColor.GOLD).append("LINK").color(net.md_5.bungee.api.ChatColor.GRAY).bold(true)
+                .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(colorify("&fClick to open the plugins Spigot page!"))))
+                .event(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.spigotmc.org/resources/ez-chest-shop-ecs-1-14-x-1-17-x.90411/"))
+                .append("\nGitHub: ", ComponentBuilder.FormatRetention.NONE).color(net.md_5.bungee.api.ChatColor.RED).append("LINK").color(net.md_5.bungee.api.ChatColor.GRAY).bold(true)
+                .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(colorify("&fClick to chekc out the plugins\n Open Source GitHub repository!"))))
+                .event(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://github.com/ItzAmirreza/EzChestShop")).create());
     }
 
 
