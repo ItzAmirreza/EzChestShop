@@ -30,14 +30,19 @@ public class FlagRegistry {
     // register a Boolean based flag:
     private static StateFlag registerStateFlag(String name, boolean def) {
         com.sk89q.worldguard.protection.flags.registry.FlagRegistry registry = WorldGuard.getInstance().getFlagRegistry();
+        Flag<?> existing = registry.get(name);
+        if (existing != null) {
+            return (StateFlag) existing;
+        }
+
         try {
             StateFlag flag = new StateFlag(name, def);
             registry.register(flag);
             return flag;
         } catch (FlagConflictException e) {
-            Flag<?> existing = registry.get(name);
-            if (existing instanceof BooleanFlag) {
-                return (StateFlag) existing;
+            Flag<?> existing2 = registry.get(name);
+            if (existing2 instanceof BooleanFlag) {
+                return (StateFlag) existing2;
             }
         }
         //This will never run as there's a try catch above.

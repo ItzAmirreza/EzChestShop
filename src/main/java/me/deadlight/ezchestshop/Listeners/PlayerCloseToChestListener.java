@@ -326,7 +326,7 @@ public class PlayerCloseToChestListener implements Listener {
 
     public static void hideHologram(Location loc) {
         if (Config.holodistancing) {
-            Bukkit.getOnlinePlayers().stream().filter(p -> p.getLocation().distance(loc) < Config.holodistancing_distance + 5).forEach(p -> {
+            Bukkit.getOnlinePlayers().stream().filter(p -> p.getWorld().equals(loc.getWorld())).filter(p -> p.getLocation().distance(loc) < Config.holodistancing_distance + 5).forEach(p -> {
                 hideHologram(p, loc);
                 if (Config.holo_rotation) {
                     List<Player> players = playershopTextmap.get(loc);
