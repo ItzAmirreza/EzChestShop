@@ -7,6 +7,7 @@ import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.Utils.ASHologram;
 import me.deadlight.ezchestshop.Utils.FloatingItem;
 import me.deadlight.ezchestshop.Utils.Utils;
+import me.mrCookieSlime.Slimefun.api.BlockStorage;
 import org.bukkit.*;
 import org.bukkit.block.*;
 import org.bukkit.craftbukkit.libs.org.apache.commons.lang3.tuple.Pair;
@@ -108,6 +109,12 @@ public class PlayerCloseToChestListener implements Listener {
             ShopContainer.getShops().stream()
                     .filter(sloc -> sloc != null && loc.getWorld().equals(sloc.getWorld()) && loc.distance(sloc) < Config.holodistancing_distance + 5)
                     .forEach(sloc -> {
+                        if (EzChestShop.slimefun) {
+                            if (BlockStorage.hasBlockInfo(sloc)) {
+                                ShopContainer.deleteShop(sloc);
+                                return;
+                            }
+                        }
                         double dist = loc.distance(sloc);
                         //Show the Hologram if Player close enough
                         if (dist < Config.holodistancing_distance) {
