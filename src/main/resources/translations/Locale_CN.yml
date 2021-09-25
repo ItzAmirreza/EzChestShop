@@ -88,6 +88,13 @@ settings:
       - "&7目前狀態: %status% "
       - " &7若您開啟此選項， "
       - " &7收益將會分享給所有主人."
+    hologramRotation:
+      Title: "&eHologram Rotation"
+      Lore:
+        - "&7Rotation: "
+        - "%rotations%"
+        - " &aLeft&7/&cRight&7-click to cycle"
+        - " &7through all rotations!"
     other:
       backToShopGuiButton: "&e回到商店"
       latestTransactionsButton: "&a最後一筆交易" 
@@ -110,9 +117,48 @@ settings:
       alreadyAdmin: "&c此玩家已經在主人名單裡了!"
       sucAdminRemoved: "&e%player% &a已成功從主人名單內移除."
       notInAdminList: "&c此玩家不在主人名單中!"
+      clearedAdmins: "&cRemoved all admins from this shop."
     sharedIncome:
       MessageOn: "&7分享收益: &a開啟"
       MessageOff: "&7分享收益: &c關閉"
+    copy-paste:
+      copiedShopSettings: "[&6Copied &7shop settings!](%settings%)"
+      pastedShopSettings: "&ePasted &7shop settings!"
+    hologramRotation:
+      rotateHologramInChat: "&7Hologram Rotation: %rotation%"
+      rotation:
+        Up: "&aUp"
+        North: "&aNorth"
+        East: "&aEast"
+        South: "&aSouth"
+        West: "&aWest"
+        Down: "&aDown"
+customBuySell:
+  gui-customAmountSign-title: "&eCustom Buy/Sell"
+  gui-customAmountSign-lore:
+    - "&7Buy or Sell in custom amount "
+    - " &d "
+    - " &aLeft click for custom Buy "
+    - " &cRight click for custom Sell "
+    - " &d "
+    - " &7You can totally &abuy &e%buycount%&7 of this item. "
+    - " &7You can totally &csell &e%sellcount%&7 of this item."
+  #15 characters per line (without color codes) and "\n" for next line (starting from second line)
+  signEditorGui:
+    buy:
+      - "&a^^ Max: %max% ^^ "
+      - " &bInsert your "
+      - " &bdesired amount"
+    sell:
+      - "&c^^ Max: %max% ^^ "
+      - " &bInsert your "
+      - " &bdesired amount"
+  errors:
+    buyingIsDisabled: "&cBuying is disabled in this shop."
+    sellingIsDisabled: "&cSelling is disabled in this shop."
+    wrongInput: "&cWrong input(Or probably a very large number), please insert a number!"
+    enterTheAmount: "&ePlease write your desired amount in the sign"
+    unsupportedInteger: "&cHey!, the amount cannot be zero or negative obviously."
 shop-messages:
   successful-buy: "&a您成功以 &e%price% %currency% 購買商品"
   fullinv: "&c您的背包已滿!"
@@ -123,6 +169,7 @@ shop-messages:
   notenoughitemtosell: "&c您沒有足夠的道具來販售!"
   chestisFull: "箱子已滿."
   selftransaction: "&c您無法與自己交易!"
+  openingShopProblem: "&cThere is a problem in opening this chest shop, Please contact administrator and check the console."
 command-messages:
   negativeprice: "&c負數? 避免你破產最好別那麼做..."
   notenoughargs: "&c請輸入足夠的參數! \n &c正確用法: /ecs create (購買價格) (販售價格)"
@@ -132,6 +179,14 @@ command-messages:
     - "&7- &c/ecs create (購買價格) (販售價格) &7| 請手持要販售的物品並注視箱子輸入指令來設立商店 "
     - " &7- &c/ecs remove &7| 關閉你正在注視的商店 "
     - " &7很簡單 對吧? :)"
+  help-admin-view-addition:
+    - "&cAdmin Help: "
+    - "&7- &c/ecsadmin"
+  adminhelp:
+    - "&cAdmin help: "
+    - "&7- &c/&eecsadmin remove &7| removes the shop that you are looking at (although u can remove it by breaking it) "
+    - "&7- &c/&eecsadmin reload &7| reload the plugin configurations"
+    - "&7- &c/&eecsadmin create (buy) (sell) &7| create an admin shop"
   alreadyashop: "&c這個箱子已經是商店了!"
   shopcreated: "&a您已成功設立商店!"
   holdsomething: "&c請在主手拿著道具!"
@@ -141,3 +196,37 @@ command-messages:
   csremoved: "&e此商店已成功關閉."
   notowner: "&a你並非此商店的主人!"
   notachestorcs: "&c您注視的方塊並非一個箱子."
+  maxShopLimitReached: "&cMaximum shop limit reached: %shoplimit%!"
+  slimeFunBlockNotSupported: "&cSorry :(, but you can't execute this command with a slimefun block / please use a normal block as a container"
+  buypriceGreaterThanSellRequired: "&cBuyPrice has to be greater then the SellPrice!"
+checkprofits:
+  landing-menu:
+    - '&e========================================'
+    - '&7Total sales income: &6%currency%%income% &7from &6%sales% &7sale(s).'
+    - '&7Total buy cost: &6%currency%%cost% &7from &6%purchases% &7purchase(s).'
+    - '&7Total: &6%currency%%total%'
+    - '&7Balance: &6%currency%%balance%'
+    - '&7Click [&b&lHERE](Click for details! run_command=/checkprofits p 1) &7for a detailed report!'
+    - '&7Click to clear the report [&c&l[X]](Click to clear! run_command=/checkprofits clear)'
+  details-menu:
+    header:
+      - "&e----- &6Shop Profits Report &e-----"
+    content:
+      - " &e- &6%item%"
+      - "    &7Sales: [&e%sales%x %currency%%income%](Unit price: %unit_income%) &7Purchases: [&e%purchases%x %currency%%cost%](Unit price: %unit_cost%)"
+    footer:
+      - "&6%button_previous%&7Page %page%/%pages%&6%button_next%&7 | To view a page, type \"[&6/cp p <page>](Click to paste in chat suggest_command=/cp p )&7\""
+    hover-extra:
+      button-next: "Next"
+      button-previous: "Previous"
+  confirm-clear:
+    - "&eDo you really want to clear all profit data? [&2&l[✔]](Click to confirm clear! run_command=/checkprofits clear -confirm)"
+  confirm-clear-success: "&cYou've cleared all profit data!"
+  join-notification:
+    - "&eCheck your Shop profits [&b&lHERE](Click to show run_command=/checkprofits)"
+shulkershop-dropped-lore:
+  - "&eShulkerbox Shop:"
+  - " &7Owner: &6%owner%"
+  - " &7Item: &6%item%"
+  - " &7Buy: &6%currency%%buy_price%"
+  - " &7Sell: &6%currency%%sell_price%"

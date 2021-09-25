@@ -117,7 +117,6 @@ public class Config {
         YamlConfiguration fc = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml"));
         //update 1.3.3 new config file model update constructed by ElitoGame
         boolean isOldConfigModel = fc.isBoolean("show-holograms");
-        boolean isUsingOldhologramLineSystem = fc.isString("shops.hologram.hologram-first-line");
         //if true, then we have to implement the new config model and delete old ones
         if (isOldConfigModel) {
             //getting current values of configs
@@ -161,6 +160,8 @@ public class Config {
             Config.loadConfig();
 
         }
+
+        boolean isUsingOldhologramLineSystem = fc.isString("shops.hologram.hologram-first-line");
 
         if (isUsingOldhologramLineSystem) {
             EzChestShop.getPlugin().logConsole("Updated Hologram List!");
