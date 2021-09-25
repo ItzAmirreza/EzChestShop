@@ -9,6 +9,7 @@ import me.deadlight.ezchestshop.GUIs.ServerShopGUI;
 import me.deadlight.ezchestshop.Utils.Utils;
 import me.deadlight.ezchestshop.Utils.WorldGuard.FlagRegistry;
 import me.deadlight.ezchestshop.Utils.WorldGuard.WorldGuardUtils;
+import me.mrCookieSlime.Slimefun.api.BlockStorage;
 import org.bukkit.*;
 import org.bukkit.block.*;
 import org.bukkit.entity.Player;
@@ -37,6 +38,12 @@ public class ChestOpeningListener implements Listener {
         if (Utils.isApplicableContainer(clickedType)) {
 
             Block chestblock = event.getClickedBlock();
+            if (EzChestShop.slimefun) {
+                if (BlockStorage.hasBlockInfo(chestblock.getLocation())) {
+                    ShopContainer.deleteShop(chestblock.getLocation());
+                    return;
+                }
+            }
             PersistentDataContainer dataContainer = null;
             Location loc = chestblock.getLocation();
             TileState state = (TileState) chestblock.getState();
