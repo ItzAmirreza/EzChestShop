@@ -81,6 +81,9 @@ public class SqlQueue {
             return false;
         }
     }
+    public Location getLocation() {
+        return this.location;
+    }
 
 
 }
