@@ -7,7 +7,7 @@ import me.deadlight.ezchestshop.Data.LanguageManager;
 import me.deadlight.ezchestshop.Listeners.ChatListener;
 import me.deadlight.ezchestshop.Listeners.PlayerCloseToChestListener;
 import me.deadlight.ezchestshop.Utils.Objects.ChatWaitObject;
-import me.deadlight.ezchestshop.Utils.LogType;
+import me.deadlight.ezchestshop.Enums.LogType;
 import me.deadlight.ezchestshop.Utils.Utils;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;

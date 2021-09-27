@@ -1,4 +1,4 @@
-package me.deadlight.ezchestshop.Utils;
+package me.deadlight.ezchestshop.Enums;
 
 public enum LogType {
     TRANSACTION,

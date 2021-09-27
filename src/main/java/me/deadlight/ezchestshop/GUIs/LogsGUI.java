@@ -1,7 +1,7 @@
 package me.deadlight.ezchestshop.GUIs;
 
 import me.deadlight.ezchestshop.Data.LanguageManager;
-import me.deadlight.ezchestshop.Utils.LogType;
+import me.deadlight.ezchestshop.Enums.LogType;
 import me.deadlight.ezchestshop.Utils.Objects.TransactionLogObject;
 import me.deadlight.ezchestshop.Utils.Utils;
 import dev.triumphteam.gui.guis.Gui;
