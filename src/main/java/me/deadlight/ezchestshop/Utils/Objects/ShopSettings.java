@@ -51,9 +51,9 @@ public class ShopSettings {
 
     public ShopSettings setMsgtoggle(boolean msgtoggle) {
         this.msgtoggle = msgtoggle;
-        Database db = EzChestShop.getPlugin().getDatabase();
-        db.setBool("location", sloc,
-                "msgToggle", "shopdata", msgtoggle);
+//        Database db = EzChestShop.getPlugin().getDatabase();
+//        db.setBool("location", sloc,
+//                "msgToggle", "shopdata", msgtoggle);
         return this;
     }
 
@@ -63,9 +63,9 @@ public class ShopSettings {
 
     public ShopSettings setDbuy(boolean dbuy) {
         this.dbuy = dbuy;
-        Database db = EzChestShop.getPlugin().getDatabase();
-        db.setBool("location", sloc,
-                "buyDisabled", "shopdata", dbuy);
+//        Database db = EzChestShop.getPlugin().getDatabase();
+//        db.setBool("location", sloc,
+//                "buyDisabled", "shopdata", dbuy);
         return this;
     }
 
@@ -75,9 +75,9 @@ public class ShopSettings {
 
     public ShopSettings setDsell(boolean dsell) {
         this.dsell = dsell;
-        Database db = EzChestShop.getPlugin().getDatabase();
-        db.setBool("location", sloc,
-                "sellDisabled", "shopdata", dsell);
+//        Database db = EzChestShop.getPlugin().getDatabase();
+//        db.setBool("location", sloc,
+//                "sellDisabled", "shopdata", dsell);
         return this;
     }
 
@@ -87,9 +87,9 @@ public class ShopSettings {
 
     public ShopSettings setAdmins(String admins) {
         this.admins = admins;
-        Database db = EzChestShop.getPlugin().getDatabase();
-        db.setString("location", sloc,
-                "admins", "shopdata", admins);
+//        Database db = EzChestShop.getPlugin().getDatabase();
+//        db.setString("location", sloc,
+//                "admins", "shopdata", admins);
         return this;
     }
 
@@ -99,9 +99,9 @@ public class ShopSettings {
 
     public ShopSettings setShareincome(boolean shareincome) {
         this.shareincome = shareincome;
-        Database db = EzChestShop.getPlugin().getDatabase();
-        db.setBool("location", sloc,
-                "shareIncome", "shopdata", shareincome);
+//        Database db = EzChestShop.getPlugin().getDatabase();
+//        db.setBool("location", sloc,
+//                "shareIncome", "shopdata", shareincome);
         return this;
     }
 
@@ -111,9 +111,9 @@ public class ShopSettings {
 
     public ShopSettings setTrans(String trans) {
         this.trans = trans;
-        Database db = EzChestShop.getPlugin().getDatabase();
-        db.setString("location", sloc,
-                "transactions", "shopdata", trans);
+//        Database db = EzChestShop.getPlugin().getDatabase();
+//        db.setString("location", sloc,
+//                "transactions", "shopdata", trans);
         return this;
     }
 
@@ -123,9 +123,9 @@ public class ShopSettings {
 
     public ShopSettings setAdminshop(boolean adminshop) {
         this.adminshop = adminshop;
-        Database db = EzChestShop.getPlugin().getDatabase();
-        db.setBool("location", sloc,
-                "adminshop", "shopdata", adminshop);
+//        Database db = EzChestShop.getPlugin().getDatabase();
+//        db.setBool("location", sloc,
+//                "adminshop", "shopdata", adminshop);
         return this;
     }
 
@@ -135,9 +135,9 @@ public class ShopSettings {
 
     public ShopSettings setRotation(String rotation) {
         this.rotation = rotation;
-        Database db = EzChestShop.getPlugin().getDatabase();
-        db.setString("location", sloc,
-                "rotation", "shopdata", rotation);
+//        Database db = EzChestShop.getPlugin().getDatabase();
+//        db.setString("location", sloc,
+//                "rotation", "shopdata", rotation);
         return this;
     }
 }
