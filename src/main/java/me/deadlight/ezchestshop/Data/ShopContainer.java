@@ -37,29 +37,8 @@ public class ShopContainer {
      */
     public static void queryShopsToMemory() {
         Database db = EzChestShop.getPlugin().getDatabase();
-        for (String sloc : db.getKeys("location", "shopdata")) {
-            boolean msgtoggle = db.getBool("location", sloc,
-                    "msgToggle", "shopdata");
-            boolean dbuy =  db.getBool("location", sloc,
-                    "buyDisabled", "shopdata");
-            boolean dsell = db.getBool("location", sloc,
-                    "sellDisabled", "shopdata");
-            String admins = db.getString("location", sloc,
-                    "admins", "shopdata");
-            boolean shareincome = db.getBool("location", sloc,
-                    "shareIncome", "shopdata");
-            String trans = db.getString("location", sloc,
-                    "transactions", "shopdata");
-            boolean adminshop = db.getBool("location", sloc,
-                    "adminshop", "shopdata");
-            String rotation = db.getString("location", sloc,
-                    "rotation", "shopdata");
-            rotation = rotation == null ? Config.settings_defaults_rotation : rotation;
-            ShopSettings settings = new ShopSettings(sloc, msgtoggle, dbuy, dsell, admins, shareincome, trans, adminshop, rotation);
-            Location loc = Utils.StringtoLocation(sloc);
-            EzShop shop = new EzShop(loc, settings);
-            shopMap.put(loc, shop);
-        }
+        shopMap = db.queryShops();
+
     }
 
     /**
@@ -92,7 +71,7 @@ public class ShopContainer {
         String encodedItem = Utils.encodeItem(item);
         db.insertShop(sloc, p.getUniqueId().toString(), encodedItem == null ? "Error" : encodedItem, buyprice, sellprice, msgtoggle, dbuy, dsell, admins, shareincome, trans, adminshop, rotation);
         ShopSettings settings = new ShopSettings(sloc, msgtoggle, dbuy, dsell, admins, shareincome, trans, adminshop, rotation);
-        EzShop shop = new EzShop(loc, settings);
+        EzShop shop = new EzShop(loc, p, item, buyprice, sellprice, settings);
         shopMap.put(loc, shop);
     }
 
@@ -117,7 +96,7 @@ public class ShopContainer {
         db.insertShop(sloc, owner, encodedItem == null ? "Error" : encodedItem, buyprice, sellprice, msgtoggle, dbuy, dsell, admins, shareincome, trans, adminshop, rotation);
 
         ShopSettings settings = new ShopSettings(sloc, msgtoggle, dbuy, dsell, admins, shareincome, trans, adminshop, rotation);
-        EzShop shop = new EzShop(loc, settings);
+        EzShop shop = new EzShop(loc, owner, Utils.decodeItem(encodedItem), buyprice, sellprice, settings);
         shopMap.put(loc, shop);;
     }
 
@@ -205,7 +184,7 @@ public class ShopContainer {
             String rotation = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "rotation"), PersistentDataType.STRING);
             rotation = rotation == null ? Config.settings_defaults_rotation : rotation;
             ShopSettings settings = new ShopSettings(sloc, msgtoggle, dbuy, dsell, admins, shareincome, trans, adminshop, rotation);
-            EzShop shop = new EzShop(loc, settings);
+            EzShop shop = new EzShop(loc, owner, Utils.decodeItem(encodedItem), buyprice, sellprice, settings);
             shopMap.put(loc, shop);
             return settings;
         }

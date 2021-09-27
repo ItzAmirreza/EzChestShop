@@ -1,12 +1,17 @@
 package me.deadlight.ezchestshop.Data.SQLite;
 
 import me.deadlight.ezchestshop.EzChestShop;
+import me.deadlight.ezchestshop.Utils.Objects.EzShop;
+import me.deadlight.ezchestshop.Utils.Objects.ShopSettings;
+import me.deadlight.ezchestshop.Utils.Utils;
+import org.bukkit.Location;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -778,5 +783,38 @@ public abstract class Database {
             }
         }
         return;
+    }
+
+    public HashMap<Location, EzShop> queryShops() {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs;
+        try {
+            conn = getSQLConnection();
+            ps = conn.prepareStatement("SELECT * FROM shopdata;");
+
+            rs = ps.executeQuery();
+            HashMap<Location, EzShop> map = new HashMap<>();
+            while (rs.next()) {
+                String sloc = rs.getString("location");
+                map.put(Utils.StringtoLocation(sloc), new EzShop(Utils.StringtoLocation(sloc), rs.getString("owner"), Utils.decodeItem(rs.getString("item")),
+                        rs.getDouble("buyPrice"), rs.getDouble("sellPrice"), new ShopSettings(sloc, rs.getBoolean("msgToggle"),
+                        rs.getBoolean("buyDisabled"), rs.getBoolean("sellDisabled"), rs.getString("admins"),
+                        rs.getBoolean("shareIncome"), rs.getString("transactions"), rs.getBoolean("adminshop"), rs.getString("rotation"))));
+            }
+            return map;
+        } catch (SQLException e) {
+            plugin.getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute(), e);
+        } finally {
+            try {
+                if (ps != null)
+                    ps.close();
+                if (conn != null)
+                    conn.close();
+            } catch (SQLException e) {
+                plugin.getLogger().log(Level.SEVERE, Errors.sqlConnectionClose(), e);
+            }
+        }
+        return null;
     }
 }
