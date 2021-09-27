@@ -4,6 +4,7 @@ import me.deadlight.ezchestshop.Data.SQLite.Database;
 import me.deadlight.ezchestshop.Events.PlayerTransactEvent;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.Listeners.PlayerCloseToChestListener;
+import me.deadlight.ezchestshop.Utils.Objects.EzShop;
 import me.deadlight.ezchestshop.Utils.Objects.ShopSettings;
 import me.deadlight.ezchestshop.Utils.Utils;
 import net.milkbowl.vault.economy.Economy;
@@ -28,8 +29,7 @@ import java.util.UUID;
 public class ShopContainer {
 
     private static Economy econ = EzChestShop.getEconomy();
-    private static List<Location> shops = new ArrayList<>();
-    private static HashMap<Location, ShopSettings> shopSettings = new HashMap<>();
+    private static HashMap<Location, EzShop> shopMap = new HashMap<>();
 
     /**
      * Save all shops from the Database into memory,
@@ -38,7 +38,27 @@ public class ShopContainer {
     public static void queryShopsToMemory() {
         Database db = EzChestShop.getPlugin().getDatabase();
         for (String sloc : db.getKeys("location", "shopdata")) {
-            shops.add(Utils.StringtoLocation(sloc));
+            boolean msgtoggle = db.getBool("location", sloc,
+                    "msgToggle", "shopdata");
+            boolean dbuy =  db.getBool("location", sloc,
+                    "buyDisabled", "shopdata");
+            boolean dsell = db.getBool("location", sloc,
+                    "sellDisabled", "shopdata");
+            String admins = db.getString("location", sloc,
+                    "admins", "shopdata");
+            boolean shareincome = db.getBool("location", sloc,
+                    "shareIncome", "shopdata");
+            String trans = db.getString("location", sloc,
+                    "transactions", "shopdata");
+            boolean adminshop = db.getBool("location", sloc,
+                    "adminshop", "shopdata");
+            String rotation = db.getString("location", sloc,
+                    "rotation", "shopdata");
+            rotation = rotation == null ? Config.settings_defaults_rotation : rotation;
+            ShopSettings settings = new ShopSettings(sloc, msgtoggle, dbuy, dsell, admins, shareincome, trans, adminshop, rotation);
+            Location loc = Utils.StringtoLocation(sloc);
+            EzShop shop = new EzShop(loc, settings);
+            shopMap.put(loc, shop);
         }
     }
 
@@ -51,7 +71,7 @@ public class ShopContainer {
         Database db = EzChestShop.getPlugin().getDatabase();
         db.deleteEntry("location", Utils.LocationtoString(loc),
                 "shopdata");
-        shops.remove(loc);
+        shopMap.remove(loc);
 
         for (Player p : Bukkit.getOnlinePlayers()) {
             PlayerCloseToChestListener.hideHologram(p, loc);
@@ -72,8 +92,8 @@ public class ShopContainer {
         String encodedItem = Utils.encodeItem(item);
         db.insertShop(sloc, p.getUniqueId().toString(), encodedItem == null ? "Error" : encodedItem, buyprice, sellprice, msgtoggle, dbuy, dsell, admins, shareincome, trans, adminshop, rotation);
         ShopSettings settings = new ShopSettings(sloc, msgtoggle, dbuy, dsell, admins, shareincome, trans, adminshop, rotation);
-        shopSettings.put(loc, settings);
-        shops.add(loc);
+        EzShop shop = new EzShop(loc, settings);
+        shopMap.put(loc, shop);
     }
 
     public static void loadShop(Location loc, PersistentDataContainer dataContainer) {
@@ -97,8 +117,8 @@ public class ShopContainer {
         db.insertShop(sloc, owner, encodedItem == null ? "Error" : encodedItem, buyprice, sellprice, msgtoggle, dbuy, dsell, admins, shareincome, trans, adminshop, rotation);
 
         ShopSettings settings = new ShopSettings(sloc, msgtoggle, dbuy, dsell, admins, shareincome, trans, adminshop, rotation);
-        shopSettings.put(loc, settings);
-        shops.add(loc);
+        EzShop shop = new EzShop(loc, settings);
+        shopMap.put(loc, shop);;
     }
 
     public static PersistentDataContainer copyContainerData(PersistentDataContainer oldContainer, PersistentDataContainer newContainer) {
@@ -150,7 +170,7 @@ public class ShopContainer {
      * @return a boolean based on the outcome.
      */
     public static boolean isShop(Location loc) {
-        return shops.contains(loc);
+        return shopMap.containsKey(loc);
     }
 
     /**
@@ -159,34 +179,34 @@ public class ShopContainer {
      * @return a copy of all Shops as stored in memory.
      */
     public static List<Location> getShops() {
-        return new ArrayList<>(shops);
+        return new ArrayList<>(shopMap.keySet());
     }
 
     public static ShopSettings getShopSettings(Location loc) {
-        if (shopSettings.containsKey(loc)) {
-            return shopSettings.get(loc);
+        if (shopMap.containsKey(loc)) {
+            return shopMap.get(loc).getSettings();
         } else {
-            Database db = EzChestShop.getPlugin().getDatabase();
+
+            //why we would need to use database data for getting settings? just setting them in database is enough
+            PersistentDataContainer dataContainer = Utils.getDataContainer(loc.getBlock());
             String sloc = Utils.LocationtoString(loc);
-            boolean msgtoggle = db.getBool("location", sloc,
-                    "msgToggle", "shopdata");
-            boolean dbuy =  db.getBool("location", sloc,
-                    "buyDisabled", "shopdata");
-            boolean dsell = db.getBool("location", sloc,
-                    "sellDisabled", "shopdata");
-            String admins = db.getString("location", sloc,
-                    "admins", "shopdata");
-            boolean shareincome = db.getBool("location", sloc,
-                    "shareIncome", "shopdata");
-            String trans = db.getString("location", sloc,
-                    "transactions", "shopdata");
-            boolean adminshop = db.getBool("location", sloc,
-                    "adminshop", "shopdata");
-            String rotation = db.getString("location", sloc,
-                    "rotation", "shopdata");
+            boolean msgtoggle = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "msgtoggle"), PersistentDataType.INTEGER) == 1;
+            boolean dbuy = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "dbuy"), PersistentDataType.INTEGER) == 1;
+            boolean dsell = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "dsell"), PersistentDataType.INTEGER) == 1;
+            String admins = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "admins"), PersistentDataType.STRING);
+            boolean shareincome = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "shareincome"), PersistentDataType.INTEGER) == 1;
+            String trans = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "admins"), PersistentDataType.STRING);
+            boolean adminshop = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"), PersistentDataType.INTEGER) == 1;
+
+            String owner = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING);
+            String encodedItem = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "item"), PersistentDataType.STRING);
+            double buyprice = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "buy"), PersistentDataType.DOUBLE);
+            double sellprice = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "sell"), PersistentDataType.DOUBLE);
+            String rotation = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "rotation"), PersistentDataType.STRING);
             rotation = rotation == null ? Config.settings_defaults_rotation : rotation;
             ShopSettings settings = new ShopSettings(sloc, msgtoggle, dbuy, dsell, admins, shareincome, trans, adminshop, rotation);
-            shopSettings.put(loc, settings);
+            EzShop shop = new EzShop(loc, settings);
+            shopMap.put(loc, shop);
             return settings;
         }
     }
@@ -386,7 +406,7 @@ public class ShopContainer {
 
     private static void transactionMessage(PersistentDataContainer data, OfflinePlayer owner, OfflinePlayer customer, double price, boolean isBuy, ItemStack item, int count, Block containerBlock) {
 
-        //kharidan? true forokhtan? false
+        //buying = True, Selling = False
         PlayerTransactEvent transactEvent = new PlayerTransactEvent(owner, customer, price, isBuy, item, count, Utils.getAdminsList(data), containerBlock);
         Bukkit.getPluginManager().callEvent(transactEvent);
 

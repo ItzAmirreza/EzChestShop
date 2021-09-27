@@ -12,6 +12,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.block.*;
 import org.bukkit.craftbukkit.v1_17_R1.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.DoubleChestInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.Permissible;
@@ -658,6 +659,34 @@ public class Utils {
                 .append("\nGitHub: ", ComponentBuilder.FormatRetention.NONE).color(net.md_5.bungee.api.ChatColor.RED).append("LINK").color(net.md_5.bungee.api.ChatColor.GRAY).bold(true)
                 .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(colorify("&fClick to chekc out the plugins\n Open Source GitHub repository!"))))
                 .event(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://github.com/ItzAmirreza/EzChestShop")).create());
+    }
+
+    public static PersistentDataContainer getDataContainer(Block block) {
+        PersistentDataContainer dataContainer = null;
+        TileState state = (TileState) block.getState();
+        Inventory inventory = Utils.getBlockInventory(block);
+
+        if (block.getType() == Material.CHEST || block.getType() == Material.TRAPPED_CHEST) {
+            if (inventory instanceof DoubleChestInventory) {
+                DoubleChest doubleChest = (DoubleChest) inventory.getHolder();
+                Chest chestleft = (Chest) doubleChest.getLeftSide();
+                Chest chestright = (Chest) doubleChest.getRightSide();
+
+
+                if (!chestleft.getPersistentDataContainer().isEmpty()) {
+                    dataContainer = chestleft.getPersistentDataContainer();
+                } else {
+                    dataContainer = chestright.getPersistentDataContainer();
+                }
+            } else {
+                dataContainer = state.getPersistentDataContainer();
+            }
+        } else if (block.getType() == Material.BARREL) {
+            dataContainer = state.getPersistentDataContainer();
+        } else if (Utils.isShulkerBox(block.getType())) {
+            dataContainer = state.getPersistentDataContainer();
+        }
+        return dataContainer;
     }
 
 

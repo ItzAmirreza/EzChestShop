@@ -12,22 +12,18 @@ import me.deadlight.ezchestshop.Data.SQLite.Database;
 import me.deadlight.ezchestshop.Data.SQLite.SQLite;
 import me.deadlight.ezchestshop.Data.ShopContainer;
 import me.deadlight.ezchestshop.Listeners.*;
-import me.deadlight.ezchestshop.Tasks.LoadedChunksTask;
 import me.deadlight.ezchestshop.Utils.ASHologram;
 import me.deadlight.ezchestshop.Utils.CommandRegister;
 import me.deadlight.ezchestshop.Utils.FloatingItem;
 import me.deadlight.ezchestshop.Utils.Exceptions.CommandFetchException;
 import me.deadlight.ezchestshop.Utils.Utils;
-import me.deadlight.ezchestshop.Utils.WorldGuard.FlagRegistry;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.File;
 import java.io.IOException;
 
 public final class EzChestShop extends JavaPlugin {
@@ -129,7 +125,6 @@ public final class EzChestShop extends JavaPlugin {
 
 
         ShopContainer.queryShopsToMemory();
-        LoadedChunksTask.startTask();
 
 //        if (getServer().getPluginManager().getPlugin("WorldGuard") != null) {
 //            worldguard = true;
