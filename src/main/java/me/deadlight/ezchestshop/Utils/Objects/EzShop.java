@@ -1,19 +1,44 @@
 package me.deadlight.ezchestshop.Utils.Objects;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Item;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class EzShop {
 
     private Location location;
     private ShopSettings settings;
+    private OfflinePlayer owner;
+    private ItemStack shopItem;
+    private double buyPrice;
+    private double sellPrice;
+
     private List<String> shopViewers = new ArrayList<>();
+    private List<String> shopLoaders = new ArrayList<>();
 
 
-    public EzShop(Location location, ShopSettings settings) {
+
+    public EzShop(Location location, OfflinePlayer owner, ItemStack shopItem, double buyPrice, double sellPrice, ShopSettings settings) {
         this.location = location;
+        this.owner = owner;
+        this.shopItem = shopItem;
+        this.buyPrice = buyPrice;
+        this.sellPrice = sellPrice;
+        this.settings = settings;
+    }
+
+    public EzShop(Location location, String ownerID, ItemStack shopItem, double buyPrice, double sellPrice, ShopSettings settings) {
+        this.location = location;
+        this.owner = Bukkit.getOfflinePlayer(UUID.fromString(ownerID));
+        this.shopItem = shopItem;
+        this.buyPrice = buyPrice;
+        this.sellPrice = sellPrice;
         this.settings = settings;
     }
 
@@ -25,6 +50,9 @@ public class EzShop {
     }
     public List<String> getShopViewers() {
         return shopViewers;
+    }
+    public List<String> getShopLoaders() {
+        return shopLoaders;
     }
     public void setLocation(Location location) {
         this.location = location;
@@ -41,6 +69,16 @@ public class EzShop {
     }
     public void removeShopViewer(String str) {
         this.shopViewers.remove(str);
+    }
+    public void setShopLoaders(List<String> shopLoaders) {
+        this.shopLoaders = shopLoaders;
+    }
+    public void addShopLoader(String str) {
+        if (this.shopLoaders.contains(str)) return;
+        this.shopLoaders.add(str);
+    }
+    public void removeShopLoader(String str) {
+        this.shopLoaders.remove(str);
     }
 
 }
