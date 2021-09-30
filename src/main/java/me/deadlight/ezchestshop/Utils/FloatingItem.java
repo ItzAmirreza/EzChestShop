@@ -5,6 +5,7 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.BukkitConverters;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedWatchableObject;
+import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.Packets.*;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
@@ -40,7 +41,6 @@ public class FloatingItem {
         this.spawn.setZ(location.getZ());
         this.spawn.setType(EntityType.DROPPED_ITEM);
         //this.destroy.setEntityIds(new int[] { eID });
-        this.spawn.sendPacket(player);
 
         //using packetwrapper
         this.meta.setEntityID(entityID);
@@ -53,19 +53,24 @@ public class FloatingItem {
         }
         metadata.add(new WrappedWatchableObject(new WrappedDataWatcher.WrappedDataWatcherObject(indexofIS, WrappedDataWatcher.Registry.getItemStackSerializer(false)), BukkitConverters.getItemStackConverter().getGeneric(itemStack))); //ma item
         this.meta.setMetadata(metadata);
-        this.meta.sendPacket(player);
 
         //sending velocity packet
         this.velocity.setEntityID(entityID);
         this.velocity.setVelocityX(0.0);
         this.velocity.setVelocityY(0.0);
         this.velocity.setVelocityZ(0.0);
-        this.velocity.sendPacket(player);
 
+    }
+
+    public void spawn() {
+        this.spawn.sendPacket(player);
+        this.meta.sendPacket(player);
+        this.velocity.sendPacket(player);
     }
 
     public void destroy() {
         //this.destroy.sendPacket(player);
+        EzChestShop.logDebug("Destroying...");
         PacketContainer destroyEntityPacket = new PacketContainer(PacketType.Play.Server.ENTITY_DESTROY);
         if (Utils.is1_17) {
             destroyEntityPacket.getIntegers().writeSafely(0, entityID);
@@ -80,6 +85,7 @@ public class FloatingItem {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        EzChestShop.logDebug("Destroyed.");
     }
 
 

@@ -189,7 +189,34 @@ public class Utils {
                 || (isShulkerBox(type) && Config.container_shulkers);
     }
 
+    /**
+     * When Double chests are an option, this method makes sure the correct Persistent Datacontainer is used.
+     * @param target
+     * @return
+     */
+    public static Block getCorrectBlock(Block target) {
+        if (target == null) return null;
+        Inventory inventory = Utils.getBlockInventory(target);
+        if (inventory instanceof DoubleChestInventory) {
+            //double chest
 
+            DoubleChest doubleChest = (DoubleChest) inventory.getHolder();
+            Chest leftchest = (Chest) doubleChest.getLeftSide();
+            Chest rightchest = (Chest) doubleChest.getRightSide();
+
+            if (leftchest.getPersistentDataContainer().has(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING)
+                    || rightchest.getPersistentDataContainer().has(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING)) {
+
+
+                if (!leftchest.getPersistentDataContainer().isEmpty()) {
+                    target = leftchest.getBlock();
+                } else {
+                    target = rightchest.getBlock();
+                }
+            }
+        }
+        return target;
+    }
 
 
     public static List<UUID> getAdminsList(PersistentDataContainer data) {
