@@ -49,6 +49,8 @@ public class Config {
 
     public static boolean permissions_create_shop_enabled;
 
+    public static boolean check_for_removed_shops;
+
     public static String language;
     public static boolean debug_logging;
 
@@ -97,6 +99,8 @@ public class Config {
         command_checkprofit_lines_pp = config.getInt("commands.checkprofit-lines-per-page");
 
         permissions_create_shop_enabled = config.getBoolean("permissions.create-shops");
+
+        check_for_removed_shops = config.getBoolean("tasks.check-for-removed-shops");
 
         language = config.getString("language");
         if (!LanguageManager.getSupportedLanguages().contains(language)) {
@@ -155,6 +159,9 @@ public class Config {
 
             //new economy config section
             fc.set("economy.server-currency", "$");
+
+            //tasks
+            fc.set("tasks.check-for-removed-shops", true);
 
             fc.save(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml"));
             Config.loadConfig();

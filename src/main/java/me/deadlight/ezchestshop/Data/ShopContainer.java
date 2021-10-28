@@ -411,21 +411,37 @@ public class ShopContainer {
     }
 
 
+
+
     public static void startSqlQueueTask() {
         Bukkit.getScheduler().runTaskTimer(EzChestShop.getPlugin(), new Runnable() {
             @Override
             public void run() {
 
                 //now looping through all shops and executing mysql commands
+
                 for (EzShop shop : shopMap.values()) {
                     if (shop.getSqlQueue().isChanged()) {
+                        Database db = EzChestShop.getPlugin().getDatabase();
                         //ok then it's time to execute the mysql thingys
                         SqlQueue queue = shop.getSqlQueue();
                         HashMap<Changes, Object> changes = queue.getChangesList();
+                        String sloc = shop.getSettings().getSloc();
                         for (Changes change : changes.keySet()) {
-                            //mysql job / you can get the value using Changes.
-                        }
+                            Object valueObject = changes.get(change);
 
+                            //mysql job / you can get the value using Changes.
+                            if (change.theClass == String.class) {
+                                //well its string
+                                String value = (String) valueObject;
+                                db.setString("location", sloc, change.databaseValue, "shopdata", value);
+
+                            } else if (change.theClass == Boolean.class) {
+                                //well its boolean
+                                boolean value = (Boolean) valueObject;
+                                db.setBool("location", sloc, change.databaseValue, "shopdata", value);
+                            }
+                        }
 
                         //the last thing has to be clearing the SqlQueue object so don't remove this
                         queue.resetChangeList(shop.getSettings()); //giving new shop settings to keep the queue updated

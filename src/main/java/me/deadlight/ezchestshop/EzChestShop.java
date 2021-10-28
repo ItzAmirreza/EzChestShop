@@ -12,6 +12,7 @@ import me.deadlight.ezchestshop.Data.SQLite.Database;
 import me.deadlight.ezchestshop.Data.SQLite.SQLite;
 import me.deadlight.ezchestshop.Data.ShopContainer;
 import me.deadlight.ezchestshop.Listeners.*;
+import me.deadlight.ezchestshop.Tasks.LoadedChunksTask;
 import me.deadlight.ezchestshop.Utils.ASHologram;
 import me.deadlight.ezchestshop.Utils.CommandRegister;
 import me.deadlight.ezchestshop.Utils.FloatingItem;
@@ -125,6 +126,11 @@ public final class EzChestShop extends JavaPlugin {
 
 
         ShopContainer.queryShopsToMemory();
+        ShopContainer.startSqlQueueTask();
+        if (Config.check_for_removed_shops) {
+            LoadedChunksTask.startTask();
+        }
+
 
 //        if (getServer().getPluginManager().getPlugin("WorldGuard") != null) {
 //            worldguard = true;
@@ -182,6 +188,7 @@ public final class EzChestShop extends JavaPlugin {
     @Override
     public void onDisable() {
         // Plugin shutdown logic
+        getServer().getScheduler().cancelTasks(this);
 
         getDatabase().disconnect();
 

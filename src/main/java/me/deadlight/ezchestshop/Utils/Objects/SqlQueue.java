@@ -54,7 +54,7 @@ public class SqlQueue {
      */
     private boolean validateChange(Changes changes, Object object) {
         //FOR THE FUTURE SETTINGS, HAVE TO ADD IT HERE
-        if (changes == Changes.ADMINS) {
+        if (changes == Changes.ADMINS_LIST) {
             String str = (String) object;
             return settings.getAdmins().equalsIgnoreCase(str);
         } else if (changes == Changes.MESSAGE_TOGGLE) {
@@ -76,6 +76,9 @@ public class SqlQueue {
         } else if (changes == Changes.DISABLE_SELL) {
             boolean bool = (boolean) object;
             return settings.isDsell() == bool;
+        } else if (changes == Changes.IS_ADMIN) {
+            boolean bool = (boolean) object;
+            return settings.isAdminshop() == bool;
         } else {
             //alright, we will have only SHOP_CREATE & SHOP_REMOVE which should not be given in SqlQueue object but I'll think about it seperately
             return false;

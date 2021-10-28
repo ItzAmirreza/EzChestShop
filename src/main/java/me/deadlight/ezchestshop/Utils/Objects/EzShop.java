@@ -3,7 +3,6 @@ package me.deadlight.ezchestshop.Utils.Objects;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Item;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -33,6 +32,7 @@ public class EzShop {
         this.sellPrice = sellPrice;
         this.settings = settings;
         sqlQueue = new SqlQueue(location, settings);
+        settings.assignToShop(this);
     }
 
     public EzShop(Location location, String ownerID, ItemStack shopItem, double buyPrice, double sellPrice, ShopSettings settings) {
