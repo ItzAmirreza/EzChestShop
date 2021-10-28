@@ -8,7 +8,6 @@ import me.deadlight.ezchestshop.Listeners.ChatListener;
 import me.deadlight.ezchestshop.Listeners.PlayerCloseToChestListener;
 import me.deadlight.ezchestshop.Utils.Objects.ChatWaitObject;
 import me.deadlight.ezchestshop.Enums.LogType;
-import me.deadlight.ezchestshop.Utils.Objects.EzShop;
 import me.deadlight.ezchestshop.Utils.Utils;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
@@ -286,7 +285,7 @@ public class SettingsGUI {
             event.getCurrentItem().setItemMeta(meta);
             ShopContainer.getShopSettings(containerBlock.getLocation()).setRotation(next_rotation);
             if (Config.holodistancing) {
-                EzShop.hideHologram(containerBlock.getLocation());
+                PlayerCloseToChestListener.hideHologram(containerBlock.getLocation());
             }
         });
         

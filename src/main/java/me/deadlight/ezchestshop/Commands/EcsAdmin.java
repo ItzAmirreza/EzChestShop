@@ -5,7 +5,6 @@ import me.deadlight.ezchestshop.Data.ShopContainer;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.Data.LanguageManager;
 import me.deadlight.ezchestshop.Listeners.PlayerCloseToChestListener;
-import me.deadlight.ezchestshop.Utils.Objects.EzShop;
 import me.deadlight.ezchestshop.Utils.Utils;
 import me.deadlight.ezchestshop.Utils.WorldGuard.FlagRegistry;
 import me.deadlight.ezchestshop.Utils.WorldGuard.WorldGuardUtils;
@@ -57,7 +56,7 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
 
                     String firstarg = args[0];
                     if (firstarg.equalsIgnoreCase("remove") && (player.hasPermission("ecs.admin.remove") || player.hasPermission("ecs.admin"))) {
-                        Block target = Utils.getCorrectBlock(player.getTargetBlockExact(6));
+                        Block target = getCorrectBlock(player.getTargetBlockExact(6));
                         if (target != null) {
                             removeShop(player, args, target);
                         } else {
@@ -67,12 +66,11 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
                     } else if (firstarg.equalsIgnoreCase("reload") && (player.hasPermission("ecs.admin.reload") || player.hasPermission("ecs.admin"))) {
 
                         Config.loadConfig();
-                        EzShop.updateAllHolograms();
                         LanguageManager.reloadLanguages();
                         player.sendMessage(Utils.colorify("&aEzChestShop successfully reloaded!"));
 
                     } else if (firstarg.equalsIgnoreCase("create") && (player.hasPermission("ecs.admin.create") || player.hasPermission("ecs.admin"))) {
-                        Block target = Utils.getCorrectBlock(player.getTargetBlockExact(6));
+                        Block target = getCorrectBlock(player.getTargetBlockExact(6));
                         if (target != null) {
                             if (size >= 3) {
 
@@ -207,7 +205,7 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
                                 }
 
                                 ShopContainer.deleteShop(blockState.getLocation());
-                            EzShop.hideHologram(blockState.getLocation());
+                                PlayerCloseToChestListener.hideHologram(blockState.getLocation());
                                 state.update();
 
                                 player.sendMessage(lm.chestShopRemoved());
@@ -360,4 +358,28 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
         }
     }
 
+
+    private Block getCorrectBlock(Block target) {
+        if (target == null) return null;
+        Inventory inventory = Utils.getBlockInventory(target);
+        if (inventory instanceof DoubleChestInventory) {
+            //double chest
+
+            DoubleChest doubleChest = (DoubleChest) inventory.getHolder();
+            Chest leftchest = (Chest) doubleChest.getLeftSide();
+            Chest rightchest = (Chest) doubleChest.getRightSide();
+
+            if (leftchest.getPersistentDataContainer().has(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING)
+                    || rightchest.getPersistentDataContainer().has(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING)) {
+
+
+                if (!leftchest.getPersistentDataContainer().isEmpty()) {
+                    target = leftchest.getBlock();
+                } else {
+                    target = rightchest.getBlock();
+                }
+            }
+        }
+        return target;
+    }
 }

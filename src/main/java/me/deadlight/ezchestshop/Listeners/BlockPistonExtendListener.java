@@ -4,7 +4,6 @@ import me.deadlight.ezchestshop.Data.LanguageManager;
 import me.deadlight.ezchestshop.Data.ShopContainer;
 import me.deadlight.ezchestshop.Events.ShulkerShopDropEvent;
 import me.deadlight.ezchestshop.EzChestShop;
-import me.deadlight.ezchestshop.Utils.Objects.EzShop;
 import me.deadlight.ezchestshop.Utils.Utils;
 import me.deadlight.ezchestshop.Utils.WorldGuard.FlagRegistry;
 import me.deadlight.ezchestshop.Utils.WorldGuard.WorldGuardUtils;
@@ -78,7 +77,7 @@ public class BlockPistonExtendListener implements Listener {
 
                         ShopContainer.deleteShop(shulkerLoc);
                         if (Config.holodistancing) {
-                            EzShop.hideHologram(shulkerLoc);
+                            PlayerCloseToChestListener.hideHologram(shulkerLoc);
                         }
                         Bukkit.getScheduler().scheduleSyncDelayedTask(EzChestShop.getPlugin(), () -> {
 

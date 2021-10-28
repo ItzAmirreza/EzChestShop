@@ -4,7 +4,6 @@ package me.deadlight.ezchestshop.Data;
 import me.deadlight.ezchestshop.Data.SQLite.Database;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.Utils.Objects.CheckProfitEntry;
-import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
 
@@ -21,8 +20,6 @@ public class PlayerContainer {
 
     private HashMap<String, CheckProfitEntry> checkProfits = null;
 
-    private Location lookedShop;
-
     public PlayerContainer(OfflinePlayer offlinePlayer) {
         this.offlinePlayer = offlinePlayer;
         this.uuid = offlinePlayer.getUniqueId();
@@ -38,14 +35,6 @@ public class PlayerContainer {
             playerContainerMap.put(uuid, pc);
             return pc;
         }
-    }
-
-    public Location getLookedAtShop() {
-        return lookedShop;
-    }
-
-    public void setLookedShop(Location lookedShop) {
-        this.lookedShop = lookedShop;
     }
 
     /*

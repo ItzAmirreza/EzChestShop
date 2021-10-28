@@ -7,7 +7,6 @@ import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.Data.LanguageManager;
 import me.deadlight.ezchestshop.GUIs.SettingsGUI;
 import me.deadlight.ezchestshop.Listeners.PlayerCloseToChestListener;
-import me.deadlight.ezchestshop.Utils.Objects.EzShop;
 import me.deadlight.ezchestshop.Utils.Objects.ShopSettings;
 import me.deadlight.ezchestshop.Utils.Utils;
 import me.deadlight.ezchestshop.Utils.WorldGuard.FlagRegistry;
@@ -58,7 +57,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
 
                 String mainarg = args[0];
 
-                Block target = Utils.getCorrectBlock(player.getTargetBlockExact(6));
+                Block target = getCorrectBlock(player.getTargetBlockExact(6));
 
                 if (mainarg.equalsIgnoreCase("create") && target != null) {
 
@@ -176,7 +175,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                                 StringUtil.copyPartialMatches(args[2], list_settings_admins_2, fList);
                             }
                             BlockState blockState = getLookedAtBlockStateIfOwner(player, false, false,
-                                    Utils.getCorrectBlock(player.getTargetBlockExact(6)));
+                                    getCorrectBlock(player.getTargetBlockExact(6)));
                             if (blockState != null) {
                                 if (args[2].equalsIgnoreCase("add")) {
                                     if (args.length == 4) {
@@ -417,7 +416,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
             }
 
             ShopContainer.deleteShop(blockState.getLocation());
-            EzShop.hideHologram(blockState.getLocation());
+            PlayerCloseToChestListener.hideHologram(blockState.getLocation());
 
 
             blockState.update();
@@ -554,7 +553,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                     settings.isShareincome() ? 1 : 0);
             container.set(new NamespacedKey(EzChestShop.getPlugin(), "rotation"), PersistentDataType.STRING,
                     settings.getRotation());
-            EzShop.updateHologram(blockState.getLocation());
+            PlayerCloseToChestListener.hideHologram(blockState.getLocation());
             ShopSettings newSettings = ShopContainer.getShopSettings(blockState.getLocation());
             newSettings.setMsgtoggle(settings.isMsgtoggle());
             newSettings.setDbuy(settings.isDbuy());
@@ -626,7 +625,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                                 "rotation", "shopdata", settings.getRotation());
                         container.set(new NamespacedKey(EzChestShop.getPlugin(), "rotation"), PersistentDataType.STRING,
                                 settings.getRotation());
-                        EzShop.updateHologram(blockState.getLocation());
+                        PlayerCloseToChestListener.hideHologram(blockState.getLocation());
                         newSettings.setRotation(settings.getRotation());
                         break;
                     }
@@ -765,7 +764,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                     container.set(new NamespacedKey(EzChestShop.getPlugin(), "rotation"), PersistentDataType.STRING,
                             settings.getRotation());
                     player.sendMessage(lm.rotateHologramInChat(settings.getRotation()));
-                    EzShop.updateHologram(blockState.getLocation());
+                    PlayerCloseToChestListener.hideHologram(blockState.getLocation());
                     break;
             }
 
@@ -918,6 +917,30 @@ public class MainCommands implements CommandExecutor, TabCompleter {
             player.sendMessage(lm.notAChestOrChestShop());
         }
         return null;
+    }
+
+    private Block getCorrectBlock(Block target) {
+        if (target == null) return null;
+        Inventory inventory = Utils.getBlockInventory(target);
+        if (inventory instanceof DoubleChestInventory) {
+            //double chest
+
+            DoubleChest doubleChest = (DoubleChest) inventory.getHolder();
+            Chest leftchest = (Chest) doubleChest.getLeftSide();
+            Chest rightchest = (Chest) doubleChest.getRightSide();
+
+            if (leftchest.getPersistentDataContainer().has(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING)
+                    || rightchest.getPersistentDataContainer().has(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING)) {
+
+
+                if (!leftchest.getPersistentDataContainer().isEmpty()) {
+                    target = leftchest.getBlock();
+                } else {
+                    target = rightchest.getBlock();
+                }
+            }
+        }
+        return target;
     }
 
 }
