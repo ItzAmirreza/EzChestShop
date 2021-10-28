@@ -17,7 +17,6 @@ public class EzShop {
     private ItemStack shopItem;
     private double buyPrice;
     private double sellPrice;
-    private SqlQueue sqlQueue;
 
     private List<String> shopViewers = new ArrayList<>();
     private List<String> shopLoaders = new ArrayList<>();
@@ -31,8 +30,8 @@ public class EzShop {
         this.buyPrice = buyPrice;
         this.sellPrice = sellPrice;
         this.settings = settings;
-        sqlQueue = new SqlQueue(location, settings);
-        settings.assignToShop(this);
+        this.settings.assignShop(this);
+        this.settings.createSqlQueue();
     }
 
     public EzShop(Location location, String ownerID, ItemStack shopItem, double buyPrice, double sellPrice, ShopSettings settings) {
@@ -42,6 +41,8 @@ public class EzShop {
         this.buyPrice = buyPrice;
         this.sellPrice = sellPrice;
         this.settings = settings;
+        this.settings.assignShop(this);
+        this.settings.createSqlQueue();
     }
 
     public Location getLocation() {
@@ -83,9 +84,6 @@ public class EzShop {
         this.shopLoaders.remove(str);
     }
 
-    public SqlQueue getSqlQueue() {
-        return sqlQueue;
-    }
 
 
 }

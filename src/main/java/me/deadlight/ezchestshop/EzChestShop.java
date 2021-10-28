@@ -189,6 +189,9 @@ public final class EzChestShop extends JavaPlugin {
     public void onDisable() {
         // Plugin shutdown logic
         getServer().getScheduler().cancelTasks(this);
+        logConsole("&c[&eEzChestShop&c] &bSaving remained sql cache...");
+        ShopContainer.saveSqlQueueCache();
+        logConsole("&c[&eEzChestShop&c] &aCompleted. ");
 
         getDatabase().disconnect();
 

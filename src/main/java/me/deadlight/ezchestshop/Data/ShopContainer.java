@@ -421,10 +421,10 @@ public class ShopContainer {
                 //now looping through all shops and executing mysql commands
 
                 for (EzShop shop : shopMap.values()) {
-                    if (shop.getSqlQueue().isChanged()) {
+                    if (shop.getSettings().getSqlQueue().isChanged()) {
                         Database db = EzChestShop.getPlugin().getDatabase();
                         //ok then it's time to execute the mysql thingys
-                        SqlQueue queue = shop.getSqlQueue();
+                        SqlQueue queue = shop.getSettings().getSqlQueue();
                         HashMap<Changes, Object> changes = queue.getChangesList();
                         String sloc = shop.getSettings().getSloc();
                         for (Changes change : changes.keySet()) {
@@ -451,6 +451,37 @@ public class ShopContainer {
 
             }
         }, 0, 20 * 60); //for now leaving it as non-editable value
+    }
+
+    public static void saveSqlQueueCache() {
+        for (EzShop shop : shopMap.values()) {
+            if (shop.getSettings().getSqlQueue().isChanged()) {
+                Database db = EzChestShop.getPlugin().getDatabase();
+                //ok then it's time to execute the mysql thingys
+                SqlQueue queue = shop.getSettings().getSqlQueue();
+                HashMap<Changes, Object> changes = queue.getChangesList();
+                String sloc = shop.getSettings().getSloc();
+                for (Changes change : changes.keySet()) {
+                    Object valueObject = changes.get(change);
+
+                    //mysql job / you can get the value using Changes.
+                    if (change.theClass == String.class) {
+                        //well its string
+                        String value = (String) valueObject;
+                        db.setString("location", sloc, change.databaseValue, "shopdata", value);
+
+                    } else if (change.theClass == Boolean.class) {
+                        //well its boolean
+                        boolean value = (Boolean) valueObject;
+                        db.setBool("location", sloc, change.databaseValue, "shopdata", value);
+                    }
+                }
+
+                //the last thing has to be clearing the SqlQueue object so don't remove this
+                queue.resetChangeList(shop.getSettings()); //giving new shop settings to keep the queue updated
+
+            }
+        }
     }
 
 /*
