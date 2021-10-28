@@ -36,7 +36,6 @@ public class ShopContainer {
     public static void queryShopsToMemory() {
         Database db = EzChestShop.getPlugin().getDatabase();
         shopMap = db.queryShops();
-
     }
 
     /**
@@ -49,10 +48,7 @@ public class ShopContainer {
         db.deleteEntry("location", Utils.LocationtoString(loc),
                 "shopdata");
         shopMap.remove(loc);
-
-        for (Player p : Bukkit.getOnlinePlayers()) {
-            PlayerCloseToChestListener.hideHologram(p, loc);
-        }
+        EzShop.hideHologram(loc);
     }
 
     /**
@@ -157,6 +153,26 @@ public class ShopContainer {
      */
     public static List<Location> getShops() {
         return new ArrayList<>(shopMap.keySet());
+    }
+
+    /**
+     * Get a Shop from Memory using it's location.
+     *
+     * @param loc
+     * @return
+     */
+    public static EzShop getShop(Location loc) {
+        return shopMap.get(loc);
+    }
+
+    /**
+     * Get a Shop from Memory using it's location as a String.
+     *
+     * @param sloc
+     * @return
+     */
+    public static EzShop getShop(String sloc) {
+        return shopMap.get(Utils.StringtoLocation(sloc));
     }
 
     public static ShopSettings getShopSettings(Location loc) {

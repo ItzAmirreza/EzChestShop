@@ -66,9 +66,6 @@ public class ASHologram {
         this.meta = new WrapperPlayServerEntityMetadata();
         this.meta.setEntityID(entityID);
         this.meta.setMetadata(obj);
-        //this.destroy.setEntityIds(new int[] { entityID });
-        spawn();
-
     }
 
     public void spawn() {
