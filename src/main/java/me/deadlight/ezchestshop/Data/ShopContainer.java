@@ -155,8 +155,15 @@ public class ShopContainer {
      *
      * @return a copy of all Shops as stored in memory.
      */
-    public static List<Location> getShops() {
-        return new ArrayList<>(shopMap.keySet());
+    public static List<EzShop> getShops() {
+        return new ArrayList<>(shopMap.values());
+    }
+
+    public static EzShop getShop(Location location) {
+        if (isShop(location)) {
+            return shopMap.get(location);
+        }
+        return null;
     }
 
     public static ShopSettings getShopSettings(Location loc) {

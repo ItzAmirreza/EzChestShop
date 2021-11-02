@@ -53,7 +53,6 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
                     sendHelp(player);
                 } else {
 
-
                     String firstarg = args[0];
                     if (firstarg.equalsIgnoreCase("remove") && (player.hasPermission("ecs.admin.remove") || player.hasPermission("ecs.admin"))) {
                         Block target = getCorrectBlock(player.getTargetBlockExact(6));

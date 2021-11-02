@@ -65,9 +65,12 @@ public class PlayerCloseToChestListener implements Listener {
                         }
                         if (!isAlreadyPresentingText(loc, player)) {
                             if (ShopContainer.isShop(loc)) {
-                                Location holoLoc = getHoloLoc(target);
-
                                 PersistentDataContainer container = ((TileState) target.getState()).getPersistentDataContainer();
+                                if (Utils.validateContainerValues(container, ShopContainer.getShop(loc))) {
+                                    System.out.println("[ECS] Something unexpected happened with container's data, shop got removed.");
+                                    return;
+                                }
+                                Location holoLoc = getHoloLoc(target);
                                 ItemStack thatItem = Utils.decodeItem(container.get(new NamespacedKey(EzChestShop.getPlugin(),
                                         "item"), PersistentDataType.STRING));
 
@@ -107,27 +110,31 @@ public class PlayerCloseToChestListener implements Listener {
 
             Location loc = player.getLocation();
             ShopContainer.getShops().stream()
-                    .filter(sloc -> sloc != null && loc.getWorld().equals(sloc.getWorld()) && loc.distance(sloc) < Config.holodistancing_distance + 5)
-                    .forEach(sloc -> {
+                    .filter(ezShop -> ezShop.getLocation() != null && loc.getWorld().equals(ezShop.getLocation().getWorld()) && loc.distance(ezShop.getLocation()) < Config.holodistancing_distance + 5)
+                    .forEach(ezShop -> {
                         if (EzChestShop.slimefun) {
-                            if (BlockStorage.hasBlockInfo(sloc)) {
-                                ShopContainer.deleteShop(sloc);
+                            if (BlockStorage.hasBlockInfo(ezShop.getLocation())) {
+                                ShopContainer.deleteShop(ezShop.getLocation());
                                 return;
                             }
                         }
-                        double dist = loc.distance(sloc);
+                        double dist = loc.distance(ezShop.getLocation());
                         //Show the Hologram if Player close enough
                         if (dist < Config.holodistancing_distance) {
-                            if (isAlreadyPresenting(sloc, player))
+                            if (isAlreadyPresenting(ezShop.getLocation(), player))
                                 return; //forEach -> acts as continue;
 
-                            Block target = sloc.getWorld().getBlockAt(sloc);
+                            Block target = ezShop.getLocation().getWorld().getBlockAt(ezShop.getLocation());
                             if (target != null) {
                                 if (Utils.isApplicableContainer(target)) {
+                                    PersistentDataContainer container = ((TileState)target.getState()).getPersistentDataContainer();
+                                    if (Utils.validateContainerValues(container, ShopContainer.getShop(target.getLocation()))) {
+                                        System.out.println("[ECS] Something unexpected happened with container's data, shop got removed.");
+                                        return;
+                                    }
                                     Location holoLoc = getHoloLoc(target);
 
 
-                                    PersistentDataContainer container = ((TileState)target.getState()).getPersistentDataContainer();
                                     ItemStack thatItem = Utils.decodeItem(container.get(new NamespacedKey(EzChestShop.getPlugin(),
                                             "item"), PersistentDataType.STRING));
 
@@ -149,13 +156,13 @@ public class PlayerCloseToChestListener implements Listener {
                                     }
 
 
-                                    showHologram(holoLoc, sloc, thatItem, buy, sell, event.getPlayer(), is_adminshop, shopOwner, is_dbuy, is_dsell);
+                                    showHologram(holoLoc, ezShop.getLocation(), thatItem, buy, sell, event.getPlayer(), is_adminshop, shopOwner, is_dbuy, is_dsell);
                                     //mark the shop as visible
-                                    List<Player> players = playershopmap.get(sloc);
+                                    List<Player> players = playershopmap.get(ezShop.getLocation());
                                     if (players == null)
                                         players = new ArrayList<>();
                                     players.add(player);
-                                    playershopmap.put(sloc, players);
+                                    playershopmap.put(ezShop.getLocation(), players);
 
                                 }
                             }
@@ -164,7 +171,7 @@ public class PlayerCloseToChestListener implements Listener {
                         //Hide the Hologram that is too far away from the player
                         else if (dist > Config.holodistancing_distance + 1 && dist < Config.holodistancing_distance + 3){
                             //Hide the Hologram - requires spawn Position of the Hologram and Position of the Shop
-                            hideHologram(player, sloc);
+                            hideHologram(player, ezShop.getLocation());
                         }
                     });
         }
@@ -175,9 +182,9 @@ public class PlayerCloseToChestListener implements Listener {
         Player player = event.getPlayer();
         Location loc = player.getLocation();
         ShopContainer.getShops().stream()
-                .filter(sloc -> sloc != null && loc.getWorld().equals(sloc.getWorld()) && loc.distance(sloc) < Config.holodistancing_distance + 5)
+                .filter(sloc -> sloc.getLocation() != null && loc.getWorld().equals(sloc.getLocation().getWorld()) && loc.distance(sloc.getLocation()) < Config.holodistancing_distance + 5)
                 .forEach(sloc -> {
-                    hideHologram(player, sloc);
+                    hideHologram(player, sloc.getLocation());
                 });
     }
 
@@ -186,9 +193,9 @@ public class PlayerCloseToChestListener implements Listener {
         Player player = event.getPlayer();
         Location loc = event.getFrom();
         ShopContainer.getShops().stream()
-                .filter(sloc -> sloc != null && loc.getWorld().equals(sloc.getWorld()) && loc.distance(sloc) < Config.holodistancing_distance + 5)
+                .filter(sloc -> sloc.getLocation() != null && loc.getWorld().equals(sloc.getLocation().getWorld()) && loc.distance(sloc.getLocation()) < Config.holodistancing_distance + 5)
                 .forEach(sloc -> {
-                    hideHologram(player, sloc);
+                    hideHologram(player, sloc.getLocation());
                 });
     }
 

@@ -6,6 +6,7 @@ depend: [Vault, ProtocolLib]
 softdepend:
   - WildChests
   - WorldGuard
+  - Slimefun #in case just to load after the Slimefun
 authors: [ Dead_Light ]
 description: Easy Chest Shop that any server owner wants that for his players
 commands:
