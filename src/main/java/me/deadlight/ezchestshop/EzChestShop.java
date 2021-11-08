@@ -17,6 +17,7 @@ import me.deadlight.ezchestshop.Utils.ASHologram;
 import me.deadlight.ezchestshop.Utils.CommandRegister;
 import me.deadlight.ezchestshop.Utils.FloatingItem;
 import me.deadlight.ezchestshop.Utils.Exceptions.CommandFetchException;
+import me.deadlight.ezchestshop.Utils.UpdateChecker;
 import me.deadlight.ezchestshop.Utils.Utils;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
@@ -148,6 +149,7 @@ public final class EzChestShop extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new BlockPistonExtendListener(), this);
         getServer().getPluginManager().registerEvents(new SQLite(this), this);
         getServer().getPluginManager().registerEvents(new CommandCheckProfits(), this);
+        getServer().getPluginManager().registerEvents(new UpdateChecker(), this);
         //Add Config check over here, to change the Shop display varient.
         //PlayerLooking is less laggy but probably harder to spot.
         if (Config.holodistancing) {
