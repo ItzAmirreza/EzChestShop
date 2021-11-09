@@ -103,69 +103,19 @@ public class CommandCheckProfits implements CommandExecutor, Listener, TabComple
 
                     if (page == null)
                         return false;
-//                    // Show data depending on page.
-//                    ComponentBuilder compb = new ComponentBuilder("----- ").color(deco).append("Shop Profits Report")
-//                            .color(hl).append(" -----").color(deco);
                     // Sort checkprofits:
                     Collections.sort(checkprofits,
                             (cp1, cp2) -> ((Double) Math.floor(cp2.getBuyPrice() - cp2.getSellPrice()))
                                     .compareTo(cp1.getBuyPrice() - cp1.getSellPrice()));
-                    // Collections.sort(checkprofits, Collections.reverseOrder());
-                    // how many pages will there be? 4 entries per page:
+                    // how many pages will there be? x entries per page:
                     Integer pages = (int) Math.floor(checkprofits.size() / 4)
                             + ((checkprofits.size() % Config.command_checkprofit_lines_pp == 0) ? 0 : 1);// add 1 if not divideable by 4
+                    if (page > pages || page < 1) {
+                        p.sendMessage(lm.wrongInput());
+                        return false;
+                    }
                     p.spigot().sendMessage(lm.checkProfitsDetailpage(p, checkprofits, page, pages));
 
-                    /*if (page > 0 && page <= pages && checkprofits.size() != 0) {
-                        for (int i = 0; i < 4; i++) {// 0 to 3
-                            Integer index = ((page - 1) * 4) + i;
-                            if (index >= checkprofits.size())
-                                break;
-                            CheckProfitEntry entry = checkprofits.get(index);
-                            ItemStack item = entry.getItem();
-                            if (item == null)
-                                continue;
-
-                            compb.append("\n - ", ComponentBuilder.FormatRetention.NONE).color(deco)
-                                    .append(Utils.capitalizeFirstSplit(item.getType().toString())).color(hl)
-                                    .event(new HoverEvent(HoverEvent.Action.SHOW_ITEM,
-                                            new BaseComponent[] {
-                                                    new TextComponent(Utils.ItemToTextCompoundString(item)) }))
-                                    .append("\n    Sales: ", ComponentBuilder.FormatRetention.NONE).color(tc)
-                                    .append(entry.getBuyAmount() + "x " + currency
-                                            + Utils.formatNumber(entry.getBuyPrice(), Utils.FormatType.CHAT))
-                                    .color(deco);
-                            if (entry.getBuyPrice() != 0.0)
-                                compb.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                                        TextComponent.fromLegacyText("Unit price: " + entry.getBuyUnitPrice())));
-                            compb.append(" Purchases: ", ComponentBuilder.FormatRetention.NONE).color(tc).append(
-                                    entry.getSellAmount() + "x " + currency + Utils.formatNumber(entry.getSellPrice(), Utils.FormatType.CHAT))
-                                    .color(deco);
-                            if (entry.getSellPrice() != 0.0)
-                                compb.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                                        TextComponent.fromLegacyText("Unit price: " + entry.getSellUnitPrice())));
-                        }
-                        compb.append("\n", ComponentBuilder.FormatRetention.NONE);
-                        if (page > 1) {
-                            compb.append("← ").color(deco)
-                                    .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
-                                            "/checkprofits p " + (page - 1)))
-                                    .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText("Previous")));
-                        }
-                        compb.append("Page " + page + "/" + pages, ComponentBuilder.FormatRetention.NONE).color(tc);
-                        if (page < pages) {
-                            compb.append(" →").color(deco)
-                                    .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
-                                            "/checkprofits p " + (page + 1)))
-                                    .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText("Next")));
-                        }
-                        compb.append(" | To view a page, type \"", ComponentBuilder.FormatRetention.NONE).color(tc)
-                                .append("/cp p <page>").color(hl)
-                                .event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/cp p "))
-                                .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText("Click to paste in Chat")))
-                                .append("\"", ComponentBuilder.FormatRetention.NONE).color(tc);
-                    }
-                    p.spigot().sendMessage(compb.create());*/
                 }
             }
 

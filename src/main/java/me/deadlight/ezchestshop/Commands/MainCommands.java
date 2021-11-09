@@ -312,6 +312,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                                 player.sendMessage(lm.buyGreaterThanSellRequired());
                                 return;
                             }
+                            //owner, buy, sell, msgtoggle, dbuy, dsell, admins, shareincome, trans, adminshop, rotation
 
                             container.set(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING, player.getUniqueId().toString());
                             container.set(new NamespacedKey(EzChestShop.getPlugin(), "buy"), PersistentDataType.DOUBLE, buyprice);

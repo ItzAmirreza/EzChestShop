@@ -2,6 +2,7 @@ package me.deadlight.ezchestshop.Tasks;
 
 import me.deadlight.ezchestshop.Data.ShopContainer;
 import me.deadlight.ezchestshop.EzChestShop;
+import me.deadlight.ezchestshop.Utils.Objects.EzShop;
 import me.deadlight.ezchestshop.Utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -14,10 +15,10 @@ public class LoadedChunksTask {
             @Override
             public void run() {
                 //fix credited to Huke
-                for (final Location shop : ShopContainer.getShops()) {
-                    final World world = shop.getWorld();
-                    if (world != null && world.isChunkLoaded(shop.getBlockX() >> 4, shop.getBlockZ() >> 4) && (shop.getBlock().isEmpty() || !Utils.isApplicableContainer(shop.getBlock()))) {
-                        ShopContainer.deleteShop(shop);
+                for (final EzShop shop : ShopContainer.getShops()) {
+                    final World world = shop.getLocation().getWorld();
+                    if (world != null && world.isChunkLoaded(shop.getLocation().getBlockX() >> 4, shop.getLocation().getBlockZ() >> 4) && (shop.getLocation().getBlock().isEmpty() || !Utils.isApplicableContainer(shop.getLocation().getBlock()))) {
+                        ShopContainer.deleteShop(shop.getLocation());
                     }
                 }
             }
