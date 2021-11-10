@@ -132,6 +132,8 @@ public final class EzChestShop extends JavaPlugin {
             LoadedChunksTask.startTask();
         }
 
+        UpdateChecker checker = new UpdateChecker();
+        checker.check();
 
 //        if (getServer().getPluginManager().getPlugin("WorldGuard") != null) {
 //            worldguard = true;

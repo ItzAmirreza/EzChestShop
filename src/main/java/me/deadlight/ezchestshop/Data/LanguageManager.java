@@ -1,29 +1,26 @@
 package me.deadlight.ezchestshop.Data;
 
-import de.themoep.minedown.MineDown;
-import de.tr7zw.changeme.nbtapi.NBTItem;
 import me.deadlight.ezchestshop.Commands.EcsAdmin;
 import me.deadlight.ezchestshop.Commands.MainCommands;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.Listeners.ChatListener;
+import me.deadlight.ezchestshop.MineDown.MineDown;
 import me.deadlight.ezchestshop.Utils.Objects.CheckProfitEntry;
 import me.deadlight.ezchestshop.Utils.Utils;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.*;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
+import java.io.Console;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class LanguageManager {
@@ -315,6 +312,15 @@ public class LanguageManager {
     }
     public String daysago(long days) {
         return Utils.colorify(getString("transactions.daysago").replace("%days%", String.valueOf(days)));
+    }
+
+    public String transactionBuyInform(String player, int amount, String item, double price) {
+        return Utils.colorify(getString("transactions.player-inform-buy").replace("%player%", player).replace("%amount%",
+                String.valueOf(amount)).replace("%item%", item).replace("%price%", String.valueOf(price)).replace("%currency%", Config.currency));
+    }
+    public String transactionSellInform(String player, int amount, String item, double price) {
+        return Utils.colorify(getString("transactions.player-inform-sell").replace("%player%", player).replace("%amount%",
+                        String.valueOf(amount)).replace("%item%", item).replace("%price%", String.valueOf(price)).replace("%currency%", Config.currency));
     }
 
 
@@ -647,6 +653,7 @@ public class LanguageManager {
             if (index == checkProfitEntries.size())
                 break;
             CheckProfitEntry checkProfitEntry = checkProfitEntries.get(i + ((page - 1) * Config.command_checkprofit_lines_pp));
+            //EzChestShop.logDebug(Utils.getFinalItemName(checkProfitEntry.getItem()) + ": " + Utils.encodeItem(checkProfitEntry.getItem()));
             compb.append(MineDown.parse(getList("checkprofits.details-menu.content").stream()
                     .collect(Collectors.joining("\n")).replace("%currency%", Config.currency)
                     .replace("%income%","" + checkProfitEntry.getBuyPrice())
@@ -656,9 +663,7 @@ public class LanguageManager {
                     .replace("%purchases%", "" + checkProfitEntry.getSellAmount())
                     .replace("%unit_cost%", "" + checkProfitEntry.getSellUnitPrice())
                     .replace("%item%", "[" + Utils.getFinalItemName(checkProfitEntry.getItem()) + "]" +
-                            "(show_item=" + NBTItem.convertItemtoNBT(checkProfitEntry.getItem()).getString("id") + " "
-                            + NBTItem.convertItemtoNBT(checkProfitEntry.getItem())
-                            .toString().replaceAll("(\\{id:.*,tag:)|,Count:.*b}", "") + ")")
+                            "(show_item=ezcp " + Utils.encodeItem(checkProfitEntry.getItem()) + ")")
             ), ComponentBuilder.FormatRetention.NONE).append("\n");
         }
         //Footer
@@ -704,6 +709,14 @@ public class LanguageManager {
                 .replace("%sell_price%", Utils.formatNumber(sell, Utils.FormatType.GUI))
                 .replace("%currency%", Config.currency)).collect(Collectors.toList());
         return list;
+    }
+
+    //Other
+    public BaseComponent[] updateNotification(String curV, String newV) {
+        return new ComponentBuilder("").append(TextComponent.fromLegacyText(
+                Utils.colorify(getString("other.update-notifications").replace("%current_version%", curV).replace("%new_version%", newV))))
+                .event(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.spigotmc.org/resources/ez-chest-shop-ecs-1-14-x-1-17-x.90411/"))
+                .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(Utils.colorify("&cClick to check out the Spigot Page!")))).create();
     }
 
 

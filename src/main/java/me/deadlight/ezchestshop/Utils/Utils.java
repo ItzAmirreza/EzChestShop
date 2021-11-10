@@ -3,7 +3,10 @@ import me.deadlight.ezchestshop.Data.ShopContainer;
 import me.deadlight.ezchestshop.Utils.Objects.EzShop;
 import me.deadlight.ezchestshop.Utils.Objects.TransactionLogObject;
 import net.md_5.bungee.api.chat.*;
+import net.md_5.bungee.api.chat.hover.content.Item;
 import net.minecraft.nbt.NBTTagCompound;
+//import net.md_5.bungee.api.chat.hover.content.Item;
+import net.minecraft.resources.MinecraftKey;
 import org.bukkit.*;
 import me.deadlight.ezchestshop.Data.Config;
 import me.deadlight.ezchestshop.EzChestShop;
@@ -121,14 +124,22 @@ public class Utils {
      * @param itemStack
      * @return
      */
-    public static String ItemToTextCompoundString(ItemStack itemStack) {
+    public static Item ItemStackToHoverItem(ItemStack itemStack) {
         // First we convert the item stack into an NMS itemstack
         net.minecraft.world.item.ItemStack nmsItemStack = CraftItemStack.asNMSCopy(itemStack);
         NBTTagCompound compound = new NBTTagCompound();
         compound = nmsItemStack.save(compound);
-
-        return compound.toString();
+        EzChestShop.logDebug(itemStack.getType().getKey() + ": " + itemStack.getAmount() + ", " + compound.toString());
+        Item item = new Item(itemStack.getType().getKey().getKey(), itemStack.getAmount(), ItemTag.ofNbt(compound.toString()));
+        EzChestShop.logDebug("2. " + item.getId() + ": " + item.getCount() + ", " + item.getTag().getNbt());
+        return item;
     }
+
+    public static String getMinecraftIDFrom( net.minecraft.world.item.ItemStack stack) {
+        if (!stack.hasTag()) return "minecraft:air";
+        return stack.getTag().getString("id"); //get the raw id of the stack
+    }
+
 
     /**
      * Get the Inventory of the given Block if it is a Chest, Barrel or any Shulker

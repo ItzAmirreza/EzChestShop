@@ -48,6 +48,8 @@ transactions:
   minutesago: "&e%minutes% minute(s) ago"
   hoursago: "&e%hours% hour(s) ago"
   daysago: "&e%days% days ago"
+  player-inform-buy: "&7[&aECS&7] &b%player% &7has bought &e%amount%x &7of &d%item%&7 with the worth of &a%price%%currency%"
+  player-inform-sell: "&7[&aECS&7] &b%player% &7has sold &e%amount%x &7of &d%item%&7 with the worth of &a%price%%currency%"
 #settings gui section
 settings:
   GuiTitle: "&b&lSettings"
@@ -239,3 +241,5 @@ shulkershop-dropped-lore:
   - " &7Item: &6%item%"
   - " &7Buy: &6%currency%%buy_price%"
   - " &7Sell: &6%currency%%sell_price%"
+other:
+  update-notifications: "&c[&eEzChestShop&c] &eDetected a new version: &b%new_version%&e! You are still using &c%current_version%&e!"

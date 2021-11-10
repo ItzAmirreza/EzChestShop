@@ -36,7 +36,6 @@ public class ShopContainer {
     public static void queryShopsToMemory() {
         Database db = EzChestShop.getPlugin().getDatabase();
         shopMap = db.queryShops();
-
     }
 
     /**

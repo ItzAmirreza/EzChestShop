@@ -24,8 +24,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
                 <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
+                    <source>9</source>
+                    <target>9</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -126,10 +126,10 @@
             <id>repo</id>
             <url>https://repo.mattstudios.me/artifactory/public/</url>
         </repository>
-        <repository>
-            <id>minebench-repo</id>
-            <url>https://repo.minebench.de/</url>
-        </repository>
+<!--        <repository>-->
+<!--            <id>minebench-repo</id>-->
+<!--            <url>https://repo.minebench.de/</url>-->
+<!--        </repository>-->
         <repository>
             <id>codemc-repo</id>
             <url>https://repo.codemc.org/repository/maven-public/</url>
@@ -138,6 +138,10 @@
         <repository>
             <id>sk89q-repo</id>
             <url>https://maven.enginehub.org/repo/</url>
+        </repository>
+        <repository>
+            <id>bungee-repo</id>
+            <url>https://oss.sonatype.org/content/groups/public/</url>
         </repository>
     </repositories>
 
@@ -183,21 +187,27 @@
             <version>RC-27</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>de.themoep</groupId>
-            <artifactId>minedown</artifactId>
-            <version>1.7.1-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>de.tr7zw</groupId>
-            <artifactId>item-nbt-api</artifactId>
-            <version>2.8.0</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>de.themoep</groupId>-->
+<!--            <artifactId>minedown</artifactId>-->
+<!--            <version>1.7.1-SNAPSHOT</version>-->
+<!--            <scope>compile</scope>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>de.tr7zw</groupId>-->
+<!--            <artifactId>item-nbt-api</artifactId>-->
+<!--            <version>2.8.0</version>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>com.sk89q.worldguard</groupId>
             <artifactId>worldguard-bukkit</artifactId>
             <version>7.0.5</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.md-5</groupId>
+            <artifactId>bungeecord-chat</artifactId>
+            <version>1.17-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
