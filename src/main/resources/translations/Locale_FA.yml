@@ -226,13 +226,13 @@ checkprofits:
     footer:
       - "&6%button_previous%&7Page %page%/%pages%&6%button_next%&7 | To view a page, type \"[&6/cp p <page>](Click to paste in chat suggest_command=/cp p )&7\""
     hover-extra:
-      button-next: "Next"
-      button-previous: "Previous"
+      button-next: "Badi"
+      button-previous: "Ghabli"
   confirm-clear:
-    - "&eDo you really want to clear all profit data? [&2&l[✔]](Click to confirm clear! run_command=/checkprofits clear -confirm)"
-  confirm-clear-success: "&cYou've cleared all profit data!"
+    - "&eAya mikhahid etelaat shoma hazf shavad?[&2&l[✔]](Click baraye tayid run_command=/checkprofits clear -confirm)"
+  confirm-clear-success: "&cShoma hame etelaat darbare daramad khod ra pak kardid!"
   join-notification:
-    - "&eCheck your Shop profits [&b&lHERE](Click to show run_command=/checkprofits)"
+    - "&eDaramad khod ra baresi konid [&b&lHERE](Click to show run_command=/checkprofits)"
 shulkershop-dropped-lore:
   - "&eShulkerbox Shop:"
   - " &7Owner: &6%owner%"
