@@ -50,7 +50,10 @@ public final class EzChestShop extends JavaPlugin {
     @Override
     public void onLoad() {
         // Adds Custom Flags to WorldGuard!
-
+        if (getServer().getPluginManager().getPlugin("WorldGuard") != null) {
+            worldguard = true;
+            FlagRegistry.onLoad();
+        }
     }
 
     @Override
@@ -130,12 +133,6 @@ public final class EzChestShop extends JavaPlugin {
         ShopContainer.startSqlQueueTask();
         if (Config.check_for_removed_shops) {
             LoadedChunksTask.startTask();
-        }
-
-
-        if (getServer().getPluginManager().getPlugin("WorldGuard") != null) {
-            worldguard = true;
-            FlagRegistry.onLoad();
         }
 
     }
