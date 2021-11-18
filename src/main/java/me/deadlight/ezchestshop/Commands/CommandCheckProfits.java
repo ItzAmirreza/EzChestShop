@@ -126,6 +126,8 @@ public class CommandCheckProfits implements CommandExecutor, Listener, TabComple
     @EventHandler
     public void onJoin(PlayerJoinEvent evt) {
         Player p = evt.getPlayer();
+        if (!p.hasPermission("ecs.checkprofits"))
+            return;
         PlayerContainer pc = PlayerContainer.get(p);
         List<CheckProfitEntry> checkprofits = pc.getProfits().entrySet().stream().map(x -> x.getValue())
                 .filter(x -> x.getItem() != null).collect(Collectors.toList());

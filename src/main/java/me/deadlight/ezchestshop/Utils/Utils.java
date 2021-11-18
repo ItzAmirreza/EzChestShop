@@ -130,6 +130,12 @@ public class Utils {
         return compound.toString();
     }
 
+    public static String getMinecraftIDFrom( net.minecraft.world.item.ItemStack stack) {
+        if (!stack.hasTag()) return "minecraft:air";
+        return stack.getTag().getString("id"); //get the raw id of the stack
+    }
+
+
     /**
      * Get the Inventory of the given Block if it is a Chest, Barrel or any Shulker
      * @param block

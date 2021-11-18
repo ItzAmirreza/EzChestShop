@@ -50,7 +50,7 @@ public class ASHologram {
         this.spawn.setX(loc.getX());
         this.spawn.setY(loc.getY());
         this.spawn.setZ(loc.getZ());
-        WrappedChatComponent nick = WrappedChatComponent.fromText(name);
+        WrappedChatComponent nick = WrappedChatComponent.fromText(Utils.colorify(name));
         //1.17 = 15 | 1.16 and lower 14
         int armorstandindex = 14;
         if (Utils.family1_17) {
@@ -91,7 +91,7 @@ public class ASHologram {
 
     public void setName(String name) {
         this.name = name;
-        WrappedChatComponent nick = WrappedChatComponent.fromText(ChatColor.translateAlternateColorCodes('&', name));
+        WrappedChatComponent nick = WrappedChatComponent.fromText(Utils.colorify(name));
         this.name = name;
         this.meta.getMetadata().get(3).setValue(Optional.of(nick.getHandle()));
         meta.sendPacket(handler);
