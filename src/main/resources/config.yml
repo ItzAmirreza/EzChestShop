@@ -19,7 +19,7 @@ shops:
       - "<buy>&fBuy: &a%buy% %currency%</buy><separator> &f| </separator><sell>&fSell: &c%sell% %currency%</sell>"
       - "&d%item%"
       - "[item]"
-    # Define a custom Linespacing multiplier. 1 is default.
+    # Define a custom Line spacing multiplier. 1 is default.
     holo-line-spacing: 1
     # hologram will get removed after x seconds if plugin doesn't detect any movement toward chest shop (default: 10)
     hologram-disappearance-delay: 10
@@ -31,7 +31,7 @@ shops:
       # Defines the range at which shops will render holograms (default: 10.0)
       range: 10.0
       # Set if items should be rendered first and holograms only when looking at the shop directly.
-      show-items-first: true
+      show-items-first: false
   # Define which containers are applicable for chest shops:
   container:
     chests: true
