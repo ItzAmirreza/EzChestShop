@@ -22,9 +22,10 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+
+import javax.net.ssl.HttpsURLConnection;
+import java.io.*;
+import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -42,6 +43,8 @@ public class Utils {
     public static boolean is1_17 = false;
     public static boolean is1_17_1 = false;
     public static boolean family1_17 = false;
+
+    private static String discordLink;
 
 
     /**
@@ -760,6 +763,28 @@ public class Utils {
             }
 
         }
+    }
+
+    public static String getDiscordLink() {
+        if (discordLink == null) {
+            try {
+                HttpsURLConnection connection = (HttpsURLConnection) new URL("https://api.spiget.org/v2/resources/90411").openConnection();
+                connection.setRequestMethod("GET");
+                BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                String inputLine;
+                while ((inputLine = br.readLine()) != null) {
+                    if (inputLine.contains("RGlzY29yZCBTZXJ2ZXI=")) {
+                        inputLine = inputLine.replace("\"RGlzY29yZCBTZXJ2ZXI=\": \"", "").replace("\"", "").replace(",", "").trim();
+                        discordLink = inputLine;
+                        break;
+                    }
+                }
+            } catch (Exception e) {
+                discordLink = "https://discord.gg/rSfsqgCqBZ"; // Default discord Link if not found!
+            }
+        }
+        return discordLink;
+
     }
 
 

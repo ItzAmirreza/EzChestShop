@@ -115,17 +115,20 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
         List<String> fList = new ArrayList<String>();
-        List<String> list_firstarg = Arrays.asList("create", "reload", "remove");
+        List<String> list_firstarg = Arrays.asList("create", "reload", "remove", "help");
         List<String> list_create_1 = Arrays.asList("[BuyPrice]");
         List<String> list_create_2 = Arrays.asList("[SellPrice]");
         if (sender instanceof Player) {
-            if (args.length == 1)
-                StringUtil.copyPartialMatches(args[0], list_firstarg, fList);
-            if (args.length > 1 && args[0].equalsIgnoreCase("create")) {
-                if (args.length == 2)
-                    StringUtil.copyPartialMatches(args[1], list_create_1, fList);
-                if (args.length == 3)
-                    StringUtil.copyPartialMatches(args[2], list_create_2, fList);
+            Player p = (Player) sender;
+            if (p.hasPermission("ecs.admin") || p.hasPermission("ecs.admin.reload") || p.hasPermission("ecs.admin.create") || p.hasPermission("ecs.admin.remove")) {
+                if (args.length == 1)
+                    StringUtil.copyPartialMatches(args[0], list_firstarg, fList);
+                if (args.length > 1 && args[0].equalsIgnoreCase("create")) {
+                    if (args.length == 2)
+                        StringUtil.copyPartialMatches(args[1], list_create_1, fList);
+                    if (args.length == 3)
+                        StringUtil.copyPartialMatches(args[2], list_create_2, fList);
+                }
             }
         }
         return fList;

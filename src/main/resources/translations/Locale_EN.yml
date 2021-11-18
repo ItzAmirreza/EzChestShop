@@ -198,6 +198,7 @@ command-messages:
     - "&7- &c/&eecsadmin remove &7| removes the shop that you are looking at (although u can remove it by breaking it) "
     - "&7- &c/&eecsadmin reload &7| reload the plugin configurations"
     - "&7- &c/&eecsadmin create (buy) (sell) &7| create an admin shop"
+    - "&7 For further help, join our [&bDiscord](%discord_link% Click to join the support Discord!)&7!"
   alreadyashop: "&cThis container is already a shop!"
   shopcreated: "&aYou have successfully created a chest shop!"
   holdsomething: "&cPlease hold something in your main hand!"

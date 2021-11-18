@@ -591,7 +591,7 @@ public class LanguageManager {
     }
     public BaseComponent[] cmdadminHelp() {
         return MineDown.parse(new ArrayList<>(getList("command-messages.adminhelp")).stream()
-                .map(s -> Utils.colorify(s)).collect(Collectors.joining("\n")));
+                .map(s -> Utils.colorify(s)).collect(Collectors.joining("\n")).replace("%discord_link%", Utils.getDiscordLink()));
     }
     public String alreadyAShop() {
         return Utils.colorify(getString("command-messages.alreadyashop"));

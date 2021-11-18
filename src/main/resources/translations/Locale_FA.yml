@@ -198,6 +198,7 @@ command-messages:
     - "&7- &c/&eecsadmin remove &7| Hazf shopi ke dar hale negah kardan be un hastid. "
     - "&7- &c/&eecsadmin reload &7| reload kardan confige ez chest shop"
     - "&7- &c/&eecsadmin create (buy) (sell) &7| dorost kardan admin chest shop"
+    - "&7 For further help, join our [&bDiscord](%discord_link% Click to join the support Discord!)&7!"
   alreadyashop: "&cIn block ghablan ham shop bode! va hast."
   shopcreated: "&aShoma ba movafaghiat shop khod ra dorost kardid."
   holdsomething: "&cLotfan itemi ra dar dast asli khod begirid."

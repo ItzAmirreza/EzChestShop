@@ -203,6 +203,7 @@ command-messages:
     - "&7- &c/&eecsadmin remove &7| Entfernt den Shop auf den du schaust. (Alternativ kann der Shop auc abgebaut werden) "
     - "&7- &c/&eecsadmin reload &7| Lädt die Konfigurationen des Plugins neu"
     - "&7- &c/&eecsadmin create (buy) (sell) &7| Erstelle einen Adminshop!"
+    - "&7 Für weitere Hilfe, tritt unserum [&bDiscord](%discord_link% Klick um dem Unterstützungs-Discord beizutreten!)&7 Server bei!"
   alreadyashop: "&cDieser container ist bereits ein Shop!"
   shopcreated: "&aDu hast erfolgreich einen Kistenshop erstellt!"
   holdsomething: "&cBitte halte etwas in deiner Haupthand!"
