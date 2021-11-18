@@ -124,15 +124,13 @@ public class Utils {
      * @param itemStack
      * @return
      */
-    public static Item ItemStackToHoverItem(ItemStack itemStack) {
+    public static String ItemToTextCompoundString(ItemStack itemStack) {
         // First we convert the item stack into an NMS itemstack
         net.minecraft.world.item.ItemStack nmsItemStack = CraftItemStack.asNMSCopy(itemStack);
         NBTTagCompound compound = new NBTTagCompound();
         compound = nmsItemStack.save(compound);
-        EzChestShop.logDebug(itemStack.getType().getKey() + ": " + itemStack.getAmount() + ", " + compound.toString());
-        Item item = new Item(itemStack.getType().getKey().getKey(), itemStack.getAmount(), ItemTag.ofNbt(compound.toString()));
-        EzChestShop.logDebug("2. " + item.getId() + ": " + item.getCount() + ", " + item.getTag().getNbt());
-        return item;
+
+        return compound.toString();
     }
 
     public static String getMinecraftIDFrom( net.minecraft.world.item.ItemStack stack) {

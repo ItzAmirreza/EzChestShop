@@ -1,10 +1,10 @@
 package me.deadlight.ezchestshop.Data;
 
+import de.themoep.minedown.MineDown;
 import me.deadlight.ezchestshop.Commands.EcsAdmin;
 import me.deadlight.ezchestshop.Commands.MainCommands;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.Listeners.ChatListener;
-import me.deadlight.ezchestshop.MineDown.MineDown;
 import me.deadlight.ezchestshop.Utils.Objects.CheckProfitEntry;
 import me.deadlight.ezchestshop.Utils.Utils;
 import net.md_5.bungee.api.chat.*;
@@ -654,17 +654,24 @@ public class LanguageManager {
                 break;
             CheckProfitEntry checkProfitEntry = checkProfitEntries.get(i + ((page - 1) * Config.command_checkprofit_lines_pp));
             //EzChestShop.logDebug(Utils.getFinalItemName(checkProfitEntry.getItem()) + ": " + Utils.encodeItem(checkProfitEntry.getItem()));
-            compb.append(MineDown.parse(getList("checkprofits.details-menu.content").stream()
-                    .collect(Collectors.joining("\n")).replace("%currency%", Config.currency)
-                    .replace("%income%","" + checkProfitEntry.getBuyPrice())
-                    .replace("%sales%", "" + checkProfitEntry.getBuyAmount())
-                    .replace("%unit_income%", "" + checkProfitEntry.getBuyUnitPrice())
-                    .replace("%cost%","" + checkProfitEntry.getSellPrice())
-                    .replace("%purchases%", "" + checkProfitEntry.getSellAmount())
-                    .replace("%unit_cost%", "" + checkProfitEntry.getSellUnitPrice())
-                    .replace("%item%", "[" + Utils.getFinalItemName(checkProfitEntry.getItem()) + "]" +
-                            "(show_item=ezcp " + Utils.encodeItem(checkProfitEntry.getItem()) + ")")
-            ), ComponentBuilder.FormatRetention.NONE).append("\n");
+            String[] details = getList("checkprofits.details-menu.content").stream()
+                    .collect(Collectors.joining("\n")).split("%item%");
+            for (int j = 0; j < details.length; j++) {
+                compb.append(MineDown.parse(details[j].replace("%currency%", Config.currency)
+                        .replace("%income%","" + checkProfitEntry.getBuyPrice())
+                        .replace("%sales%", "" + checkProfitEntry.getBuyAmount())
+                        .replace("%unit_income%", "" + checkProfitEntry.getBuyUnitPrice())
+                        .replace("%cost%","" + checkProfitEntry.getSellPrice())
+                        .replace("%purchases%", "" + checkProfitEntry.getSellAmount())
+                        .replace("%unit_cost%", "" + checkProfitEntry.getSellUnitPrice())
+                ), ComponentBuilder.FormatRetention.NONE);
+                if (details.length - 1 != j) {
+                    compb.append(Utils.getFinalItemName(checkProfitEntry.getItem())).event(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new BaseComponent[] {
+                            new TextComponent(Utils.ItemToTextCompoundString(checkProfitEntry.getItem())) }));
+                } else {
+                    compb.append("\n");
+                }
+            }
         }
         //Footer
         compb.append(MineDown.parse(getList("checkprofits.details-menu.footer").stream().map(s -> {
