@@ -48,6 +48,8 @@ transactions:
   minutesago: "&e%minutes% minute(s) ago"
   hoursago: "&e%hours% hour(s) ago"
   daysago: "&e%days% days ago"
+  player-inform-buy: "&7[&aECS&7] &b%player% &7has bought &e%amount%x &7of &d%item%&7 with the worth of &a%price%%currency%"
+  player-inform-sell: "&7[&aECS&7] &b%player% &7has sold &e%amount%x &7of &d%item%&7 with the worth of &a%price%%currency%"
 #settings gui section
 settings:
   GuiTitle: "&b&lSettings"
@@ -196,6 +198,7 @@ command-messages:
     - "&7- &c/&eecsadmin remove &7| removes the shop that you are looking at (although u can remove it by breaking it) "
     - "&7- &c/&eecsadmin reload &7| reload the plugin configurations"
     - "&7- &c/&eecsadmin create (buy) (sell) &7| create an admin shop"
+    - "&7 For further help, join our [&bDiscord](%discord_link% Click to join the support Discord!)&7!"
   alreadyashop: "&cThis container is already a shop!"
   shopcreated: "&aYou have successfully created a chest shop!"
   holdsomething: "&cPlease hold something in your main hand!"
@@ -239,3 +242,5 @@ shulkershop-dropped-lore:
   - " &7Item: &6%item%"
   - " &7Buy: &6%currency%%buy_price%"
   - " &7Sell: &6%currency%%sell_price%"
+other:
+  update-notifications: "&c[&eEzChestShop&c] &eDetected a new version: &b%new_version%&e! You are still using &c%current_version%&e!"

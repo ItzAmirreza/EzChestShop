@@ -74,3 +74,5 @@ tasks:
   # Normally, This option is for when server(basically other plugins) remove the chest shop, in this case, it could result in some issues
   # if this is causing so much lag, you can turn this off (requires restart)
   check-for-removed-shops: true
+other:
+  notify-op-of-updates: true

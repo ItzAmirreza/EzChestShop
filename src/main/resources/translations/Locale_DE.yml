@@ -52,6 +52,9 @@ transactions:
   minutesago: "&evar %minutes% Minuten"
   hoursago: "&evor %hours% Stunde(n)"
   daysago: "&evor %days% Tagen"
+  player-inform-buy: "&7[&aECS&7] &b%player% &7hat &e%amount% Stück von &d%item%&7 im Wert von &a%price%%currency%&7 gekauft."
+  player-inform-sell: "&7[&aECS&7] &b%player% &7hat &e%amount% Stück von &d%item%&7 im Wert von &a%price%%currency%&7 gekauft."
+#GUI Einstellungs-sektion
 settings:
   GuiTitle: "&b&lEinstellungen"
   statusOn: "&aEin"
@@ -200,6 +203,7 @@ command-messages:
     - "&7- &c/&eecsadmin remove &7| Entfernt den Shop auf den du schaust. (Alternativ kann der Shop auc abgebaut werden) "
     - "&7- &c/&eecsadmin reload &7| Lädt die Konfigurationen des Plugins neu"
     - "&7- &c/&eecsadmin create (buy) (sell) &7| Erstelle einen Adminshop!"
+    - "&7 Für weitere Hilfe, tritt unserum [&bDiscord](%discord_link% Klick um dem Unterstützungs-Discord beizutreten!)&7 Server bei!"
   alreadyashop: "&cDieser container ist bereits ein Shop!"
   shopcreated: "&aDu hast erfolgreich einen Kistenshop erstellt!"
   holdsomething: "&cBitte halte etwas in deiner Haupthand!"
@@ -243,3 +247,5 @@ shulkershop-dropped-lore:
   - " &7Item: &6%item%"
   - " &7kaufpreis: &6%currency%%buy_price%"
   - " &7Verkaufspreis: &6%currency%%sell_price%"
+other:
+  update-notifications: "&c[&eEzChestShop&c] &eNeue Version gefunden: &b%new_version%&e! Du verwendest immer noch &c%current_version%&e!"

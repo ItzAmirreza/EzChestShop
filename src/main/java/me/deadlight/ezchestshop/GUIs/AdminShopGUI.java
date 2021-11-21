@@ -158,7 +158,7 @@ public class AdminShopGUI {
                 lastinv = doubleChest.getInventory();
             }
 
-            if (player.hasPermission("ecs.admin")) {
+            if (player.hasPermission("ecs.admin") || player.hasPermission("ecs.admin.view")) {
                 player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 0.5f, 0.5f);
                 player.openInventory(lastinv);
             }

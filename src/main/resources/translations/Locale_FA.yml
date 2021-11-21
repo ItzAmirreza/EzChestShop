@@ -49,6 +49,8 @@ transactions:
   minutesago: "&e%minutes% daghighe pish"
   hoursago: "&e%hours% saat pish"
   daysago: "&e%days% roz pish"
+  player-inform-buy: "&7[&aECS&7] &b%player% &7has bought &e%amount%x &7of &d%item%&7 with the worth of &a%price%%currency%"
+  player-inform-sell: "&7[&aECS&7] &b%player% &7has sold &e%amount%x &7of &d%item%&7 with the worth of &a%price%%currency%"
 # Bakhsh Settings GUI
 settings:
   GuiTitle: "&b&lTanzimat"
@@ -196,6 +198,7 @@ command-messages:
     - "&7- &c/&eecsadmin remove &7| Hazf shopi ke dar hale negah kardan be un hastid. "
     - "&7- &c/&eecsadmin reload &7| reload kardan confige ez chest shop"
     - "&7- &c/&eecsadmin create (buy) (sell) &7| dorost kardan admin chest shop"
+    - "&7 For further help, join our [&bDiscord](%discord_link% Click to join the support Discord!)&7!"
   alreadyashop: "&cIn block ghablan ham shop bode! va hast."
   shopcreated: "&aShoma ba movafaghiat shop khod ra dorost kardid."
   holdsomething: "&cLotfan itemi ra dar dast asli khod begirid."
@@ -239,3 +242,5 @@ shulkershop-dropped-lore:
   - " &7Item: &6%item%"
   - " &7Buy: &6%currency%%buy_price%"
   - " &7Sell: &6%currency%%sell_price%"
+other:
+  update-notifications: "&c[&eEzChestShop&c] &eDetected a new version: &b%new_version%&e! You are still using &c%current_version%&e!"

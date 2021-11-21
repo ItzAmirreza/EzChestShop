@@ -53,6 +53,7 @@ public class Config {
 
     public static String language;
     public static boolean debug_logging;
+    public static boolean notify_updates;
 
 
 
@@ -112,6 +113,7 @@ public class Config {
             }
         }
         debug_logging = config.getBoolean("debug.logging");
+        notify_updates = config.getBoolean("other.notify-op-of-updates");
     }
 
 

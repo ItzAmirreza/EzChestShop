@@ -1,4 +1,5 @@
 package me.deadlight.ezchestshop.Listeners;
+import me.deadlight.ezchestshop.Data.LanguageManager;
 import me.deadlight.ezchestshop.Data.PlayerContainer;
 import me.deadlight.ezchestshop.Data.ShopContainer;
 import me.deadlight.ezchestshop.Events.PlayerTransactEvent;
@@ -7,6 +8,7 @@ import me.deadlight.ezchestshop.Utils.Objects.TransactionLogObject;
 import me.deadlight.ezchestshop.Utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.block.TileState;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -21,6 +23,8 @@ import java.util.UUID;
 
 public class PlayerTransactionListener implements Listener {
 
+    LanguageManager lm = new LanguageManager();
+
     static DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
 
     @EventHandler
@@ -29,17 +33,17 @@ public class PlayerTransactionListener implements Listener {
         logProfits(event);
         if (((TileState)event.getContainerBlock().getState()).getPersistentDataContainer().get(new NamespacedKey(EzChestShop.getPlugin(), "msgtoggle"), PersistentDataType.INTEGER) == 1) {
 
+            OfflinePlayer owner = event.getOwner();
             List<UUID> getters = event.getAdminsUUID();
-            getters.add(event.getOwner().getUniqueId());
+            getters.add(owner.getUniqueId());
 
             if (event.isBuy()) {
                 for (UUID adminUUID : getters) {
                     Player admin = Bukkit.getPlayer(adminUUID);
                     if (admin != null) {
                         if (admin.isOnline()) {
-                            if (event.getOwner().isOnline()) {
-                                event.getOwner().getPlayer().sendMessage(Utils.colorify("&7[&aECS&7] &b" + event.getCustomer().getName() + " &7has bought &e" + event.getCount() + "x &7of &d" + event.getItemName() + "&7 with the worth of &a" + event.getPrice() + "$"));
-                            }
+                            admin.getPlayer().sendMessage(lm.transactionBuyInform(event.getCustomer().getName(), event.getCount(),
+                                    event.getItemName(), event.getPrice()));
                         }
                     }
                 }
@@ -48,8 +52,9 @@ public class PlayerTransactionListener implements Listener {
                     Player admin = Bukkit.getPlayer(adminUUID);
                     if (admin != null) {
                         if (admin.isOnline()) {
-                            if (event.getOwner().isOnline()) {
-                                event.getOwner().getPlayer().sendMessage(Utils.colorify("&7[&aECS&7] &b" + event.getCustomer().getName() + " &7has sold &e" + event.getCount() + "x &7of &d" + event.getItemName() + "&7 with the worth of &a" + event.getPrice() + "$"));
+                            if (admin.isOnline()) {
+                                admin.getPlayer().sendMessage(lm.transactionSellInform(event.getCustomer().getName(), event.getCount(),
+                                        event.getItemName(), event.getPrice()));
                             }
                         }
                     }
