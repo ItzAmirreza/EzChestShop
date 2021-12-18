@@ -6,7 +6,7 @@
 
     <groupId>me.deadlight</groupId>
     <artifactId>EzChestShop</artifactId>
-    <version>1.4.4</version>
+    <version>1.4.4-1.18</version>
     <packaging>jar</packaging>
 
     <name>EzChestShop</name>
@@ -140,9 +140,9 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.spigotmc.</groupId>
+            <groupId>org.spigotmc</groupId>
             <artifactId>spigot</artifactId>
-            <version>1.17.1-R0.1-SNAPSHOT</version>
+            <version>1.18.1-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -154,7 +154,7 @@
         <dependency>
             <groupId>dev.triumphteam</groupId>
             <artifactId>triumph-gui</artifactId>
-            <version>3.0.3</version> <!-- replace version here -->
+            <version>3.0.3</version>
         </dependency>
         <dependency>
             <groupId>com.comphenix.protocol</groupId>

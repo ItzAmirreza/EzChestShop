@@ -6,6 +6,7 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.BlockPosition;
 import com.comphenix.protocol.wrappers.nbt.NbtCompound;
+import com.comphenix.protocol.wrappers.nbt.NbtFactory;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -110,7 +111,7 @@ public final class SignMenuFactory {
 
             openSign.getBlockPositionModifier().write(0, this.position);
 
-            NbtCompound signNBT = (NbtCompound) signData.getNbtModifier().read(0);
+            NbtCompound signNBT = NbtFactory.ofCompound("");
 
             for (int line = 0; line < SIGN_LINES; line++) {
                 signNBT.put("Text" + (line + 1), this.text.size() > line ? String.format(NBT_FORMAT, color(this.text.get(line))) : "");
@@ -122,7 +123,6 @@ public final class SignMenuFactory {
             signNBT.put("id", NBT_BLOCK_ID);
 
             signData.getBlockPositionModifier().write(0, this.position);
-            signData.getIntegers().write(0, ACTION_INDEX);
             signData.getNbtModifier().write(0, signNBT);
 
             try {

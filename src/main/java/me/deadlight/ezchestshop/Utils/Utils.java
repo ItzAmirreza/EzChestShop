@@ -11,7 +11,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.*;
-import org.bukkit.craftbukkit.v1_17_R1.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_18_R1.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.DoubleChestInventory;
 import org.bukkit.inventory.Inventory;
@@ -39,10 +39,11 @@ public class Utils {
 
     public static HashMap<String, Block> blockBreakMap = new HashMap<>();
     public static HashMap<Location, List<String>> sqlQueue = new HashMap<>();
-
-    public static boolean is1_17 = false;
-    public static boolean is1_17_1 = false;
-    public static boolean family1_17 = false;
+//
+//    public static boolean is1_17 = false;
+//    public static boolean is1_17_1 = false;
+//    public static boolean family1_17 = false;
+//    public static boolean is1_18 = false;
 
     private static String discordLink;
 
@@ -81,7 +82,7 @@ public class Utils {
             String encodedData = Base64.getEncoder().encodeToString(rawData);
 
             os.close();
-           return encodedData;
+            return encodedData;
 
         } catch (IOException ex) {
             System.out.println(ex);
@@ -128,14 +129,9 @@ public class Utils {
         // First we convert the item stack into an NMS itemstack
         net.minecraft.world.item.ItemStack nmsItemStack = CraftItemStack.asNMSCopy(itemStack);
         NBTTagCompound compound = new NBTTagCompound();
-        compound = nmsItemStack.save(compound);
+        compound = nmsItemStack.b(compound);
 
         return compound.toString();
-    }
-
-    public static String getMinecraftIDFrom( net.minecraft.world.item.ItemStack stack) {
-        if (!stack.hasTag()) return "minecraft:air";
-        return stack.getTag().getString("id"); //get the raw id of the stack
     }
 
 

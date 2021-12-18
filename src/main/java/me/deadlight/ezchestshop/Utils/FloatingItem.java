@@ -47,10 +47,7 @@ public class FloatingItem {
         List<WrappedWatchableObject> metadata = new ArrayList<>();
         metadata.add(new WrappedWatchableObject(new WrappedDataWatcher.WrappedDataWatcherObject(5, WrappedDataWatcher.Registry.get(Boolean.class)), true)); //setting the value of no graviy to true
         //metadata.add(new WrappedWatchableObject(new WrappedDataWatcher.WrappedDataWatcherObject(0, WrappedDataWatcher.Registry.get(Byte.class)), (byte) 0x40)); //just makin the dropped item glow
-        int indexofIS = 7;
-        if (Utils.family1_17) {
-            indexofIS = 8;
-        }
+        int indexofIS = 8;
         metadata.add(new WrappedWatchableObject(new WrappedDataWatcher.WrappedDataWatcherObject(indexofIS, WrappedDataWatcher.Registry.getItemStackSerializer(false)), BukkitConverters.getItemStackConverter().getGeneric(itemStack))); //ma item
         this.meta.setMetadata(metadata);
         this.meta.sendPacket(player);
@@ -67,14 +64,7 @@ public class FloatingItem {
     public void destroy() {
         //this.destroy.sendPacket(player);
         PacketContainer destroyEntityPacket = new PacketContainer(PacketType.Play.Server.ENTITY_DESTROY);
-        if (Utils.is1_17) {
-            destroyEntityPacket.getIntegers().writeSafely(0, entityID);
-        } else if (Utils.is1_17_1) {
-            PlayEntityDestory_1_17_1.destroy(player, entityID);
-        } else {
-            destroyEntityPacket.getIntegers().writeSafely(0, 1);
-            destroyEntityPacket.getIntegerArrays().writeSafely(0, new int[]{entityID});
-        }
+        PlayEntityDestory_1_18.destroy(player, entityID);
         try {
             ProtocolLibrary.getProtocolManager().sendServerPacket(player, destroyEntityPacket);
         } catch (Exception e) {

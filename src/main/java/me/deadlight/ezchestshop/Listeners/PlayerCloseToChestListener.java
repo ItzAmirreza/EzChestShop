@@ -1,5 +1,6 @@
 package me.deadlight.ezchestshop.Listeners;
 
+import com.mojang.datafixers.util.Pair;
 import me.deadlight.ezchestshop.Data.Config;
 import me.deadlight.ezchestshop.Data.LanguageManager;
 import me.deadlight.ezchestshop.Data.ShopContainer;
@@ -10,7 +11,6 @@ import me.deadlight.ezchestshop.Utils.Utils;
 import me.mrCookieSlime.Slimefun.api.BlockStorage;
 import org.bukkit.*;
 import org.bukkit.block.*;
-import org.bukkit.craftbukkit.libs.org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -354,10 +354,10 @@ public class PlayerCloseToChestListener implements Listener {
 
     public static void hideHologram(Player p, Location loc) {
         if (HoloTextMap.containsKey(p) && HoloTextMap.get(p).size() > 0) {
-            new ArrayList<>(HoloTextMap.get(p)).stream().filter(holo -> loc.equals(holo.getLeft()))
+            new ArrayList<>(HoloTextMap.get(p)).stream().filter(holo -> loc.equals(holo.getFirst()))
                     .forEach(holo -> {
-                holo.getValue().destroy();
-                Utils.onlinePackets.remove(holo.getValue());
+                holo.getSecond().destroy();
+                Utils.onlinePackets.remove(holo.getSecond());
 
                 List<Player> players = playershopmap.get(loc);
                 if (players != null) {
@@ -377,10 +377,10 @@ public class PlayerCloseToChestListener implements Listener {
             });
         }
         if (HoloItemMap.containsKey(p) && HoloItemMap.get(p).size() > 0) {
-            new ArrayList<>(HoloItemMap.get(p)).stream().filter(holo -> loc.equals(holo.getKey()))
+            new ArrayList<>(HoloItemMap.get(p)).stream().filter(holo -> loc.equals(holo.getFirst()))
                     .forEach(holo -> {
-                holo.getValue().destroy();
-                Utils.onlinePackets.remove(holo.getValue());
+                holo.getSecond().destroy();
+                Utils.onlinePackets.remove(holo.getSecond());
 
                 List<Player> players = playershopmap.get(loc);
                 if (players != null) {
@@ -404,9 +404,9 @@ public class PlayerCloseToChestListener implements Listener {
         if (HoloTextMap.containsKey(player) && HoloTextMap.get(player).size() > 0) {
             new ArrayList<>(HoloTextMap.get(player)).stream()
                     .forEach(holo -> {
-                        holo.getValue().destroy();
-                        Utils.onlinePackets.remove(holo.getValue());
-                        Location loc = holo.getKey();
+                        holo.getSecond().destroy();
+                        Utils.onlinePackets.remove(holo.getSecond());
+                        Location loc = holo.getFirst();
                         List<Player> players = playershopTextmap.get(loc);
                         if (players != null) {
                             players.remove(player);

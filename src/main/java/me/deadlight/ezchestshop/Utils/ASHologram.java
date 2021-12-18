@@ -5,10 +5,8 @@ import java.util.UUID;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
-import me.deadlight.ezchestshop.Packets.PlayEntityDestory_1_17_1;
-import me.deadlight.ezchestshop.Packets.WrapperPlayServerEntityMetadata;
-import me.deadlight.ezchestshop.Packets.WrapperPlayServerEntityTeleport;
-import me.deadlight.ezchestshop.Packets.WrapperPlayServerSpawnEntity;
+import me.deadlight.ezchestshop.EzChestShop;
+import me.deadlight.ezchestshop.Packets.*;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -52,10 +50,7 @@ public class ASHologram {
         this.spawn.setZ(loc.getZ());
         WrappedChatComponent nick = WrappedChatComponent.fromText(Utils.colorify(name));
         //1.17 = 15 | 1.16 and lower 14
-        int armorstandindex = 14;
-        if (Utils.family1_17) {
-            armorstandindex = 15;
-        }
+        int armorstandindex = 15;
 
         List<WrappedWatchableObject> obj = Util.asList(
                 new WrappedWatchableObject(new WrappedDataWatcherObject(armorstandindex, Registry.get(Byte.class)), armorMeta),
@@ -74,7 +69,6 @@ public class ASHologram {
     public void spawn() {
         this.spawn.sendPacket(handler);
         this.meta.sendPacket(handler);
-
     }
 
     public void setLocation(Location loc) {
@@ -98,14 +92,7 @@ public class ASHologram {
     }
     public void destroy() {
         PacketContainer destroyEntityPacket = new PacketContainer(PacketType.Play.Server.ENTITY_DESTROY);
-        if (Utils.is1_17) {
-            destroyEntityPacket.getIntegers().writeSafely(0, entityID);
-        } else if (Utils.is1_17_1) {
-            PlayEntityDestory_1_17_1.destroy(this.handler, entityID);
-        } else {
-            destroyEntityPacket.getIntegers().writeSafely(0, 1);
-            destroyEntityPacket.getIntegerArrays().writeSafely(0, new int[]{entityID});
-        }
+        PlayEntityDestory_1_18.destroy(this.handler, entityID);
         try {
             ProtocolLibrary.getProtocolManager().sendServerPacket(handler, destroyEntityPacket);
         } catch (Exception e) {
