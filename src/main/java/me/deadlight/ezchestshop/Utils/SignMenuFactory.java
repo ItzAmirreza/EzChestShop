@@ -5,29 +5,18 @@ import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.BlockPosition;
-import com.comphenix.protocol.wrappers.nbt.NbtCompound;
-import com.comphenix.protocol.wrappers.nbt.NbtFactory;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.BiPredicate;
+import java.util.stream.Collectors;
 
 public final class SignMenuFactory {
-
-    private static final int ACTION_INDEX = 9;
-    private static final int SIGN_LINES = 4;
-
-    private static final String NBT_FORMAT = "{\"text\":\"%s\"}";
-    private static final String NBT_BLOCK_ID = "minecraft:sign";
 
     private final Plugin plugin;
 
@@ -63,8 +52,7 @@ public final class SignMenuFactory {
                 }
                 Bukkit.getScheduler().runTaskLater(plugin, () -> {
                     if (player.isOnline()) {
-                        Location location = menu.position.toLocation(player.getWorld());
-                        player.sendBlockChange(location, location.getBlock().getBlockData());
+                        player.sendBlockChange(menu.location, menu.location.getBlock().getBlockData());
                     }
                 }, 2L);
             }
@@ -78,7 +66,7 @@ public final class SignMenuFactory {
         private BiPredicate<Player, String[]> response;
         private boolean reopenIfFail;
 
-        private BlockPosition position;
+        private Location location;
 
         private boolean forceClose;
 
@@ -101,36 +89,25 @@ public final class SignMenuFactory {
             if (!player.isOnline()) {
                 return;
             }
-            Location location = player.getLocation();
-            this.position = new BlockPosition(location.getBlockX(), location.getBlockY() + (255 - location.getBlockY()), location.getBlockZ());
+            location = player.getLocation();
+            location.setY(location.getBlockY() - 4);
 
-            player.sendBlockChange(this.position.toLocation(location.getWorld()), Material.OAK_SIGN.createBlockData());
+            player.sendBlockChange(location, Material.OAK_SIGN.createBlockData());
+            player.sendSignChange(
+                    location,
+                    text.stream().map(Utils::colorify)
+                            .collect(Collectors.toList()).toArray(new String[4])
+            );
 
             PacketContainer openSign = ProtocolLibrary.getProtocolManager().createPacket(PacketType.Play.Server.OPEN_SIGN_EDITOR);
-            PacketContainer signData = ProtocolLibrary.getProtocolManager().createPacket(PacketType.Play.Server.TILE_ENTITY_DATA);
-
-            openSign.getBlockPositionModifier().write(0, this.position);
-
-            NbtCompound signNBT = NbtFactory.ofCompound("");
-
-            for (int line = 0; line < SIGN_LINES; line++) {
-                signNBT.put("Text" + (line + 1), this.text.size() > line ? String.format(NBT_FORMAT, color(this.text.get(line))) : "");
-            }
-
-            signNBT.put("x", this.position.getX());
-            signNBT.put("y", this.position.getY());
-            signNBT.put("z", this.position.getZ());
-            signNBT.put("id", NBT_BLOCK_ID);
-
-            signData.getBlockPositionModifier().write(0, this.position);
-            signData.getNbtModifier().write(0, signNBT);
-
+            BlockPosition position = new BlockPosition(location.getBlockX(), location.getBlockY(), location.getBlockZ());
+            openSign.getBlockPositionModifier().write(0, position);
             try {
-                ProtocolLibrary.getProtocolManager().sendServerPacket(player, signData);
                 ProtocolLibrary.getProtocolManager().sendServerPacket(player, openSign);
             } catch (InvocationTargetException exception) {
                 exception.printStackTrace();
             }
+
             inputs.put(player, this);
         }
 
@@ -139,7 +116,7 @@ public final class SignMenuFactory {
          * functionality. false by default.
          *
          * @param player the player
-         * @param force decides whether or not it will reopen if reopen is enabled
+         * @param force  decides whether it will reopen if reopen is enabled
          */
         public void close(Player player, boolean force) {
             this.forceClose = force;
@@ -152,8 +129,5 @@ public final class SignMenuFactory {
             close(player, false);
         }
 
-        private String color(String input) {
-            return ChatColor.translateAlternateColorCodes('&', input);
-        }
     }
 }

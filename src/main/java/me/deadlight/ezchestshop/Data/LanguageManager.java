@@ -177,7 +177,7 @@ public class LanguageManager {
                 }
             }
         }
-        return result;
+        return new ArrayList<>(result);
     }
 
 
