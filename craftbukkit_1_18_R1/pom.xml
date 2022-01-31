@@ -5,9 +5,14 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>me.deadlight</groupId>
-    <artifactId>EzChestShop-parent</artifactId>
-    <version>1.4.4-1.18</version>
-    <packaging>pom</packaging>
+    <artifactId>EzChestShop-craftbukkit_1_18_R1</artifactId>
+    <version>${project.parent.version}</version>
+    <packaging>jar</packaging>
+    <parent>
+        <groupId>me.deadlight</groupId>
+        <artifactId>EzChestShop-parent</artifactId>
+        <version>1.4.4-1.18</version>
+    </parent>
 
     <name>EzChestShop</name>
 
@@ -15,21 +20,21 @@
     <properties>
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
 
-    <modules>
-        <module>core</module>
-        <module>craftbukkit_1_18_R1</module>
-        <module>dist</module>
-    </modules>
-
     <repositories>
-
+        <repository>
+            <id>spigotmc-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+        </repository>
     </repositories>
 
     <dependencies>
-
+        <dependency>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot</artifactId>
+            <version>1.18.1-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 </project>
