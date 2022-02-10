@@ -1,12 +1,12 @@
 package me.deadlight.ezchestshop.Listeners;
 
-import com.mojang.datafixers.util.Pair;
 import me.deadlight.ezchestshop.Data.Config;
 import me.deadlight.ezchestshop.Data.LanguageManager;
 import me.deadlight.ezchestshop.Data.ShopContainer;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.Utils.ASHologram;
 import me.deadlight.ezchestshop.Utils.FloatingItem;
+import me.deadlight.ezchestshop.Utils.Pair;
 import me.deadlight.ezchestshop.Utils.Utils;
 import me.mrCookieSlime.Slimefun.api.BlockStorage;
 import org.bukkit.*;

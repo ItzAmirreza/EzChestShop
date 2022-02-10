@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>me.deadlight</groupId>
-    <artifactId>EzChestShop-craftbukkit_1_18_R1</artifactId>
+    <artifactId>EzChestShop-craftbukkit_1_17_R1</artifactId>
     <version>${project.parent.version}</version>
     <packaging>jar</packaging>
     <parent>
@@ -14,7 +14,7 @@
         <version>1.4.5</version>
     </parent>
 
-    <name>EzChestShop-craftbukkit_1_18_R1</name>
+    <name>EzChestShop-craftbukkit_1_17_R1</name>
 
     <description>Easy Chest Shop that any server owner wants that for his/her players</description>
     <properties>
@@ -33,7 +33,7 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot</artifactId>
-            <version>1.18.1-R0.1-SNAPSHOT</version>
+            <version>1.17.1-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

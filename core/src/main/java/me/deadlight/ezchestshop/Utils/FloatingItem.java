@@ -6,6 +6,7 @@ import com.comphenix.protocol.wrappers.BukkitConverters;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 import me.deadlight.ezchestshop.Packets.*;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -14,6 +15,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.logging.Level;
 
 public class FloatingItem {
 
@@ -24,6 +26,17 @@ public class FloatingItem {
     private Player player;
     private WrapperPlayServerEntityVelocity velocity;
 
+    static VersionUtils versionUtils;
+
+    static {
+        try {
+            String packageName = Utils.class.getPackage().getName();
+            String internalsName = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
+            versionUtils = (VersionUtils) Class.forName(packageName + "." + internalsName).newInstance();
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | ClassCastException exception) {
+            Bukkit.getLogger().log(Level.SEVERE, "EzChestShop could not find a valid implementation for this server version.");
+        }
+    }
 
     public FloatingItem(Player player, ItemStack itemStack, Location location) {
 
@@ -47,7 +60,7 @@ public class FloatingItem {
         List<WrappedWatchableObject> metadata = new ArrayList<>();
         metadata.add(new WrappedWatchableObject(new WrappedDataWatcher.WrappedDataWatcherObject(5, WrappedDataWatcher.Registry.get(Boolean.class)), true)); //setting the value of no graviy to true
         //metadata.add(new WrappedWatchableObject(new WrappedDataWatcher.WrappedDataWatcherObject(0, WrappedDataWatcher.Registry.get(Byte.class)), (byte) 0x40)); //just makin the dropped item glow
-        int indexofIS = 8;
+        int indexofIS = versionUtils.getItemIndex();
         metadata.add(new WrappedWatchableObject(new WrappedDataWatcher.WrappedDataWatcherObject(indexofIS, WrappedDataWatcher.Registry.getItemStackSerializer(false)), BukkitConverters.getItemStackConverter().getGeneric(itemStack))); //ma item
         this.meta.setMetadata(metadata);
         this.meta.sendPacket(player);
@@ -64,7 +77,7 @@ public class FloatingItem {
     public void destroy() {
         //this.destroy.sendPacket(player);
         PacketContainer destroyEntityPacket = new PacketContainer(PacketType.Play.Server.ENTITY_DESTROY);
-        PlayEntityDestory_1_18.destroy(player, entityID);
+        versionUtils.destroyEntity(player, entityID);
         try {
             ProtocolLibrary.getProtocolManager().sendServerPacket(player, destroyEntityPacket);
         } catch (Exception e) {

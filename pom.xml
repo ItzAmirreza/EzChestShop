@@ -6,10 +6,10 @@
 
     <groupId>me.deadlight</groupId>
     <artifactId>EzChestShop-parent</artifactId>
-    <version>1.4.4-1.18</version>
+    <version>1.4.5</version>
     <packaging>pom</packaging>
 
-    <name>EzChestShop</name>
+    <name>EzChestShop-parent</name>
 
     <description>Easy Chest Shop that any server owner wants that for his/her players</description>
     <properties>
@@ -21,15 +21,8 @@
 
     <modules>
         <module>core</module>
+        <module>craftbukkit_1_17_R1</module>
         <module>craftbukkit_1_18_R1</module>
         <module>dist</module>
     </modules>
-
-    <repositories>
-
-    </repositories>
-
-    <dependencies>
-
-    </dependencies>
 </project>

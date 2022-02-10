@@ -11,7 +11,7 @@
     <parent>
         <groupId>me.deadlight</groupId>
         <artifactId>EzChestShop-parent</artifactId>
-        <version>1.4.4-1.18</version>
+        <version>1.4.5</version>
     </parent>
 
     <name>EzChestShop</name>
@@ -49,35 +49,10 @@
                             <createDependencyReducedPom>false</createDependencyReducedPom>
                             <artifactSet>
                                 <includes>
-                                    <include>me.deadlight:ezchestshop-*</include>
+                                    <include>me.deadlight:EzChestShop-*</include>
                                 </includes>
                             </artifactSet>
                         </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>3.1.1</version>
-                <configuration>
-                    <relocations>
-                        <relocation>
-                            <pattern>dev.triumphteam.gui</pattern>
-                            <shadedPattern>me.deadlight.ezchestshop.gui</shadedPattern> <!-- Replace package here here -->
-                        </relocation>
-                        <relocation>
-                            <pattern>de.themoep.minedown</pattern>
-                            <shadedPattern>me.deadlight.ezchestshop.minedown</shadedPattern>
-                        </relocation>
-                    </relocations>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
                     </execution>
                 </executions>
             </plugin>
@@ -101,14 +76,7 @@
             <!--                </dependencies>-->
             <!--            </plugin>-->
         </plugins>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
     </build>
-
 
     <dependencies>
         <dependency>
@@ -119,6 +87,11 @@
         <dependency>
             <groupId>me.deadlight</groupId>
             <artifactId>EzChestShop-craftbukkit_1_18_R1</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>me.deadlight</groupId>
+            <artifactId>EzChestShop-craftbukkit_1_17_R1</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
     </dependencies>

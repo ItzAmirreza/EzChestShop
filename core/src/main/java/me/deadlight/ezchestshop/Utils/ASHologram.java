@@ -2,10 +2,13 @@ package me.deadlight.ezchestshop.Utils;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.logging.Level;
+
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import me.deadlight.ezchestshop.Packets.*;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -23,6 +26,18 @@ public class ASHologram {
     //private WrapperPlayServerEntityDestroy destroy;
     private String name;
     private Player handler;
+
+    static VersionUtils versionUtils;
+
+    static {
+        try {
+            String packageName = Utils.class.getPackage().getName();
+            String internalsName = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
+            versionUtils = (VersionUtils) Class.forName(packageName + "." + internalsName).newInstance();
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | ClassCastException exception) {
+            Bukkit.getLogger().log(Level.SEVERE, "EzChestShop could not find a valid implementation for this server version.");
+        }
+    }
 
     public ASHologram(Player p, String name, EntityType type,Location loc,boolean isGlowing) {
         UUID uuid = UUID.randomUUID();
@@ -48,7 +63,7 @@ public class ASHologram {
         this.spawn.setZ(loc.getZ());
         WrappedChatComponent nick = WrappedChatComponent.fromText(Utils.colorify(name));
         //1.17 = 15 | 1.16 and lower 14
-        int armorstandindex = 15;
+        int armorstandindex = versionUtils.getArmorStandIndex();
 
         List<WrappedWatchableObject> obj = Util.asList(
                 new WrappedWatchableObject(new WrappedDataWatcherObject(armorstandindex, Registry.get(Byte.class)), armorMeta),
@@ -90,7 +105,7 @@ public class ASHologram {
     }
     public void destroy() {
         PacketContainer destroyEntityPacket = new PacketContainer(PacketType.Play.Server.ENTITY_DESTROY);
-        PlayEntityDestory_1_18.destroy(this.handler, entityID);
+        versionUtils.destroyEntity(this.handler, entityID);
         try {
             ProtocolLibrary.getProtocolManager().sendServerPacket(handler, destroyEntityPacket);
         } catch (Exception e) {

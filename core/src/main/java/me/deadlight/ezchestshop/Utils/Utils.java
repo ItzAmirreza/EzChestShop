@@ -3,7 +3,6 @@ import me.deadlight.ezchestshop.Data.ShopContainer;
 import me.deadlight.ezchestshop.Utils.Objects.EzShop;
 import me.deadlight.ezchestshop.Utils.Objects.TransactionLogObject;
 import net.md_5.bungee.api.chat.*;
-import net.minecraft.nbt.NBTTagCompound;
 import org.bukkit.*;
 import me.deadlight.ezchestshop.Data.Config;
 import me.deadlight.ezchestshop.EzChestShop;
@@ -11,7 +10,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.*;
-import org.bukkit.craftbukkit.v1_18_R1.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.DoubleChestInventory;
 import org.bukkit.inventory.Inventory;
@@ -29,6 +27,7 @@ import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -46,6 +45,18 @@ public class Utils {
 //    public static boolean is1_18 = false;
 
     private static String discordLink;
+
+    static VersionUtils versionUtils;
+
+    static {
+        try {
+            String packageName = Utils.class.getPackage().getName();
+            String internalsName = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
+            versionUtils = (VersionUtils) Class.forName(packageName + "." + internalsName).newInstance();
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | ClassCastException exception) {
+            Bukkit.getLogger().log(Level.SEVERE, "EzChestShop could not find a valid implementation for this server version.");
+        }
+    }
 
 
     /**
@@ -126,12 +137,7 @@ public class Utils {
      * @return
      */
     public static String ItemToTextCompoundString(ItemStack itemStack) {
-        // First we convert the item stack into an NMS itemstack
-        net.minecraft.world.item.ItemStack nmsItemStack = CraftItemStack.asNMSCopy(itemStack);
-        NBTTagCompound compound = new NBTTagCompound();
-        compound = nmsItemStack.b(compound);
-
-        return compound.toString();
+        return versionUtils.ItemToTextCompoundString(itemStack);
     }
 
 
