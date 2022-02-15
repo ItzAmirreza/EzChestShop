@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>me.deadlight</groupId>
+    <artifactId>EzChestShop-dist</artifactId>
+    <version>${project.parent.version}</version>
+    <packaging>jar</packaging>
+    <parent>
+        <groupId>me.deadlight</groupId>
+        <artifactId>EzChestShop-parent</artifactId>
+        <version>1.4.5</version>
+    </parent>
+
+    <name>EzChestShop</name>
+
+    <description>Easy Chest Shop that any server owner wants that for his/her players</description>
+    <properties>
+        <java.version>1.8</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <build>
+        <directory>../target</directory>
+        <finalName>${project.name}-${project.version}</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.4</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <artifactSet>
+                                <includes>
+                                    <include>me.deadlight:EzChestShop-*</include>
+                                </includes>
+                            </artifactSet>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!--            <plugin>-->
+            <!--                <groupId>org.apache.maven.plugins</groupId>-->
+            <!--                <artifactId>maven-compiler-plugin</artifactId>-->
+            <!--                <version>3.8.1</version>-->
+            <!--                <configuration>-->
+            <!--                    <compilerId>eclipse</compilerId>-->
+            <!--                    <source>${java.version}</source>-->
+            <!--                    <target>${java.version}</target>-->
+            <!--                </configuration>-->
+            <!--                <dependencies>-->
+            <!--                    &lt;!&ndash; Compiler &ndash;&gt;-->
+            <!--                    &lt;!&ndash; The default compiler has troubles with the class PlayerDataInfo &ndash;&gt;-->
+            <!--                    <dependency>-->
+            <!--                        <groupId>org.codehaus.plexus</groupId>-->
+            <!--                        <artifactId>plexus-compiler-eclipse</artifactId>-->
+            <!--                        <version>2.8.8</version>-->
+            <!--                    </dependency>-->
+            <!--                </dependencies>-->
+            <!--            </plugin>-->
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>me.deadlight</groupId>
+            <artifactId>EzChestShop-core</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>me.deadlight</groupId>
+            <artifactId>EzChestShop-craftbukkit_1_18_R1</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>me.deadlight</groupId>
+            <artifactId>EzChestShop-craftbukkit_1_17_R1</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+    </dependencies>
+</project>

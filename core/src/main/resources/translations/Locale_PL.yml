@@ -1,0 +1,253 @@
+# Plugin uses this file in order to display messages in plugin
+# For hologram messages, you have to check config.yml
+# NOTE: DO NOT USE TAB in yml file as it can cause serious performance problems and it sometimes can break the plugin
+# Don't forget to rate if you liked EzChestShop
+# Polish translation by RevosGO.pl
+shop-gui:
+  initialbuyprice: '&aCena zakupu: &e%buyprice% %currency%'
+  initialsellprice: '&cCena sprzedaży: &e%sellprice% %currency%'
+  admin-title: '&cSklep gracza %shopowner% &4(Podgląd właściciela)'
+  nonowner-title: '&cSklep gracza %shopowner%'
+  owner-title: '&cSklep gracza %shopowner%'
+  adminshop-title: '&cSklep Serwerowy'
+  buttons:
+    sellone-title: '&cSprzedaj 1x'
+    sellone-lore:
+      - '&7Sprzedaj za &e%price% %currency%'
+    sell64-title: '&cSprzedaj 64x'
+    sell64-lore:
+      - '&7Sprzedaj za &e%price% %currency%'
+    buyone-title: '&aKup 1x'
+    buyone-lore:
+      - '&7Kup za &e%price% %currency%'
+    buy64-title: '&aKup 64x'
+    buy64-lore:
+      - '&7Kup za &e%price% %currency%'
+    adminview: '&c&lPodgląd właściciela'
+    storage: '&e&lPrzedmioty'
+    settings: '&b&lUstawienia'
+    disabled-title: '&cWyłączony'
+    disabled-lore:
+      - '&7Ta opcja została wyłączona przez '
+      - ' &7właściciela sklepu.'
+transactions:
+  transactionButtonTitle: '&aZapisy transakcji'
+  backToSettingsButton: '&eWróć do ustawień'
+  PaperTitleBuy: '&aZakup | %player%'
+  PaperTitleSell: '&cSprzedaż | %player%'
+  PaperLoreBuy:
+    - '&7Całkowita cena: %price% '
+    - ' &7Ilość: %count% '
+    - ' &7Typ transakcji: &aKupione od ciebie '
+    - ' &e%time%'
+  PaperLoreSell:
+    - '&7Całkowita cena: %price% '
+    - ' &7Ilość: %count% '
+    - ' &7Typ transakcji: &cSprzedane do ciebie '
+    - ' &e%time%'
+  lessthanminute: '&emniej niż minutę temu'
+  minutesago: '&e%minutes% minut(y) temu'
+  hoursago: '&e%hours% godzin(y) temu'
+  daysago: '&e%days% dni temu'
+  player-inform-buy: '&7[&aRVS&7] &b%player% &7kupił &e%amount%x &d%item%&7
+    za cenę &a%price% %currency%'
+  player-inform-sell: '&7[&aRVS&7] &b%player% &7sprzedał &e%amount%x &d%item%&7
+    za cenę &a%price% %currency%'
+# sekcja ustawień GUI
+settings:
+  GuiTitle: '&b&lUstawienia'
+  statusOn: '&aWłączone'
+  statusOff: '&cWyłączone'
+  buttons:
+    toggleTransactions:
+      Title: '&ePrzełącz wiadomości o transakcjach'
+      Lore:
+        - '&7Aktualny status: %status% '
+        - ' &7Jeśli włączysz tę opcję, '
+        - ' &7będziesz otrzymywał wiadomości '
+        - ' &7na chacie, jeśli ktoś dokona '
+        - ' &7zakupu lub sprzedaży w tym sklepie.'
+    disableBuying:
+      Title: '&eWyłącz kupowanie'
+      Lore:
+        - '&7Aktualny status: %status% '
+        - ' &7Jeśli włączysz tę opcję, '
+        - ' &7nikt nie będzie mógł zrobić '
+        - ' &7zakupów w tym sklepie.'
+    disableSelling:
+      Title: '&eWyłącz sprzedawanie'
+      Lore:
+        - '&7Aktualny status: %status% '
+        - ' &7Jeśli włączysz tę opcję, '
+        - ' &7nikt nie będzie mógł sprzedawać '
+        - ' &7przedmiotów w tym sklepie.'
+    shopAdmins:
+      Title: '&eAdministratorzy sklepu'
+      nobodyStatusAdmins: '&aNikt'
+      Lore:
+        - '&7Możesz dodawać/usuwać administratorów '
+        - ' &7swojego sklepu. Administratorzy mają '
+        - ' &7dostęp do przedmiotów i dostęp do niektórych '
+        - ' &7ustawień (do wszystkiego z wyjątkiem dzielenia '
+        - ' &7się dochodami i dodawania/usuwania administratorów). '
+        - ' &aLPM &7żeby dodać administratora '
+        - ' &cPPM &7żeby usunąć administratora '
+        - ' &7Aktualni administratorzy: %admins%'
+    sharedIncome:
+      Title: '&eDzielenie przychodu'
+      Lore:
+        - '&7Aktualny status: %status% '
+        - ' &7Jeśli włączysz tę opcję, '
+        - ' &7przychód ze sprzedaży będzie dzielony '
+        - ' &7także z administratorami sklepu.'
+    hologramRotation:
+      Title: '&eUstawienie hologramu'
+      Lore:
+        - '&7Rotacja: '
+        - '%rotations%'
+        - ' &aLewy&7/&cPrawy&7-przycisk myszy'
+        - ' &7żeby przełączać między rotacjami!'
+    other:
+      backToShopGuiButton: '&eWróć do sklepu'
+      latestTransactionsTitle: '&aOstatnie transakcje'
+  chat:
+    toggleTransactions:
+      MessageOn: '&7Przełącz wiadomości o transakcjach: &aWłączone'
+      MessageOff: '&7Przełącz wiadomości o transakcjach: &cWyłączone'
+    disableBuying:
+      MessageOn: '&7Wyłącz kupowanie: &aWłączone'
+      MessageOff: '&7Wyłącz kupowanie: &cWyłączone'
+    disableSelling:
+      MessageOn: '&7Wyłącz sprzedawanie: &aWłączone'
+      MessageOff: '&7Wyłącz sprzedawanie: &cWyłączone'
+    shopAdmins:
+      addingAdminWaiting: '&eWprowadź nazwę użytkownika, którego chcesz dodać do listy administratorów.'
+      removingAdminWaiting: '&eWprowadź nazwę użytkownika, którego chcesz usunąć z listy administratorów.'
+      selfAdmin: '&cNie możesz dodać lub usunąć siebie z listy administratorów!'
+      sucAdminAdded: '&e%player% &azostał dodany do listy administratorów.'
+      alreadyAdmin: '&cTen gracz znajduje się już na liście administratorów!'
+      noPlayer: '&cTen gracz nie istnieje lub nie grał tutaj wcześniej.'
+      sucAdminRemoved: '&e%player% &azostał dodany do listy administratorów.'
+      notInAdminList: '&cTen gracz nie znajduje się na liście administratorów!'
+      clearedAdmins: '&cUsunięto wszystkich administratorów tego sklepu.'
+    sharedIncome:
+      MessageOn: '&7Współdzielony przychód: &aWłączony'
+      MessageOff: '&7Współdzielony przychód: &cWyłączony'
+    copy-paste:
+      copiedShopSettings: '[&6Skopiowano &7ustawienia sklepu!](%settings%)'
+      pastedShopSettings: '&eWklejono &7ustawienia sklepu!'
+    hologramRotation:
+      rotateHologramInChat: '&7Rotacja hologramu: %rotation%'
+      rotation:
+        Up: '&aGóra'
+        North: '&aPółnoc'
+        East: '&aWschód'
+        South: '&aPołudnie'
+        West: '&aZachód'
+        Down: '&aDół'
+customBuySell:
+  gui-customAmountSign-title: '&eWłasna ilość zakupu/sprzedaży'
+  gui-customAmountSign-lore:
+    - '&7Kupuj i sprzedawaj określone ilości '
+    - ' &d '
+    - ' &aLPM, żeby określić ilość zakupu '
+    - ' &cPPM, żeby określić ilość sprzedaży '
+    - ' &d '
+    - ' &7Stać cię na &azakup &e%buycount%&7 sztuk tego przedmiotu. '
+    - ' &7Możesz &csprzedać &e%sellcount%&7 sztuk tego przedmiotu.'
+  # 15 znaków w jednej linijce (bez kodów kolorów) i "\n" dla następnej linii (startuje od drugiej linijki)
+  signEditorGui:
+    buy:
+      - '&a^^ Maks: %max% ^^ '
+      - ' &bWstaw swoją '
+      - ' &bżądaną ilość'
+    sell:
+      - '&c^^ Maks: %max% ^^ '
+      - ' &bWstaw swoją '
+      - ' &bżądaną ilość'
+  errors:
+    buyingIsDisabled: '&cKupowanie w tym sklepie jest wyłączone.'
+    sellingIsDisabled: '&cSprzedawanie w tym sklepie jest wyłączone.'
+    wrongInput: '&cBłędne dane (albo prawdopodobnie zbyt duża liczba), wprowadź proszę liczbę!'
+    enterTheAmount: '&eWprowadź swoją żądaną ilość na tabliczce'
+    unsupportedInteger: '&cHej!, ilość nie może wynosić zero ani być wartością ujemną.'
+shop-messages:
+  successful-buy: '&aZakupiłeś ten przedmiot za &e%price% %currency%'
+  fullinv: '&cNie masz wystarczająco miejsca na tą ilość tego przedmiotu.'
+  cannotafford: '&cNie stać cię na tyle...'
+  outofstock: '&cTen sklep jest pusty!'
+  successful-sell: '&aSprzedałeś swoje przedmioty za &e%price% %currency%'
+  shopcannotafford: '&cSklepu nie stać na przyjęcie tego towaru.'
+  notenoughitemtosell: '&cNie masz wystarczającej ilości tego przedmiotu na sprzedaż!'
+  chestisFull: 'Skrzynia jest pełna.'
+  selftransaction: '&cNie możesz kupować i sprzedawać u siebie!'
+  openingShopProblem: '&cWystąpił problem z otworzeniem tego sklepu, skontaktuj się z administratorem.'
+command-messages:
+  negativeprice: '&cMusisz użyć wartości na plusie...'
+  notenoughargs: "&cNie wprowadziłeś odopowiednich argumentów! \n &cPoprawne użycie: /ecs\
+    \ create (cena zakupu) (cena sprzedaży)"
+  consolenotallowed: '&cNie masz pozwolenia na używanie komend w konsoli.'
+  help:
+    - '&7- &c/ecs create (cena zakupu) (cena sprzedaży) &7| Tworzy ze skrzynki sklep poprzez
+    patrzenie się na skrzynkę i trzymanie w dłoni przedmiotu przeznaczonego do obrotu. '
+    - '&7- &c/ecs remove &7| Usuwa sklep, na który patrzysz '
+    - '&7- &c/ecs settings (setting) &7| Copy/Paste/Toggle ustawienia związane ze sklepem '
+    - '&eUstawienia: &7[copy, paste, admins, toggle-buying, toggle-selling, toggle-message,
+    toggle-shared-income] '
+  help-admin-view-addition:
+    - '&cPomoc Admina: '
+    - '&7- &c/ecsadmin'
+  adminhelp:
+    - '&cAdmin help: '
+    - '&7- &c/&eecsadmin remove &7| usuwa sklep, na który patrzysz (chociaż możesz go usunąć niszcząc go) '
+    - '&7- &c/&eecsadmin reload &7| przeładowuje plugin'
+    - '&7- &c/&eecsadmin create (buy) (sell) &7| tworzy sklep serwerowy'
+  alreadyashop: '&cTa skrzynka jest już sklepem!'
+  shopcreated: '&aPomyslnie stworzyłeś nowy sklep!'
+  holdsomething: '&cTrzymaj proszę jakiś przedmiot w głównej dłoni!'
+  notallowdtocreate: '&cNie masz pozwolenia na tworzenie/usuwanie sklepów w tym miejscu.'
+  notchest: '&cBlok na który patrzysz nie jest wspieranym typem skrzyni/nie jest skrzynią.'
+  lookatchest: '&cSpójrz się na skrzynię.'
+  csremoved: '&eSklep został pomyślnie usunięty.'
+  notowner: '&aNie jesteś właścicielem tego sklepu!'
+  notachestorcs: '&cBlok na który patrzysz nie jest skrzynką/nie jest sklepem.'
+  maxShopLimitReached: '&cOsiągnąłeś maksymalną ilość sklepów: %shoplimit%!'
+  slimeFunBlockNotSupported: '&cNie możesz wykonać komendy z blokiem slimefun, użyj normalnego bloku jako pojemnika.'
+  buypriceGreaterThanSellRequired: '&cCena zakupu musi być wyższa, niż cena sprzedaży!'
+checkprofits:
+  landing-menu:
+    - '&e========================================'
+    - '&7Całkowity dochód ze sprzedaży: &6%currency%%income% &7z(e) &6%sales% &7sprzedaży.'
+    - '&7Całkowity koszt zakupu: &6%currency%%cost% &7z(e) &6%purchases% &7zakupów.'
+    - '&7Całkowicie: &6%currency%%total%'
+    - '&7Stan konta: &6%currency%%balance%'
+    - '&7Kliknij [&b&lTUTAJ](Kliknij po szczegóły! run_command=/checkprofits p 1) &7po więcej szczegółów!'
+    - '&7Kliknij, żeby wyczyścić raport [&c&l[X]](Kliknij, żeby wyczyścić! run_command=/checkprofits clear)'
+  details-menu:
+    header:
+      - '&e----- &6Raport zysków sklepu &e-----'
+    content:
+      - ' &e- &6%item%'
+      - '    &7Sprzedaży: [&e%sales%x %currency%%income%](Cena jednostkowa: %unit_income%) &7Zakupów:
+      [&e%purchases%x %currency%%cost%](Cena jednostkowa: %unit_cost%)'
+    footer:
+      - '&6%button_previous%&7Strona %page%/%pages%&6%button_next%&7 | Żeby zobaczyć stronę,
+      wpisz "[&6/cp p <page>](Kliknij, żeby wkleić na chacie suggest_command=/cp p )&7"'
+    hover-extra:
+      button-next: 'Następna'
+      button-previous: 'Poprzednia'
+  confirm-clear:
+    - '&eCzy na pewno chcesz wyczyścić wszystkie informacje o zyskach? [&2&l[✔]](Kliknij, żeby potwierdzić usunięcie.
+    run_command=/checkprofits clear -confirm)'
+  confirm-clear-success: '&cWyczyściłeś wszystkie dane dotyczące zysków!'
+  join-notification:
+    - '&eSprawdź zyski swojego sklepu [&b&lTUTAJ](Kliknij, żeby zobaczyć! run_command=/checkprofits)'
+shulkershop-dropped-lore:
+  - '&eSklep z ShulkerBoxa:'
+  - ' &7Właściciel: &6%owner%'
+  - ' &7Przedmiot: &6%item%'
+  - ' &7Zakup: &6%currency%%buy_price%'
+  - ' &7Sprzedaż: &6%currency%%sell_price%'
+other:
+  update-notifications: '&c[&eEzChestShop&c] &eWykryto nową wersję: &b%new_version%&e!
+    Nadal używasz wersji &c%current_version%&e!'
