@@ -189,7 +189,7 @@ command-messages:
   notenoughargs: "&cDu hast nicht genügend Argumente verwendet! \n &cRichtige Verwendung: /ecs create (Kaufpreis) (Verkaufspreis)"
   consolenotallowed: "&cDu hast nicht genügend Rechte um Befehle von der Konsole auszuführen."
   help:
-    - "&bEz&cChestShop &7Plugin von Dead_Light©"
+    - "&bEz&cChestShop &7Plugin von Dead_Light & ElitoGame©"
     - "&7- &c/ecs create (Kaufpreis) (Verkaufspreis) &7| Erstelle einen Shop indem du die gewünschten Gegenstände in der Hand hältst und auf die Kiste schaust. "
     - " &7- &c/ecs remove &7| Entfernt den Shop auf den du schaust. "
     - " &7- &c/ecs settings (setting) &7| Einstellungen kopieren/einfügen/bearbeiten "

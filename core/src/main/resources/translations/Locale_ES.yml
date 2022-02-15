@@ -184,7 +184,7 @@ command-messages:
   notenoughargs: "&cNo has proporcionado suficientes argumentos! \n &cUso correcto: /ecs create (Precio de compra) (Precio de venta)"
   consolenotallowed: "&cNo puedes ejecutar ningún comando desde la consola."
   help:
-    - "&bEz&cChestShop &7Plugin By Dead_Light©"
+    - "&bEz&cChestShop &7Plugin By Dead_Light & ElitoGame©"
     - "&7- &c/ecs create (Precio de compra) (Precio de venta) &7| Crea una tienda en cofre mirando un cofre y teniendo el artículo que quieres vender en tu mano.. "
     - " &7- &c/ecs remove &7| Elimina la tienda del cofre al que estás mirando. "
     - " &7Fácil ¿verdad? :)"

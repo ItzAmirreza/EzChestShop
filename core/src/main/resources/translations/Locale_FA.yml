@@ -185,7 +185,7 @@ command-messages:
   notenoughargs: "&cCommand be dorosti ersal nashode \n &cRavesh dorost: /ecs create (Gheymate kharid az shoma) (Gheymat forosh be shoma)"
   consolenotallowed: "&cShoma ghader be ersal hich commandi az console nistid."
   help:
-    - "&bEz&cChestShop &7Plugin By Dead_Light©"
+    - "&bEz&cChestShop &7Plugin By Dead_Light & ElitoGame©"
     - "&7- &c/ecs create (Gheymate kharid az shoma) (Gheymat forosh be shoma) &7| Be yek chest/shulker/barrel negah kon va itemi ke mikhay beforshi ro dastet begir "
     - "&7- &c/ecs remove &7| Hazf kardan shopi ke dar hale negah kardan be un hastid "
     - "&7- &c/ecs settings (setting) &7| Copy/Paste/Taghir vaziate tanzimate shopi ke dar hale negah kardan hastid. "

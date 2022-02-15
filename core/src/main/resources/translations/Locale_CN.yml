@@ -177,7 +177,7 @@ command-messages:
   notenoughargs: "&c請輸入足夠的參數! \n &c正確用法: /ecs create (購買價格) (販售價格)"
   consolenotallowed: "&c你沒有權限執行這項命令."
   help:
-    - "&bEz&cChestShop &7Plugin By Dead_Light©"
+    - "&bEz&cChestShop &7Plugin By Dead_Light & ElitoGame©"
     - "&7- &c/ecs create (購買價格) (販售價格) &7| 請手持要販售的物品並注視箱子輸入指令來設立商店 "
     - " &7- &c/ecs remove &7| 關閉你正在注視的商店 "
     - " &7很簡單 對吧? :)"

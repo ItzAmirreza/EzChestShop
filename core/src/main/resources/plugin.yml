@@ -7,7 +7,7 @@ softdepend:
   - WildChests
   - WorldGuard
   - Slimefun #in case just to load after the Slimefun
-authors: [ Dead_Light ]
+authors: [ Dead_Light, ElitoGame ]
 description: ${project.description}
 commands:
   ecs:

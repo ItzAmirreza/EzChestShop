@@ -188,6 +188,7 @@ command-messages:
     \ create (cena zakupu) (cena sprzedaży)"
   consolenotallowed: '&cNie masz pozwolenia na używanie komend w konsoli.'
   help:
+    - "&bEz&cChestShop &7Plugin By Dead_Light & ElitoGame©"
     - '&7- &c/ecs create (cena zakupu) (cena sprzedaży) &7| Tworzy ze skrzynki sklep poprzez
     patrzenie się na skrzynkę i trzymanie w dłoni przedmiotu przeznaczonego do obrotu. '
     - '&7- &c/ecs remove &7| Usuwa sklep, na który patrzysz '

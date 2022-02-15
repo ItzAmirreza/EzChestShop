@@ -184,7 +184,7 @@ command-messages:
   notenoughargs: "&cYou haven't provided enough arguments! \n &cCorrect usage: /ecs create (Buy price) (Sell price)"
   consolenotallowed: "&cYou are not allowed to execute any command from console."
   help:
-    - "&bEz&cChestShop &7Plugin By Dead_Light©"
+    - "&bEz&cChestShop &7Plugin By Dead_Light & ElitoGame©"
     - "&7- &c/ecs create (Buy Price) (Sell Price) &7| Create a chest shop by looking at a chest and having the item that you want to sell in your hand. "
     - "&7- &c/ecs remove &7| Removes the chest shop that you are looking at "
     - "&7- &c/ecs settings (setting) &7| Copy/Paste/Toggle settings related to the chest shop "
