@@ -144,15 +144,18 @@ settings:
         West: "&aGharb"
         Down: "&aPayin"
 customBuySell:
-  gui-customAmountSign-title: "&eKharid/Forosh meghdar delkhah"
+
+  gui-customAmountSign-title: "&eForosh/Kharid meghdar delkhah"
   gui-customAmountSign-lore:
     - "&7Kharid ya forosh dar meghdar delkhah "
     - " &d "
-    - " &aChap click baraye kharid meghdar delkhah "
-    - " &cRast click baraye foroshe meghdar delkhah "
+    - " &cRast click baraye    &aChap click baraye  "
+    - " &cforoshe meghdar      &akharid meghdar "
+    - "      &cdelkhah                  &adelkhah "
     - " &d "
-    - " &7Shoma ghader be &akharid &e%buycount%&7 az in item hastid. "
-    - " &7Shoma ghader be &cforosh &e%sellcount%&7 az in item hastid. "
+    - " &l &r           &7Shoma ghader be"
+    - " &l &r          &cforosh &e%sellcount% &7| &akharid &e%buycount%"
+    - " &l &r              &7in item hastid. "
   # Shoma Az 15 Character Dar Har Line (Bedone Hesabe Chat Colors) Mitonid Estefade Konid, Baraye Line Badi az "\n" Estefade Konid. (starting from second line)
   signEditorGui:
     buy:
@@ -189,7 +192,7 @@ command-messages:
     - "&7- &c/ecs create (Gheymate kharid az shoma) (Gheymat forosh be shoma) &7| Be yek chest/shulker/barrel negah kon va itemi ke mikhay beforshi ro dastet begir "
     - "&7- &c/ecs remove &7| Hazf kardan shopi ke dar hale negah kardan be un hastid "
     - "&7- &c/ecs settings (setting) &7| Copy/Paste/Taghir vaziate tanzimate shopi ke dar hale negah kardan hastid. "
-    - "&eTanzimat: &7[copy, paste, admins, toggle-buying, toggle-selling, toggle-message, toggle-shared-income]"
+    - "&eTanzimat: &7[copy, paste, admins, toggle-buying, toggle-selling, toggle-message, toggle-shared-income, change-rotation]"
   help-admin-view-addition:
     - "&cAdmin Help: "
     - "&7- &c/ecsadmin"

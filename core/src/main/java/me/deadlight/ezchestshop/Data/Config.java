@@ -41,6 +41,7 @@ public class Config {
     public static boolean settings_zero_equals_disabled;
     public static boolean settings_buy_greater_than_sell;
     public static boolean settings_add_shulkershop_lore;
+    public static boolean settings_custom_amout_transactions;
 
     public static boolean command_shop_alias;
     public static boolean command_adminshop_alias;
@@ -93,6 +94,7 @@ public class Config {
         settings_zero_equals_disabled = config.getBoolean("shops.settings.zero-price-equals-disabled");
         settings_buy_greater_than_sell = config.getBoolean("shops.settings.buy-greater-than-sell");
         settings_add_shulkershop_lore = config.getBoolean("shops.settings.add-shulkershop-lore");
+        settings_custom_amout_transactions = config.getBoolean("shops.settings.custom-amount-transactions");
 
         command_shop_alias = config.getBoolean("commands.alias.ecs-shop");
         command_adminshop_alias = config.getBoolean("commands.alias.ecsadmin-adminshop");
@@ -207,6 +209,9 @@ public class Config {
             fc.save(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml"));
             Config.loadConfig();
         }
+
+        // Should work like the above stuff, but without the check if it exists.
+        fc.addDefault("shops.settings.custom-amount-transactions", true);
 
         //well then its already an updated config, no need to change
 

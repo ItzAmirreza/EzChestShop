@@ -58,6 +58,8 @@ shops:
     buy-greater-than-sell: true
     # If set to true Shulker shops will be given some Lore when mined (Set inside the language files)
     add-shulkershop-lore: true
+    # Toggle if custom amount buying or selling should be enabled.
+    custom-amount-transactions: true
 economy:
   # Used to replace %currency% for the language files and the 2nd hologram line.
   server-currency: $
