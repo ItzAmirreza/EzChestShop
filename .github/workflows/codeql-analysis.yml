@@ -63,7 +63,7 @@ jobs:
     - name: Compile Minecraft Spigot or Paper (BuildTools)
       uses: SpraxDev/Action-SpigotMC@v3
       with:
-        versions: 1.17.1
+        versions: 1.16.1, 1.16.3, 1.16.5, 1.17.1, 1.18.1
     # Autobuild attempts to build any compiled languages  (C/C++, C#, or Java).
     # If this step fails, then you should remove it and run the build manually (see below)
     - name: Autobuild

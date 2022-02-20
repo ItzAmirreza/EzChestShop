@@ -29,6 +29,6 @@ jobs:
     - name: Compile Minecraft Spigot or Paper (BuildTools)
       uses: SpraxDev/Action-SpigotMC@v3
       with:
-        versions: 1.17.1
+        versions: 1.16.1, 1.16.3, 1.16.5, 1.17.1, 1.18.1
     - name: Build with Maven
       run: mvn -B package --file pom.xml

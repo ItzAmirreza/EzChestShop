@@ -211,7 +211,11 @@ public class Config {
         }
 
         // Should work like the above stuff, but without the check if it exists.
-        fc.addDefault("shops.settings.custom-amount-transactions", true);
+        if (!fc.isBoolean("shops.settings.custom-amount-transactions")) {
+            fc.set("shops.settings.custom-amount-transactions", true);
+            fc.save(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml"));
+            Config.loadConfig();
+        }
 
         //well then its already an updated config, no need to change
 
