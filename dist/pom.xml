@@ -86,6 +86,11 @@
         </dependency>
         <dependency>
             <groupId>me.deadlight</groupId>
+            <artifactId>EzChestShop-craftbukkit_1_18_R2</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>me.deadlight</groupId>
             <artifactId>EzChestShop-craftbukkit_1_18_R1</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
