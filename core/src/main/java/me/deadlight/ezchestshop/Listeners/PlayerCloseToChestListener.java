@@ -236,7 +236,7 @@ public class PlayerCloseToChestListener implements Listener {
                     line = line.replaceAll("<separator>|<\\/separator>", "").replaceAll("<buy>|<\\/buy>", "").replaceAll("<sell>|<\\/sell>", "");
                 }
                 ASHologram hologram = new ASHologram(player, line, EntityType.ARMOR_STAND, lineLocation, false);
-                hologram.spawn();
+//                hologram.spawn();
                 Utils.onlinePackets.add(hologram);
                 holoTextList.add(Pair.of(shopLocation, hologram));
                 lineLocation.add(0, 0.3 * Config.holo_linespacing, 0);
@@ -289,7 +289,7 @@ public class PlayerCloseToChestListener implements Listener {
                     line = line.replaceAll("<separator>|<\\/separator>", "").replaceAll("<buy>|<\\/buy>", "").replaceAll("<sell>|<\\/sell>", "");
                 }
                 ASHologram hologram = new ASHologram(player, line, EntityType.ARMOR_STAND, lineLocation, false);
-                hologram.spawn();
+//                hologram.spawn();
                 Utils.onlinePackets.add(hologram);
                 holoTextList.add(Pair.of(shopLocation, hologram));
                 lineLocation.add(0, 0.3 * Config.holo_linespacing, 0);

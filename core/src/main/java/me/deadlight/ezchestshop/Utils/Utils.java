@@ -38,11 +38,6 @@ public class Utils {
 
     public static HashMap<String, Block> blockBreakMap = new HashMap<>();
     public static HashMap<Location, List<String>> sqlQueue = new HashMap<>();
-//
-//    public static boolean is1_17 = false;
-//    public static boolean is1_17_1 = false;
-//    public static boolean family1_17 = false;
-//    public static boolean is1_18 = false;
 
     private static String discordLink;
 

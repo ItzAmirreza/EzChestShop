@@ -1,5 +1,6 @@
 package me.deadlight.ezchestshop.Utils;
 
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -13,4 +14,9 @@ abstract class VersionUtils {
 
     abstract void destroyEntity(Player player, int entityID);
 
+    abstract void spawnHologram(Player player, Location location, String line, int ID);
+
+    abstract void spawnFloatingItem(Player player, Location location, ItemStack itemStack, int ID);
+
+    abstract void signFactoryListen();
 }

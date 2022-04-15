@@ -1,11 +1,9 @@
 package me.deadlight.ezchestshop.Utils;
-import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.events.PacketAdapter;
-import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.events.PacketEvent;
-import com.comphenix.protocol.wrappers.BlockPosition;
-import org.bukkit.Bukkit;
+import io.netty.channel.Channel;
+import me.deadlight.ezchestshop.EzChestShop;
+import me.deadlight.ezchestshop.Utils.TinyProtocols.Reflection;
+import me.deadlight.ezchestshop.Utils.TinyProtocols.TinyProtocol;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -14,13 +12,25 @@ import org.bukkit.plugin.Plugin;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.function.BiPredicate;
-import java.util.stream.Collectors;
 
 public final class SignMenuFactory {
+
+    private static final int ACTION_INDEX = 9;
+    private static final int SIGN_LINES = 4;
+
+    private static final String NBT_FORMAT = "{\"text\":\"%s\"}";
+    private static final String NBT_BLOCK_ID = "minecraft:sign";
 
     private final Plugin plugin;
 
     private final Map<Player, Menu> inputs;
+    private Reflection.FieldAccessor<String> UPDATE_SIGN = Reflection.getField("{nms}.PacketPlayInUpdateSign", String.class, 0);
+    private Class<?> signUpdateClass = Reflection.getClass("{nms}.PacketPlayInUpdateSign");
+    private Reflection.FieldAccessor<String> firstLine = Reflection.getField(signUpdateClass, String.class, 0);
+    private Reflection.FieldAccessor<String> secondLine = Reflection.getField(signUpdateClass, String.class, 1);
+    private Reflection.FieldAccessor<String> thirdLine = Reflection.getField(signUpdateClass, String.class, 2);
+    private Reflection.FieldAccessor<String> fourthLine = Reflection.getField(signUpdateClass, String.class, 3);
+
 
     public SignMenuFactory(Plugin plugin) {
         this.plugin = plugin;
@@ -33,30 +43,54 @@ public final class SignMenuFactory {
     }
 
     private void listen() {
-        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(this.plugin, PacketType.Play.Client.UPDATE_SIGN) {
+
+
+        TinyProtocol listen = new TinyProtocol(EzChestShop.getPlugin()) {
+
             @Override
-            public void onPacketReceiving(PacketEvent event) {
-                Player player = event.getPlayer();
+            public Object onPacketInAsync(Player player, Channel channel, Object packet) {
+                if (UPDATE_SIGN.hasField(packet)) {
 
-                Menu menu = inputs.remove(player);
-
-                if (menu == null) {
-                    return;
-                }
-                event.setCancelled(true);
-
-                boolean success = menu.response.test(player, event.getPacket().getStringArrays().read(0));
-
-                if (!success && menu.reopenIfFail && !menu.forceClose) {
-                    Bukkit.getScheduler().runTaskLater(plugin, () -> menu.open(player), 2L);
-                }
-                Bukkit.getScheduler().runTaskLater(plugin, () -> {
-                    if (player.isOnline()) {
-                        player.sendBlockChange(menu.location, menu.location.getBlock().getBlockData());
+                    Menu menu = inputs.remove(player);
+                    if (menu == null) {
+                        return null;
                     }
-                }, 2L);
+                    firstLine.get(packet)
+                    boolean success = menu.response.test(player, lines);
+
+
+
+                }
             }
-        });
+
+        };
+
+
+//        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(this.plugin, PacketType.Play.Client.UPDATE_SIGN) {
+//            @Override
+//            public void onPacketReceiving(PacketEvent event) {
+//                Player player = event.getPlayer();
+//
+//                Menu menu = inputs.remove(player);
+//
+//                if (menu == null) {
+//                    return;
+//                }
+//                event.setCancelled(true);
+//
+//                boolean success = menu.response.test(player, event.getPacket().getStringArrays().read(0));
+//
+//                if (!success && menu.reopenIfFail && !menu.forceClose) {
+//                    Bukkit.getScheduler().runTaskLater(plugin, () -> menu.open(player), 2L);
+//                }
+//                Bukkit.getScheduler().runTaskLater(plugin, () -> {
+//                    if (player.isOnline()) {
+//                        Location location = menu.position.toLocation(player.getWorld());
+//                        player.sendBlockChange(location, location.getBlock().getBlockData());
+//                    }
+//                }, 2L);
+//            }
+//        });
     }
 
     public final class Menu {
@@ -66,7 +100,7 @@ public final class SignMenuFactory {
         private BiPredicate<Player, String[]> response;
         private boolean reopenIfFail;
 
-        private Location location;
+        private BlockPosition position;
 
         private boolean forceClose;
 
@@ -89,25 +123,37 @@ public final class SignMenuFactory {
             if (!player.isOnline()) {
                 return;
             }
-            location = player.getLocation();
-            location.setY(location.getBlockY() - 4);
+            Location location = player.getLocation();
+            this.position = new BlockPosition(location.getBlockX(), location.getBlockY() + (255 - location.getBlockY()), location.getBlockZ());
 
-            player.sendBlockChange(location, Material.OAK_SIGN.createBlockData());
-            player.sendSignChange(
-                    location,
-                    text.stream().map(Utils::colorify)
-                            .collect(Collectors.toList()).toArray(new String[4])
-            );
+            player.sendBlockChange(this.position.toLocation(location.getWorld()), Material.OAK_SIGN.createBlockData());
 
             PacketContainer openSign = ProtocolLibrary.getProtocolManager().createPacket(PacketType.Play.Server.OPEN_SIGN_EDITOR);
-            BlockPosition position = new BlockPosition(location.getBlockX(), location.getBlockY(), location.getBlockZ());
-            openSign.getBlockPositionModifier().write(0, position);
+            PacketContainer signData = ProtocolLibrary.getProtocolManager().createPacket(PacketType.Play.Server.TILE_ENTITY_DATA);
+
+            openSign.getBlockPositionModifier().write(0, this.position);
+
+            NbtCompound signNBT = (NbtCompound) signData.getNbtModifier().read(0);
+
+            for (int line = 0; line < SIGN_LINES; line++) {
+                signNBT.put("Text" + (line + 1), this.text.size() > line ? String.format(NBT_FORMAT, color(this.text.get(line))) : "");
+            }
+
+            signNBT.put("x", this.position.getX());
+            signNBT.put("y", this.position.getY());
+            signNBT.put("z", this.position.getZ());
+            signNBT.put("id", NBT_BLOCK_ID);
+
+            signData.getBlockPositionModifier().write(0, this.position);
+            signData.getIntegers().write(0, ACTION_INDEX);
+            signData.getNbtModifier().write(0, signNBT);
+
             try {
+                ProtocolLibrary.getProtocolManager().sendServerPacket(player, signData);
                 ProtocolLibrary.getProtocolManager().sendServerPacket(player, openSign);
             } catch (InvocationTargetException exception) {
                 exception.printStackTrace();
             }
-
             inputs.put(player, this);
         }
 
@@ -116,7 +162,7 @@ public final class SignMenuFactory {
          * functionality. false by default.
          *
          * @param player the player
-         * @param force  decides whether it will reopen if reopen is enabled
+         * @param force decides whether or not it will reopen if reopen is enabled
          */
         public void close(Player player, boolean force) {
             this.forceClose = force;
@@ -129,5 +175,8 @@ public final class SignMenuFactory {
             close(player, false);
         }
 
+        private String color(String input) {
+            return ChatColor.translateAlternateColorCodes('&', input);
+        }
     }
 }

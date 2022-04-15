@@ -2,11 +2,12 @@ name: EzChestShop
 version: ${project.version}
 main: me.deadlight.ezchestshop.EzChestShop
 api-version: 1.14
-depend: [Vault, ProtocolLib]
+depend: [Vault]
 softdepend:
   - WildChests
   - WorldGuard
   - Slimefun #in case just to load after the Slimefun
+  - Multiverse-Core #this is needed to make sure all the worlds are loaded
 authors: [ Dead_Light ]
 description: ${project.description}
 commands:

@@ -1,8 +1,6 @@
 package me.deadlight.ezchestshop;
 import com.bgsoftware.wildchests.api.WildChestsAPI;
 import com.bgsoftware.wildchests.api.handlers.ChestsManager;
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.ProtocolManager;
 import me.deadlight.ezchestshop.Commands.CommandCheckProfits;
 import me.deadlight.ezchestshop.Commands.EcsAdmin;
 import me.deadlight.ezchestshop.Commands.MainCommands;
@@ -17,6 +15,7 @@ import me.deadlight.ezchestshop.Utils.ASHologram;
 import me.deadlight.ezchestshop.Utils.CommandRegister;
 import me.deadlight.ezchestshop.Utils.FloatingItem;
 import me.deadlight.ezchestshop.Utils.Exceptions.CommandFetchException;
+import me.deadlight.ezchestshop.Utils.TinyProtocols.TinyProtocol;
 import me.deadlight.ezchestshop.Utils.UpdateChecker;
 import me.deadlight.ezchestshop.Utils.Utils;
 import me.deadlight.ezchestshop.Utils.WorldGuard.FlagRegistry;
@@ -44,8 +43,6 @@ public final class EzChestShop extends JavaPlugin {
     public static boolean protocollib = false;
     public static boolean slimefun = false;
     public static boolean worldguard = false;
-
-    private static ProtocolManager manager;
 
 
     @Override
@@ -79,17 +76,6 @@ public final class EzChestShop extends JavaPlugin {
 
         if (!setupEconomy() ) {
             logConsole("&c[&eEzChestShop&c] &4Cannot find vault or economy plugin. Self disabling... &ePlease note that you need vault and at least one economy plugin installed.");
-            Bukkit.getPluginManager().disablePlugin(this);
-            return;
-        }
-
-
-        if (getServer().getPluginManager().getPlugin("ProtocolLib") != null) {
-            protocollib = true;
-            manager = ProtocolLibrary.getProtocolManager();
-            logConsole("&c[&eEzChestShop&c] &aProtocolLib is installed.");
-        } else {
-            logConsole("&c[&eEzChestShop&c] &4ProtocolLib is not installed. Disabling the plugin...");
             Bukkit.getPluginManager().disablePlugin(this);
             return;
         }
@@ -216,10 +202,6 @@ public final class EzChestShop extends JavaPlugin {
 
     public static EzChestShop getPlugin() {
         return plugin;
-    }
-
-    public static ProtocolManager getProtocolManager() {
-        return manager;
     }
 
     public static void logConsole(String str) {
