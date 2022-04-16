@@ -15,7 +15,6 @@ import me.deadlight.ezchestshop.Utils.ASHologram;
 import me.deadlight.ezchestshop.Utils.CommandRegister;
 import me.deadlight.ezchestshop.Utils.FloatingItem;
 import me.deadlight.ezchestshop.Utils.Exceptions.CommandFetchException;
-import me.deadlight.ezchestshop.Utils.TinyProtocols.TinyProtocol;
 import me.deadlight.ezchestshop.Utils.UpdateChecker;
 import me.deadlight.ezchestshop.Utils.Utils;
 import me.deadlight.ezchestshop.Utils.WorldGuard.FlagRegistry;

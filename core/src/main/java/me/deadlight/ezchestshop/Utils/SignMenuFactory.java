@@ -1,8 +1,4 @@
 package me.deadlight.ezchestshop.Utils;
-import io.netty.channel.Channel;
-import me.deadlight.ezchestshop.EzChestShop;
-import me.deadlight.ezchestshop.Utils.TinyProtocols.Reflection;
-import me.deadlight.ezchestshop.Utils.TinyProtocols.TinyProtocol;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -24,12 +20,6 @@ public final class SignMenuFactory {
     private final Plugin plugin;
 
     private final Map<Player, Menu> inputs;
-    private Reflection.FieldAccessor<String> UPDATE_SIGN = Reflection.getField("{nms}.PacketPlayInUpdateSign", String.class, 0);
-    private Class<?> signUpdateClass = Reflection.getClass("{nms}.PacketPlayInUpdateSign");
-    private Reflection.FieldAccessor<String> firstLine = Reflection.getField(signUpdateClass, String.class, 0);
-    private Reflection.FieldAccessor<String> secondLine = Reflection.getField(signUpdateClass, String.class, 1);
-    private Reflection.FieldAccessor<String> thirdLine = Reflection.getField(signUpdateClass, String.class, 2);
-    private Reflection.FieldAccessor<String> fourthLine = Reflection.getField(signUpdateClass, String.class, 3);
 
 
     public SignMenuFactory(Plugin plugin) {
@@ -43,27 +33,6 @@ public final class SignMenuFactory {
     }
 
     private void listen() {
-
-
-        TinyProtocol listen = new TinyProtocol(EzChestShop.getPlugin()) {
-
-            @Override
-            public Object onPacketInAsync(Player player, Channel channel, Object packet) {
-                if (UPDATE_SIGN.hasField(packet)) {
-
-                    Menu menu = inputs.remove(player);
-                    if (menu == null) {
-                        return null;
-                    }
-                    firstLine.get(packet)
-                    boolean success = menu.response.test(player, lines);
-
-
-
-                }
-            }
-
-        };
 
 
 //        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(this.plugin, PacketType.Play.Client.UPDATE_SIGN) {
