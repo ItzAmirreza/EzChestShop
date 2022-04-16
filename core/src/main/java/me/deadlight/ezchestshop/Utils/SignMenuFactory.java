@@ -1,4 +1,5 @@
 package me.deadlight.ezchestshop.Utils;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -33,8 +34,7 @@ public final class SignMenuFactory {
     }
 
     private void listen() {
-
-
+        Utils.versionUtils.signFactoryListen(this);
 //        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(this.plugin, PacketType.Play.Client.UPDATE_SIGN) {
 //            @Override
 //            public void onPacketReceiving(PacketEvent event) {

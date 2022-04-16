@@ -1,4 +1,6 @@
 package me.deadlight.ezchestshop.Utils;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelInboundHandlerAdapter;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.chat.IChatBaseComponent;
 import net.minecraft.network.protocol.game.PacketPlayOutEntityMetadata;
@@ -100,8 +102,19 @@ public class v1_18_R1 extends VersionUtils {
     }
 
     @Override
-    void signFactoryListen() {
+    void signFactoryListen(SignMenuFactory signMenuFactory) {
 
+    }
+
+    @Override
+    public void injectConnection(Player player) {
+        ((CraftPlayer) player).getHandle().b.a.k.pipeline().addBefore("packet_handler", "EzChestShop Listener", new ChannelHandler(player));
+    }
+
+    @Override
+    public void ejectConnection(Player player) {
+        Channel channel = ((CraftPlayer) player).getHandle().b.a.k;
+        channel.eventLoop().submit(() -> channel.pipeline().remove("EzChestShop Listener"));
     }
 
 

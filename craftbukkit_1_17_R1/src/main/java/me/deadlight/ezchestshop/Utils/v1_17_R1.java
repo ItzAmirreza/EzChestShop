@@ -51,6 +51,20 @@ public class v1_17_R1 extends VersionUtils {
 
     }
 
+    @Override
+    void signFactoryListen(SignMenuFactory signMenuFactory) {
+
+    }
+
+    @Override
+    public void injectConnection(Player player) {
+
+    }
+
+    @Override
+    public void ejectConnection(Player player) {
+
+    }
 
 
 }

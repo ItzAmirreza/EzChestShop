@@ -41,7 +41,7 @@ public class Utils {
 
     private static String discordLink;
 
-    static VersionUtils versionUtils;
+    public static VersionUtils versionUtils;
 
     static {
         try {

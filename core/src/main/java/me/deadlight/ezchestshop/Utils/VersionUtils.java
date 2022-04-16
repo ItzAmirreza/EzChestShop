@@ -4,7 +4,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-abstract class VersionUtils {
+public abstract class VersionUtils {
 
     abstract String ItemToTextCompoundString(ItemStack itemStack);
 
@@ -18,5 +18,10 @@ abstract class VersionUtils {
 
     abstract void spawnFloatingItem(Player player, Location location, ItemStack itemStack, int ID);
 
-    abstract void signFactoryListen();
+    abstract void signFactoryListen(SignMenuFactory signMenuFactory);
+
+    public abstract void injectConnection(Player player);
+
+    public abstract void ejectConnection(Player player);
+
 }
