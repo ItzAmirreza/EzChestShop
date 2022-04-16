@@ -1,5 +1,6 @@
 package me.deadlight.ezchestshop.GUIs;
 
+import me.deadlight.ezchestshop.Data.Config;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.Data.LanguageManager;
 import me.deadlight.ezchestshop.Utils.Utils;
@@ -176,12 +177,12 @@ public class OwnerShopGUI {
 
         GuiItem guiSignItem = new GuiItem(signItem, event -> {
             event.setCancelled(true);
-            if (event.isLeftClick()) {
+            if (event.isRightClick()) {
                 //buy
                 player.sendMessage(lm.selfTransaction());
 
 
-            } else if (event.isRightClick()) {
+            } else if (event.isLeftClick()) {
                 //sell
                 player.sendMessage(lm.selfTransaction());
 
@@ -207,9 +208,11 @@ public class OwnerShopGUI {
         gui.setItem(18, storageGUI);
         //settings item
         gui.setItem(26, settingsGui);
-        //sign item
-        gui.setItem(22, guiSignItem);
 
+        if (Config.settings_custom_amout_transactions) {
+            //sign item
+            gui.setItem(22, guiSignItem);
+        }
         gui.open(player);
 
 

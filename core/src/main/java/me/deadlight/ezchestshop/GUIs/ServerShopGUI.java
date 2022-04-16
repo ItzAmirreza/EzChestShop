@@ -1,5 +1,6 @@
 package me.deadlight.ezchestshop.GUIs;
 
+import me.deadlight.ezchestshop.Data.Config;
 import me.deadlight.ezchestshop.Data.ShopContainer;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.Data.LanguageManager;
@@ -162,88 +163,88 @@ public class ServerShopGUI {
 
         GuiItem guiSignItem = new GuiItem(signItem, event -> {
             event.setCancelled(true);
-           if (event.isLeftClick()) {
-               //buy
-               if (disabledBuy) {
-                   player.sendMessage(lm.disabledBuyingMessage());
-                   return;
-               }
-               player.closeInventory();
-               player.playSound(player.getLocation(), Sound.ITEM_BOOK_PAGE_TURN, 1.0f, 1.0f);
-               SignMenuFactory signMenuFactory = new SignMenuFactory(EzChestShop.getPlugin());
-               SignMenuFactory.Menu menu = signMenuFactory.newMenu(lm.signEditorGuiBuy(possibleCounts.get(0)))
-                       .reopenIfFail(false).response((thatplayer, strings) -> {
-                           try {
-                               if (strings[0].equalsIgnoreCase("")) {
-                                   return false;
-                               }
-                               if (Utils.isInteger(strings[0])) {
-                                   int amount = Integer.parseInt(strings[0]);
-                                   if (!Utils.amountCheck(amount)) {
-                                       player.sendMessage(lm.unsupportedInteger());
-                                       return false;
-                                   }
-                                   Bukkit.getScheduler().scheduleSyncDelayedTask(EzChestShop.getPlugin(), new Runnable() {
-                                       @Override
-                                       public void run() {
-                                           ShopContainer.buyServerItem(containerBlock, buyPrice * amount, amount, thatplayer, mainitem, data);
-                                       }
-                                   });
-                               } else {
-                                   thatplayer.sendMessage(lm.wrongInput());
-                               }
+            if (event.isRightClick()) {
+                //buy
+                if (disabledBuy) {
+                    player.sendMessage(lm.disabledBuyingMessage());
+                    return;
+                }
+                player.closeInventory();
+                player.playSound(player.getLocation(), Sound.ITEM_BOOK_PAGE_TURN, 1.0f, 1.0f);
+                SignMenuFactory signMenuFactory = new SignMenuFactory(EzChestShop.getPlugin());
+                SignMenuFactory.Menu menu = signMenuFactory.newMenu(lm.signEditorGuiBuy(possibleCounts.get(0)))
+                        .reopenIfFail(false).response((thatplayer, strings) -> {
+                            try {
+                                if (strings[0].equalsIgnoreCase("")) {
+                                    return false;
+                                }
+                                if (Utils.isInteger(strings[0])) {
+                                    int amount = Integer.parseInt(strings[0]);
+                                    if (!Utils.amountCheck(amount)) {
+                                        player.sendMessage(lm.unsupportedInteger());
+                                        return false;
+                                    }
+                                    Bukkit.getScheduler().scheduleSyncDelayedTask(EzChestShop.getPlugin(), new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            ShopContainer.buyServerItem(containerBlock, buyPrice * amount, amount, thatplayer, mainitem, data);
+                                        }
+                                    });
+                                } else {
+                                    thatplayer.sendMessage(lm.wrongInput());
+                                }
 
-                           } catch (Exception e) {
-                               return false;
-                           }
-                           return true;
-                       });
-               menu.open(player);
-               player.sendMessage(lm.enterTheAmount());
-
-
-           } else if (event.isRightClick()) {
-               //sell
-               if (disabledSell) {
-                   player.sendMessage(lm.disabledSellingMessage());
-                   return;
-               }
-               player.closeInventory();
-               player.playSound(player.getLocation(), Sound.ITEM_BOOK_PAGE_TURN, 1.0f, 1.0f);
-               SignMenuFactory signMenuFactory = new SignMenuFactory(EzChestShop.getPlugin());
-               SignMenuFactory.Menu menu = signMenuFactory.newMenu(lm.signEditorGuiSell(possibleCounts.get(1)))
-                       .reopenIfFail(false).response((thatplayer, strings) -> {
-                           try {
-                               if (strings[0].equalsIgnoreCase("")) {
-                                   return false;
-                               }
-                               if (Utils.isInteger(strings[0])) {
-                                   int amount = Integer.parseInt(strings[0]);
-                                   if (!Utils.amountCheck(amount)) {
-                                       player.sendMessage(lm.unsupportedInteger());
-                                       return false;
-                                   }
-                                   Bukkit.getScheduler().scheduleSyncDelayedTask(EzChestShop.getPlugin(), new Runnable() {
-                                       @Override
-                                       public void run() {
-                                           ShopContainer.sellServerItem(containerBlock, sellPrice * amount, amount, mainitem, thatplayer, data);
-                                       }
-                                   });
-                               } else {
-                                   thatplayer.sendMessage(lm.wrongInput());
-                               }
-
-                           } catch (Exception e) {
-                               return false;
-                           }
-                           return true;
-                       });
-               menu.open(player);
-               player.sendMessage(lm.enterTheAmount());
+                            } catch (Exception e) {
+                                return false;
+                            }
+                            return true;
+                        });
+                menu.open(player);
+                player.sendMessage(lm.enterTheAmount());
 
 
-           }
-         });
+            } else if (event.isLeftClick()) {
+                //sell
+                if (disabledSell) {
+                    player.sendMessage(lm.disabledSellingMessage());
+                    return;
+                }
+                player.closeInventory();
+                player.playSound(player.getLocation(), Sound.ITEM_BOOK_PAGE_TURN, 1.0f, 1.0f);
+                SignMenuFactory signMenuFactory = new SignMenuFactory(EzChestShop.getPlugin());
+                SignMenuFactory.Menu menu = signMenuFactory.newMenu(lm.signEditorGuiSell(possibleCounts.get(1)))
+                        .reopenIfFail(false).response((thatplayer, strings) -> {
+                            try {
+                                if (strings[0].equalsIgnoreCase("")) {
+                                    return false;
+                                }
+                                if (Utils.isInteger(strings[0])) {
+                                    int amount = Integer.parseInt(strings[0]);
+                                    if (!Utils.amountCheck(amount)) {
+                                        player.sendMessage(lm.unsupportedInteger());
+                                        return false;
+                                    }
+                                    Bukkit.getScheduler().scheduleSyncDelayedTask(EzChestShop.getPlugin(), new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            ShopContainer.sellServerItem(containerBlock, sellPrice * amount, amount, mainitem, thatplayer, data);
+                                        }
+                                    });
+                                } else {
+                                    thatplayer.sendMessage(lm.wrongInput());
+                                }
+
+                            } catch (Exception e) {
+                                return false;
+                            }
+                            return true;
+                        });
+                menu.open(player);
+                player.sendMessage(lm.enterTheAmount());
+
+
+            }
+        });
 
 
         gui.setItem(10, glasses);
@@ -257,9 +258,11 @@ public class ServerShopGUI {
         gui.setItem(14, oneBuy);
         //64x buy (15)
         gui.setItem(15, moreBuy);
-        //custom buy item
-        gui.setItem(22, guiSignItem);
 
+        if (Config.settings_custom_amout_transactions) {
+            //custom buy item
+            gui.setItem(22, guiSignItem);
+        }
 //        if (player.hasPermission("ecs.admin") || isAdmin(data, player.getUniqueId().toString())) {
 //            gui.setItem();
 //        }

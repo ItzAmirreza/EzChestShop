@@ -7,8 +7,8 @@ softdepend:
   - WildChests
   - WorldGuard
   - Slimefun #in case just to load after the Slimefun
-  - Multiverse-Core #this is needed to make sure all the worlds are loaded
-authors: [ Dead_Light ]
+  - Multiverse-Core #preventing null worlds
+authors: [Dead_Light, ElitoGame]
 description: ${project.description}
 commands:
   ecs:

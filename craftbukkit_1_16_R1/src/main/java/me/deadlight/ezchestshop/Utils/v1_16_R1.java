@@ -1,12 +1,14 @@
 package me.deadlight.ezchestshop.Utils;
 
-import net.minecraft.nbt.NBTTagCompound;
-import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_17_R1.inventory.CraftItemStack;
+import me.deadlight.ezchestshop.EzChestShop;
+import net.minecraft.server.v1_16_R1.NBTTagCompound;
+import net.minecraft.server.v1_16_R1.PacketPlayOutEntityDestroy;
+import org.bukkit.craftbukkit.v1_16_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_16_R1.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-public class v1_17_R1 extends VersionUtils {
+public class v1_16_R1 extends VersionUtils {
 
     /**
      * Convert a Item to a Text Compount. Used in Text Component Builders to show
@@ -19,7 +21,7 @@ public class v1_17_R1 extends VersionUtils {
     @Override
     String ItemToTextCompoundString(ItemStack itemStack) {
         // First we convert the item stack into an NMS itemstack
-        net.minecraft.world.item.ItemStack nmsItemStack = CraftItemStack.asNMSCopy(itemStack);
+        net.minecraft.server.v1_16_R1.ItemStack nmsItemStack = CraftItemStack.asNMSCopy(itemStack);
         NBTTagCompound compound = new NBTTagCompound();
         compound = nmsItemStack.save(compound);
 
@@ -28,27 +30,17 @@ public class v1_17_R1 extends VersionUtils {
 
     @Override
     int getArmorStandIndex() {
-        return 15;
+        return 14;
     }
 
     @Override
     int getItemIndex() {
-        return 8;
+        return 7;
     }
 
     @Override
     void destroyEntity(Player player, int entityID) {
-        ((org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer) player).getHandle().b.sendPacket(new net.minecraft.network.protocol.game.PacketPlayOutEntityDestroy(entityID));
-    }
-
-    @Override
-    void spawnHologram(Player player, Location location, String line, int ID) {
-
-    }
-
-    @Override
-    void spawnFloatingItem(Player player, Location location, ItemStack itemStack, int ID) {
-
+        ((CraftPlayer) player).getHandle().playerConnection.sendPacket(new PacketPlayOutEntityDestroy(entityID));
     }
 
 

@@ -136,15 +136,16 @@ settings:
         West: "&aWest"
         Down: "&aDown"
 customBuySell:
-  gui-customAmountSign-title: "&eCustom Buy/Sell"
+  gui-customAmountSign-title: "&eCustom Sell/Buy"
   gui-customAmountSign-lore:
     - "&7Buy or Sell in custom amount "
     - " &d "
-    - " &aLeft click for custom Buy "
-    - " &cRight click for custom Sell "
+    - " &cLeft click for   &aRight click for  "
+    - " &l &r&ccustom Sell    &l &r &acustom Buy"
     - " &d "
-    - " &7You can totally &abuy &e%buycount%&7 of this item. "
-    - " &7You can totally &csell &e%sellcount%&7 of this item."
+    - "         &7You can totally"
+    - "         &l &r&csell &e%sellcount% &7| &abuy &e%buycount% "
+    - "          &l &r&7of this item."
   #15 characters per line (without color codes) and "\n" for next line (starting from second line)
   signEditorGui:
     buy:
@@ -177,9 +178,11 @@ command-messages:
   notenoughargs: "&c請輸入足夠的參數! \n &c正確用法: /ecs create (購買價格) (販售價格)"
   consolenotallowed: "&c你沒有權限執行這項命令."
   help:
-    - "&bEz&cChestShop &7Plugin By Dead_Light©"
+    - "&bEz&cChestShop &7Plugin By Dead_Light & ElitoGame©"
     - "&7- &c/ecs create (購買價格) (販售價格) &7| 請手持要販售的物品並注視箱子輸入指令來設立商店 "
     - " &7- &c/ecs remove &7| 關閉你正在注視的商店 "
+    - "&7- &c/ecs settings (setting) &7| Copy/Paste/Toggle settings related to the chest shop "
+    - "&eSettings: &7[copy, paste, admins, toggle-buying, toggle-selling, toggle-message, toggle-shared-income, change-rotation] "
     - " &7很簡單 對吧? :)"
   help-admin-view-addition:
     - "&cAdmin Help: "

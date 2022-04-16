@@ -290,13 +290,13 @@ public class LanguageManager {
     public List<String> transactionPaperLoreBuy(String price, int count, String time) {
         return getList("transactions.PaperLoreBuy").stream().map(s ->
                 Utils.colorify(s.replace("%price%", Utils.formatNumber(Double.valueOf(price),
-                Utils.FormatType.GUI)).replace("%count%", String.valueOf(count)).replace("%time%", time)))
+                Utils.FormatType.GUI)).replace("%currency%", Config.currency).replace("%count%", String.valueOf(count)).replace("%time%", time)))
                 .collect(Collectors.toList());
     }
     public List<String> transactionPaperLoreSell(String price, int count, String time) {
         return getList("transactions.PaperLoreSell").stream().map(s ->
                 Utils.colorify(s.replace("%price%", Utils.formatNumber(Double.valueOf(price),
-                Utils.FormatType.GUI)).replace("%count%", String.valueOf(count)).replace("%time%", time)))
+                Utils.FormatType.GUI)).replace("%currency%", Config.currency).replace("%count%", String.valueOf(count)).replace("%time%", time)))
                 .collect(Collectors.toList());
     }
 

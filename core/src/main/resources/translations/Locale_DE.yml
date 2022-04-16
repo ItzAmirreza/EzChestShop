@@ -147,16 +147,17 @@ settings:
         West: "&aWested"
         Down: "&aUnten"
 customBuySell:
-  gui-customAmountSign-title: "&eBenutzerdefierter Kauf/Verkauf"
+  gui-customAmountSign-title: "&eBenutzerdefierter Verkauf/Kauf"
   gui-customAmountSign-lore:
     - "&7Kauf oder Verkauf einer"
     - "&7benutzerdefinierten Menge"
     - " &d "
-    - " &aLinksclick für benutzerdefinierten Kauf "
-    - " &cRechtsclick für benutzerdefinierten Verkauf "
+    - "     &cLinksclick für         &aRechtsclick für"
+    - " &cbenutzerdefinierten  &abenutzerdefinierten  "
+    - "        &cVerkauf                     &aKauf"
     - " &d "
-    - " &7Du kannst insgesamt &e%buycount%&7 von diesem Item &akaufen. "
-    - " &7Du kannst insgesamt &e%sellcount%&7 von diesem Item &cverkaufen."
+    - "       &7Du kannst dieses Item insgesamt"
+    - "           &e%sellcount%x&7 &cverkaufen &7| &e%buycount%x &akaufen"
   # 15 Zeichen pro Zeile (\n) ohne Farb-codes, startend ab der zweiten Zeile.
   signEditorGui:
     buy:
@@ -189,11 +190,11 @@ command-messages:
   notenoughargs: "&cDu hast nicht genügend Argumente verwendet! \n &cRichtige Verwendung: /ecs create (Kaufpreis) (Verkaufspreis)"
   consolenotallowed: "&cDu hast nicht genügend Rechte um Befehle von der Konsole auszuführen."
   help:
-    - "&bEz&cChestShop &7Plugin von Dead_Light©"
+    - "&bEz&cChestShop &7Plugin von Dead_Light & ElitoGame©"
     - "&7- &c/ecs create (Kaufpreis) (Verkaufspreis) &7| Erstelle einen Shop indem du die gewünschten Gegenstände in der Hand hältst und auf die Kiste schaust. "
     - " &7- &c/ecs remove &7| Entfernt den Shop auf den du schaust. "
     - " &7- &c/ecs settings (setting) &7| Einstellungen kopieren/einfügen/bearbeiten "
-    - " &eEinstellungen: &7[copy, paste, admins, toggle-buying, toggle-selling, toggle-message, toggle-shared-income] "
+    - " &eEinstellungen: &7[copy, paste, admins, toggle-buying, toggle-selling, toggle-message, toggle-shared-income, change-rotation] "
     - " &7Einfach oder? :)"
   help-admin-view-addition:
     - "&cAdmin Hilfe: "

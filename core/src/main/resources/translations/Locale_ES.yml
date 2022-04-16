@@ -143,15 +143,16 @@ settings:
         West: "&aWest"
         Down: "&aDown"
 customBuySell:
-  gui-customAmountSign-title: "&eCustom Buy/Sell"
+  gui-customAmountSign-title: "&eCustom Sell/Buy"
   gui-customAmountSign-lore:
     - "&7Buy or Sell in custom amount "
     - " &d "
-    - " &aLeft click for custom Buy "
-    - " &cRight click for custom Sell "
+    - " &cLeft click for   &aRight click for  "
+    - " &l &r&ccustom Sell    &l &r &acustom Buy"
     - " &d "
-    - " &7You can totally &abuy &e%buycount%&7 of this item. "
-    - " &7You can totally &csell &e%sellcount%&7 of this item."
+    - "         &7You can totally"
+    - "         &l &r&csell &e%sellcount% &7| &abuy &e%buycount% "
+    - "          &l &r&7of this item."
   #15 characters per line (without color codes) and "\n" for next line (starting from second line)
   signEditorGui:
     buy:
@@ -184,9 +185,11 @@ command-messages:
   notenoughargs: "&cNo has proporcionado suficientes argumentos! \n &cUso correcto: /ecs create (Precio de compra) (Precio de venta)"
   consolenotallowed: "&cNo puedes ejecutar ningún comando desde la consola."
   help:
-    - "&bEz&cChestShop &7Plugin By Dead_Light©"
+    - "&bEz&cChestShop &7Plugin By Dead_Light & ElitoGame©"
     - "&7- &c/ecs create (Precio de compra) (Precio de venta) &7| Crea una tienda en cofre mirando un cofre y teniendo el artículo que quieres vender en tu mano.. "
     - " &7- &c/ecs remove &7| Elimina la tienda del cofre al que estás mirando. "
+    - "&7- &c/ecs settings (setting) &7| Copy/Paste/Toggle settings related to the chest shop "
+    - "&eSettings: &7[copy, paste, admins, toggle-buying, toggle-selling, toggle-message, toggle-shared-income, change-rotation] "
     - " &7Fácil ¿verdad? :)"
   help-admin-view-addition:
     - "&cAdmin Help: "

@@ -1,5 +1,6 @@
 package me.deadlight.ezchestshop.GUIs;
 
+import me.deadlight.ezchestshop.Data.Config;
 import me.deadlight.ezchestshop.Data.ShopContainer;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.Data.LanguageManager;
@@ -144,7 +145,7 @@ public class NonOwnerShopGUI {
 
         GuiItem guiSignItem = new GuiItem(signItem, event -> {
             event.setCancelled(true);
-            if (event.isLeftClick()) {
+            if (event.isRightClick()) {
                 //buy
                 if (disabledBuy) {
                     player.sendMessage(lm.disabledBuyingMessage());
@@ -184,7 +185,7 @@ public class NonOwnerShopGUI {
                 player.sendMessage(lm.enterTheAmount());
 
 
-            } else if (event.isRightClick()) {
+            } else if (event.isLeftClick()) {
                 //sell
                 if (disabledSell) {
                     player.sendMessage(lm.disabledSellingMessage());
@@ -242,9 +243,11 @@ public class NonOwnerShopGUI {
         gui.setItem(14, oneBuy);
         //64x buy (15)
         gui.setItem(15, moreBuy);
-        //sign item
-        gui.setItem(22, guiSignItem);
 
+        if (Config.settings_custom_amout_transactions) {
+            //sign item
+            gui.setItem(22, guiSignItem);
+        }
 
         gui.open(player);
 

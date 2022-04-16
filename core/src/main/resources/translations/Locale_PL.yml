@@ -146,15 +146,17 @@ settings:
         West: '&aZachód'
         Down: '&aDół'
 customBuySell:
-  gui-customAmountSign-title: '&eWłasna ilość zakupu/sprzedaży'
+
+  gui-customAmountSign-title: '&eWłasna ilość sprzedaży/zakupu'
   gui-customAmountSign-lore:
     - '&7Kupuj i sprzedawaj określone ilości '
     - ' &d '
-    - ' &aLPM, żeby określić ilość zakupu '
-    - ' &cPPM, żeby określić ilość sprzedaży '
+    - ' &cLPM, żeby określić  &aPPM, żeby określić '
+    - '  &cilość sprzedaży       &ailość zakupu'
     - ' &d '
-    - ' &7Stać cię na &azakup &e%buycount%&7 sztuk tego przedmiotu. '
-    - ' &7Możesz &csprzedać &e%sellcount%&7 sztuk tego przedmiotu.'
+    - '          &7Stać cię na | Możesz '
+    - '      &l  &r &csprzedać &e%sellcount%&7 &7| &azakup &e%buycount%'
+    - '   sztuk tego przedmiotu.'
   # 15 znaków w jednej linijce (bez kodów kolorów) i "\n" dla następnej linii (startuje od drugiej linijki)
   signEditorGui:
     buy:
@@ -188,12 +190,13 @@ command-messages:
     \ create (cena zakupu) (cena sprzedaży)"
   consolenotallowed: '&cNie masz pozwolenia na używanie komend w konsoli.'
   help:
+    - "&bEz&cChestShop &7Plugin By Dead_Light & ElitoGame©"
     - '&7- &c/ecs create (cena zakupu) (cena sprzedaży) &7| Tworzy ze skrzynki sklep poprzez
     patrzenie się na skrzynkę i trzymanie w dłoni przedmiotu przeznaczonego do obrotu. '
     - '&7- &c/ecs remove &7| Usuwa sklep, na który patrzysz '
     - '&7- &c/ecs settings (setting) &7| Copy/Paste/Toggle ustawienia związane ze sklepem '
     - '&eUstawienia: &7[copy, paste, admins, toggle-buying, toggle-selling, toggle-message,
-    toggle-shared-income] '
+    toggle-shared-income, change-rotation] '
   help-admin-view-addition:
     - '&cPomoc Admina: '
     - '&7- &c/ecsadmin'
