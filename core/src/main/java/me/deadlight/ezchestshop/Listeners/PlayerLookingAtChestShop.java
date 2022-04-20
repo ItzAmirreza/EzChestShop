@@ -1,14 +1,19 @@
 package me.deadlight.ezchestshop.Listeners;
-import me.deadlight.ezchestshop.*;
+
 import me.deadlight.ezchestshop.Data.Config;
 import me.deadlight.ezchestshop.Data.LanguageManager;
 import me.deadlight.ezchestshop.Data.ShopContainer;
+import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.Utils.ASHologram;
 import me.deadlight.ezchestshop.Utils.FloatingItem;
 import me.deadlight.ezchestshop.Utils.Utils;
 import org.bukkit.*;
-import org.bukkit.block.*;
-import org.bukkit.entity.*;
+import org.bukkit.block.Block;
+import org.bukkit.block.Chest;
+import org.bukkit.block.DoubleChest;
+import org.bukkit.block.TileState;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;

@@ -7,7 +7,8 @@ import me.deadlight.ezchestshop.Utils.Objects.CheckProfitEntry;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class PlayerContainer {

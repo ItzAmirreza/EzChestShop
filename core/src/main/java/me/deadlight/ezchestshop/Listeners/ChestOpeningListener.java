@@ -1,4 +1,5 @@
 package me.deadlight.ezchestshop.Listeners;
+
 import me.deadlight.ezchestshop.Data.Config;
 import me.deadlight.ezchestshop.Data.ShopContainer;
 import me.deadlight.ezchestshop.EzChestShop;
@@ -11,7 +12,10 @@ import me.deadlight.ezchestshop.Utils.WorldGuard.FlagRegistry;
 import me.deadlight.ezchestshop.Utils.WorldGuard.WorldGuardUtils;
 import me.mrCookieSlime.Slimefun.api.BlockStorage;
 import org.bukkit.*;
-import org.bukkit.block.*;
+import org.bukkit.block.Block;
+import org.bukkit.block.Chest;
+import org.bukkit.block.DoubleChest;
+import org.bukkit.block.TileState;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -21,6 +25,7 @@ import org.bukkit.inventory.DoubleChestInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+
 import java.util.List;
 import java.util.UUID;
 

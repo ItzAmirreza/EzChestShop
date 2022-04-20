@@ -1,11 +1,11 @@
 package me.deadlight.ezchestshop.GUIs;
 
-import me.deadlight.ezchestshop.Data.Config;
-import me.deadlight.ezchestshop.EzChestShop;
-import me.deadlight.ezchestshop.Data.LanguageManager;
-import me.deadlight.ezchestshop.Utils.Utils;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
+import me.deadlight.ezchestshop.Data.Config;
+import me.deadlight.ezchestshop.Data.LanguageManager;
+import me.deadlight.ezchestshop.EzChestShop;
+import me.deadlight.ezchestshop.Utils.Utils;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.*;
 import org.bukkit.block.Block;

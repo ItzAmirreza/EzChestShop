@@ -1,20 +1,23 @@
 package me.deadlight.ezchestshop.Listeners;
+
+import me.deadlight.ezchestshop.Data.LanguageManager;
 import me.deadlight.ezchestshop.Data.ShopContainer;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.GUIs.SettingsGUI;
-import me.deadlight.ezchestshop.Data.LanguageManager;
 import me.deadlight.ezchestshop.Utils.Objects.ChatWaitObject;
 import me.deadlight.ezchestshop.Utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.block.*;
+import org.bukkit.block.Block;
+import org.bukkit.block.TileState;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;

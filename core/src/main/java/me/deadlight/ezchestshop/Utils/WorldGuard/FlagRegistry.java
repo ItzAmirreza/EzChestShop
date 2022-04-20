@@ -2,8 +2,8 @@ package me.deadlight.ezchestshop.Utils.WorldGuard;
 
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.protection.flags.BooleanFlag;
-import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.sk89q.worldguard.protection.flags.Flag;
+import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.sk89q.worldguard.protection.flags.registry.FlagConflictException;
 
 public class FlagRegistry {

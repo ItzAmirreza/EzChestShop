@@ -1,8 +1,10 @@
 package me.deadlight.ezchestshop.Utils;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
 import java.util.logging.Level;
 
 public class FloatingItem {

@@ -1,16 +1,16 @@
 package me.deadlight.ezchestshop.GUIs;
 
+import dev.triumphteam.gui.guis.Gui;
+import dev.triumphteam.gui.guis.GuiItem;
 import me.deadlight.ezchestshop.Data.Config;
-import me.deadlight.ezchestshop.Data.ShopContainer;
-import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.Data.LanguageManager;
+import me.deadlight.ezchestshop.Data.ShopContainer;
+import me.deadlight.ezchestshop.Enums.LogType;
+import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.Listeners.ChatListener;
 import me.deadlight.ezchestshop.Listeners.PlayerCloseToChestListener;
 import me.deadlight.ezchestshop.Utils.Objects.ChatWaitObject;
-import me.deadlight.ezchestshop.Enums.LogType;
 import me.deadlight.ezchestshop.Utils.Utils;
-import dev.triumphteam.gui.guis.Gui;
-import dev.triumphteam.gui.guis.GuiItem;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;

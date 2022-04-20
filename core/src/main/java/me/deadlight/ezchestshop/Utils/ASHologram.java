@@ -1,8 +1,10 @@
 package me.deadlight.ezchestshop.Utils;
-import java.util.UUID;
+
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+
+import java.util.UUID;
 
 public class ASHologram {
 
