@@ -1,6 +1,6 @@
 package me.deadlight.ezchestshop.Utils;
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelInboundHandlerAdapter;
+import me.deadlight.ezchestshop.EzChestShop;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.chat.IChatBaseComponent;
 import net.minecraft.network.protocol.game.PacketPlayOutEntityMetadata;
@@ -10,6 +10,7 @@ import net.minecraft.server.network.PlayerConnection;
 import net.minecraft.world.entity.decoration.EntityArmorStand;
 import net.minecraft.world.entity.item.EntityItem;
 import net.minecraft.world.level.World;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_18_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_18_R1.entity.CraftPlayer;
@@ -17,7 +18,12 @@ import org.bukkit.craftbukkit.v1_18_R1.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class v1_18_R1 extends VersionUtils {
+
+    private static final Map<SignMenuFactory, UpdateSignListener> listeners = new HashMap<>();
 
     /**
      * Convert a Item to a Text Compount. Used in Text Component Builders to show
@@ -103,19 +109,66 @@ public class v1_18_R1 extends VersionUtils {
 
     @Override
     void signFactoryListen(SignMenuFactory signMenuFactory) {
+        listeners.put(signMenuFactory, new UpdateSignListener() {
+            @Override
+            public void listen(Player player, String[] array) {
 
+                SignMenuFactory.Menu menu = signMenuFactory.getInputs().remove(player);
+                System.out.println("removed input " + player);
+
+                if (menu == null) {
+                    System.out.println("menu null " + signMenuFactory.getInputs());
+                    return;
+                }
+                setCancelled(true);
+
+                boolean success = menu.getResponse().test(player, array);
+                System.out.println("Success " + success);
+
+                if (!success && menu.isReopenIfFail() && !menu.isForceClose()) {
+                    Bukkit.getScheduler().runTaskLater(EzChestShop.getPlugin(), () -> menu.open(player), 2L);
+                }
+
+                if (success) {
+                    removeSignMenuFactoryListen(signMenuFactory);
+                    System.out.println("removed listener");
+                }
+
+                Bukkit.getScheduler().runTaskLater(EzChestShop.getPlugin(), () -> {
+                    if (player.isOnline()) {
+                        Location location = menu.getLocation();
+                        player.sendBlockChange(location, location.getBlock().getBlockData());
+                    }
+                }, 2L);
+
+
+            }
+        });
+    }
+
+    @Override
+    void removeSignMenuFactoryListen(SignMenuFactory signMenuFactory) {
+        listeners.remove(signMenuFactory);
+    }
+
+    @Override
+    void openMenu(SignMenuFactory.Menu menu, Player player) {
+        MenuOpener.openMenu(menu, player);
     }
 
     @Override
     public void injectConnection(Player player) {
-        ((CraftPlayer) player).getHandle().b.a.k.pipeline().addBefore("packet_handler", "EzChestShop Listener", new ChannelHandler(player));
+        ((CraftPlayer) player).getHandle().b.a.k.pipeline().addBefore("packet_handler", "ecs_listener", new ChannelHandler(player));
     }
 
     @Override
     public void ejectConnection(Player player) {
         Channel channel = ((CraftPlayer) player).getHandle().b.a.k;
-        channel.eventLoop().submit(() -> channel.pipeline().remove("EzChestShop Listener"));
+        channel.eventLoop().submit(() -> channel.pipeline().remove("esc_listener"));
     }
 
 
+    public static Map<SignMenuFactory, UpdateSignListener> getListeners() {
+        return listeners;
+    }
 }

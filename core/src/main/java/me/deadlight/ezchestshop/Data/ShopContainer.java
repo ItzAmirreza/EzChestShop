@@ -1,4 +1,5 @@
 package me.deadlight.ezchestshop.Data;
+
 import me.deadlight.ezchestshop.Data.SQLite.Database;
 import me.deadlight.ezchestshop.Enums.Changes;
 import me.deadlight.ezchestshop.Events.PlayerTransactEvent;
@@ -17,7 +18,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * ShopContainer - a tool to retrieve and store data regarding shops,

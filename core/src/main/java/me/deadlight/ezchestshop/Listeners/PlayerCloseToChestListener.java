@@ -10,7 +10,10 @@ import me.deadlight.ezchestshop.Utils.Pair;
 import me.deadlight.ezchestshop.Utils.Utils;
 import me.mrCookieSlime.Slimefun.api.BlockStorage;
 import org.bukkit.*;
-import org.bukkit.block.*;
+import org.bukkit.block.Block;
+import org.bukkit.block.Chest;
+import org.bukkit.block.DoubleChest;
+import org.bukkit.block.TileState;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -327,7 +330,6 @@ public class PlayerCloseToChestListener implements Listener {
                     continue;
                 if (!line.equals("<empty>")) {
                     ASHologram hologram = new ASHologram(player, line, EntityType.ARMOR_STAND, lineLocation, false);
-                    hologram.spawn();
                     Utils.onlinePackets.add(hologram);
                     holoTextList.add(Pair.of(shopLocation, hologram));
                 }

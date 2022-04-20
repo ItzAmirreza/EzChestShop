@@ -1,8 +1,8 @@
 package me.deadlight.ezchestshop.Utils;
 
-import me.deadlight.ezchestshop.EzChestShop;
 import net.minecraft.server.v1_16_R2.NBTTagCompound;
 import net.minecraft.server.v1_16_R2.PacketPlayOutEntityDestroy;
+import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_16_R2.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_16_R2.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
@@ -43,6 +43,40 @@ public class v1_16_R2 extends VersionUtils {
         ((CraftPlayer) player).getHandle().playerConnection.sendPacket(new PacketPlayOutEntityDestroy(entityID));
     }
 
+    @Override
+    void spawnHologram(Player player, Location location, String line, int ID) {
+
+    }
+
+    @Override
+    void spawnFloatingItem(Player player, Location location, ItemStack itemStack, int ID) {
+
+    }
+
+    @Override
+    void signFactoryListen(SignMenuFactory signMenuFactory) {
+
+    }
+
+    @Override
+    void removeSignMenuFactoryListen(SignMenuFactory signMenuFactory) {
+
+    }
+
+    @Override
+    void openMenu(SignMenuFactory.Menu menu, Player player) {
+
+    }
+
+    @Override
+    public void injectConnection(Player player) {
+
+    }
+
+    @Override
+    public void ejectConnection(Player player) {
+
+    }
 
 
 }

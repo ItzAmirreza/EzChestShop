@@ -1,6 +1,5 @@
 package me.deadlight.ezchestshop;
-import com.bgsoftware.wildchests.api.WildChestsAPI;
-import com.bgsoftware.wildchests.api.handlers.ChestsManager;
+
 import me.deadlight.ezchestshop.Commands.CommandCheckProfits;
 import me.deadlight.ezchestshop.Commands.EcsAdmin;
 import me.deadlight.ezchestshop.Commands.MainCommands;
@@ -11,12 +10,8 @@ import me.deadlight.ezchestshop.Data.SQLite.SQLite;
 import me.deadlight.ezchestshop.Data.ShopContainer;
 import me.deadlight.ezchestshop.Listeners.*;
 import me.deadlight.ezchestshop.Tasks.LoadedChunksTask;
-import me.deadlight.ezchestshop.Utils.ASHologram;
-import me.deadlight.ezchestshop.Utils.CommandRegister;
-import me.deadlight.ezchestshop.Utils.FloatingItem;
+import me.deadlight.ezchestshop.Utils.*;
 import me.deadlight.ezchestshop.Utils.Exceptions.CommandFetchException;
-import me.deadlight.ezchestshop.Utils.UpdateChecker;
-import me.deadlight.ezchestshop.Utils.Utils;
 import me.deadlight.ezchestshop.Utils.WorldGuard.FlagRegistry;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
@@ -35,9 +30,6 @@ public final class EzChestShop extends JavaPlugin {
     private static Economy econ = null;
 
     private Database db;
-
-    public boolean integrationWildChests = false;
-    public ChestsManager wchests = null;
 
     public static boolean protocollib = false;
     public static boolean slimefun = false;
@@ -97,12 +89,6 @@ public final class EzChestShop extends JavaPlugin {
         registerTabCompleters();
         //metrics
         Metrics metrics = new Metrics(this, 10756);
-
-        //integration boolean changer
-        if (getServer().getPluginManager().getPlugin("WildChests") != null) {
-            integrationWildChests = true;
-            wchests = WildChestsAPI.getInstance().getChestsManager();
-        }
 
         if (getServer().getPluginManager().getPlugin("Slimefun") != null) {
             slimefun = true;
@@ -192,7 +178,7 @@ public final class EzChestShop extends JavaPlugin {
                 }
 
             }
-        } catch (Exception e) {
+        } catch (Exception ignored) {
 
         }
 

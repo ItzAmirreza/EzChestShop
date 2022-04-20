@@ -20,6 +20,10 @@ public abstract class VersionUtils {
 
     abstract void signFactoryListen(SignMenuFactory signMenuFactory);
 
+    abstract void removeSignMenuFactoryListen(SignMenuFactory signMenuFactory);
+
+    abstract void openMenu(SignMenuFactory.Menu menu, Player player);
+
     public abstract void injectConnection(Player player);
 
     public abstract void ejectConnection(Player player);

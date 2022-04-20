@@ -1,10 +1,10 @@
 package me.deadlight.ezchestshop.Commands;
-import com.bgsoftware.wildchests.api.handlers.ChestsManager;
+
 import me.deadlight.ezchestshop.Data.Config;
+import me.deadlight.ezchestshop.Data.LanguageManager;
 import me.deadlight.ezchestshop.Data.SQLite.Database;
 import me.deadlight.ezchestshop.Data.ShopContainer;
 import me.deadlight.ezchestshop.EzChestShop;
-import me.deadlight.ezchestshop.Data.LanguageManager;
 import me.deadlight.ezchestshop.GUIs.SettingsGUI;
 import me.deadlight.ezchestshop.Listeners.PlayerCloseToChestListener;
 import me.deadlight.ezchestshop.Utils.Objects.ShopSettings;
@@ -28,6 +28,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.StringUtil;
+
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -775,23 +776,6 @@ public class MainCommands implements CommandExecutor, TabCompleter {
 
 
     private boolean checkIfLocation(Location location, Player player) {
-
-        if (plugin.integrationWildChests) { // Start of WildChests integration
-            ChestsManager cm = plugin.wchests;
-            if (cm.getChest(location) != null) {
-                player.sendMessage(Utils.colorify("&cSorry, but we don't support WildChests yet..."));
-                return false;
-//                Chest schest = cm.getChest(location);
-//                if (schest.getPlacer().equals(player.getUniqueId())) {
-//                    return true;
-//
-//                } else {
-//                    player.sendMessage(Utils.color("&cYou are not owner of this chest!"));
-//                    return false;
-//                }
-            }
-        } // End of WildChests integration (future integration)
-
         Block exactBlock = player.getTargetBlockExact(6);
         if (exactBlock == null || exactBlock.getType() == Material.AIR || !(Utils.isApplicableContainer(exactBlock))) {
             return false;
