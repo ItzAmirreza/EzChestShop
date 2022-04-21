@@ -30,7 +30,7 @@ public class ChannelHandler extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
 
         if (msg instanceof PacketPlayInUpdateSign) {
-            for (Map.Entry<SignMenuFactory, UpdateSignListener> entry : v1_18_R1.getListeners().entrySet()) {
+            for (Map.Entry<SignMenuFactory, UpdateSignListener> entry : v1_17_R1.getListeners().entrySet()) {
                 UpdateSignListener listener = entry.getValue();
 
                 try {

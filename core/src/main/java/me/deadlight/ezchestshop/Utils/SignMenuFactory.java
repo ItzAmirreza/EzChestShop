@@ -35,31 +35,6 @@ public final class SignMenuFactory {
 
     private void listen() {
         Utils.versionUtils.signFactoryListen(this);
-//        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(this.plugin, PacketType.Play.Client.UPDATE_SIGN) {
-//            @Override
-//            public void onPacketReceiving(PacketEvent event) {
-//                Player player = event.getPlayer();
-//
-//                Menu menu = inputs.remove(player);
-//
-//                if (menu == null) {
-//                    return;
-//                }
-//                event.setCancelled(true);
-//
-//                boolean success = menu.response.test(player, event.getPacket().getStringArrays().read(0));
-//
-//                if (!success && menu.reopenIfFail && !menu.forceClose) {
-//                    Bukkit.getScheduler().runTaskLater(plugin, () -> menu.open(player), 2L);
-//                }
-//                Bukkit.getScheduler().runTaskLater(plugin, () -> {
-//                    if (player.isOnline()) {
-//                        Location location = menu.position.toLocation(player.getWorld());
-//                        player.sendBlockChange(location, location.getBlock().getBlockData());
-//                    }
-//                }, 2L);
-//            }
-//        });
     }
 
     public final class Menu {

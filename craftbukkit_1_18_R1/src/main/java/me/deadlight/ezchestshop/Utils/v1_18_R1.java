@@ -114,16 +114,13 @@ public class v1_18_R1 extends VersionUtils {
             public void listen(Player player, String[] array) {
 
                 SignMenuFactory.Menu menu = signMenuFactory.getInputs().remove(player);
-                System.out.println("removed input " + player);
 
                 if (menu == null) {
-                    System.out.println("menu null " + signMenuFactory.getInputs());
                     return;
                 }
                 setCancelled(true);
 
                 boolean success = menu.getResponse().test(player, array);
-                System.out.println("Success " + success);
 
                 if (!success && menu.isReopenIfFail() && !menu.isForceClose()) {
                     Bukkit.getScheduler().runTaskLater(EzChestShop.getPlugin(), () -> menu.open(player), 2L);
@@ -131,7 +128,6 @@ public class v1_18_R1 extends VersionUtils {
 
                 if (success) {
                     removeSignMenuFactoryListen(signMenuFactory);
-                    System.out.println("removed listener");
                 }
 
                 Bukkit.getScheduler().runTaskLater(EzChestShop.getPlugin(), () -> {
