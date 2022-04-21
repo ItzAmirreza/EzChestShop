@@ -164,7 +164,7 @@ public class v1_17_R1 extends VersionUtils {
     @Override
     public void ejectConnection(Player player) {
         Channel channel = ((CraftPlayer) player).getHandle().b.a.k;
-        channel.eventLoop().submit(() -> channel.pipeline().remove("esc_listener"));
+        channel.eventLoop().submit(() -> channel.pipeline().remove("ecs_listener"));
     }
 
     public static Map<SignMenuFactory, UpdateSignListener> getListeners() {

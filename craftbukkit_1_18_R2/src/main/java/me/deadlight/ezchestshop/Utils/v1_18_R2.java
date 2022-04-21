@@ -169,7 +169,7 @@ public class v1_18_R2 extends VersionUtils {
     public void ejectConnection(Player player) {
 
         Channel channel = ((CraftPlayer) player).getHandle().b.a.m;
-        channel.eventLoop().submit(() -> channel.pipeline().remove("esc_listener"));
+        channel.eventLoop().submit(() -> channel.pipeline().remove("ecs_listener"));
     }
 
     public static Map<SignMenuFactory, UpdateSignListener> getListeners() {
