@@ -18,6 +18,7 @@ import org.bukkit.block.DoubleChest;
 import org.bukkit.block.TileState;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -35,7 +36,7 @@ public class ChestOpeningListener implements Listener {
     private OwnerShopGUI ownerShopGUI = new OwnerShopGUI();
     private AdminShopGUI adminShopGUI = new AdminShopGUI();
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onChestOpening(PlayerInteractEvent event) {
         if (event.getClickedBlock() == null) return;
         if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
