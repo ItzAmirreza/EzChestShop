@@ -1,5 +1,4 @@
 package me.deadlight.ezchestshop.Utils;
-
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import net.minecraft.server.v1_16_R3.PacketPlayInUpdateSign;

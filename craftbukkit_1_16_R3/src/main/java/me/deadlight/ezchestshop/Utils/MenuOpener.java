@@ -1,12 +1,12 @@
 package me.deadlight.ezchestshop.Utils;
 import net.minecraft.server.v1_16_R3.*;
+import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Objects;
-import java.lang.reflect.Constructor;
 public class MenuOpener {
 
     private static Constructor<PacketPlayOutTileEntityData> constructor;

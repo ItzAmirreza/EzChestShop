@@ -1,5 +1,4 @@
 package me.deadlight.ezchestshop.Utils;
-
 import io.netty.channel.Channel;
 import me.deadlight.ezchestshop.EzChestShop;
 import net.minecraft.server.v1_16_R3.*;
@@ -64,7 +63,7 @@ public class v1_16_R3 extends VersionUtils {
         EntityArmorStand armorstand = new EntityArmorStand(world, location.getX(), location.getY(), location.getZ());
         armorstand.setInvisible(true); //invisible
         armorstand.setMarker(true); //Marker
-        armorstand.setCustomName(IChatBaseComponent.ChatSerializer.a(line)); //set custom name
+        armorstand.setCustomName(IChatBaseComponent.ChatSerializer.a("{\"text\": \"" + line + "\"}")); //set custom name
         armorstand.setCustomNameVisible(true); //make custom name visible
         armorstand.setNoGravity(true); //no gravity
         armorstand.e(ID); //set entity id

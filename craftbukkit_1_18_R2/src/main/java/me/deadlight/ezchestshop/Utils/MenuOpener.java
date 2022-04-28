@@ -1,5 +1,4 @@
 package me.deadlight.ezchestshop.Utils;
-
 import net.minecraft.core.BlockPosition;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.protocol.game.PacketPlayOutOpenSignEditor;
