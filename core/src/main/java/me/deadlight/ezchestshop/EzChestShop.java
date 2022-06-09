@@ -57,8 +57,8 @@ public final class EzChestShop extends JavaPlugin {
 
         Config.loadConfig();
         // Plugin startup logic
-        if (!(getServer().getVersion().contains("1.18") || getServer().getVersion().contains("1.17") || getServer().getVersion().contains("1.16"))) {
-            logConsole("&c[&eEzChestShop&c] &4This is an 1.18/1.17 only version, your build is outdated! Self disabling...");
+        if (!(getServer().getVersion().contains("1.19") || getServer().getVersion().contains("1.18") || getServer().getVersion().contains("1.17") || getServer().getVersion().contains("1.16"))) {
+            logConsole("&c[&eEzChestShop&c] &4This is an 1.19/1.18/1.17 only version, your build is outdated! Self disabling...");
             Bukkit.getPluginManager().disablePlugin(this);
             return;
         } else {
