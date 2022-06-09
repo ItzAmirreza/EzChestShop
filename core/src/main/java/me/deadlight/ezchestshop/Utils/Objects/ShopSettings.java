@@ -144,6 +144,6 @@ public class ShopSettings {
     }
 
     public void createSqlQueue() {
-        this.sqlQueue = new SqlQueue(assignedShop.getLocation(), this);
+        this.sqlQueue = new SqlQueue(assignedShop.getLocation(), this, getAssignedShop());
     }
 }

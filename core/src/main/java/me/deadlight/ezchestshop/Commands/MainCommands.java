@@ -104,9 +104,9 @@ public class MainCommands implements CommandExecutor, TabCompleter {
 
                 } else if (mainarg.equalsIgnoreCase("version")) {
 
-                Utils.sendVersionMessage(player);
+                    Utils.sendVersionMessage(player);
 
-                } else {
+                }  else {
                     sendHelp(player);
                 }
 
@@ -129,7 +129,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
         List<String> list_mainarg = Arrays.asList("create", "remove", "settings", "version");
         List<String> list_create_1 = Arrays.asList("[BuyPrice]");
         List<String> list_create_2 = Arrays.asList("[SellPrice]");
-        List<String> list_settings_1 = Arrays.asList("copy", "paste", "toggle-message", "toggle-buying", "toggle-selling", "admins", "toggle-shared-income", "change-rotation");
+        List<String> list_settings_1 = Arrays.asList("copy", "paste", "toggle-message", "toggle-buying", "toggle-selling", "admins", "toggle-shared-income", "change-rotation", "transfer-owner");
         List<String> list_settings_admins_2 = Arrays.asList("add", "remove", "list", "clear");
         List<String> list_settings_paste_2 = Arrays.asList("toggle-message", "toggle-buying", "toggle-selling", "admins", "toggle-shared-income", "change-rotation");
         List<String> list_settings_change_rotation_2 = new ArrayList<>(Utils.rotations);
@@ -239,6 +239,9 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                             }
                         }
                     }
+                } else if (args[0].equalsIgnoreCase("transfer")) {
+                    // If null is returned a list of online players will be suggested
+                    return null;
                 }
             }
         }
@@ -464,9 +467,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                 } else {
                     modifyShopSettings(player, SettingType.ROTATION, "", target);
                 }
-            }
-
-            if (settingarg.equalsIgnoreCase("admins")) {
+            } else if (settingarg.equalsIgnoreCase("admins")) {
                 if (args.length == 3) {
                     if (args[2].equalsIgnoreCase("clear")) {
                         modifyShopSettings(player, SettingType.ADMINS, "clear", target);
@@ -495,6 +496,29 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                     } else if (args[2].equalsIgnoreCase("remove")) {
                         modifyShopSettings(player, SettingType.ADMINS, "-" + args[3], target);
                     }
+                }
+            } else if (settingarg.equalsIgnoreCase("transfer-owner")) {
+                if (args.length == 3) {
+
+                    OfflinePlayer op = Bukkit.getOfflinePlayer(args[2]);
+
+                    if (op != null && op.hasPlayedBefore()) {
+
+                        BlockState blockState = getLookedAtBlockStateIfOwner(player, true, false, target);
+                        if (blockState != null) {
+                            ShopContainer.transferOwner(blockState, op);
+                            EzChestShop.logDebug("ID: " + op.getUniqueId() + ", " + Utils.LocationtoString(blockState.getLocation()));
+                            // TODO send a confirmation message
+                            player.sendMessage(ChatColor.GREEN + "Transferred Shop to new Owner, " + args[2] + "!");
+                            blockState.update();
+                        }
+
+                    } else {
+                        player.sendMessage(lm.noPlayer());
+                    }
+
+                } else {
+                    sendHelp(player);
                 }
             }
         }

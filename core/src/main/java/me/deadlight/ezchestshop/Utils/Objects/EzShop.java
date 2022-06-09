@@ -17,6 +17,7 @@ public class EzShop {
     private ItemStack shopItem;
     private double buyPrice;
     private double sellPrice;
+    private SqlQueue sqlQueue;
 
     private List<String> shopViewers = new ArrayList<>();
     private List<String> shopLoaders = new ArrayList<>();
@@ -32,6 +33,7 @@ public class EzShop {
         this.settings = settings;
         this.settings.assignShop(this);
         this.settings.createSqlQueue();
+        this.createSqlQueue();
     }
 
     public EzShop(Location location, String ownerID, ItemStack shopItem, double buyPrice, double sellPrice, ShopSettings settings) {
@@ -43,6 +45,7 @@ public class EzShop {
         this.settings = settings;
         this.settings.assignShop(this);
         this.settings.createSqlQueue();
+        this.createSqlQueue();
     }
 
     public Location getLocation() {
@@ -83,7 +86,15 @@ public class EzShop {
     public void removeShopLoader(String str) {
         this.shopLoaders.remove(str);
     }
+    public UUID getOwnerID() {
+        return owner.getUniqueId();
+    }
 
-
-
+    public SqlQueue getSqlQueue() {
+        return sqlQueue;
+    }
+    public void createSqlQueue() {
+        this.sqlQueue = new SqlQueue(this.getLocation(), getSettings(), this);
+    }
+    public void setOwner(OfflinePlayer owner) {this.owner = owner;};
 }
