@@ -99,6 +99,11 @@ public class v1_16_R3 extends VersionUtils {
         PacketPlayOutEntityMetadata metaPacket = new PacketPlayOutEntityMetadata(ID, floatingItem.getDataWatcher(), true);
         playerConnection.sendPacket(metaPacket);
 
+        //Eventually we need a velocity packet in order to make the item stand
+        Vec3D vel = new Vec3D(0, 0, 0);
+        PacketPlayOutEntityVelocity velocityPacket = new PacketPlayOutEntityVelocity(floatingItem.getId(), vel);
+        playerConnection.sendPacket(velocityPacket);
+
     }
 
     @Override
