@@ -73,7 +73,7 @@ public class v1_19_R1 extends VersionUtils {
         EntityArmorStand armorstand = new EntityArmorStand(world, location.getX(), location.getY(), location.getZ());
         armorstand.j(true); //invisible
         armorstand.t(true); //Marker
-        armorstand.a(IChatBaseComponent.a(line)); //set custom name
+        armorstand.b(IChatBaseComponent.a(line)); //set custom name
         armorstand.n(true); //make custom name visible
         armorstand.e(true); //no gravity
         armorstand.e(ID); //set entity id
