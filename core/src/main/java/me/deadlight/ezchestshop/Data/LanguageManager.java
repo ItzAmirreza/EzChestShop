@@ -628,6 +628,9 @@ public class LanguageManager {
     public String buyGreaterThanSellRequired() {
         return Utils.colorify(getString("command-messages.buypriceGreaterThanSellRequired"));
     }
+    public String invalidShopItem() {
+        return Utils.colorify(getString("command-messages.invalidShopItem"));
+    }
 
 
     //checkprofits.

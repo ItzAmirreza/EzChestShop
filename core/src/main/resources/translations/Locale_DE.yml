@@ -217,6 +217,7 @@ command-messages:
   maxShopLimitReached: "&cMaximale Shop Anzahl erreicht: %shoplimit%!"
   slimeFunBlockNotSupported: "&cLeider sind slimefun kisten nicht unterstützt! Bitte verwende einen anderen Container!"
   buypriceGreaterThanSellRequired: "&cDer Kaufpreis muss größer als der Verkaufspreis sein!"
+  invalidShopItem: "&cMit diesem Item kann hier kein Shop erzeugt werden."
 checkprofits:
   landing-menu:
     - '&e========================================'

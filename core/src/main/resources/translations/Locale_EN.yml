@@ -212,6 +212,7 @@ command-messages:
   maxShopLimitReached: "&cMaximum shop limit reached: %shoplimit%!"
   slimeFunBlockNotSupported: "&cSorry :(, but you can't execute this command with a slimefun block / please use a normal block as a container"
   buypriceGreaterThanSellRequired: "&cBuyPrice has to be greater than the SellPrice!"
+  invalidShopItem: "&cThe item you are trying to create a shop with is invalid here."
 checkprofits:
   landing-menu:
     - '&e========================================'

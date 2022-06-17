@@ -214,6 +214,7 @@ command-messages:
   maxShopLimitReached: "&cShoma az in bishtar nemitavanid shop besazid. Hade aksar: %shoplimit% shop!"
   slimeFunBlockNotSupported: "&cBebakhshid :(, Shoma ghader be estefade az block haye slimefun baraye chest shop nistid, az yek block mamoli estefade konid."
   buypriceGreaterThanSellRequired: "&cGheymate kharid az shoma bayad bozorg tar az gheymate forosh be shoma bashad."
+  invalidShopItem: "&cThe item you are trying to create a shop with is invalid here."
 checkprofits:
   landing-menu:
     - '&e========================================'

@@ -294,6 +294,10 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
                                 ItemStack thatIteminplayer = player.getInventory().getItemInMainHand();
                                 ItemStack thatItem = thatIteminplayer.clone();
                                 thatItem.setAmount(1);
+                                if (Utils.isShulkerBox(thatItem.getType()) && Utils.isShulkerBox(target)) {
+                                    player.sendMessage(lm.invalidShopItem());
+                                    return;
+                                }
 
                                 double buyprice = Double.parseDouble(args[1]);
                                 double sellprice = Double.parseDouble(args[2]);
