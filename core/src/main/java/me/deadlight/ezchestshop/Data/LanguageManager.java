@@ -399,7 +399,7 @@ public class LanguageManager {
         return Utils.colorify(getString("settings.chat.toggleTransactions.MessageOn"));
     }
     public String toggleTransactionMessageOffInChat() {
-        return Utils.colorify(getString("settings.chat.toggleTransactions.MessageOn"));
+        return Utils.colorify(getString("settings.chat.toggleTransactions.MessageOff"));
     }
     //settings.chat.disableBuying.
     public String disableBuyingOnInChat() {
