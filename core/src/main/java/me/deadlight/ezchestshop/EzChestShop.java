@@ -128,27 +128,27 @@ public final class EzChestShop extends JavaPlugin {
 
     }
     private void registerCommands() {
-        PluginCommand ecs = getCommand("ecs");
-        PluginCommand ecsadmin = getCommand("ecsadmin");
+        PluginCommand cs = getCommand("chestshop");
+        PluginCommand csadmin = getCommand("csadmin");
         CommandRegister register = new CommandRegister();
         try {
             if (Config.command_shop_alias) {
-                register.registerCommandAlias(ecs, "shop");
+                register.registerCommandAlias(cs, "shop");
             }
             if (Config.command_adminshop_alias) {
-                register.registerCommandAlias(ecsadmin, "adminshop");
+                register.registerCommandAlias(csadmin, "adminshop");
             }
         } catch (CommandFetchException e) {
             e.printStackTrace();
         }
-        ecs.setExecutor(new MainCommands());
-        ecsadmin.setExecutor(new EcsAdmin());
+        cs.setExecutor(new MainCommands());
+        csadmin.setExecutor(new EcsAdmin());
         getCommand("checkprofits").setExecutor(new CommandCheckProfits());
     }
 
     private void registerTabCompleters() {
-        getCommand("ecs").setTabCompleter(new MainCommands());
-        getCommand("ecsadmin").setTabCompleter(new EcsAdmin());
+        getCommand("chestshop").setTabCompleter(new MainCommands());
+        getCommand("csadmin").setTabCompleter(new EcsAdmin());
         getCommand("checkprofits").setTabCompleter(new CommandCheckProfits());
     }
 

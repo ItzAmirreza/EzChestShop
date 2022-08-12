@@ -11,15 +11,8 @@ softdepend:
 authors: [Dead_Light, ElitoGame]
 description: ${project.description}
 commands:
-  ecs:
-    description: create or delete a shop
-    aliases:
-      - cs
-      - cshop
-      - chestshop
-      - ezchestshop
-  ecsadmin:
-    description: commands designed for admins to moderate
+  chestshop:
+  csadmin:
   checkprofits:
     description: Check all your shop profits that you made offline!
     aliases:
