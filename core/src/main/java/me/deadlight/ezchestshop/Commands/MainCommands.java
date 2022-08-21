@@ -129,7 +129,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
         List<String> list_mainarg = Arrays.asList("create", "remove", "settings", "version");
         List<String> list_create_1 = Arrays.asList("[BuyPrice]");
         List<String> list_create_2 = Arrays.asList("[SellPrice]");
-        List<String> list_settings_1 = Arrays.asList("copy", "paste", "toggle-message", "toggle-buying", "toggle-selling", "admins", "toggle-shared-income", "change-rotation");
+        List<String> list_settings_1 = Arrays.asList("copy", "paste", "toggle-message", "toggle-buying", "toggle-selling", "admins", "toggle-shared-income", "change-rotation"); //, "transfer-ownership"
         List<String> list_settings_admins_2 = Arrays.asList("add", "remove", "list", "clear");
         List<String> list_settings_paste_2 = Arrays.asList("toggle-message", "toggle-buying", "toggle-selling", "admins", "toggle-shared-income", "change-rotation");
         List<String> list_settings_change_rotation_2 = new ArrayList<>(Utils.rotations);
@@ -239,6 +239,10 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                             }
                         }
                     }
+//                    else if (args[1].equalsIgnoreCase("transfer-ownership")) {
+//                        // If null is returned a list of online players will be suggested
+//                        return null;
+//                    }
                 }
             }
         }
@@ -468,9 +472,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                 } else {
                     modifyShopSettings(player, SettingType.ROTATION, "", target);
                 }
-            }
-
-            if (settingarg.equalsIgnoreCase("admins")) {
+            } else if (settingarg.equalsIgnoreCase("admins")) {
                 if (args.length == 3) {
                     if (args[2].equalsIgnoreCase("clear")) {
                         modifyShopSettings(player, SettingType.ADMINS, "clear", target);
@@ -501,6 +503,46 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                     }
                 }
             }
+            // TODO This setting is kinda broken rn:
+            // Imagine a player creating a shop buying dirt for 9999 cash.
+            // Then he transfers this shop to the richest player on the server and sells all of his dirt for 9999 cash a piece.
+            // He's just stolen all of this players cash.
+            //
+            // If we implement such a system we need a way for players to accept the shop and review if they actually want this shop.
+            // Until then this feature is only available as a admin command.
+
+//            else if (settingarg.equalsIgnoreCase("transfer-ownership")) {
+//                if (args.length == 3) {
+//
+//                    OfflinePlayer op = Bukkit.getOfflinePlayer(args[2]);
+//
+//                    if (op != null && op.hasPlayedBefore()) {
+//                        BlockState blockState = getLookedAtBlockStateIfOwner(player, true, false, target);
+//                        if (blockState != null) {
+//                            player.spigot().sendMessage(lm.shopTransferConfirm(args[2], false)); // Confirmation message similar to the clearprofit message.
+//                        }
+//                    } else {
+//                        player.sendMessage(lm.noPlayer());
+//                    }
+//
+//                } else if (args.length == 4 && args[3].equals("-confirm")) {
+//                    OfflinePlayer op = Bukkit.getOfflinePlayer(args[2]);
+//
+//                    if (op != null && op.hasPlayedBefore()) {
+//
+//                        BlockState blockState = getLookedAtBlockStateIfOwner(player, true, false, target);
+//                        if (blockState != null) {
+//                            ShopContainer.transferOwner(blockState, op);
+//                            player.sendMessage(lm.shopTransferred(args[2]));
+//                        }
+//
+//                    } else {
+//                        player.sendMessage(lm.noPlayer());
+//                    }
+//                } else {
+//                    sendHelp(player);
+//                }
+//            }
         }
     }
 

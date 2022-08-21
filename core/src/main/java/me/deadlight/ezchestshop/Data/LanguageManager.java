@@ -631,6 +631,14 @@ public class LanguageManager {
     public String invalidShopItem() {
         return Utils.colorify(getString("command-messages.invalidShopItem"));
     }
+    public String shopTransferred(String targetPlayer) {
+        return Utils.colorify(getString("command-messages.shopTransferred").replaceAll("%player%", targetPlayer));
+    }
+    public BaseComponent[] shopTransferConfirm(String targetPlayer, boolean isAdmin) {
+        String msg = getString("command-messages.shopTransferConfirm");
+        if (isAdmin) msg = msg.replace("/ecs settings", "/ecsadmin");
+        return MineDown.parse(Utils.colorify(msg.replace("%player%", targetPlayer)));
+    }
 
 
     //checkprofits.

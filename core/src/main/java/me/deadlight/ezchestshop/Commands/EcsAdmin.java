@@ -9,14 +9,14 @@ import me.deadlight.ezchestshop.Utils.Utils;
 import me.deadlight.ezchestshop.Utils.WorldGuard.FlagRegistry;
 import me.deadlight.ezchestshop.Utils.WorldGuard.WorldGuardUtils;
 import me.mrCookieSlime.Slimefun.api.BlockStorage;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
+import org.bukkit.*;
 import org.bukkit.block.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.DoubleChestInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -92,6 +92,38 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
                             player.sendMessage(lm.lookAtChest());
                         }
 
+                    } else if (firstarg.equalsIgnoreCase("transfer-ownership") && (player.hasPermission("ecs.admin.transfer") || player.hasPermission("ecs.admin"))) {
+                        Block target = getCorrectBlock(player.getTargetBlockExact(6));
+                        if (size == 2) {
+
+                            OfflinePlayer op = Bukkit.getOfflinePlayer(args[1]);
+
+                            if (op != null && op.hasPlayedBefore()) {
+                                BlockState blockState = getLookedAtBlockState(player, true, false, target);
+                                if (blockState != null) {
+                                    player.spigot().sendMessage(lm.shopTransferConfirm(args[1], true)); // Confirmation message similar to the clearprofit message.
+                                }
+                            } else {
+                                player.sendMessage(lm.noPlayer());
+                            }
+
+                        } else if (size == 3 && args[2].equals("-confirm")) {
+                            OfflinePlayer op = Bukkit.getOfflinePlayer(args[1]);
+
+                            if (op != null && op.hasPlayedBefore()) {
+
+                                BlockState blockState = getLookedAtBlockState(player, true, false, target);
+                                if (blockState != null) {
+                                    ShopContainer.transferOwner(blockState, op);
+                                    player.sendMessage(lm.shopTransferred(args[1]));
+                                }
+
+                            } else {
+                                player.sendMessage(lm.noPlayer());
+                            }
+                        } else {
+                            sendHelp(player);
+                        }
                     } else {
                         sendHelp(player);
                     }
@@ -116,9 +148,10 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
         List<String> fList = new ArrayList<String>();
-        List<String> list_firstarg = Arrays.asList("create", "reload", "remove", "help");
+        List<String> list_firstarg = Arrays.asList("create", "reload", "remove", "help", "transfer-ownership");
         List<String> list_create_1 = Arrays.asList("[BuyPrice]");
         List<String> list_create_2 = Arrays.asList("[SellPrice]");
+        List<String> list_transfer_2 = Arrays.asList("-confirm");
         if (sender instanceof Player) {
             Player p = (Player) sender;
             if (p.hasPermission("ecs.admin") || p.hasPermission("ecs.admin.reload") || p.hasPermission("ecs.admin.create") || p.hasPermission("ecs.admin.remove")) {
@@ -129,6 +162,13 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
                         StringUtil.copyPartialMatches(args[1], list_create_1, fList);
                     if (args.length == 3)
                         StringUtil.copyPartialMatches(args[2], list_create_2, fList);
+                } else if (args.length > 1 && args[0].equalsIgnoreCase("transfer-ownership")) {
+                    if (args.length == 3) {
+                        StringUtil.copyPartialMatches(args[2], list_transfer_2, fList);
+                    } else {
+                        // If null is returned a list of online players will be suggested
+                        return null;
+                    }
                 }
             }
         }
@@ -365,6 +405,115 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
         }
     }
 
+    private boolean checkIfLocation(Location location, Player player) {
+        Block exactBlock = player.getTargetBlockExact(6);
+        if (exactBlock == null || exactBlock.getType() == Material.AIR || !(Utils.isApplicableContainer(exactBlock))) {
+            return false;
+        }
+
+        BlockBreakEvent newevent = new BlockBreakEvent(exactBlock, player);
+        Utils.blockBreakMap.put(player.getName(), exactBlock);
+        Bukkit.getServer().getPluginManager().callEvent(newevent);
+
+        boolean result = true;
+        if (!Utils.blockBreakMap.containsKey(player.getName()) || Utils.blockBreakMap.get(player.getName()) != exactBlock) {
+            result = false;
+        }
+        if (player.hasPermission("ecs.admin")) {
+            result = true;
+        }
+        Utils.blockBreakMap.remove(player.getName());
+
+        return result;
+
+    }
+
+    private Chest ifItsADoubleChestShop(Block block) {
+        //double chest
+        if (block instanceof Chest) {
+            Chest chest = (Chest) block.getState();
+            Inventory inventory = chest.getInventory();
+            if (inventory instanceof DoubleChestInventory) {
+                DoubleChest doubleChest = (DoubleChest) chest.getInventory().getHolder();
+                Chest leftchest = (Chest) doubleChest.getLeftSide();
+                Chest rightchest = (Chest) doubleChest.getRightSide();
+
+                if (leftchest.getPersistentDataContainer().has(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING) || rightchest.getPersistentDataContainer().has(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING)) {
+
+                    Chest rightone = null;
+
+                    if (!leftchest.getPersistentDataContainer().isEmpty()) {
+                        rightone = leftchest;
+                    } else {
+                        rightone = rightchest;
+                    }
+
+                    return rightone;
+                }
+            }
+        }
+        return null;
+    }
+
+    private BlockState getLookedAtBlockState(Player player, boolean sendErrors, boolean isCreateOrRemove, Block target) {
+        if (target != null && target.getType() != Material.AIR) {
+            BlockState blockState = target.getState();
+            if (EzChestShop.slimefun) {
+                boolean sfresult = BlockStorage.hasBlockInfo(blockState.getBlock().getLocation());
+                if (sfresult) {
+                    player.sendMessage(lm.slimeFunBlockNotSupported());
+                    return null;
+                }
+            }
+            if (blockState instanceof TileState) {
+
+                if (Utils.isApplicableContainer(target)) {
+
+                    if (checkIfLocation(target.getLocation(), player)) {
+
+                        if (target.getType() == Material.CHEST || target.getType() == Material.TRAPPED_CHEST) {
+                            Inventory inventory = Utils.getBlockInventory(target);
+                            if (Utils.getBlockInventory(target) instanceof DoubleChestInventory) {
+                                DoubleChest doubleChest = (DoubleChest) inventory.getHolder();
+                                Chest chestleft = (Chest) doubleChest.getLeftSide();
+                                Chest chestright = (Chest) doubleChest.getRightSide();
+
+                                if (!chestleft.getPersistentDataContainer().isEmpty()) {
+                                    blockState = chestleft.getBlock().getState();
+                                } else {
+                                    blockState = chestright.getBlock().getState();
+                                }
+                            }
+                        }
+
+                        PersistentDataContainer container = ((TileState) blockState).getPersistentDataContainer();
+                        Chest chkIfDCS = ifItsADoubleChestShop(target);
+
+                        if (container.has(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING) || chkIfDCS != null) {
+
+                            return blockState;
+
+                        } else if (sendErrors) {
+                            player.sendMessage(lm.notAChestOrChestShop());
+                        }
+                    } else if (sendErrors) {
+                        if (isCreateOrRemove) {
+                            player.sendMessage(lm.notAllowedToCreateOrRemove());
+                        } else {
+                            player.sendMessage(lm.notAChestOrChestShop());
+                        }
+                    }
+                } else if (sendErrors) {
+                    player.sendMessage(lm.notAChestOrChestShop());
+                }
+            } else if (sendErrors) {
+                player.sendMessage(lm.notAChestOrChestShop());
+            }
+        } else if (sendErrors) {
+            player.sendMessage(lm.notAChestOrChestShop());
+        }
+        return null;
+    }
 
     private Block getCorrectBlock(Block target) {
         if (target == null) return null;

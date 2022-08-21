@@ -199,6 +199,7 @@ command-messages:
     - "&7- &c/&eecsadmin remove &7| removes the shop that you are looking at (although u can remove it by breaking it) "
     - "&7- &c/&eecsadmin reload &7| reload the plugin configurations"
     - "&7- &c/&eecsadmin create (buy) (sell) &7| create an admin shop"
+    - "&7- &c/&eecsadmin transfer-ownership (player) &7| transfer the ownership of any shop to another player."
     - "&7 For further help, join our [&bDiscord](%discord_link% Click to join the support Discord!)&7!"
   alreadyashop: "&cEste cofre ya es una tienda!"
   shopcreated: "&aYou have successfully created a chest shop!"
@@ -213,6 +214,8 @@ command-messages:
   slimeFunBlockNotSupported: "&cSorry :(, but you can't execute this command with a slimefun block / please use a normal block as a container"
   buypriceGreaterThanSellRequired: "&cBuyPrice has to be greater then the SellPrice!"
   invalidShopItem: "&cThe item you are trying to create a shop with is invalid here."
+  shopTransferConfirm: "&eAre you sure you want to permanently transfer this shops ownership to %player%? [&2&l[✔]](Click to confirm transfer! run_command=/ecs settings transfer-ownership %player% -confirm)"
+  shopTransferred: "&aYou have successfully transferred this shop to %player%!"
 checkprofits:
   landing-menu:
     - '&e========================================'

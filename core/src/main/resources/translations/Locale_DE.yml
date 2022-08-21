@@ -204,6 +204,7 @@ command-messages:
     - "&7- &c/&eecsadmin remove &7| Entfernt den Shop auf den du schaust. (Alternativ kann der Shop auc abgebaut werden) "
     - "&7- &c/&eecsadmin reload &7| Lädt die Konfigurationen des Plugins neu"
     - "&7- &c/&eecsadmin create (buy) (sell) &7| Erstelle einen Adminshop!"
+    - "&7- &c/&eecsadmin transfer-ownership (player) &7| Ändere den Besitzer eines Shops."
     - "&7 Für weitere Hilfe, tritt unserum [&bDiscord](%discord_link% Klick um dem Unterstützungs-Discord beizutreten!)&7 Server bei!"
   alreadyashop: "&cDieser container ist bereits ein Shop!"
   shopcreated: "&aDu hast erfolgreich einen Kistenshop erstellt!"
@@ -218,6 +219,8 @@ command-messages:
   slimeFunBlockNotSupported: "&cLeider sind slimefun kisten nicht unterstützt! Bitte verwende einen anderen Container!"
   buypriceGreaterThanSellRequired: "&cDer Kaufpreis muss größer als der Verkaufspreis sein!"
   invalidShopItem: "&cMit diesem Item kann hier kein Shop erzeugt werden."
+  shopTransferConfirm: "&eBist du sicher das du die Besitzrechte permanent auf %player% überschreiben willst? [&2&l[✔]](Klick zum bestätigen der Transfers!! run_command=/ecs settings transfer-ownership %player% -confirm)"
+  shopTransferred: "&aDu hast die Besitzrechte dieses Shops erfolgreich auf %player% übertragen!"
 checkprofits:
   landing-menu:
     - '&e========================================'

@@ -9,12 +9,14 @@ public class SqlQueue {
     private HashMap<Changes, Object> changesList = new HashMap<>();
     private Location location;
     private ShopSettings settings;
+    private EzShop shop;
 
 
 
-    public SqlQueue(Location location, ShopSettings settings) {
+    public SqlQueue(Location location, ShopSettings settings, EzShop shop) {
         this.location = location;
         this.settings = settings;
+        this.shop = shop;
     }
 
     public boolean isChanged() {
@@ -36,9 +38,10 @@ public class SqlQueue {
         this.changesList.put(change, object);
     }
 
-    public void resetChangeList(ShopSettings newSettings) {
+    public void resetChangeList(ShopSettings newSettings, EzShop newShop) {
         this.changesList.clear();
         this.settings = newSettings;
+        this.shop = newShop;
     }
     public HashMap<Changes, Object> getChangesList() {
         return changesList;
@@ -54,7 +57,10 @@ public class SqlQueue {
      */
     private boolean validateChange(Changes changes, Object object) {
         //FOR THE FUTURE SETTINGS, HAVE TO ADD IT HERE
-        if (changes == Changes.ADMINS_LIST) {
+        if (changes == Changes.SHOP_OWNER) {
+            String str = (String) object;
+            return shop.getOwnerID().toString().equalsIgnoreCase(str);
+        } else if (changes == Changes.ADMINS_LIST) {
             String str = (String) object;
             return settings.getAdmins().equalsIgnoreCase(str);
         } else if (changes == Changes.MESSAGE_TOGGLE) {

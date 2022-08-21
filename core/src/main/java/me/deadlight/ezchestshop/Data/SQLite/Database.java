@@ -536,7 +536,7 @@ public abstract class Database {
      * @param expression the Expression to be queried with
      * @return a List of the resulting keys, if none the List will be empty
      */
-    public List<String> getKeysByExpresiion(String primary_key, String column, String table, String expression) {
+    public List<String> getKeysByExpresion(String primary_key, String column, String table, String expression) {
         Connection conn = null;
         PreparedStatement ps = null;
         ResultSet rs;

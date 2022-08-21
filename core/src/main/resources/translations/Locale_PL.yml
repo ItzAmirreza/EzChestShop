@@ -205,6 +205,7 @@ command-messages:
     - '&7- &c/&eecsadmin remove &7| usuwa sklep, na który patrzysz (chociaż możesz go usunąć niszcząc go) '
     - '&7- &c/&eecsadmin reload &7| przeładowuje plugin'
     - '&7- &c/&eecsadmin create (buy) (sell) &7| tworzy sklep serwerowy'
+    - "&7- &c/&eecsadmin transfer-ownership (player) &7| transfer the ownership of any shop to another player."
   alreadyashop: '&cTa skrzynka jest już sklepem!'
   shopcreated: '&aPomyslnie stworzyłeś nowy sklep!'
   holdsomething: '&cTrzymaj proszę jakiś przedmiot w głównej dłoni!'
@@ -218,6 +219,8 @@ command-messages:
   slimeFunBlockNotSupported: '&cNie możesz wykonać komendy z blokiem slimefun, użyj normalnego bloku jako pojemnika.'
   buypriceGreaterThanSellRequired: '&cCena zakupu musi być wyższa, niż cena sprzedaży!'
   invalidShopItem: "&cThe item you are trying to create a shop with is invalid here."
+  shopTransferConfirm: "&eAre you sure you want to permanently transfer this shops ownership to %player%? [&2&l[✔]](Click to confirm transfer! run_command=/ecs settings transfer-ownership %player% -confirm)"
+  shopTransferred: "&aYou have successfully transferred this shop to %player%!"
 checkprofits:
   landing-menu:
     - '&e========================================'
