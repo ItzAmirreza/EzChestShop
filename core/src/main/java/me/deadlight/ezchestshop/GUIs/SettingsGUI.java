@@ -2,6 +2,7 @@ package me.deadlight.ezchestshop.GUIs;
 
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
+import me.deadlight.ezchestshop.Commands.MainCommands;
 import me.deadlight.ezchestshop.Data.Config;
 import me.deadlight.ezchestshop.Data.LanguageManager;
 import me.deadlight.ezchestshop.Data.ShopContainer;
@@ -10,12 +11,12 @@ import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.Listeners.ChatListener;
 import me.deadlight.ezchestshop.Listeners.PlayerCloseToChestListener;
 import me.deadlight.ezchestshop.Utils.Objects.ChatWaitObject;
+import me.deadlight.ezchestshop.Utils.Objects.EzShop;
+import me.deadlight.ezchestshop.Utils.SignMenuFactory;
 import me.deadlight.ezchestshop.Utils.Utils;
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.OfflinePlayer;
+import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.TileState;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -28,6 +29,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class SettingsGUI {
+    public static LanguageManager lm = new LanguageManager();
     //msgtoggle 0/1
     //dbuy 0/1
     //dsell 0/1
@@ -38,8 +40,6 @@ public class SettingsGUI {
     //adminshop 0/1
 
     public void showGUI(Player player, Block containerBlock, boolean isAdmin) {
-
-        LanguageManager lm = new LanguageManager();
 
         PersistentDataContainer dataContainer = ((TileState)containerBlock.getState()).getPersistentDataContainer();
 
@@ -288,7 +288,89 @@ public class SettingsGUI {
                 PlayerCloseToChestListener.hideHologram(containerBlock.getLocation());
             }
         });
-        
+
+
+        ItemStack priceItemStack= new ItemStack(Material.HOPPER, 1);
+        ItemMeta priceItemMeta = priceItemStack.getItemMeta();
+        priceItemMeta.setDisplayName(lm.changePricesButtonTitle());
+        priceItemMeta.setLore(lm.changePricesButtonLore());
+        priceItemStack.setItemMeta(priceItemMeta);
+        GuiItem priceItem = new GuiItem(priceItemStack, event -> {
+            event.setCancelled(true);
+            if (event.getClick() == ClickType.LEFT) {
+                player.closeInventory();
+                player.playSound(player.getLocation(), Sound.ITEM_BOOK_PAGE_TURN, 1.0f, 1.0f);
+                SignMenuFactory signMenuFactory = new SignMenuFactory(EzChestShop.getPlugin());
+                SignMenuFactory.Menu menu = signMenuFactory.newMenu(lm.changePriceSingGUI(false))
+                        .reopenIfFail(false).response((thatplayer, strings) -> {
+                            try {
+                                if (strings[0].equalsIgnoreCase("")) {
+                                    return false;
+                                }
+                                if (Utils.isInteger(strings[0])) {
+                                    int amount = Integer.parseInt(strings[0]);
+                                    if (amount < 0) {
+                                        player.sendMessage(lm.negativePrice());
+                                        return false;
+                                    }
+                                    Bukkit.getScheduler().scheduleSyncDelayedTask(EzChestShop.getPlugin(),
+                                            () -> {
+                                                // If these checks complete successfully continue.
+                                                if (changePrice(containerBlock.getState(), false, amount, player, containerBlock)) {
+                                                    ShopContainer.changePrice(containerBlock.getState(), amount, false);
+                                                    PlayerCloseToChestListener.hideHologram(containerBlock.getState().getLocation());
+                                                    player.sendMessage(lm.shopSellPriceUpdated());
+                                                }
+                                            });
+                                } else {
+                                    thatplayer.sendMessage(lm.wrongInput());
+                                }
+
+                            } catch (Exception e) {
+                                return false;
+                            }
+                            return true;
+                        });
+                menu.open(player);
+            } else if (event.getClick() == ClickType.RIGHT) {
+                player.closeInventory();
+                player.playSound(player.getLocation(), Sound.ITEM_BOOK_PAGE_TURN, 1.0f, 1.0f);
+                SignMenuFactory signMenuFactory = new SignMenuFactory(EzChestShop.getPlugin());
+                SignMenuFactory.Menu menu = signMenuFactory.newMenu(lm.changePriceSingGUI(true))
+                        .reopenIfFail(false).response((thatplayer, strings) -> {
+                            try {
+                                if (strings[0].equalsIgnoreCase("")) {
+                                    return false;
+                                }
+                                if (Utils.isInteger(strings[0])) {
+                                    int amount = Integer.parseInt(strings[0]);
+                                    if (amount < 0) {
+                                        player.sendMessage(lm.negativePrice());
+                                        return false;
+                                    }
+                                    Bukkit.getScheduler().scheduleSyncDelayedTask(EzChestShop.getPlugin(),
+                                            () -> {
+                                                // If these checks complete successfully continue.
+                                                if (changePrice(containerBlock.getState(), true, amount, player, containerBlock)) {
+                                                    ShopContainer.changePrice(containerBlock.getState(), amount, true);
+                                                    PlayerCloseToChestListener.hideHologram(containerBlock.getState().getLocation());
+                                                    player.sendMessage(lm.shopBuyPriceUpdated());
+                                                }
+                                            });
+                                } else {
+                                    thatplayer.sendMessage(lm.wrongInput());
+                                }
+
+                            } catch (Exception e) {
+                                return false;
+                            }
+                            return true;
+                        });
+                menu.open(player);
+            } else {
+                return;
+            }
+        });
 
 
 
@@ -339,7 +421,7 @@ public class SettingsGUI {
         } else {
             gui.setItem(14, glasses);
         }
-        gui.setItem(15, glasses);
+        gui.setItem(15, priceItem);
         gui.setItem(16, glasses);
         //17-26
         gui.setItem(26, lastTrans);
@@ -454,6 +536,53 @@ public class SettingsGUI {
             return false;
         }
 
+     }
+
+     private boolean changePrice(BlockState blockState, boolean isBuy, double price, Player player, Block containerBlock) {
+         EzShop shop = ShopContainer.getShop(blockState.getLocation());
+         // Enforce buy > sell.
+         if (Config.settings_buy_greater_than_sell) {
+             if (
+                     (isBuy && shop.getSellPrice() > price && price != 0) ||
+                             (!isBuy && price > shop.getBuyPrice() && shop.getBuyPrice() != 0)
+             ) {
+                 player.sendMessage(lm.buyGreaterThanSellRequired());
+                 return false;
+             }
+         }
+         // Revert from disabling buy sell.
+         if (Config.settings_zero_equals_disabled && isBuy && shop.getBuyPrice() == 0 && price != 0) {
+             TileState state = ((TileState)containerBlock.getState());
+             state.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "dbuy"), PersistentDataType.INTEGER, 0);
+             state.update();
+             player.sendMessage(lm.disableBuyingOffInChat());
+             ShopContainer.getShopSettings(containerBlock.getLocation()).setDbuy(false);
+         }
+         if (Config.settings_zero_equals_disabled && !isBuy && shop.getSellPrice() == 0 && price != 0) {
+             TileState state = ((TileState)containerBlock.getState());
+             state.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "dsell"), PersistentDataType.INTEGER, 0);
+             state.update();
+             player.sendMessage(lm.disableSellingOffInChat());
+             ShopContainer.getShopSettings(containerBlock.getLocation()).setDsell(false);
+         }
+         // Disable buy/sell
+         if (price == 0 && Config.settings_zero_equals_disabled) {
+             if (isBuy && shop.getBuyPrice() != 0) {
+                 TileState state = ((TileState)containerBlock.getState());
+                 state.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "dbuy"), PersistentDataType.INTEGER, 1);
+                 state.update();
+                 player.sendMessage(lm.disableBuyingOffInChat());
+                 ShopContainer.getShopSettings(containerBlock.getLocation()).setDbuy(true);
+             }
+             if (!isBuy && shop.getSellPrice() != 0) {
+                 TileState state = ((TileState)containerBlock.getState());
+                 state.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "dsell"), PersistentDataType.INTEGER, 1);
+                 state.update();
+                 player.sendMessage(lm.disableSellingOffInChat());
+                 ShopContainer.getShopSettings(containerBlock.getLocation()).setDsell(true);
+             }
+         }
+         return true;
      }
 
 

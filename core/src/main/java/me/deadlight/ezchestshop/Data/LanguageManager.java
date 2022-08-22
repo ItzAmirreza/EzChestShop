@@ -384,6 +384,18 @@ public class LanguageManager {
                 .map(s -> Utils.colorify(s.replace("%rotations%", formatRotations(rotation))
                         .replace("%rotation%", rotationFromData(rotation)))).collect(Collectors.toList());
     }
+    //settings.buttons.changePrices
+    public String changePricesButtonTitle() {
+        return Utils.colorify(getString("settings.buttons.changePrices.Title"));
+    }
+    public List<String> changePricesButtonLore() {
+        return getList("settings.buttons.changePrices.Lore").stream()
+                .map(s -> Utils.colorify(s)).collect(Collectors.toList());
+    }
+    public List<String> changePriceSingGUI(boolean isBuy) {
+        return getList("settings.buttons.changePrices." + (isBuy ? "SignPlaceholderBuy" : "SignPlaceholderSell")).stream()
+                .map(s -> Utils.colorify(s)).collect(Collectors.toList());
+    }
     //settings.buttons.other.
     public String backToShopGuiButton() {
         return Utils.colorify(getString("settings.buttons.other.backToShopGuiButton"));

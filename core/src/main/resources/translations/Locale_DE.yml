@@ -108,6 +108,24 @@ settings:
         - "%rotations%"
         - " &aLinks&7/&cRechts&7-click um zwischen"
         - " &7den Rotationen zu wechseln!"
+    changePrices:
+      Title: "&eShop Kauf-/Verkaufspreis"
+      Lore:
+        - "&7Bearbeite den Kauf- oder Verkaufspreis "
+        - " &d "
+        - ' &cLinks klicken zum   &aRechts klicken zum  '
+        - ' &l &r&cVerkaufspreis       &l &r &aKaufspreis'
+        - ' &l   &r&cbearbeiten.      &l   &r &abearbeiten.'
+      SignPlaceholderBuy:
+        - ""
+        - "&a^^ &7Gib deinen &a^^ "
+        - " &7neuen &aKauf- "
+        - " &apreis &7ein!"
+      SignPlaceholderSell:
+        - ""
+        - "&c^^ &7Gib deinen &c^^ "
+        - " &7neuen Verkauf- "
+        - " &cpreis &7ein!"
     other:
       backToShopGuiButton: "&eZurück zum Shop"
       latestTransactionsTitle: "&aLetzte Transaktionen"

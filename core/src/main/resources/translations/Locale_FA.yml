@@ -105,6 +105,23 @@ settings:
         - "%rotations%"
         - " &aChap&7/&cRast&7-click baraye taghir"
         - " &7beyne charkhesh ha"
+    changePrices:
+      Title: "&eShop buy/sell price"
+      Lore:
+        - "&7Edit the Buy or Sell price "
+        - " &d "
+        - " &cLeft click to   &aRight click to  "
+        - ' &l  &r&cedit Sell    &l   &r &aedit Buy'
+      SignPlaceholderBuy:
+        - ""
+        - "&a^^ &7Enter &a^^ "
+        - " &7your new "
+        - " &abuy &7price!"
+      SignPlaceholderSell:
+        - ""
+        - "&c^^ &7Enter &c^^ "
+        - " &7your new "
+        - " &csell &7price!"
     other:
       backToShopGuiButton: "&eBargasht be shop"
       latestTransactionsTitle: "&aAkharin tarakonesh ha"

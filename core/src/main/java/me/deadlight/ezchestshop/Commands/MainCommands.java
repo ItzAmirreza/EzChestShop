@@ -533,18 +533,18 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                             }
                             // Revert from disabling buy sell.
                             if (Config.settings_zero_equals_disabled && isBuy && shop.getBuyPrice() == 0 && price != 0) {
-                                modifyShopSettings(player, SettingType.DBUY, "", target);
+                                modifyShopSettings(player, SettingType.DBUY, "false", target);
                             }
                             if (Config.settings_zero_equals_disabled && !isBuy && shop.getSellPrice() == 0 && price != 0) {
-                                modifyShopSettings(player, SettingType.DSELL, "", target);
+                                modifyShopSettings(player, SettingType.DSELL, "false", target);
                             }
                             // Disable buy/sell
                             if (price == 0 && Config.settings_zero_equals_disabled) {
                                 if (isBuy && shop.getBuyPrice() != 0) {
-                                    modifyShopSettings(player, SettingType.DBUY, "", target);
+                                    modifyShopSettings(player, SettingType.DBUY, "true", target);
                                 }
                                 if (!isBuy && shop.getSellPrice() != 0) {
-                                    modifyShopSettings(player, SettingType.DSELL, "", target);
+                                    modifyShopSettings(player, SettingType.DSELL, "true", target);
                                 }
                             }
                             // if any update happend get the block again.
@@ -561,11 +561,10 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                     sendHelp(player);
                 }
             }
-            // TODO This setting is kinda broken rn:
+            //TODO This setting is kinda broken rn:
             // Imagine a player creating a shop buying dirt for 9999 cash.
             // Then he transfers this shop to the richest player on the server and sells all of his dirt for 9999 cash a piece.
             // He's just stolen all of this players cash.
-            //
             // If we implement such a system we need a way for players to accept the shop and review if they actually want this shop.
             // Until then this feature is only available as a admin command.
 
@@ -752,7 +751,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
             PersistentDataContainer container = ((TileState) blockState).getPersistentDataContainer();
             switch (type) {
                 case DBUY:
-                    settings.setDbuy(!settings.isDbuy());
+                    settings.setDbuy(data.equals("") ? !settings.isDbuy() : data.equals("true"));
                     db.setBool("location", sloc,
                             "buyDisabled", "shopdata", settings.isDbuy());
                     container.set(new NamespacedKey(EzChestShop.getPlugin(), "dbuy"), PersistentDataType.INTEGER,
@@ -764,7 +763,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                     }
                     break;
                 case DSELL:
-                    settings.setDsell(!settings.isDsell());
+                    settings.setDsell(data.equals("") ? !settings.isDsell() : data.equals("true"));
                     db.setBool("location", sloc,
                             "sellDisabled", "shopdata", settings.isDsell());
                     container.set(new NamespacedKey(EzChestShop.getPlugin(), "dsell"), PersistentDataType.INTEGER,
