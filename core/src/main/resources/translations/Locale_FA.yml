@@ -218,6 +218,8 @@ command-messages:
   invalidShopItem: "&cThe item you are trying to create a shop with is invalid here."
   shopTransferConfirm: "&eAre you sure you want to permanently transfer this shops ownership to %player%? [&2&l[✔]](Click to confirm transfer! run_command=/ecs settings transfer-ownership %player% -confirm)"
   shopTransferred: "&aYou have successfully transferred this shop to %player%!"
+  buyPriceUpdated: "&aBuy &7price has been updated!"
+  sellPriceUpdated: "&cSell &7price has been updated!"
 checkprofits:
   landing-menu:
     - '&e========================================'

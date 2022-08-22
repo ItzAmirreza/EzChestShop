@@ -221,6 +221,8 @@ command-messages:
   invalidShopItem: "&cMit diesem Item kann hier kein Shop erzeugt werden."
   shopTransferConfirm: "&eBist du sicher das du die Besitzrechte permanent auf %player% überschreiben willst? [&2&l[✔]](Klick zum bestätigen der Transfers!! run_command=/ecs settings transfer-ownership %player% -confirm)"
   shopTransferred: "&aDu hast die Besitzrechte dieses Shops erfolgreich auf %player% übertragen!"
+  buyPriceUpdated: "&aLKaufpreis &7wurde bearbeitet!"
+  sellPriceUpdated: "&cVerkaufspreis &7wurde bearbeitet!"
 checkprofits:
   landing-menu:
     - '&e========================================'

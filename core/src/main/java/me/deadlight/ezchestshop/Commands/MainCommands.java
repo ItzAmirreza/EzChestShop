@@ -7,6 +7,7 @@ import me.deadlight.ezchestshop.Data.ShopContainer;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.GUIs.SettingsGUI;
 import me.deadlight.ezchestshop.Listeners.PlayerCloseToChestListener;
+import me.deadlight.ezchestshop.Utils.Objects.EzShop;
 import me.deadlight.ezchestshop.Utils.Objects.ShopSettings;
 import me.deadlight.ezchestshop.Utils.Utils;
 import me.deadlight.ezchestshop.Utils.WorldGuard.FlagRegistry;
@@ -129,7 +130,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
         List<String> list_mainarg = Arrays.asList("create", "remove", "settings", "version");
         List<String> list_create_1 = Arrays.asList("[BuyPrice]");
         List<String> list_create_2 = Arrays.asList("[SellPrice]");
-        List<String> list_settings_1 = Arrays.asList("copy", "paste", "toggle-message", "toggle-buying", "toggle-selling", "admins", "toggle-shared-income", "change-rotation"); //, "transfer-ownership"
+        List<String> list_settings_1 = Arrays.asList("copy", "paste", "toggle-message", "toggle-buying", "toggle-selling", "admins", "toggle-shared-income", "change-rotation", "buyprice", "sellprice"); //, "transfer-ownership"
         List<String> list_settings_admins_2 = Arrays.asList("add", "remove", "list", "clear");
         List<String> list_settings_paste_2 = Arrays.asList("toggle-message", "toggle-buying", "toggle-selling", "admins", "toggle-shared-income", "change-rotation");
         List<String> list_settings_change_rotation_2 = new ArrayList<>(Utils.rotations);
@@ -238,6 +239,12 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                                 }
                             }
                         }
+                    }
+                    else if (args[1].equalsIgnoreCase("buyprice") && args.length == 3) {
+                        StringUtil.copyPartialMatches(args[2], list_create_1, fList);
+                    }
+                    else if (args[1].equalsIgnoreCase("sellprice") && args.length == 3) {
+                        StringUtil.copyPartialMatches(args[2], list_create_2, fList);
                     }
 //                    else if (args[1].equalsIgnoreCase("transfer-ownership")) {
 //                        // If null is returned a list of online players will be suggested
@@ -501,6 +508,57 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                     } else if (args[2].equalsIgnoreCase("remove")) {
                         modifyShopSettings(player, SettingType.ADMINS, "-" + args[3], target);
                     }
+                }
+            } else if (settingarg.equalsIgnoreCase("buyprice") || settingarg.equalsIgnoreCase("sellprice")) {
+                if (args.length == 3) {
+                    BlockState blockState = getLookedAtBlockStateIfOwner(player, true, false, target);
+                    boolean isBuy = settingarg.equalsIgnoreCase("buyprice");
+                    try {
+                        if (blockState != null) {
+                            double price = Double.parseDouble(args[2]);
+                            if (price < 0) {
+                                player.sendMessage(lm.negativePrice());
+                                return;
+                            }
+                            EzShop shop = ShopContainer.getShop(blockState.getLocation());
+                            // Enforce buy > sell.
+                            if (Config.settings_buy_greater_than_sell) {
+                                if (
+                                        (isBuy && shop.getSellPrice() > price && price != 0) ||
+                                        (!isBuy && price > shop.getBuyPrice() && shop.getBuyPrice() != 0)
+                                ) {
+                                    player.sendMessage(lm.buyGreaterThanSellRequired());
+                                    return;
+                                }
+                            }
+                            // Revert from disabling buy sell.
+                            if (Config.settings_zero_equals_disabled && isBuy && shop.getBuyPrice() == 0 && price != 0) {
+                                modifyShopSettings(player, SettingType.DBUY, "", target);
+                            }
+                            if (Config.settings_zero_equals_disabled && !isBuy && shop.getSellPrice() == 0 && price != 0) {
+                                modifyShopSettings(player, SettingType.DSELL, "", target);
+                            }
+                            // Disable buy/sell
+                            if (price == 0 && Config.settings_zero_equals_disabled) {
+                                if (isBuy && shop.getBuyPrice() != 0) {
+                                    modifyShopSettings(player, SettingType.DBUY, "", target);
+                                }
+                                if (!isBuy && shop.getSellPrice() != 0) {
+                                    modifyShopSettings(player, SettingType.DSELL, "", target);
+                                }
+                            }
+                            // if any update happend get the block again.
+                            blockState = getLookedAtBlockStateIfOwner(player, true, false, target);
+                            // Change the price
+                            ShopContainer.changePrice(blockState, price, isBuy);
+                            player.sendMessage(isBuy ? lm.shopBuyPriceUpdated() : lm.shopSellPriceUpdated());
+                            PlayerCloseToChestListener.hideHologram(blockState.getLocation());
+                        }
+                    } catch (NumberFormatException e) {
+                        player.sendMessage(lm.wrongInput());
+                    }
+                } else {
+                    sendHelp(player);
                 }
             }
             // TODO This setting is kinda broken rn:

@@ -639,6 +639,12 @@ public class LanguageManager {
         if (isAdmin) msg = msg.replace("/ecs settings", "/ecsadmin");
         return MineDown.parse(Utils.colorify(msg.replace("%player%", targetPlayer)));
     }
+    public String shopBuyPriceUpdated() {
+        return Utils.colorify(getString("command-messages.buyPriceUpdated"));
+    }
+    public String shopSellPriceUpdated() {
+        return Utils.colorify(getString("command-messages.sellPriceUpdated"));
+    }
 
 
     //checkprofits.

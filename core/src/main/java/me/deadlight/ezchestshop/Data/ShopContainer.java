@@ -436,6 +436,22 @@ public class ShopContainer {
         }
     }
 
+    public static void changePrice(BlockState state, double newPrice, boolean isBuyPrice) {
+        Location loc = state.getLocation();
+        if (isShop(loc)) {
+            PersistentDataContainer container = ((TileState) state).getPersistentDataContainer();
+            container.set(new NamespacedKey(EzChestShop.getPlugin(), isBuyPrice ? "buy" : "sell"), PersistentDataType.DOUBLE, newPrice);
+            EzShop shop = getShop(loc);
+            shop.getSqlQueue().setChange(isBuyPrice ? Changes.BUY_PRICE : Changes.SELL_PRICE, newPrice);
+            if (isBuyPrice) {
+                shop.setBuyPrice(newPrice);
+            } else {
+                shop.setSellPrice(newPrice);
+            }
+            state.update();
+        }
+    }
+
 
     public static void startSqlQueueTask() {
         Bukkit.getScheduler().runTaskTimer(EzChestShop.getPlugin(), new Runnable() {
@@ -486,6 +502,10 @@ public class ShopContainer {
                 //well its boolean
                 boolean value = (Boolean) valueObject;
                 db.setBool("location", sloc, change.databaseValue, "shopdata", value);
+            } else if (change.theClass == Double.class) {
+                //well its boolean
+                double value = (Double) valueObject;
+                db.setDouble("location", sloc, change.databaseValue, "shopdata", value);
             }
         }
 

@@ -98,6 +98,21 @@ public class EzShop {
     public void createSqlQueue() {
         this.sqlQueue = new SqlQueue(this.getLocation(), getSettings(), this);
     }
-    public void setOwner(OfflinePlayer owner) {this.owner = owner;};
+    public void setOwner(OfflinePlayer owner) {this.owner = owner;}
 
+    public double getBuyPrice() {
+        return buyPrice;
+    }
+
+    public void setBuyPrice(double buyPrice) {
+        this.buyPrice = buyPrice;
+    }
+
+    public double getSellPrice() {
+        return sellPrice;
+    }
+
+    public void setSellPrice(double sellPrice) {
+        this.sellPrice = sellPrice;
+    }
 }

@@ -57,7 +57,13 @@ public class SqlQueue {
      */
     private boolean validateChange(Changes changes, Object object) {
         //FOR THE FUTURE SETTINGS, HAVE TO ADD IT HERE
-        if (changes == Changes.SHOP_OWNER) {
+        if (changes == Changes.BUY_PRICE) {
+            double num = (double) object;
+            return shop.getBuyPrice() == num;
+        } else if (changes == Changes.SELL_PRICE) {
+            double num = (double) object;
+            return shop.getSellPrice() == num;
+        } else if (changes == Changes.SHOP_OWNER) {
             String str = (String) object;
             return shop.getOwnerID().toString().equalsIgnoreCase(str);
         } else if (changes == Changes.ADMINS_LIST) {
