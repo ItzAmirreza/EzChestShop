@@ -76,7 +76,7 @@ public class BlockBreakListener implements Listener {
                             shulker.setItemMeta(meta);
                             loc.getWorld().dropItemNaturally(loc, shulker);
                             if (Config.holodistancing) {
-                                PlayerCloseToChestListener.hideHologram(event.getBlock().getLocation());
+                                PlayerCloseToChestListener.hideHologram(event.getBlock().getLocation(), true);
                             }
                         }
                     }

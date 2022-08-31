@@ -56,6 +56,11 @@ public class EzShop {
     public ShopSettings getSettings() {
         return settings;
     }
+
+    public ItemStack getShopItem() {
+        return shopItem.clone();
+    }
+
     public List<String> getShopViewers() {
         return shopViewers;
     }

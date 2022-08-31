@@ -12,6 +12,7 @@ import me.deadlight.ezchestshop.Listeners.ChatListener;
 import me.deadlight.ezchestshop.Listeners.PlayerCloseToChestListener;
 import me.deadlight.ezchestshop.Utils.Objects.ChatWaitObject;
 import me.deadlight.ezchestshop.Utils.Objects.EzShop;
+import me.deadlight.ezchestshop.Utils.Objects.ShopSettings;
 import me.deadlight.ezchestshop.Utils.SignMenuFactory;
 import me.deadlight.ezchestshop.Utils.Utils;
 import org.bukkit.*;
@@ -25,8 +26,11 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
+import java.time.Duration;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class SettingsGUI {
     public static LanguageManager lm = new LanguageManager();
@@ -285,7 +289,7 @@ public class SettingsGUI {
             event.getCurrentItem().setItemMeta(meta);
             ShopContainer.getShopSettings(containerBlock.getLocation()).setRotation(next_rotation);
             if (Config.holodistancing) {
-                PlayerCloseToChestListener.hideHologram(containerBlock.getLocation());
+                PlayerCloseToChestListener.hideHologram(containerBlock.getLocation(), true);
             }
         });
 
@@ -318,7 +322,7 @@ public class SettingsGUI {
                                                 // If these checks complete successfully continue.
                                                 if (changePrice(containerBlock.getState(), false, amount, player, containerBlock)) {
                                                     ShopContainer.changePrice(containerBlock.getState(), amount, false);
-                                                    PlayerCloseToChestListener.hideHologram(containerBlock.getState().getLocation());
+                                                    PlayerCloseToChestListener.hideHologram(containerBlock.getState().getLocation(), true);
                                                     player.sendMessage(lm.shopSellPriceUpdated());
                                                 }
                                             });
@@ -353,7 +357,7 @@ public class SettingsGUI {
                                                 // If these checks complete successfully continue.
                                                 if (changePrice(containerBlock.getState(), true, amount, player, containerBlock)) {
                                                     ShopContainer.changePrice(containerBlock.getState(), amount, true);
-                                                    PlayerCloseToChestListener.hideHologram(containerBlock.getState().getLocation());
+                                                    PlayerCloseToChestListener.hideHologram(containerBlock.getState().getLocation(), true);
                                                     player.sendMessage(lm.shopBuyPriceUpdated());
                                                 }
                                             });
@@ -372,7 +376,66 @@ public class SettingsGUI {
             }
         });
 
+        int maxMessages = Utils.getMaxPermission(player, "ecs.shops.hologram.messages.limit.");
+        int currentMessages = ShopSettings.getAllCustomMessages(ShopContainer.getShop(containerBlock.getLocation()).getOwnerID().toString()).size();
+        ItemStack customMessageItemStack= new ItemStack(Material.WRITABLE_BOOK, 1);
+        ItemMeta customMessageItemMeta = customMessageItemStack.getItemMeta();
+        customMessageItemMeta.setDisplayName(lm.hologramMessageButtonTitle());
+        boolean hasNoMaxShopLimit = maxMessages == -1;
+        boolean hasPermissionLimit = Config.permission_hologram_message_limit;
+        // if hasNoMaxShopLimit and hasPermissionLimit are true, value should be false.
+        // if hasNoMaxShopLimit is true and hasPermissionLimit is false, value should be false.
+        // if hasNoMaxShopLimit is false and hasPermissionLimit is true, value should be true.
+        // if hasNoMaxShopLimit is false and hasPermissionLimit is false, value should be false.
+        boolean value = hasNoMaxShopLimit && hasPermissionLimit ? false : hasNoMaxShopLimit ? false : hasPermissionLimit;
+        customMessageItemMeta.setLore(((maxMessages - currentMessages > 0 && hasPermissionLimit) || !hasPermissionLimit) || hasNoMaxShopLimit  ?
+                lm.hologramMessageButtonLore(player, ShopContainer.getShop(containerBlock.getLocation()).getOwnerID().toString()) :
+                lm.hologramMessageButtonLoreMaxReached(player));
+        customMessageItemStack.setItemMeta(customMessageItemMeta);
+        GuiItem customMessageItem = new GuiItem(customMessageItemStack, event -> {
+            event.setCancelled(true);
+            EzChestShop.logConsole("Max messages: " + maxMessages + " Current messages: " + currentMessages + ", Clicked right: " + event.isRightClick() + ", Clicked left: " + event.isLeftClick());
+            if (maxMessages - currentMessages > 0 || !value) {
+                if (event.isRightClick()) {
+                    CustomMessageManageGUI customMessageManageGUI = new CustomMessageManageGUI();
+                    customMessageManageGUI.showGUI(player, containerBlock, isAdmin);
+                } else {
+                    player.closeInventory();
+                    player.playSound(player.getLocation(), Sound.ITEM_BOOK_PAGE_TURN, 1.0f, 1.0f);
+                    SignMenuFactory signMenuFactory = new SignMenuFactory(EzChestShop.getPlugin());
+                    SignMenuFactory.Menu menu = signMenuFactory.newMenu(lm.hologramMessageSingGUI(player, containerBlock.getLocation()))
+                            .reopenIfFail(false).response((thatplayer, strings) -> {
+                                try {
+                                    // Run checks here if allowed
+                                    Bukkit.getScheduler().scheduleSyncDelayedTask(EzChestShop.getPlugin(),
+                                            () -> {
+                                                int lines = Config.settings_hologram_message_line_count_default;
+                                                if (Config.permission_hologram_message_line_count) {
+                                                    int maxShops = Utils.getMaxPermission(player, "ecs.shops.hologram.messages.lines.");
+                                                    maxShops = maxShops == -1 ? 4 : maxShops == 0 ? 1 : maxShops;
+                                                    lines = maxShops;
+                                                }
+                                                List<String> messages = Arrays.asList(strings).subList(0, lines).stream()
+                                                        .filter(s -> !s.trim().equals("")).collect(Collectors.toList());
+                                                // Save data!
+                                                ShopContainer.getShopSettings(containerBlock.getLocation())
+                                                        .setCustomMessages(messages);
+                                                PlayerCloseToChestListener.hideHologram(containerBlock.getState().getLocation(), true);
 
+                                            });
+
+                                } catch (Exception e) {
+                                    return false;
+                                }
+                                return true;
+                            });
+                    menu.open(player);
+                }
+            } else {
+                CustomMessageManageGUI customMessageManageGUI = new CustomMessageManageGUI();
+                customMessageManageGUI.showGUI(player, containerBlock, isAdmin);
+            }
+        });
 
         ItemStack backItemStack = new ItemStack(Material.DARK_OAK_DOOR, 1);
         ItemMeta backItemMeta = backItemStack.getItemMeta();
@@ -422,7 +485,11 @@ public class SettingsGUI {
             gui.setItem(14, glasses);
         }
         gui.setItem(15, priceItem);
-        gui.setItem(16, glasses);
+        if (Config.settings_hologram_message_enabled) {
+            gui.setItem(16, customMessageItem);
+        } else {
+            gui.setItem(16, glasses);
+        }
         //17-26
         gui.setItem(26, lastTrans);
 

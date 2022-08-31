@@ -122,6 +122,22 @@ settings:
         - "&c^^ &7Enter &c^^ "
         - " &7your new "
         - " &csell &7price!"
+    hologramMessage:
+      Title: "&eCustomize your Hologram"
+      Lore:
+        - "&7Left Click to add a custom"
+        - "&7Hologram message!"
+        - "&7Right Click to manage your"
+        - "&7current Hologram messages!"
+        - " &d "
+        - "&8You can use line %lineNumbers%!"
+        - "<ifhasmax>&8You can have %messagesleft% more messages!</ifhasmax>"
+      LoreMaxReached:
+        - "&cYou can only have"
+        - "&c%maxLines% lines!"
+        - "&7Click here to manage"
+        - "&7your hologram messages!"
+      SignPlaceholderTexts: "###############"
     other:
       backToShopGuiButton: "&eBargasht be shop"
       latestTransactionsTitle: "&aAkharin tarakonesh ha"
@@ -160,8 +176,39 @@ settings:
         South: "&aJonub"
         West: "&aGharb"
         Down: "&aPayin"
+# Custom Messages Manager GUI section
+customMessageManager:
+  GuiTitle: "&b&lHologram Messages Manager"
+  ConfirmDeleteGuiTitle: "&c&lConfirm Delete Text"
+  buttons:
+    previousPage:
+      Title: "&ePrevious"
+      Lore:
+    nextPage:
+      Title: "&eNext"
+      Lore:
+    shopEntry:
+      Title: "&7%shopitem% &7shop"
+      UnkownTitle: "&cUnknown shop"
+      Lore:
+        - "&7Located at &eX:%x%, Y:%y%, Z:%z%"
+        - ""
+        - "&eHologram messages:"
+        - "&7%hologram-messages%"
+        - ""
+        - "&cRight Click to delete this"
+        - "&chologram message!"
+    confirmDelete:
+      Title: "&cAre you sure?"
+      Lore:
+        - "&7You are about to delete"
+        - "&7this hologram message!"
+        - "&7This action cannot be undone!"
+        - "&cRight Click to confirm!"
+    backToCustomMessageManager:
+      Title: "&eBack to Custom Messages Manager"
+      Lore:
 customBuySell:
-
   gui-customAmountSign-title: "&eForosh/Kharid meghdar delkhah"
   gui-customAmountSign-lore:
     - "&7Kharid ya forosh dar meghdar delkhah "

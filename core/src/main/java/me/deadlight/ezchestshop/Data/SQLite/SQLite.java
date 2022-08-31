@@ -129,6 +129,7 @@ public class SQLite extends Database implements Listener {
                 put("transactions", new SQLColumn("STRING (32)", false, false));
                 put("adminshop", new SQLColumn("BOOLEAN", false, false));
                 put("rotation", new SQLColumn("STRING (32)", false, false));
+                put("customMessages", new SQLColumn("STRING (32)", false, false));
 
             }
         }));

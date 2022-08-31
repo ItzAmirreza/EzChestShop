@@ -1,7 +1,14 @@
 package me.deadlight.ezchestshop.Utils.Objects;
 
 import me.deadlight.ezchestshop.Data.Config;
+import me.deadlight.ezchestshop.Data.SQLite.Database;
 import me.deadlight.ezchestshop.Enums.Changes;
+import me.deadlight.ezchestshop.EzChestShop;
+import me.deadlight.ezchestshop.Utils.Utils;
+import org.bukkit.Location;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class ShopSettings {
 
@@ -14,11 +21,16 @@ public class ShopSettings {
     private String trans;
     private boolean adminshop;
     private String rotation;
+    private List<String> customMessages;
     private SqlQueue sqlQueue;
     private EzShop assignedShop;
+    // Use some form of static Hashmap to cash this per shop/location/player smth. Querying is only viable once, since we have the SQL Queue which makes things pretty hard to track.
+    // Unless I compare it with the previous customMessages, then it could work! Seems like less of a hassle.
+    private static boolean customMessagesInitialChecked = false;
+    private static Map<UUID, Map<Location, String>> customMessagesTotal = new HashMap<>();
 
     public ShopSettings(String sloc, boolean msgtoggle, boolean dbuy, boolean dsell, String admins, boolean shareincome,
-                        String trans, boolean adminshop, String rotation) {
+                        String trans, boolean adminshop, String rotation, List<String> customMessages) {
         this.sloc = sloc;
         this.msgtoggle = msgtoggle;
         this.dbuy = dbuy;
@@ -28,6 +40,7 @@ public class ShopSettings {
         this.trans = trans;
         this.adminshop = adminshop;
         this.rotation = rotation;
+        this.customMessages = customMessages;
     }
 
     private ShopSettings(ShopSettings settings) {
@@ -40,6 +53,7 @@ public class ShopSettings {
         this.trans = settings.trans;
         this.adminshop = settings.adminshop;
         this.rotation = settings.rotation;
+        this.customMessages = settings.customMessages;
         this.assignedShop = settings.assignedShop;
         this.sqlQueue = settings.sqlQueue;
     }
@@ -53,8 +67,8 @@ public class ShopSettings {
     }
 
     public ShopSettings setMsgtoggle(boolean msgtoggle) {
-        this.msgtoggle = msgtoggle;
         sqlQueue.setChange(Changes.MESSAGE_TOGGLE, msgtoggle);
+        this.msgtoggle = msgtoggle;
         return this;
     }
 
@@ -63,8 +77,8 @@ public class ShopSettings {
     }
 
     public ShopSettings setDbuy(boolean dbuy) {
-        this.dbuy = dbuy;
         sqlQueue.setChange(Changes.DISABLE_BUY, dbuy);
+        this.dbuy = dbuy;
         return this;
     }
 
@@ -73,8 +87,8 @@ public class ShopSettings {
     }
 
     public ShopSettings setDsell(boolean dsell) {
-        this.dsell = dsell;
         sqlQueue.setChange(Changes.DISABLE_SELL, dsell);
+        this.dsell = dsell;
         return this;
     }
 
@@ -83,8 +97,8 @@ public class ShopSettings {
     }
 
     public ShopSettings setAdmins(String admins) {
-        this.admins = admins;
         sqlQueue.setChange(Changes.ADMINS_LIST, admins);
+        this.admins = admins;
         return this;
     }
 
@@ -93,8 +107,8 @@ public class ShopSettings {
     }
 
     public ShopSettings setShareincome(boolean shareincome) {
-        this.shareincome = shareincome;
         sqlQueue.setChange(Changes.SHAREINCOME, shareincome);
+        this.shareincome = shareincome;
         return this;
     }
 
@@ -103,8 +117,8 @@ public class ShopSettings {
     }
 
     public ShopSettings setTrans(String trans) {
-        this.trans = trans;
         sqlQueue.setChange(Changes.TRANSACTIONS, trans);
+        this.trans = trans;
         return this;
     }
 
@@ -113,8 +127,8 @@ public class ShopSettings {
     }
 
     public ShopSettings setAdminshop(boolean adminshop) {
-        this.adminshop = adminshop;
         sqlQueue.setChange(Changes.IS_ADMIN, adminshop);
+        this.adminshop = adminshop;
         return this;
     }
 
@@ -123,9 +137,52 @@ public class ShopSettings {
     }
 
     public ShopSettings setRotation(String rotation) {
-        this.rotation = rotation;
         sqlQueue.setChange(Changes.ROTATION, rotation);
+        this.rotation = rotation;
         return this;
+    }
+
+    public List<String> getCustomMessages() {
+        if (!customMessagesInitialChecked) {
+            customMessagesInitialChecked = true;
+            customMessagesTotal.put(assignedShop.getOwnerID(), fetchAllCustomMessages(assignedShop.getOwnerID().toString()));
+        }
+        return customMessages;
+    }
+
+    public ShopSettings setCustomMessages(List<String> customMessages) {
+        String newMessages = customMessages.stream().collect(Collectors.joining("#,#"));
+        if (!newMessages.equals(this.customMessages)) {
+            if (newMessages.isEmpty()) {
+                customMessagesTotal.get(assignedShop.getOwnerID()).remove(assignedShop.getLocation());
+            } else {
+                customMessagesTotal.get(assignedShop.getOwnerID()).put(assignedShop.getLocation(), newMessages);
+            }
+        }
+        sqlQueue.setChange(Changes.CUSTOM_MESSAGES, newMessages);
+        this.customMessages = customMessages;
+        return this;
+    }
+
+    public static Map<Location, String> getAllCustomMessages(String owner) {
+        if (!customMessagesInitialChecked) {
+            Database db = EzChestShop.getPlugin().getDatabase();
+            Map<String, String> data = db.getKeysWithValueByExpresion("location", "customMessages", "owner", "shopdata",
+                    "IS \"" + owner + "\" AND customMessages IS NOT NULL AND trim(customMessages, \" \") IS NOT \"\"");
+            Map<Location, String> converted = data.entrySet().stream().collect(Collectors.toMap(e -> Utils.StringtoLocation(e.getKey()),e -> e.getValue()));
+            customMessagesInitialChecked = true;
+            customMessagesTotal.put(UUID.fromString(owner), converted);
+            return converted;
+        }
+        return customMessagesTotal.get(UUID.fromString(owner));
+    }
+
+    private static Map<Location, String> fetchAllCustomMessages(String owner) {
+        Database db = EzChestShop.getPlugin().getDatabase();
+        Map<String, String> data = db.getKeysWithValueByExpresion("location", "customMessages", "owner", "shopdata",
+                "IS \"" + owner + "\" AND customMessages IS NOT NULL AND trim(customMessages, \" \") IS NOT \"\"");
+        Map<Location, String> converted = data.entrySet().stream().collect(Collectors.toMap(e -> Utils.StringtoLocation(e.getKey()),e -> e.getValue()));
+        return converted;
     }
 
     public void assignShop(EzShop shop) {
@@ -146,4 +203,5 @@ public class ShopSettings {
     public void createSqlQueue() {
         this.sqlQueue = new SqlQueue(assignedShop.getLocation(), this, getAssignedShop());
     }
+
 }

@@ -248,7 +248,7 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
                                 }
 
                                 ShopContainer.deleteShop(blockState.getLocation());
-                                PlayerCloseToChestListener.hideHologram(blockState.getLocation());
+                                PlayerCloseToChestListener.hideHologram(blockState.getLocation(), true);
                                 state.update();
 
                                 player.sendMessage(lm.chestShopRemoved());

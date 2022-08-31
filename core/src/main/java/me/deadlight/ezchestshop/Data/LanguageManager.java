@@ -6,13 +6,16 @@ import me.deadlight.ezchestshop.Commands.MainCommands;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.Listeners.ChatListener;
 import me.deadlight.ezchestshop.Utils.Objects.CheckProfitEntry;
+import me.deadlight.ezchestshop.Utils.Objects.ShopSettings;
 import me.deadlight.ezchestshop.Utils.Utils;
 import net.md_5.bungee.api.chat.*;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
 import java.io.IOException;
@@ -396,6 +399,59 @@ public class LanguageManager {
         return getList("settings.buttons.changePrices." + (isBuy ? "SignPlaceholderBuy" : "SignPlaceholderSell")).stream()
                 .map(s -> Utils.colorify(s)).collect(Collectors.toList());
     }
+    //settings.buttons.hologramMessage
+    public String hologramMessageButtonTitle() {
+        return Utils.colorify(getString("settings.buttons.hologramMessage.Title"));
+    }
+    public List<String> hologramMessageButtonLore(Player player, String ownerID) {
+        int lines = Config.settings_hologram_message_line_count_default;
+        if (Config.permission_hologram_message_line_count) {
+            int maxShops = Utils.getMaxPermission(player, "ecs.shops.hologram.messages.lines.");
+            maxShops = maxShops == -1 ? 4 : maxShops == 0 ? 1 : maxShops;
+            lines = maxShops;
+        }
+        int maxMessages = Utils.getMaxPermission(player, "ecs.shops.hologram.messages.limit.");
+        int currentMessages = ShopSettings.getAllCustomMessages(ownerID).size();
+        String lineMsg = lines == 1 ? "1" : "1-" + lines;
+        boolean hasNoMaxShopLimit = maxMessages == -1;
+        boolean hasPermissionLimit = Config.permission_hologram_message_limit;
+        // if hasNoMaxShopLimit and hasPermissionLimit are true, value should be false.
+        // if hasNoMaxShopLimit is true and hasPermissionLimit is false, value should be false.
+        // if hasNoMaxShopLimit is false and hasPermissionLimit is true, value should be true.
+        // if hasNoMaxShopLimit is false and hasPermissionLimit is false, value should be false.
+        boolean value = hasNoMaxShopLimit && hasPermissionLimit ? false : hasNoMaxShopLimit ? false : hasPermissionLimit;
+        return getList("settings.buttons.hologramMessage.Lore").stream()
+                .filter(s -> ((value) || !s.startsWith("<ifhasmax>")))
+                .map(s -> Utils.colorify(s).replace("%lineNumbers%", lineMsg).replace("%messagesleft%",  "" + (maxMessages - currentMessages))
+                        .replace("<ifhasmax>", "").replace("</ifhasmax>", "")).collect(Collectors.toList());
+    }
+    public List<String> hologramMessageButtonLoreMaxReached(Player player) {
+        int maxMessages = Utils.getMaxPermission(player, "ecs.shops.hologram.messages.limit.");
+        return getList("settings.buttons.hologramMessage.LoreMaxReached").stream()
+                .map(s -> Utils.colorify(s.replace("%maxLines%", "" + maxMessages))).collect(Collectors.toList());
+    }
+    public List<String> hologramMessageSingGUI(Player player, Location loc) {
+        int lines = Config.settings_hologram_message_line_count_default;
+        if (Config.permission_hologram_message_line_count) {
+            int maxShops = Utils.getMaxPermission(player, "ecs.shops.hologram.messages.lines.");
+            maxShops = maxShops == -1 ? 4 : maxShops == 0 ? 1 : maxShops;
+            lines = maxShops;
+        }
+        // Add as many white slots as a player can use. Then fill the rest with the placeholder.
+        List<String> output = new ArrayList<>();
+        ShopSettings settings = ShopContainer.getShopSettings(loc);
+        for (int i = 0; i < lines; i++) {
+            if (settings.getCustomMessages().size() > i) {
+                output.add(settings.getCustomMessages().get(i));
+            } else {
+                output.add("");
+            }
+        }
+        for (int i = 0; i < 4 - lines; i++) {
+            output.add(Utils.colorify(getString("settings.buttons.hologramMessage.SignPlaceholderTexts")));
+        }
+        return output;
+    }
     //settings.buttons.other.
     public String backToShopGuiButton() {
         return Utils.colorify(getString("settings.buttons.other.backToShopGuiButton"));
@@ -506,6 +562,66 @@ public class LanguageManager {
     public String rotationWest() {return Utils.colorify(getString("settings.chat.hologramRotation.rotation.West"));}
     public String rotationDown() {return Utils.colorify(getString("settings.chat.hologramRotation.rotation.Down"));}
 
+    //customMessageManager.
+    public String customMessageManagerTitle() {
+        return Utils.colorify(getString("customMessageManager.GuiTitle"));
+    }
+    public String customMessageManagerConfirmDeleteGuiTitle() {
+        return Utils.colorify(getString("customMessageManager.ConfirmDeleteGuiTitle"));
+    }
+    //customMessageManager.buttons.
+    //customMessageManager.buttons.previousPage.
+    public String customMessageManagerPreviousPageTitle() {
+        return Utils.colorify(getString("customMessageManager.buttons.previousPage.Title"));
+    }
+    public List<String> customMessageManagerPreviousPageLore() {
+        return getList("customMessageManager.buttons.previousPage.Lore").stream().map(s -> Utils.colorify(s)).collect(Collectors.toList());
+    }
+    //customMessageManager.buttons.nextPage.
+    public String customMessageManagerNextPageTitle() {
+        return Utils.colorify(getString("customMessageManager.buttons.nextPage.Title"));
+    }
+    public List<String> customMessageManagerNextPageLore() {
+        return getList("customMessageManager.buttons.nextPage.Lore").stream().map(s -> Utils.colorify(s)).collect(Collectors.toList());
+    }
+    //customMessageManager.buttons.shopEntry.
+    public String customMessageManagerShopEntryTitle(ItemStack item) {;
+        return Utils.colorify(getString("customMessageManager.buttons.shopEntry.Title").replace("%shopitem%", Utils.getFinalItemName(item)));
+    }
+    public String customMessageManagerShopEntryUnkownTitle() {
+        return Utils.colorify(getString("customMessageManager.buttons.shopEntry.UnkownTitle"));
+    }
+    public List<String> customMessageManagerShopEntryLore(Location loc, List<String> messages) {
+        List<String> lore = new ArrayList<>(getList("customMessageManager.buttons.shopEntry.Lore"));
+        // find the placeholder %hologram-messages% in the lore and replace it with the messages List.
+        for (int i = 0; i < lore.size(); i++) {
+            if (lore.get(i).contains("%hologram-messages%")) {
+                String oldLine = lore.get(i);
+                lore.remove(i);
+                for (String message : messages) {
+                    lore.add(i, oldLine.replace("%hologram-messages%", message));
+                    i++;
+                }
+            }
+        }
+        return lore.stream()
+                .map(s -> Utils.colorify(s).replace("%x%", "" + loc.getX()).replace("%y%", "" + loc.getY()).replace("%z%", "" + loc.getZ())
+                ).collect(Collectors.toList());
+    }
+    //customMessageManager.buttons.confirmDelete.
+    public String customMessageManagerConfirmDeleteTitle() {
+        return Utils.colorify(getString("customMessageManager.buttons.confirmDelete.Title"));
+    }
+    public List<String> customMessageManagerConfirmDeleteLore() {
+        return getList("customMessageManager.buttons.confirmDelete.Lore").stream().map(s -> Utils.colorify(s)).collect(Collectors.toList());
+    }
+    //customMessageManager.buttons.backToCustomMessageManager.
+    public String customMessageManagerBackToCustomMessageManagerTitle() {
+        return Utils.colorify(getString("customMessageManager.buttons.backToCustomMessageManager.Title"));
+    }
+    public List<String> customMessageManagerBackToCustomMessageManagerLore() {
+        return getList("customMessageManager.buttons.backToCustomMessageManager.Lore").stream().map(s -> Utils.colorify(s)).collect(Collectors.toList());
+    }
 
     //customBuySell.
     public String customAmountSignTitle() {

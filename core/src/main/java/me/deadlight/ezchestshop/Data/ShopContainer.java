@@ -56,7 +56,7 @@ public class ShopContainer {
         shopMap.remove(loc);
 
         for (Player p : Bukkit.getOnlinePlayers()) {
-            PlayerCloseToChestListener.hideHologram(p, loc);
+            PlayerCloseToChestListener.hideHologram(p, loc, true);
         }
     }
 
@@ -72,8 +72,8 @@ public class ShopContainer {
         Database db = EzChestShop.getPlugin().getDatabase();
         String sloc = Utils.LocationtoString(loc);
         String encodedItem = Utils.encodeItem(item);
-        db.insertShop(sloc, p.getUniqueId().toString(), encodedItem == null ? "Error" : encodedItem, buyprice, sellprice, msgtoggle, dbuy, dsell, admins, shareincome, trans, adminshop, rotation);
-        ShopSettings settings = new ShopSettings(sloc, msgtoggle, dbuy, dsell, admins, shareincome, trans, adminshop, rotation);
+        db.insertShop(sloc, p.getUniqueId().toString(), encodedItem == null ? "Error" : encodedItem, buyprice, sellprice, msgtoggle, dbuy, dsell, admins, shareincome, trans, adminshop, rotation, new ArrayList<>());
+        ShopSettings settings = new ShopSettings(sloc, msgtoggle, dbuy, dsell, admins, shareincome, trans, adminshop, rotation, new ArrayList<>());
         EzShop shop = new EzShop(loc, p, item, buyprice, sellprice, settings);
         shopMap.put(loc, shop);
     }
@@ -96,9 +96,9 @@ public class ShopContainer {
         double sellprice = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "sell"), PersistentDataType.DOUBLE);
         String rotation = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "rotation"), PersistentDataType.STRING);
         rotation = rotation == null ? "top" : rotation;
-        db.insertShop(sloc, owner, encodedItem == null ? "Error" : encodedItem, buyprice, sellprice, msgtoggle, dbuy, dsell, admins, shareincome, trans, adminshop, rotation);
+        db.insertShop(sloc, owner, encodedItem == null ? "Error" : encodedItem, buyprice, sellprice, msgtoggle, dbuy, dsell, admins, shareincome, trans, adminshop, rotation, new ArrayList<>());
 
-        ShopSettings settings = new ShopSettings(sloc, msgtoggle, dbuy, dsell, admins, shareincome, trans, adminshop, rotation);
+        ShopSettings settings = new ShopSettings(sloc, msgtoggle, dbuy, dsell, admins, shareincome, trans, adminshop, rotation, new ArrayList<>());
         EzShop shop = new EzShop(loc, owner, Utils.decodeItem(encodedItem), buyprice, sellprice, settings);
         shopMap.put(loc, shop);;
     }
@@ -193,7 +193,7 @@ public class ShopContainer {
             double sellprice = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "sell"), PersistentDataType.DOUBLE);
             String rotation = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "rotation"), PersistentDataType.STRING);
             rotation = rotation == null ? Config.settings_defaults_rotation : rotation;
-            ShopSettings settings = new ShopSettings(sloc, msgtoggle, dbuy, dsell, admins, shareincome, trans, adminshop, rotation);
+            ShopSettings settings = new ShopSettings(sloc, msgtoggle, dbuy, dsell, admins, shareincome, trans, adminshop, rotation, new ArrayList<>());
             EzShop shop = new EzShop(loc, owner, Utils.decodeItem(encodedItem), buyprice, sellprice, settings);
             shopMap.put(loc, shop);
             return settings;
@@ -503,7 +503,7 @@ public class ShopContainer {
                 boolean value = (Boolean) valueObject;
                 db.setBool("location", sloc, change.databaseValue, "shopdata", value);
             } else if (change.theClass == Double.class) {
-                //well its boolean
+                //well its double
                 double value = (Double) valueObject;
                 db.setDouble("location", sloc, change.databaseValue, "shopdata", value);
             }

@@ -46,11 +46,17 @@ public class Config {
     public static boolean settings_add_shulkershop_lore;
     public static boolean settings_custom_amout_transactions;
 
+    public static boolean settings_hologram_message_enabled;
+    public static boolean settings_hologram_message_show_always;
+    public static int settings_hologram_message_line_count_default;
+
     public static boolean command_shop_alias;
     public static boolean command_adminshop_alias;
     public static int command_checkprofit_lines_pp;
 
     public static boolean permissions_create_shop_enabled;
+    public static boolean permission_hologram_message_limit;
+    public static boolean permission_hologram_message_line_count;
 
     public static boolean check_for_removed_shops;
 
@@ -99,11 +105,17 @@ public class Config {
         settings_add_shulkershop_lore = config.getBoolean("shops.settings.add-shulkershop-lore");
         settings_custom_amout_transactions = config.getBoolean("shops.settings.custom-amount-transactions");
 
+        settings_hologram_message_enabled = config.getBoolean("shops.settings.hologram-messages.enabled");
+        settings_hologram_message_show_always = config.getBoolean("shops.settings.hologram-messages.show-always");
+        settings_hologram_message_line_count_default = config.getInt("shops.settings.hologram-messages.line-count-default");
+
         command_shop_alias = config.getBoolean("commands.alias.ecs-shop");
         command_adminshop_alias = config.getBoolean("commands.alias.ecsadmin-adminshop");
         command_checkprofit_lines_pp = config.getInt("commands.checkprofit-lines-per-page");
 
         permissions_create_shop_enabled = config.getBoolean("permissions.create-shops");
+        permission_hologram_message_limit = config.getBoolean("permissions.hologram-message-limit");
+        permission_hologram_message_line_count = config.getBoolean("permissions.hologram-message-line-count");
 
         check_for_removed_shops = config.getBoolean("tasks.check-for-removed-shops");
 
@@ -216,6 +228,17 @@ public class Config {
         // Should work like the above stuff, but without the check if it exists.
         if (!fc.isBoolean("shops.settings.custom-amount-transactions")) {
             fc.set("shops.settings.custom-amount-transactions", true);
+            fc.save(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml"));
+            Config.loadConfig();
+        }
+
+        if (!fc.isBoolean("shops.settings.hologram-messages.enabled")) {
+            fc.set("shops.settings.hologram-messages.enabled", true);
+            fc.set("shops.settings.hologram-messages.show-always", false);
+            fc.set("shops.settings.hologram-messages.line-count-default", 1);
+            fc.set("permissions.hologram-message-limit", false);
+            fc.set("permissions.hologram-message-line-count", false);
+
             fc.save(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml"));
             Config.loadConfig();
         }

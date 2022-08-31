@@ -126,6 +126,23 @@ settings:
         - "&c^^ &7Gib deinen &c^^ "
         - " &7neuen Verkauf- "
         - " &cpreis &7ein!"
+    hologramMessage:
+      Title: "&eBearbeite dein Hologram"
+      Lore:
+        - "&7Linksklick um dein Hologram"
+        - "&7mit einem benutzerdefinierten Text"
+        - "&7zu bearbeiten!"
+        - "&7Rechtsklick um deine Hologram"
+        - "&7zu verwalten!"
+        - " &d "
+        - "&8Du kannst %lineNumbers% Zeilen verwenden!"
+        - "<ifhasmax>&8Du hast noch %messagesleft% Texte übrig!</ifhasmax>"
+      LoreMaxReached:
+        - "&cDu kannst maximal"
+        - "&c%maxLines% Zeilen haben!"
+        - "&7Klick hier um deine Hologram"
+        - "&7Texte zu verwalten!"
+      SignPlaceholderTexts: "###############"
     other:
       backToShopGuiButton: "&eZurück zum Shop"
       latestTransactionsTitle: "&aLetzte Transaktionen"
@@ -164,6 +181,37 @@ settings:
         South: "&aSüden"
         West: "&aWested"
         Down: "&aUnten"
+# Custom Messages Manager GUI section
+customMessageManager:
+  GuiTitle: "&b&lHologram Text Verwaltung"
+  ConfirmDeleteGuiTitle: "&c&lHologram Text löschen"
+  buttons:
+    previousPage:
+      Title: "&eVorherige Seite"
+      Lore:
+    nextPage:
+      Title: "&eNächste Seite"
+      Lore:
+    shopEntry:
+      Title: "&7%shopitem% &7Shop"
+      UnkownTitle: "&cUnbekannter Shop"
+      Lore:
+        - "&7Koordinaten: &eX:%x%, Y:%y%, Z:%z%"
+        - ""
+        - "&eHologram Text:"
+        - "&7%hologram-messages%"
+        - ""
+        - "&cRechtsklick um den Text"
+        - "&czu löschen!"
+    confirmDelete:
+      Title: "&cBist du dir sicher?"
+      Lore:
+        - "&7Du kannst diesen Text"
+        - "&7nicht wiederherstellen!"
+        - "&cRechtsklick zum Löschen!"
+    backToCustomMessageManager:
+      Title: "&eBack to Custom Messages Manager"
+      Lore:
 customBuySell:
   gui-customAmountSign-title: "&eBenutzerdefierter Verkauf/Kauf"
   gui-customAmountSign-lore:

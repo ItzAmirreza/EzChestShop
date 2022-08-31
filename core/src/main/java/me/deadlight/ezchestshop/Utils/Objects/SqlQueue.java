@@ -1,9 +1,12 @@
 package me.deadlight.ezchestshop.Utils.Objects;
 
 import me.deadlight.ezchestshop.Enums.Changes;
+import me.deadlight.ezchestshop.EzChestShop;
 import org.bukkit.Location;
 
 import java.util.HashMap;
+import java.util.stream.Collectors;
+
 public class SqlQueue {
 
     private HashMap<Changes, Object> changesList = new HashMap<>();
@@ -91,6 +94,9 @@ public class SqlQueue {
         } else if (changes == Changes.IS_ADMIN) {
             boolean bool = (boolean) object;
             return settings.isAdminshop() == bool;
+        } else if (changes == Changes.CUSTOM_MESSAGES) {
+            String str = (String) object;
+            return settings.getCustomMessages().stream().collect(Collectors.joining("#,#")).equalsIgnoreCase(str);
         } else {
             //alright, we will have only SHOP_CREATE & SHOP_REMOVE which should not be given in SqlQueue object but I'll think about it seperately
             return false;

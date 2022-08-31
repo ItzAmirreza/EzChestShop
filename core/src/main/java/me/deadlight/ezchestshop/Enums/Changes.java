@@ -11,6 +11,7 @@ public enum Changes {
     SHAREINCOME(Boolean.class, "shareIncome"),
     TRANSACTIONS(String.class, "transactions"),
     ROTATION(String.class, "rotation"),
+    CUSTOM_MESSAGES(String.class, "customMessages"),
     MESSAGE_TOGGLE(Boolean.class, "msgToggle"),
     DISABLE_BUY(Boolean.class, "buyDisabled"),
     DISABLE_SELL(Boolean.class, "sellDisabled");

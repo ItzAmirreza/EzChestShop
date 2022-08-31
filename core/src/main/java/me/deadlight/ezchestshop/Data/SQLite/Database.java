@@ -10,11 +10,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 public abstract class Database {
     EzChestShop plugin;
@@ -568,6 +566,47 @@ public abstract class Database {
     }
 
     /**
+     * Get a Hashmap of 2 Strings. Useful to get keep connections between the primary key and another data value.
+     * @param primary_key The primary key to query by. This will be the key in the Hashmap
+     * @param value_key The value associated with the primary key. This will be the value in the Hashmap
+     * @param column The column to search.
+     * @param table The table to seach.
+     * @param expression A SQL expression to narrow down the results.
+     * @return A Hashmap of <primary key result, value key result>.
+     */
+    public HashMap<String, String> getKeysWithValueByExpresion(String primary_key, String value_key, String column, String table, String expression) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs;
+        HashMap<String, String> map = new HashMap<>();
+
+        try {
+            conn = getSQLConnection();
+            EzChestShop.logDebug("SELECT " + primary_key + ", " + value_key + " FROM " + table + " WHERE " + column + " " + expression + ";");
+            ps = conn.prepareStatement(
+                    "SELECT " + primary_key + ", " + value_key + " FROM " + table + " WHERE " + column + " " + expression + ";");
+
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                map.put(rs.getString(primary_key), rs.getString(value_key));
+            }
+            return map;
+        } catch (SQLException e) {
+            plugin.getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute(), e);
+        } finally {
+            try {
+                if (ps != null)
+                    ps.close();
+                if (conn != null)
+                    conn.close();
+            } catch (SQLException e) {
+                plugin.getLogger().log(Level.SEVERE, Errors.sqlConnectionClose(), e);
+            }
+        }
+        return map;
+    }
+
+    /**
      * Query the Database for a List of all primary Keys of a given table
      *
      * @param primary_key the name of the primary key row.
@@ -745,15 +784,15 @@ public abstract class Database {
 
 
     public void insertShop(String sloc, String owner, String item, double buyprice, double sellprice, boolean msgtoggle,
-                           boolean dbuy, boolean dsell, String admins, boolean shareincome, String trans, boolean adminshop, String rotation) {
+                           boolean dbuy, boolean dsell, String admins, boolean shareincome, String trans, boolean adminshop, String rotation, List<String> customMessages) {
         Connection conn = null;
         PreparedStatement ps = null;
         try {
             conn = getSQLConnection();
             ps = conn.prepareStatement(
                     "REPLACE INTO shopdata (location,owner,item,buyPrice,sellPrice,msgToggle,"
-                            + "buyDisabled,sellDisabled,admins,shareIncome,transactions,adminshop,rotation) "
-                            + "VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)");
+                            + "buyDisabled,sellDisabled,admins,shareIncome,transactions,adminshop,rotation,customMessages) "
+                            + "VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
 
             ps.setString(1, sloc);
             ps.setString(2, owner);
@@ -768,6 +807,7 @@ public abstract class Database {
             ps.setString(11, trans);
             ps.setBoolean(12, adminshop);
             ps.setString(13, rotation);
+            ps.setString(14, customMessages.stream().collect(Collectors.joining("#,#")));
             ps.executeUpdate();
             return;
         } catch (SQLException e) {
@@ -797,10 +837,13 @@ public abstract class Database {
             HashMap<Location, EzShop> map = new HashMap<>();
             while (rs.next()) {
                 String sloc = rs.getString("location");
+                String customMessages = rs.getString("customMessages");
+                if (customMessages == null) customMessages = "";
                 map.put(Utils.StringtoLocation(sloc), new EzShop(Utils.StringtoLocation(sloc), rs.getString("owner"), Utils.decodeItem(rs.getString("item")),
                         rs.getDouble("buyPrice"), rs.getDouble("sellPrice"), new ShopSettings(sloc, rs.getBoolean("msgToggle"),
                         rs.getBoolean("buyDisabled"), rs.getBoolean("sellDisabled"), rs.getString("admins"),
-                        rs.getBoolean("shareIncome"), rs.getString("transactions"), rs.getBoolean("adminshop"), rs.getString("rotation"))));
+                        rs.getBoolean("shareIncome"), rs.getString("transactions"), rs.getBoolean("adminshop"),
+                        rs.getString("rotation"), Arrays.asList(customMessages.split("#,#")))));
             }
             return map;
         } catch (SQLException e) {

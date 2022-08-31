@@ -6,6 +6,7 @@ import me.deadlight.ezchestshop.Data.ShopContainer;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.Utils.ASHologram;
 import me.deadlight.ezchestshop.Utils.FloatingItem;
+import me.deadlight.ezchestshop.Utils.Pair;
 import me.deadlight.ezchestshop.Utils.Utils;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -175,10 +176,24 @@ public class PlayerLookingAtChestShop implements Listener {
                 } else {
                     line = line.replaceAll("<separator>|<\\/separator>", "").replaceAll("<buy>|<\\/buy>", "").replaceAll("<sell>|<\\/sell>", "");
                 }
-                ASHologram hologram = new ASHologram(player, line, EntityType.ARMOR_STAND, lineLocation, false);
-//                hologram.spawn();
-                Utils.onlinePackets.add(hologram);
-                holoTextList.add(hologram);
+                if (line.startsWith("<custom")) {
+                    if (Config.settings_hologram_message_enabled) {
+                        int customNum = Integer.parseInt(line.replaceAll("\\D", ""));
+                        List<String> customMessages = ShopContainer.getShopSettings(shopLocation).getCustomMessages();
+
+                        if (customNum > customMessages.size()) continue;
+                        line = Utils.colorify(customMessages.get(customNum - 1));
+                    } else {
+                        continue;
+                    }
+                }
+                if (line.trim().equals(""))
+                    continue;
+                if (!line.equals("<empty>")) {
+                    ASHologram hologram = new ASHologram(player, line, EntityType.ARMOR_STAND, lineLocation, false);
+                    Utils.onlinePackets.add(hologram);
+                    holoTextList.add(hologram);
+                }
                 lineLocation.add(0, 0.3 * Config.holo_linespacing, 0);
             }
         }
@@ -191,30 +206,27 @@ public class PlayerLookingAtChestShop implements Listener {
 
 
 
-        Bukkit.getScheduler().scheduleAsyncDelayedTask(EzChestShop.getPlugin(), new Runnable() {
-            @Override
-            public void run() {
-                for (ASHologram holo : holoTextList) {
-                    holo.destroy();
-                    Utils.onlinePackets.remove(holo);
-                }
-                for (FloatingItem item : holoItemList) {
-                    item.destroy();
-                    Utils.onlinePackets.remove(item);
-                }
-                List<Player> players = playershopmap.get(shopLocation);
-                if (players == null || players.isEmpty()) {
+        Bukkit.getScheduler().scheduleAsyncDelayedTask(EzChestShop.getPlugin(), () -> {
+            for (ASHologram holo : holoTextList) {
+                holo.destroy();
+                Utils.onlinePackets.remove(holo);
+            }
+            for (FloatingItem item : holoItemList) {
+                item.destroy();
+                Utils.onlinePackets.remove(item);
+            }
+            List<Player> players1 = playershopmap.get(shopLocation);
+            if (players1 == null || players1.isEmpty()) {
+                playershopmap.remove(shopLocation);
+            } else {
+                players1.remove(player);
+                if (players1.isEmpty()) {
                     playershopmap.remove(shopLocation);
                 } else {
-                    players.remove(player);
-                    if (players.isEmpty()) {
-                        playershopmap.remove(shopLocation);
-                    } else {
-                        playershopmap.put(shopLocation, players);
-                    }
+                    playershopmap.put(shopLocation, players1);
                 }
-
             }
+
         }, 20 * Config.holodelay);
 
 
@@ -223,33 +235,11 @@ public class PlayerLookingAtChestShop implements Listener {
 
 
     private boolean isAlreadyLooking(Player player, Block block) {
-        if (map.get(player) != null) {
-            if (block.getLocation().equals(map.get(player))) {
-
-                return true;
-            } else {
-
-                return false;
-            }
-        } else {
-            return false;
-        }
+        return map.get(player) != null && block.getLocation().equals(map.get(player));
     }
 
     private boolean isAlreadyPresenting(Location location, Player player) {
-
-        if (playershopmap.containsKey(location)) {
-
-            if (playershopmap.get(location).contains(player)) {
-                return true;
-            } else {
-                return false;
-            }
-
-        } else {
-            return false;
-        }
-
+        return playershopmap.containsKey(location) && playershopmap.get(location).contains(player);
     }
 
     private Location getHoloLoc(Block containerBlock) {
