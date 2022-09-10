@@ -105,6 +105,12 @@ public class LanguageManager {
     public static void applySpecialChanges(FileConfiguration fc, String local) {
         boolean changes = false;
 
+        //TODO implement the special changes. It is needed for buyX and sellX, as well as the new admin command infos.
+//        if (fc.contains("shop-gui.buttons.sellX-title")) {
+//            fc.set("shop-gui.buttons.sellX-title", );
+//            changes = true;
+//        }
+
 
         if (changes) {
             fc.options().copyHeader(true);
@@ -220,41 +226,22 @@ public class LanguageManager {
 
 
     //shop-gui.buttons.
-    public String buttonSell1Title() {
-
-        return Utils.colorify(getString("shop-gui.buttons.sellone-title"));
+    public String buttonSellXTitle(int amount) {
+        return Utils.colorify(getString("shop-gui.buttons.sellX-title").replace("%amount%", "" + amount));
     }
-    public List<String> buttonSell1Lore(double price) {
-        return getList("shop-gui.buttons.sellone-lore").stream().map(s -> Utils.colorify(s.replace("%price%",
-                Utils.formatNumber(price, Utils.FormatType.GUI)).replace("%currency%", Config.currency)))
-                .collect(Collectors.toList());
-    }
-    public String buttonSell64Title() {
-
-        return Utils.colorify(getString("shop-gui.buttons.sell64-title"));
-    }
-    public List<String> buttonSell64Lore(double price) {
-        return getList("shop-gui.buttons.sell64-lore").stream().map(s -> Utils.colorify(s.replace("%price%",
-                Utils.formatNumber(price, Utils.FormatType.GUI)).replace("%currency%", Config.currency)))
+    public List<String> buttonSellXLore(double price, int amount) {
+        return getList("shop-gui.buttons.sellX-lore").stream().map(s -> Utils.colorify(s.replace("%price%",
+                Utils.formatNumber(price, Utils.FormatType.GUI)).replace("%currency%", Config.currency).replace("%amount%", "" + amount)))
                 .collect(Collectors.toList());
     }
 
-    public String buttonBuy1Title() {
+    public String buttonBuyXTitle(int amount) {
 
-        return Utils.colorify(getString("shop-gui.buttons.buyone-title"));
+        return Utils.colorify(getString("shop-gui.buttons.buyX-title").replace("%amount%", "" + amount));
     }
-    public List<String> buttonBuy1Lore(double price) {
-        return getList("shop-gui.buttons.buyone-lore").stream().map(s -> Utils.colorify(s.replace("%price%",
-                Utils.formatNumber(price, Utils.FormatType.GUI)).replace("%currency%", Config.currency)))
-                .collect(Collectors.toList());
-    }
-    public String buttonBuy64Title() {
-
-        return Utils.colorify(getString("shop-gui.buttons.buy64-title"));
-    }
-    public List<String> buttonBuy64Lore(double price) {
-        return getList("shop-gui.buttons.buy64-lore").stream().map(s -> Utils.colorify(s.replace("%price%",
-                Utils.formatNumber(price, Utils.FormatType.GUI)).replace("%currency%", Config.currency)))
+    public List<String> buttonBuyXLore(double price, int amount) {
+        return getList("shop-gui.buttons.buyX-lore").stream().map(s -> Utils.colorify(s.replace("%price%",
+                Utils.formatNumber(price, Utils.FormatType.GUI)).replace("%currency%", Config.currency).replace("%amount%", "" + amount)))
                 .collect(Collectors.toList());
     }
 

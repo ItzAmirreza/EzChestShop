@@ -1,0 +1,162 @@
+shop-gui:
+  rows: 3
+  background: default
+  items:
+    # You can use sell-1/2/3/4/.../1728/all to sell different quantities of items.
+    sell-64:
+      row: 2
+      column: 3
+      material: red_dye
+      count: 64
+    sell-1:
+      row: 2
+      column: 4
+      material: red_dye
+      count: 1
+    # The material of the shop item cannot be changes as it depends on the item being sold/bought.
+    shop-item:
+      row: 2
+      column: 5
+      count: 1
+    # You can use buy-1/2/3/4/.../1728/all to buy different quantities of items.
+    buy-1:
+      row: 2
+      column: 6
+      material: lime_dye
+      count: 1
+    buy-64:
+      row: 2
+      column: 7
+      material: lime_dye
+      count: 64
+    storage:
+      row: 3
+      column: 1
+      material: chest
+      count: 1
+    admin-view:
+      row: 3
+      column: 1
+      material: redstone
+      count: 1
+      enchanted: true
+    custom-buy-sell:
+      row: 3
+      column: 5
+      material: oak_sign
+      count: 1
+    settings:
+      row: 3
+      column: 9
+      material: smithing_table
+      count: 1
+shop-settings:
+  rows: 3
+  background: default
+  items:
+    back:
+      row: 1
+      column: 1
+      material: dark_oak_door
+      count: 1
+    toggle-transaction-message-off:
+      row: 2
+      column: 2
+      material: gray_dye
+      count: 1
+    toggle-transaction-message-on:
+      row: 2
+      column: 2
+      material: lime_dye
+      count: 1
+    disable-buy-off:
+      row: 2
+      column: 3
+      material: gray_dye
+      count: 1
+    disable-buy-on:
+      row: 2
+      column: 3
+      material: lime_dye
+      count: 1
+    disable-sell-off:
+      row: 2
+      column: 4
+      material: gray_dye
+      count: 1
+    disable-sell-on:
+      row: 2
+      column: 4
+      material: lime_dye
+      count: 1
+    shop-admins:
+      row: 2
+      column: 5
+      material: oak_sign
+      count: 1
+    # To change the item for different rotations, use hologram-rotation-up/north/east/south/west/down
+    hologram-rotation-all:
+      row: 2
+      column: 6
+      material: compass
+      count: 1
+    change-price:
+      row: 2
+      column: 7
+      material: hopper
+      count: 1
+    customize-hologram-message:
+      row: 2
+      column: 8
+      material: writable_book
+      count: 1
+    share-income-off:
+      row: 3
+      column: 5
+      material: gray_dye
+      count: 1
+    share-income-on:
+      row: 3
+      column: 5
+      material: lime_dye
+      count: 1
+    latest-transactions:
+      row: 3
+      column: 9
+      material: paper
+      count: 1
+transaction-logs:
+  rows: 6
+  items:
+    back:
+      row: 1
+      column: 1
+      material: dark_oak_door
+      count: 1
+    # The transaction item may only have a count and a material. This item will be repeated all over the menu, except for the slot of the back item.
+    transaction-item:
+      material: paper
+      count: 1
+hologram-messages-manager:
+  rows: 6
+  background: default
+  items:
+    back:
+      row: 6
+      column: 1
+      material: dark_oak_door
+      count: 1
+    # The hologram message item may only have a count and a material. This item will be repeated all over the menu, except for the slot of the back item.
+    hologram-message-item:
+      material: chest
+      count: 1
+    previous:
+      row: 6
+      column: 3
+      material: arrow
+      count: 1
+    next:
+      row: 6
+      column: 7
+      material: arrow
+      count: 1

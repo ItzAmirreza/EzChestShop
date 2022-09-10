@@ -4,6 +4,9 @@ import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
 import dev.triumphteam.gui.guis.PaginatedGui;
+import me.deadlight.ezchestshop.Data.GUI.ContainerGui;
+import me.deadlight.ezchestshop.Data.GUI.ContainerGuiItem;
+import me.deadlight.ezchestshop.Data.GUI.GuiData;
 import me.deadlight.ezchestshop.Data.LanguageManager;
 import me.deadlight.ezchestshop.Data.ShopContainer;
 import me.deadlight.ezchestshop.Listeners.PlayerCloseToChestListener;
@@ -30,72 +33,65 @@ public class CustomMessageManageGUI {
     LanguageManager lm = new LanguageManager();
 
     public void showGUI(Player player, Block containerBlock, boolean isAdmin) {
+
+        ContainerGui container = GuiData.getMessageManager();
         PaginatedGui paginatedGui = Gui.paginated()
                 .title(Component.text(lm.customMessageManagerTitle()))
-                .rows(6)
-                .pageSize(45)
+                .rows(container.getRows())
+                .pageSize(container.getRows() * 9 - 9)
                 .create();
+        paginatedGui.setDefaultClickAction(event -> {
+            event.setCancelled(true);
+        });
 
         Map<Location, String> customMessages = ShopSettings.getAllCustomMessages(ShopContainer.getShop(containerBlock.getLocation()).getOwnerID().toString());
 
         // Fill the bottom bar:
-        paginatedGui.getFiller().fillBottom(ItemBuilder.from(Material.BLACK_STAINED_GLASS_PANE).name(Component.text("")).asGuiItem(event -> event.setCancelled(true)));
+        paginatedGui.getFiller().fillBottom(container.getBackground());
 
         // Previous item
-        ItemStack previous = new ItemStack(Material.ARROW, 1);
-        ItemMeta previousMeta = previous.getItemMeta();
-        previousMeta.setDisplayName(lm.customMessageManagerPreviousPageTitle());
-        previousMeta.setLore(lm.customMessageManagerPreviousPageLore());
-        previous.setItemMeta(previousMeta);
-        GuiItem previousItem = new GuiItem(previous, event -> {
+        ContainerGuiItem previous = container.getItem("previous")
+                .setName(lm.customMessageManagerPreviousPageTitle())
+                .setLore(lm.customMessageManagerPreviousPageLore());
+        GuiItem previousItem = new GuiItem(previous.getItem(), event -> {
             event.setCancelled(true);
             paginatedGui.previous();
         });
-        paginatedGui.setItem(6, 3, previousItem);
+        paginatedGui.setItem(previous.getSlot(), previousItem);
         // Next item
-        ItemStack next = new ItemStack(Material.ARROW, 1);
-        ItemMeta nextMeta = next.getItemMeta();
-        nextMeta.setDisplayName(lm.customMessageManagerNextPageTitle());
-        nextMeta.setLore(lm.customMessageManagerNextPageLore());
-        next.setItemMeta(nextMeta);
-        GuiItem nextItem = new GuiItem(next, event -> {
+        ContainerGuiItem next = container.getItem("next")
+                .setName(lm.customMessageManagerNextPageTitle())
+                .setLore(lm.customMessageManagerNextPageLore());
+        GuiItem nextItem = new GuiItem(next.getItem(), event -> {
             event.setCancelled(true);
             paginatedGui.next();
         });
-        paginatedGui.setItem(6, 7, nextItem);
+        paginatedGui.setItem(next.getSlot(), nextItem);
         // Back item
-        ItemStack door = new ItemStack(Material.DARK_OAK_DOOR, 1);
-        ItemMeta doorMeta = door.getItemMeta();
-        doorMeta.setDisplayName(lm.backToSettingsButton());
-        door.setItemMeta(doorMeta);
-        paginatedGui.setDefaultClickAction(event -> {
-            event.setCancelled(true);
-        });
-        GuiItem doorItem = new GuiItem(door, event -> {
+        ContainerGuiItem back = container.getItem("back")
+                .setName(lm.backToSettingsButton());
+        GuiItem doorItem = new GuiItem(back.getItem(), event -> {
             event.setCancelled(true);
             SettingsGUI settingsGUI = new SettingsGUI();
             settingsGUI.showGUI(player, containerBlock, isAdmin);
         });
-        paginatedGui.setItem(6, 1, doorItem);
+        paginatedGui.setItem(back.getSlot(), doorItem);
 
         for (Map.Entry<Location, String> entry : customMessages.entrySet()) {
             Location loc = entry.getKey();
             String message = entry.getValue();
             List<String> messages = Arrays.asList(message.split("#,#")).stream().map(s -> Utils.colorify(s)).collect(Collectors.toList());
 
-            ItemStack shop = new ItemStack(Material.CHEST, 1);
-            ItemMeta shopMeta = shop.getItemMeta();
+            ContainerGuiItem item = container.getItem("hologram-message-item");
             EzShop ezShop = ShopContainer.getShop(loc);
             if (ezShop != null) {
-                shopMeta.setDisplayName(lm.customMessageManagerShopEntryTitle(ezShop.getShopItem()));
+                item.setName(lm.customMessageManagerShopEntryTitle(ezShop.getShopItem()));
             } else {
-                shopMeta.setDisplayName(lm.customMessageManagerShopEntryUnkownTitle());
+                item.setName(lm.customMessageManagerShopEntryUnkownTitle());
             }
-            shopMeta.setLore(lm.customMessageManagerShopEntryLore(loc, messages));
+            item.setLore(lm.customMessageManagerShopEntryLore(loc, messages));
 
-            shop.setItemMeta(shopMeta);
-
-            GuiItem shopItem = new GuiItem(shop, event -> {
+            GuiItem shopItem = new GuiItem(item.getItem(), event -> {
                 event.setCancelled(true);
                 showDeleteConfirm(player, containerBlock, isAdmin, loc);
             });

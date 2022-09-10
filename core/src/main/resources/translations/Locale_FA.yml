@@ -10,17 +10,11 @@ shop-gui:
   owner-title: "&cChest shope %shopowner%"
   adminshop-title: "&cShope admin"
   buttons:
-    sellone-title: "&cForosh 1x"
-    sellone-lore:
-      - "&7Forosh be gheymate &e%price% %currency%"
-    sell64-title: "&cForosh 64x"
-    sell64-lore:
+    sellX-title: "&cForosh %amount%x"
+    sellX-lore:
       - "&7Forosh be gheymat &e%price% %currency%"
-    buyone-title: "&aKharid 1x"
-    buyone-lore:
-      - "&7Kharid be gheymate &e%price% %currency%"
-    buy64-title: "&aKharid 64x"
-    buy64-lore:
+    buyX-title: "&aKharid %amount%x"
+    buyX-lore:
       - "&7Kharid be gheymate &e%price% %currency%"
     adminview: "&c&lAdmin View"
     storage: "&e&lAnbar"

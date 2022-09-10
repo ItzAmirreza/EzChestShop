@@ -11,17 +11,11 @@ shop-gui:
   owner-title: '&cSklep gracza %shopowner%'
   adminshop-title: '&cSklep Serwerowy'
   buttons:
-    sellone-title: '&cSprzedaj 1x'
-    sellone-lore:
+    sellX-title: '&cSprzedaj %amount%x'
+    sellX-lore:
       - '&7Sprzedaj za &e%price% %currency%'
-    sell64-title: '&cSprzedaj 64x'
-    sell64-lore:
-      - '&7Sprzedaj za &e%price% %currency%'
-    buyone-title: '&aKup 1x'
-    buyone-lore:
-      - '&7Kup za &e%price% %currency%'
-    buy64-title: '&aKup 64x'
-    buy64-lore:
+    buyX-title: '&aKup %amount%x'
+    buyX-lore:
       - '&7Kup za &e%price% %currency%'
     adminview: '&c&lPodgląd właściciela'
     storage: '&e&lPrzedmioty'

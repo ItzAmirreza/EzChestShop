@@ -10,17 +10,11 @@ shop-gui:
   owner-title: "&c%shopowner%'s chest shop"
   adminshop-title: "&cAdmin shop"
   buttons:
-    sellone-title: "&cSell 1x"
-    sellone-lore:
+    sellX-title: "&cSell %amount%x"
+    sellX-lore:
       - "&7Sell for &e%price% %currency%"
-    sell64-title: "&cSell 64x"
-    sell64-lore:
-      - "&7Sell for &e%price% %currency%"
-    buyone-title: "&aBuy 1x"
-    buyone-lore:
-      - "&7Buy for &e%price% %currency%"
-    buy64-title: "&aBuy 64x"
-    buy64-lore:
+    buyX-title: "&aBuy %amount%x"
+    buyX-lore:
       - "&7Buy for &e%price% %currency%"
     adminview: "&c&lAdmin View"
     storage: "&e&lStorage"

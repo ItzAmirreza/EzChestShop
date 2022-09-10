@@ -4,6 +4,9 @@ import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
 import me.deadlight.ezchestshop.Commands.MainCommands;
 import me.deadlight.ezchestshop.Data.Config;
+import me.deadlight.ezchestshop.Data.GUI.ContainerGui;
+import me.deadlight.ezchestshop.Data.GUI.ContainerGuiItem;
+import me.deadlight.ezchestshop.Data.GUI.GuiData;
 import me.deadlight.ezchestshop.Data.LanguageManager;
 import me.deadlight.ezchestshop.Data.ShopContainer;
 import me.deadlight.ezchestshop.Enums.LogType;
@@ -45,29 +48,19 @@ public class SettingsGUI {
 
     public void showGUI(Player player, Block containerBlock, boolean isAdmin) {
 
+        ContainerGui container = GuiData.getSettings();
         PersistentDataContainer dataContainer = ((TileState)containerBlock.getState()).getPersistentDataContainer();
 
         boolean isAdminShop = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"), PersistentDataType.INTEGER) == 1;
 
 
-        Gui gui = new Gui(3, lm.settingsGuiTitle());
-        ItemStack glassis = new ItemStack(Material.BLACK_STAINED_GLASS_PANE, 1);
-        ItemMeta glassmeta = glassis.getItemMeta();
-        glassmeta.setDisplayName(Utils.colorify("&d"));
-        glassis.setItemMeta(glassmeta);
-        GuiItem glasses = new GuiItem(glassis, event -> {
-            event.setCancelled(true);
-        });
-        //I changed its place to first part of code because of different GUI sections for admins and owners
+        Gui gui = new Gui(container.getRows(), lm.settingsGuiTitle());
 
-        gui.getFiller().fillBorder(glasses);
+        gui.getFiller().fill(container.getBackground());
 
         //trans
-        ItemStack lastTransItem = new ItemStack(Material.PAPER, 1);
-        ItemMeta lastTransMeta = lastTransItem.getItemMeta();
-        lastTransMeta.setDisplayName(lm.latestTransactionsTitle());
-        lastTransItem.setItemMeta(lastTransMeta);
-        GuiItem lastTrans = new GuiItem(lastTransItem, event -> {
+        ContainerGuiItem lastTransItem = container.getItem("latest-transactions").setName(lm.latestTransactionsTitle());
+        GuiItem lastTrans = new GuiItem(lastTransItem.getItem(), event -> {
            event.setCancelled(true);
            LogsGUI logsGUI = new LogsGUI();
            logsGUI.showGUI(player, dataContainer, containerBlock, LogType.TRANSACTION, isAdmin);
@@ -88,36 +81,27 @@ public class SettingsGUI {
 
         //Message Toggle Item
         boolean isToggleMessageOn = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "msgtoggle"), PersistentDataType.INTEGER) == 1;
-        ItemStack messageToggleItem = new ItemStack(grayGreenChooser(isToggleMessageOn), 1);
-        ItemMeta messageToggleMeta = messageToggleItem.getItemMeta();
-        messageToggleMeta.setDisplayName(lm.toggleTransactionMessageButton());
-        messageToggleMeta.setLore(toggleMessageChooser(isToggleMessageOn, lm));
-        messageToggleItem.setItemMeta(messageToggleMeta);
+        ContainerGuiItem messageToggleItem = container.getItem(isToggleMessageOn ? "toggle-transaction-message-on" : "toggle-transaction-message-off")
+                .setName(lm.toggleTransactionMessageButton()).setLore(toggleMessageChooser(isToggleMessageOn, lm));
 
 
 
-        GuiItem messageToggle = new GuiItem(messageToggleItem, event -> {
+        GuiItem messageToggle = new GuiItem(messageToggleItem.getItem(), event -> {
             event.setCancelled(true);
             //start the functionality for toggle message
-            if (checkIfOn(event.getCurrentItem().getType())) {
+            if (dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "msgtoggle"), PersistentDataType.INTEGER) == 1) {
                 TileState state = ((TileState)containerBlock.getState());
                 state.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "msgtoggle"), PersistentDataType.INTEGER, 0);
                 state.update();
                 player.sendMessage(lm.toggleTransactionMessageOffInChat());
-                event.getCurrentItem().setType(Material.GRAY_DYE);
-                ItemMeta meta = event.getCurrentItem().getItemMeta();
-                meta.setLore(toggleMessageChooser(false, lm));
-                event.getCurrentItem().setItemMeta(meta);
+                showGUI(player, containerBlock, isAdmin);
                 ShopContainer.getShopSettings(containerBlock.getLocation()).setMsgtoggle(false);
             } else {
                 TileState state = ((TileState)containerBlock.getState());
                 state.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "msgtoggle"), PersistentDataType.INTEGER, 1);
                 state.update();
                 player.sendMessage(lm.toggleTransactionMessageOnInChat());
-                event.getCurrentItem().setType(Material.LIME_DYE);
-                ItemMeta meta = event.getCurrentItem().getItemMeta();
-                meta.setLore(toggleMessageChooser(true, lm));
-                event.getCurrentItem().setItemMeta(meta);
+                showGUI(player, containerBlock, isAdmin);
                 ShopContainer.getShopSettings(containerBlock.getLocation()).setMsgtoggle(true);
 
             }
@@ -125,66 +109,48 @@ public class SettingsGUI {
 
         //Message Toggle Item
         boolean isBuyDisabled = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "dbuy"), PersistentDataType.INTEGER) == 1;
-        ItemStack buyDisabledItem= new ItemStack(grayGreenChooser(isBuyDisabled), 1);
-        ItemMeta buyDisabledMeta = buyDisabledItem.getItemMeta();
-        buyDisabledMeta.setDisplayName(lm.disableBuyingButtonTitle());
-        buyDisabledMeta.setLore(buyMessageChooser(isBuyDisabled, lm));
-        buyDisabledItem.setItemMeta(buyDisabledMeta);
-        GuiItem buyDisabled = new GuiItem(buyDisabledItem, event -> {
+        ContainerGuiItem buyDisabledItem = container.getItem(isBuyDisabled ? "disable-buy-on" : "disable-buy-off")
+                .setName(lm.disableBuyingButtonTitle()).setLore(buyMessageChooser(isBuyDisabled, lm));
+        GuiItem buyDisabled = new GuiItem(buyDisabledItem.getItem(), event -> {
             event.setCancelled(true);
             //start the functionality for disabling buy
-            if (checkIfOn(event.getCurrentItem().getType())) {
+            if (dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "dbuy"), PersistentDataType.INTEGER) == 1) {
                 TileState state = ((TileState)containerBlock.getState());
                 state.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "dbuy"), PersistentDataType.INTEGER, 0);
                 state.update();
                 player.sendMessage(lm.disableBuyingOffInChat());
-                event.getCurrentItem().setType(Material.GRAY_DYE);
-                ItemMeta meta = event.getCurrentItem().getItemMeta();
-                meta.setLore(buyMessageChooser(false, lm));
-                event.getCurrentItem().setItemMeta(meta);
+                showGUI(player, containerBlock, isAdmin);
                 ShopContainer.getShopSettings(containerBlock.getLocation()).setDbuy(false);
             } else {
                 TileState state = ((TileState)containerBlock.getState());
                 state.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "dbuy"), PersistentDataType.INTEGER, 1);
                 state.update();
                 player.sendMessage(lm.disableBuyingOnInChat());
-                event.getCurrentItem().setType(Material.LIME_DYE);
-                ItemMeta meta = event.getCurrentItem().getItemMeta();
-                meta.setLore(buyMessageChooser(true, lm));
-                event.getCurrentItem().setItemMeta(meta);
+                showGUI(player, containerBlock, isAdmin);
                 ShopContainer.getShopSettings(containerBlock.getLocation()).setDbuy(true);
             }
 
         });
 
         boolean isSellDisabled = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "dsell"), PersistentDataType.INTEGER) == 1;
-        ItemStack sellDisabledItem= new ItemStack(grayGreenChooser(isSellDisabled), 1);
-        ItemMeta sellDisabledMeta = sellDisabledItem.getItemMeta();
-        sellDisabledMeta.setDisplayName(lm.disableSellingButtonTitle());
-        sellDisabledMeta.setLore(sellMessageChooser(isSellDisabled, lm));
-        sellDisabledItem.setItemMeta(sellDisabledMeta);
-        GuiItem sellDisabled = new GuiItem(sellDisabledItem, event -> {
+        ContainerGuiItem sellDisabledItem = container.getItem(isSellDisabled ? "disable-sell-on" : "disable-sell-off")
+                .setName(lm.disableSellingButtonTitle()).setLore(sellMessageChooser(isSellDisabled, lm));
+        GuiItem sellDisabled = new GuiItem(sellDisabledItem.getItem(), event -> {
             event.setCancelled(true);
             //start the functionality for disabling sell
-            if (checkIfOn(event.getCurrentItem().getType())) {
+            if (dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "dsell"), PersistentDataType.INTEGER) == 1) {
                 TileState state = ((TileState)containerBlock.getState());
                 state.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "dsell"), PersistentDataType.INTEGER, 0);
                 state.update();
                 player.sendMessage(lm.disableSellingOffInChat());
-                event.getCurrentItem().setType(Material.GRAY_DYE);
-                ItemMeta meta = event.getCurrentItem().getItemMeta();
-                meta.setLore(sellMessageChooser(false, lm));
-                event.getCurrentItem().setItemMeta(meta);
+                showGUI(player, containerBlock, isAdmin);
                 ShopContainer.getShopSettings(containerBlock.getLocation()).setDsell(false);
             } else {
                 TileState state = ((TileState)containerBlock.getState());
                 state.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "dsell"), PersistentDataType.INTEGER, 1);
                 state.update();
                 player.sendMessage(lm.disableSellingOnInChat());
-                event.getCurrentItem().setType(Material.LIME_DYE);
-                ItemMeta meta = event.getCurrentItem().getItemMeta();
-                meta.setLore(sellMessageChooser(true, lm));
-                event.getCurrentItem().setItemMeta(meta);
+                showGUI(player, containerBlock, isAdmin);
                 ShopContainer.getShopSettings(containerBlock.getLocation()).setDsell(true);
             }
         });
@@ -194,12 +160,8 @@ public class SettingsGUI {
         //otherwise: UUID@UUID@UUID@UUID
         if (!isAdmin) {
             boolean hastAtLeastOneAdmin = !dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "admins"), PersistentDataType.STRING).equals("none");
-            ItemStack signItem = new ItemStack(Material.OAK_SIGN, 1);
-            ItemMeta signMeta = signItem.getItemMeta();
-            signMeta.setDisplayName(lm.shopAdminsButtonTitle());
-            signMeta.setLore(signLoreChooser(hastAtLeastOneAdmin, dataContainer, lm));
-            signItem.setItemMeta(signMeta);
-            GuiItem signItemg = new GuiItem(signItem, event -> {
+            ContainerGuiItem signItem = container.getItem("shop-admins").setName(lm.shopAdminsButtonTitle()).setLore(signLoreChooser(hastAtLeastOneAdmin, dataContainer, lm));
+            GuiItem signItemg = new GuiItem(signItem.getItem(), event -> {
                 event.setCancelled(true);
                 //do the job
                 if (event.getClick() == ClickType.LEFT) {
@@ -219,43 +181,34 @@ public class SettingsGUI {
 
             });
             boolean isSharedIncome = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "shareincome"), PersistentDataType.INTEGER) == 1;
-            ItemStack sharedIncomeItem = new ItemStack(grayGreenChooser(isSharedIncome), 1);
-            ItemMeta sharedIncomeMeta = sharedIncomeItem.getItemMeta();
-            sharedIncomeMeta.setDisplayName(lm.shareIncomeButtonTitle());
-            sharedIncomeMeta.setLore(shareIncomeLoreChooser(isSharedIncome, lm));
-            sharedIncomeItem.setItemMeta(sharedIncomeMeta);
-            GuiItem sharedIncome = new GuiItem(sharedIncomeItem, event -> {
+            ContainerGuiItem sharedIncomeItem = container.getItem(isSharedIncome ? "share-income-on" : "share-income-off")
+                    .setName(lm.shareIncomeButtonTitle()).setLore(shareIncomeLoreChooser(isSharedIncome, lm));
+            GuiItem sharedIncome = new GuiItem(sharedIncomeItem.getItem(), event -> {
                 event.setCancelled(true);
                 //start the functionality for shared income
 
-                if (checkIfOn(event.getCurrentItem().getType())) {
+                if (dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "shareincome"), PersistentDataType.INTEGER) == 1) {
                     TileState state = ((TileState)containerBlock.getState());
                     state.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "shareincome"), PersistentDataType.INTEGER, 0);
                     state.update();
                     player.sendMessage(lm.sharedIncomeOffInChat());
-                    event.getCurrentItem().setType(Material.GRAY_DYE);
-                    ItemMeta meta = event.getCurrentItem().getItemMeta();
-                    meta.setLore(shareIncomeLoreChooser(false, lm));
-                    event.getCurrentItem().setItemMeta(meta);
+                    showGUI(player, containerBlock, isAdmin);
                     ShopContainer.getShopSettings(containerBlock.getLocation()).setShareincome(false);
                 } else {
                     TileState state = ((TileState)containerBlock.getState());
                     state.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "shareincome"), PersistentDataType.INTEGER, 1);
                     state.update();
                     player.sendMessage(lm.sharedIncomeOnInChat());
-                    event.getCurrentItem().setType(Material.LIME_DYE);
-                    ItemMeta meta = event.getCurrentItem().getItemMeta();
-                    meta.setLore(shareIncomeLoreChooser(true, lm));
-                    event.getCurrentItem().setItemMeta(meta);
+                    showGUI(player, containerBlock, isAdmin);
                     ShopContainer.getShopSettings(containerBlock.getLocation()).setShareincome(true);
                 }
 
 
             });
-            gui.setItem(13, signItemg);
+            gui.setItem(signItem.getSlot(), signItemg);
             if (hastAtLeastOneAdmin) {
                 if (dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"), PersistentDataType.INTEGER) == 0) {
-                    gui.setItem(22, sharedIncome);
+                    gui.setItem(sharedIncomeItem.getSlot(), sharedIncome);
                 }
 
             }
@@ -265,12 +218,16 @@ public class SettingsGUI {
 
         String rotation = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "rotation"), PersistentDataType.STRING);
         rotation = rotation == null ? Config.settings_defaults_rotation : rotation;
-        ItemStack rotationItemStack= new ItemStack(Material.COMPASS, 1);
-        ItemMeta rotationItemMeta = rotationItemStack.getItemMeta();
-        rotationItemMeta.setDisplayName(lm.rotateHologramButtonTitle());
-        rotationItemMeta.setLore(lm.rotateHologramButtonLore(rotation));
-        rotationItemStack.setItemMeta(rotationItemMeta);
-        GuiItem rotationItem = new GuiItem(rotationItemStack, event -> {
+        ContainerGuiItem rotationItemStack;
+        if (container.hasItem("hologram-rotation-" + rotation)) {
+            rotationItemStack = container.getItem("hologram-rotation-" + rotation)
+                    .setName(lm.rotateHologramButtonTitle()).setLore(lm.rotateHologramButtonLore(rotation));
+        } else {
+            rotationItemStack = container.getItem("hologram-rotation-all")
+                    .setName(lm.rotateHologramButtonTitle()).setLore(lm.rotateHologramButtonLore(rotation));
+        }
+
+        GuiItem rotationItem = new GuiItem(rotationItemStack.getItem(), event -> {
             event.setCancelled(true);
             String next_rotation;
             if (event.getClick() == ClickType.LEFT) {
@@ -284,9 +241,7 @@ public class SettingsGUI {
             state.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "rotation"), PersistentDataType.STRING, next_rotation);
             state.update();
             player.sendMessage(lm.rotateHologramInChat(next_rotation));
-            ItemMeta meta = event.getCurrentItem().getItemMeta();
-            meta.setLore(lm.rotateHologramButtonLore(next_rotation));
-            event.getCurrentItem().setItemMeta(meta);
+            showGUI(player, containerBlock, isAdmin);
             ShopContainer.getShopSettings(containerBlock.getLocation()).setRotation(next_rotation);
             if (Config.holodistancing) {
                 PlayerCloseToChestListener.hideHologram(containerBlock.getLocation(), true);
@@ -294,12 +249,10 @@ public class SettingsGUI {
         });
 
 
-        ItemStack priceItemStack= new ItemStack(Material.HOPPER, 1);
-        ItemMeta priceItemMeta = priceItemStack.getItemMeta();
-        priceItemMeta.setDisplayName(lm.changePricesButtonTitle());
-        priceItemMeta.setLore(lm.changePricesButtonLore());
-        priceItemStack.setItemMeta(priceItemMeta);
-        GuiItem priceItem = new GuiItem(priceItemStack, event -> {
+
+        ContainerGuiItem priceItemStack = container.getItem("change-price")
+                .setName(lm.changePricesButtonTitle()).setLore(lm.changePricesButtonLore());
+        GuiItem priceItem = new GuiItem(priceItemStack.getItem(), event -> {
             event.setCancelled(true);
             if (event.getClick() == ClickType.LEFT) {
                 player.closeInventory();
@@ -378,9 +331,9 @@ public class SettingsGUI {
 
         int maxMessages = Utils.getMaxPermission(player, "ecs.shops.hologram.messages.limit.");
         int currentMessages = ShopSettings.getAllCustomMessages(ShopContainer.getShop(containerBlock.getLocation()).getOwnerID().toString()).size();
-        ItemStack customMessageItemStack= new ItemStack(Material.WRITABLE_BOOK, 1);
-        ItemMeta customMessageItemMeta = customMessageItemStack.getItemMeta();
-        customMessageItemMeta.setDisplayName(lm.hologramMessageButtonTitle());
+
+        ContainerGuiItem customMessageItemStack = container.getItem("customize-hologram-message")
+                .setName(lm.hologramMessageButtonTitle());
         boolean hasNoMaxShopLimit = maxMessages == -1;
         boolean hasPermissionLimit = Config.permission_hologram_message_limit;
         // if hasNoMaxShopLimit and hasPermissionLimit are true, value should be false.
@@ -388,11 +341,10 @@ public class SettingsGUI {
         // if hasNoMaxShopLimit is false and hasPermissionLimit is true, value should be true.
         // if hasNoMaxShopLimit is false and hasPermissionLimit is false, value should be false.
         boolean value = hasNoMaxShopLimit && hasPermissionLimit ? false : hasNoMaxShopLimit ? false : hasPermissionLimit;
-        customMessageItemMeta.setLore(((maxMessages - currentMessages > 0 && hasPermissionLimit) || !hasPermissionLimit) || hasNoMaxShopLimit  ?
+        customMessageItemStack.setLore(((maxMessages - currentMessages > 0 && hasPermissionLimit) || !hasPermissionLimit) || hasNoMaxShopLimit  ?
                 lm.hologramMessageButtonLore(player, ShopContainer.getShop(containerBlock.getLocation()).getOwnerID().toString()) :
                 lm.hologramMessageButtonLoreMaxReached(player));
-        customMessageItemStack.setItemMeta(customMessageItemMeta);
-        GuiItem customMessageItem = new GuiItem(customMessageItemStack, event -> {
+        GuiItem customMessageItem = new GuiItem(customMessageItemStack.getItem(), event -> {
             event.setCancelled(true);
             EzChestShop.logConsole("Max messages: " + maxMessages + " Current messages: " + currentMessages + ", Clicked right: " + event.isRightClick() + ", Clicked left: " + event.isLeftClick());
             if (maxMessages - currentMessages > 0 || !value) {
@@ -437,11 +389,9 @@ public class SettingsGUI {
             }
         });
 
-        ItemStack backItemStack = new ItemStack(Material.DARK_OAK_DOOR, 1);
-        ItemMeta backItemMeta = backItemStack.getItemMeta();
-        backItemMeta.setDisplayName(lm.backToShopGuiButton());
-        backItemStack.setItemMeta(backItemMeta);
-        GuiItem backItem = new GuiItem(backItemStack, event -> {
+        ContainerGuiItem backItemStack = container.getItem("back")
+                .setName(lm.backToShopGuiButton());
+        GuiItem backItem = new GuiItem(backItemStack.getItem(), event -> {
            event.setCancelled(true);
             String owneruuid = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING);
 
@@ -477,32 +427,25 @@ public class SettingsGUI {
         });
 
 
-        gui.setItem(0, backItem);
+        gui.setItem(backItemStack.getSlot(), backItem);
         //14-15-16
         if (Config.holo_rotation) {
-            gui.setItem(14, rotationItem);
-        } else {
-            gui.setItem(14, glasses);
+            gui.setItem(rotationItemStack.getSlot(), rotationItem);
         }
-        gui.setItem(15, priceItem);
+        gui.setItem(priceItemStack.getSlot(), priceItem);
         if (Config.settings_hologram_message_enabled) {
-            gui.setItem(16, customMessageItem);
-        } else {
-            gui.setItem(16, glasses);
+            gui.setItem(customMessageItemStack.getSlot(), customMessageItem);
         }
         //17-26
-        gui.setItem(26, lastTrans);
+        gui.setItem(lastTransItem.getSlot(), lastTrans);
 
         //for forgotten logs button
         //this.themain.setItem(26, lastLogs);
 
         //10-11-12-13-(22 optional)
-        gui.setItem(10, messageToggle);
-        gui.setItem(11, buyDisabled);
-        gui.setItem(12, sellDisabled);
-        if (isAdmin) {
-            gui.setItem(13, glasses);
-        }
+        gui.setItem(messageToggleItem.getSlot(), messageToggle);
+        gui.setItem(buyDisabledItem.getSlot(), buyDisabled);
+        gui.setItem(sellDisabledItem.getSlot(), sellDisabled);
 
         gui.open(player);
 

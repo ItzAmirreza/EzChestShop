@@ -3,6 +3,9 @@ package me.deadlight.ezchestshop.GUIs;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
 import me.deadlight.ezchestshop.Data.Config;
+import me.deadlight.ezchestshop.Data.GUI.ContainerGui;
+import me.deadlight.ezchestshop.Data.GUI.ContainerGuiItem;
+import me.deadlight.ezchestshop.Data.GUI.GuiData;
 import me.deadlight.ezchestshop.Data.LanguageManager;
 import me.deadlight.ezchestshop.Data.ShopContainer;
 import me.deadlight.ezchestshop.EzChestShop;
@@ -46,6 +49,9 @@ public class AdminShopGUI {
         boolean disabledBuy = data.get(new NamespacedKey(EzChestShop.getPlugin(), "dbuy"), PersistentDataType.INTEGER) == 1;
         boolean disabledSell = data.get(new NamespacedKey(EzChestShop.getPlugin(), "dsell"), PersistentDataType.INTEGER) == 1;
 
+        ContainerGui container = GuiData.getShop();
+
+
         ItemStack mainitem = Utils.decodeItem(data.get(new NamespacedKey(EzChestShop.getPlugin(), "item"), PersistentDataType.STRING));
         ItemStack guiMainItem = mainitem.clone();
         ItemMeta mainmeta = guiMainItem.getItemMeta();
@@ -56,100 +62,67 @@ public class AdminShopGUI {
             event.setCancelled(true);
         });
 
-        Gui gui = new Gui(3, lm.guiAdminTitle(shopOwner));
-        ItemStack glassis = new ItemStack(Material.BLACK_STAINED_GLASS_PANE, 1);
-        ItemMeta glassmeta = glassis.getItemMeta();
-        glassmeta.setDisplayName(Utils.colorify("&d"));
-        glassis.setItemMeta(glassmeta);
+        Gui gui = new Gui(container.getRows(), lm.guiAdminTitle(shopOwner));
+        gui.getFiller().fill(container.getBackground());
 
-        GuiItem glasses = new GuiItem(glassis, event -> {
-            // Handle your click action here
-            event.setCancelled(true);
+        container.getItemKeys().forEach(key -> {
+            if (key.startsWith("sell-")) {
+                String amountString = key.split("-")[1];
+                int amount = 1;
+                if (amountString.equals("all")) {
+                    amount = Integer.parseInt(Utils.calculateSellPossibleAmount(Bukkit.getOfflinePlayer(player.getUniqueId()), player.getInventory().getStorageContents(), Utils.getBlockInventory(containerBlock).getStorageContents(), sellPrice, mainitem));
+                } else {
+                    try {
+                        amount = Integer.parseInt(amountString);
+                    } catch (NumberFormatException e) {}
+                }
 
-        });
+                ContainerGuiItem sellItemStack = container.getItem(key).setLore(lm.buttonSellXLore(sellPrice * amount, amount)).setName(lm.buttonSellXTitle(amount));
 
-        ItemStack oneSellIS = new ItemStack(Material.RED_DYE, 1);
-        ItemMeta meta = oneSellIS.getItemMeta();
-        meta.setDisplayName(lm.buttonSell1Title());
-        List<String> lores = lm.buttonSell1Lore(sellPrice);
-        meta.setLore(lores);
-        oneSellIS.setItemMeta(meta);
+                final int finalAmount = amount;
+                GuiItem sellItem = new GuiItem(disablingCheck(sellItemStack.getItem(), disabledSell), event -> {
+                    // sell things
+                    event.setCancelled(true);
+                    if (disabledSell) {
+                        return;
+                    }
+                    ShopContainer.sellItem(containerBlock, sellPrice * finalAmount, finalAmount, mainitem, player, offlinePlayerOwner, data);
+                    showGUI(player, data, containerBlock);
+                });
 
-        GuiItem oneSell = new GuiItem(disablingCheck(oneSellIS, disabledSell), event -> {
-            // sell things
-            event.setCancelled(true);
+                gui.setItem(sellItemStack.getSlot(), sellItem);
+            } else if (key.startsWith("buy-")) {
+                String amountString = key.split("-")[1];
+                int amount = 1;
+                if (amountString.equals("all")) {
+                    amount = Integer.parseInt(Utils.calculateBuyPossibleAmount(Bukkit.getOfflinePlayer(player.getUniqueId()), player.getInventory().getStorageContents(), Utils.getBlockInventory(containerBlock).getStorageContents(), buyPrice, mainitem));
+                } else {
+                    try {
+                        amount = Integer.parseInt(amountString);
+                    } catch (NumberFormatException e) {}
+                }
 
-            //disabling arg
-            if (disabledSell) {
-                return;
+                ContainerGuiItem buyItemStack = container.getItem(key).setLore(lm.buttonBuyXLore(buyPrice * amount, amount)).setName(lm.buttonBuyXTitle(amount));
+
+                final int finalAmount = amount;
+                GuiItem buyItem = new GuiItem(disablingCheck(buyItemStack.getItem(), disabledBuy), event -> {
+                    // buy things
+                    event.setCancelled(true);
+                    if (disabledBuy) {
+                        return;
+                    }
+                    ShopContainer.buyItem(containerBlock, buyPrice * finalAmount, finalAmount, mainitem, player, offlinePlayerOwner, data);
+                    showGUI(player, data, containerBlock);
+                });
+
+                gui.setItem(buyItemStack.getSlot(), buyItem);
             }
-
-            ShopContainer.sellItem(containerBlock, sellPrice, 1, mainitem, player, offlinePlayerOwner, data);
-        });
-
-        ItemStack moreSellIS = new ItemStack(Material.RED_DYE, 64);
-        ItemMeta meta2 = moreSellIS.getItemMeta();
-        meta2.setDisplayName(lm.buttonSell64Title());
-        List<String> lores2 = lm.buttonSell64Lore(sellPrice * 64);
-        meta2.setLore(lores2);
-        moreSellIS.setItemMeta(meta2);
-
-        GuiItem moreSell = new GuiItem(disablingCheck(moreSellIS, disabledSell), event -> {
-
-            event.setCancelled(true);
-            //disabling arg
-            if (disabledSell) {
-                return;
-            }
-            //sell things
-            ShopContainer.sellItem(containerBlock, sellPrice * 64, 64, mainitem, player, offlinePlayerOwner, data);
-        });
-
-        //buy 1x
-
-        ItemStack oneBuyIS = new ItemStack(Material.LIME_DYE, 1);
-        ItemMeta meta3 = oneBuyIS.getItemMeta();
-        meta3.setDisplayName(Utils.colorify(lm.buttonBuy1Title()));
-        List<String> lores3 = lm.buttonBuy1Lore(buyPrice);
-        meta3.setLore(lores3);
-        oneBuyIS.setItemMeta(meta3);
-
-        GuiItem oneBuy = new GuiItem(disablingCheck(oneBuyIS, disabledBuy), event -> {
-            //buy things
-            event.setCancelled(true);
-            //disabling arg
-            if (disabledBuy) {
-                return;
-            }
-            ShopContainer.buyItem(containerBlock, buyPrice, 1, mainitem, player, offlinePlayerOwner, data);
         });
 
 
-        ItemStack moreBuyIS = new ItemStack(Material.LIME_DYE, 64);
-        ItemMeta meta4 = moreBuyIS.getItemMeta();
-        meta4.setDisplayName(Utils.colorify(lm.buttonBuy64Title()));
-        List<String> lores4 = lm.buttonBuy64Lore(buyPrice * 64);
-        meta4.setLore(lores4);
-        moreBuyIS.setItemMeta(meta4);
+        ContainerGuiItem guiStorageItem = container.getItem("admin-view").setName(lm.buttonAdminView());
 
-        GuiItem moreBuy = new GuiItem(disablingCheck(moreBuyIS, disabledBuy), event -> {
-            //buy things
-            event.setCancelled(true);
-            //disabling arg
-            if (disabledBuy) {
-                return;
-            }
-            ShopContainer.buyItem(containerBlock, buyPrice * 64, 64, mainitem, player, offlinePlayerOwner, data);
-        });
-
-        ItemStack storageitem = new ItemStack(Material.REDSTONE, 1);
-        storageitem.addUnsafeEnchantment(Enchantment.LURE, 1);
-        ItemMeta storagemeta = storageitem.getItemMeta();
-        storagemeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-        storagemeta.setDisplayName(lm.buttonAdminView());
-        storageitem.setItemMeta(storagemeta);
-
-        GuiItem storageGUI = new GuiItem(storageitem, event -> {
+        GuiItem storageGUI = new GuiItem(guiStorageItem.getItem(), event -> {
             event.setCancelled(true);
             Inventory lastinv = Utils.getBlockInventory(containerBlock);
             if (lastinv instanceof DoubleChestInventory) {
@@ -164,13 +137,9 @@ public class AdminShopGUI {
         });
 
 
-        ItemStack settingsItem = new ItemStack(Material.SMITHING_TABLE, 1);
-        ItemMeta settingsMeta = settingsItem.getItemMeta();
-        settingsMeta.setDisplayName(lm.settingsButton());
-        settingsItem.setItemMeta(settingsMeta);
-
-
-        GuiItem settingsGui = new GuiItem(settingsItem, event -> {
+        ContainerGuiItem settingsItemStack = container.getItem("settings");
+        settingsItemStack.setName(lm.settingsButton());
+        GuiItem settingsGui = new GuiItem(settingsItemStack.getItem(), event -> {
             event.setCancelled(true);
             //opening the settigns menu
             SettingsGUI settingsGUI = new SettingsGUI();
@@ -178,17 +147,14 @@ public class AdminShopGUI {
             player.playSound(player.getLocation(), Sound.BLOCK_PISTON_EXTEND, 0.5f, 0.5f);
         });
 
-        ItemStack signItem = new ItemStack(Material.OAK_SIGN, 1);
-        ItemMeta signMeta = signItem.getItemMeta();
-        signMeta.setDisplayName(lm.customAmountSignTitle());
         List<String> possibleCounts = Utils.calculatePossibleAmount(Bukkit.getOfflinePlayer(player.getUniqueId()),
                 offlinePlayerOwner, player.getInventory().getStorageContents(),
                 Utils.getBlockInventory(containerBlock).getStorageContents(),
                 buyPrice, sellPrice, mainitem);
-        signMeta.setLore(lm.customAmountSignLore(possibleCounts.get(0), possibleCounts.get(1)));
-        signItem.setItemMeta(signMeta);
+        ContainerGuiItem customBuySellItemStack = container.getItem("custom-buy-sell").setName(lm.customAmountSignTitle()).setLore(lm.customAmountSignLore(possibleCounts.get(0), possibleCounts.get(1)));
 
-        GuiItem guiSignItem = new GuiItem(signItem, event -> {
+
+        GuiItem guiSignItem = new GuiItem(customBuySellItemStack.getItem(), event -> {
             event.setCancelled(true);
             if (event.isRightClick()) {
                 //buy
@@ -274,28 +240,15 @@ public class AdminShopGUI {
             }
         });
 
-
-        gui.getFiller().fillBorder(glasses);
-
-        gui.setItem(10, glasses);
-        gui.setItem(16, glasses);
-        gui.setItem(13, guiitem);
-        //1x sell (12)
-        gui.setItem(12, oneSell);
-        //64x sell (11)
-        gui.setItem(11, moreSell);
-        //1x buy (14)
-        gui.setItem(14, oneBuy);
-        //64x buy (15)
-        gui.setItem(15, moreBuy);
+        gui.setItem(container.getItem("shop-item").getSlot(), guiitem);
         //containerBlock storage
-        gui.setItem(18, storageGUI);
+        gui.setItem(guiStorageItem.getSlot(), storageGUI);
         //settings item
-        gui.setItem(26, settingsGui);
+        gui.setItem(settingsItemStack.getSlot(), settingsGui);
 
         if (Config.settings_custom_amout_transactions) {
             //sign item
-            gui.setItem(22, guiSignItem);
+            gui.setItem(customBuySellItemStack.getSlot(), guiSignItem);
         }
         gui.open(player);
 

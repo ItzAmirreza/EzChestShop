@@ -10,17 +10,11 @@ shop-gui:
   owner-title: "&c%shopowner%的箱子商店"
   adminshop-title: "&c管理員商店"
   buttons:
-    sellone-title: "&c賣出1個"
-    sellone-lore: 
+    sellX-title: "&c賣出%amount%個"
+    sellX-lore:
       - "&7以 &e%price% %currency% 販售"
-    sell64-title: "&c賣出64個"
-    sell64-lore:
-      - "&7以 &e%price% %currency% 販售"
-    buyone-title: "&a購買1個"
-    buyone-lore:
-      - "&7以 &e%price% %currency% 購買"
-    buy64-title: "&a購買64個"
-    buy64-lore:
+    buyX-title: "&a購買%amount%個"
+    buyX-lore:
       - "&7以 &e%price% %currency% 購買"
     adminview: "&c&l管理庫存"
     storage: "&e&l庫存"

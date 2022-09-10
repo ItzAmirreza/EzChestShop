@@ -10,17 +10,11 @@ shop-gui:
   owner-title: "&cTienda de %shopowner%"
   adminshop-title: "&cTienda de Admin"
   buttons:
-    sellone-title: "&cVender 1x"
-    sellone-lore:
-      - "&7Vender por &e%price% $"
-    sell64-title: "&cVender 64x"
-    sell64-lore:
+    sellX-title: "&cVender %amount%x"
+    sellX-lore:
       -  "&7Vender por &e%price% $"
-    buyone-title: "&aComprar 1x"
-    buyone-lore:
-      -  "&7Comprar por &e%price% $"
-    buy64-title: "&aComprar 64x"
-    buy64-lore:
+    buyX-title: "&aComprar %amount%x"
+    buyX-lore:
       -  "&7Comprar por &e%price% $"
     adminview: "&c&lVista de Admin"
     storage: "&e&lAlmacenamiento"
