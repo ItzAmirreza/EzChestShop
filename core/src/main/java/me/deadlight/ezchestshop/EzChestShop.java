@@ -86,6 +86,11 @@ public final class EzChestShop extends JavaPlugin {
         }
 
         GuiData.loadGuiData();
+        try {
+            GuiData.checkForGuiDataYMLupdate();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         registerListeners();
         registerCommands();
