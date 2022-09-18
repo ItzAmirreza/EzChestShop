@@ -2,15 +2,18 @@ package me.deadlight.ezchestshop.GUIs;
 
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
+import dev.triumphteam.gui.guis.PaginatedGui;
 import me.deadlight.ezchestshop.Data.GUI.ContainerGui;
 import me.deadlight.ezchestshop.Data.GUI.ContainerGuiItem;
 import me.deadlight.ezchestshop.Data.GUI.GuiData;
 import me.deadlight.ezchestshop.EzChestShop;
+import me.deadlight.ezchestshop.Listeners.UpdateChecker;
 import me.deadlight.ezchestshop.Utils.Utils;
 import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
@@ -18,6 +21,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -94,7 +98,12 @@ public class GuiEditorGUI {
         itemItem.setItemMeta(itemMeta);
         gui.setItem(3, 3, new GuiItem(itemItem, event -> {
             event.setCancelled(true);
-            showGuiInEditor(player, type);
+            if (UpdateChecker.getGuiOverflow(type) == -1) {
+                showGuiInEditor(player, type);
+            } else {
+                player.sendMessage(ChatColor.RED + "You have too many items in this gui, they are overflowing the rows! " +
+                        "You need at least " + UpdateChecker.getGuiOverflow(type) + " rows to fit all the items!");
+            }
         }));
 
         // Background:
@@ -145,6 +154,7 @@ public class GuiEditorGUI {
                         e.printStackTrace();
                     }
                     showGuiSettingsEditor(player, type);
+                    new UpdateChecker().resetGuiCheck();
                 }
             } else if (event.isLeftClick()) {
                 if (container.getRows() > 1) {
@@ -156,6 +166,7 @@ public class GuiEditorGUI {
                         e.printStackTrace();
                     }
                     showGuiSettingsEditor(player, type);
+                    new UpdateChecker().resetGuiCheck();
                 }
             }
         }));
@@ -181,7 +192,13 @@ public class GuiEditorGUI {
 
         Gui gui = Gui.gui().rows(container.getRows()).title(Component.text(ChatColor.AQUA + Utils.capitalizeFirstSplit(type.toString()) + " Editor")).create();
         gui.setDefaultClickAction(event -> event.setCancelled(true));
-        gui.getFiller().fill(ContainerGui.getDefaultBackground());
+        GuiItem filler = ContainerGui.getDefaultBackground();
+        ItemStack fillerItem = filler.getItemStack();
+        ItemMeta fillerMeta = fillerItem.getItemMeta();
+        fillerMeta.setLore(Arrays.asList(ChatColor.GRAY + "- Swap Hand click (F) to add", ChatColor.GRAY + "  a new (valid) item."));
+        fillerItem.setItemMeta(fillerMeta);
+        filler.setItemStack(fillerItem);
+        gui.getFiller().fill(filler);
 
         HashMap<Integer, List<String>> sameSlotItems = new HashMap<>();
 
@@ -202,8 +219,8 @@ public class GuiEditorGUI {
                 }
                 showGuiInEditor(player, type);
                 guiItemMover.remove(player);
-            } else if (event.getClick() == ClickType.DOUBLE_CLICK) {
-                //TODO implement a method to add items to the gui.
+            } else if (event.getClick() == ClickType.SWAP_OFFHAND) {
+                showGuiItemAdder(player, type, event.getSlot() / 9 + 1, event.getSlot() % 9 + 1);
             }
         });
 
@@ -215,7 +232,8 @@ public class GuiEditorGUI {
                 meta.setDisplayName(ChatColor.GOLD + "Shop Item");
                 meta.setLore(Arrays.asList(ChatColor.GRAY + "- Left click to modify", ChatColor.GRAY + "  this item!",
                         ChatColor.GRAY + "- Drop click (Q) to remove", ChatColor.GRAY + "- Shift click to start moving",
-                        ChatColor.GRAY + "  click again to place the item."));
+                        ChatColor.GRAY + "  click again to place the item.", ChatColor.GRAY + "- Swap Hand click (F) to add",
+                        ChatColor.GRAY + "  a new (valid) item."));
                 item.setItemMeta(meta);
                 gui.setItem(cgi.getSlot(), new GuiItem(item, event -> {
                     event.setCancelled(true);
@@ -244,10 +262,11 @@ public class GuiEditorGUI {
                 }
                 ItemStack item = cgi.getItem();
                 ItemMeta meta = item.getItemMeta();
-                meta.setDisplayName(ChatColor.GOLD + "Shop Item");
+                meta.setDisplayName(ChatColor.YELLOW +Utils.capitalizeFirstSplit(key.replace("-", "_")));
                 meta.setLore(Arrays.asList(ChatColor.GRAY + "- Left click to modify", ChatColor.GRAY + "  this item!",
                         ChatColor.GRAY + "- Drop click (Q) to remove", ChatColor.GRAY + "- Shift click to start moving",
-                        ChatColor.GRAY + "  click again to place the item."));
+                        ChatColor.GRAY + "  click again to place the item.", ChatColor.GRAY + "- Swap Hand click (F) to add",
+                        ChatColor.GRAY + "  a new (valid) item."));
                 item.setItemMeta(meta);
                 gui.setItem(cgi.getSlot(), new GuiItem(item, event -> {
                     event.setCancelled(true);
@@ -294,7 +313,8 @@ public class GuiEditorGUI {
                 lore.add("");
                 lore.addAll(Arrays.asList(ChatColor.GRAY + "- Left click to modify", ChatColor.GRAY + "  this item!",
                         ChatColor.GRAY + "- Drop click (Q) to remove", ChatColor.GRAY + "- Shift click to start moving",
-                        ChatColor.GRAY + "  click again to place the item."));
+                        ChatColor.GRAY + "  click again to place the item.", ChatColor.GRAY + "- Swap Hand click (F) to add",
+                        ChatColor.GRAY + "  a new (valid) item."));
                 meta.setLore(lore);
                 item.setItemMeta(meta);
                 gui.setItem(slot, new GuiItem(item, event -> {
@@ -411,6 +431,91 @@ public class GuiEditorGUI {
         gui.setItem(3, 1, new GuiItem(back, event -> {
             event.setCancelled(true);
             showGuiInEditor(player, type);
+        }));
+
+        gui.open(player);
+    }
+
+    public void showGuiItemAdder(Player player, GuiData.GuiType type, int row, int column) {
+        String guiName = type.toString().replace("_", "-").toLowerCase();
+
+        FileConfiguration config = GuiData.getConfig();
+        ContainerGui container = GuiData.getViaType(type);
+
+        PaginatedGui gui = Gui.paginated().rows(3).title(Component.text(ChatColor.AQUA + Utils.capitalizeFirstSplit(type.toString()) + " Item Adder")).create();
+        gui.getFiller().fillBottom(ContainerGui.getDefaultBackground());
+
+        gui.setDefaultClickAction(event -> {
+            event.setCancelled(true);
+        });
+
+        gui.setCloseGuiAction(event -> {
+            guiItemSelector.remove(player);
+        });
+
+        // Loop over all items from the internal guis.yml and see if they exist in the current gui:
+        FileConfiguration internalGuis = YamlConfiguration.loadConfiguration(
+                new InputStreamReader(EzChestShop.getPlugin().
+                        getResource("guis.yml")));
+        EzChestShop.logDebug("Path: " + guiName + ".items");
+        EzChestShop.logDebug("internalGuis: " + (internalGuis.getConfigurationSection("gui." + guiName + ".items") == null));
+        EzChestShop.logDebug("externalGuis: " + (config.getConfigurationSection(guiName + ".items") == null));
+        List internal = new ArrayList<>(internalGuis.getConfigurationSection(guiName + ".items").getKeys(false).stream().collect(Collectors.toList()));
+        internal.removeAll(config.getConfigurationSection(guiName + ".items").getKeys(false));
+
+        internal.forEach(key -> {
+            ItemStack item = new ItemStack(Material.matchMaterial(internalGuis.getString(guiName + ".items." + key + ".material")));
+            ItemMeta meta = item.getItemMeta();
+            meta.setDisplayName(ChatColor.RED + Utils.capitalizeFirstSplit(key.toString().replace("-", "_")));
+            item.setItemMeta(meta);
+            gui.addItem(new GuiItem(item, event -> {
+                event.setCancelled(true);
+                config.set(guiName + ".items." + key + ".material", item.getType().toString().toLowerCase());
+                config.set(guiName + ".items." + key + ".count", 1);
+                config.set(guiName + ".items." + key + ".enchanted", false);
+                config.set(guiName + ".items." + key + ".row", row);
+                config.set(guiName + ".items." + key + ".column", column);
+
+                try {
+                    config.save(new File(EzChestShop.getPlugin().getDataFolder(), "guis.yml"));
+                    GuiData.loadGuiData();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                showGuiInEditor(player, type);
+            }));
+        });
+
+
+        // Back:
+        ItemStack back = new ItemStack(Material.DARK_OAK_DOOR);
+        ItemMeta backMeta = back.getItemMeta();
+        backMeta.setDisplayName(ChatColor.RED + "Back");
+        back.setItemMeta(backMeta);
+        gui.setItem(3, 1, new GuiItem(back, event -> {
+            event.setCancelled(true);
+            showGuiInEditor(player, type);
+        }));
+
+        // Prev
+        ItemStack prev = new ItemStack(Material.ARROW);
+        ItemMeta prevMeta = prev.getItemMeta();
+        prevMeta.setDisplayName(ChatColor.YELLOW + "Prev");
+        prev.setItemMeta(prevMeta);
+        gui.setItem(3, 2, new GuiItem(prev, event -> {
+            event.setCancelled(true);
+            gui.previous();
+        }));
+
+        // Next
+        ItemStack next = new ItemStack(Material.ARROW);
+        ItemMeta nextMeta = next.getItemMeta();
+        nextMeta.setDisplayName(ChatColor.YELLOW + "Next");
+        next.setItemMeta(nextMeta);
+        gui.setItem(3, 8, new GuiItem(next, event -> {
+            event.setCancelled(true);
+            gui.next();
         }));
 
         gui.open(player);

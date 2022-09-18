@@ -7,6 +7,7 @@ import me.deadlight.ezchestshop.Data.ShopContainer;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.GUIs.GuiEditorGUI;
 import me.deadlight.ezchestshop.Listeners.PlayerCloseToChestListener;
+import me.deadlight.ezchestshop.Listeners.UpdateChecker;
 import me.deadlight.ezchestshop.Utils.Utils;
 import me.deadlight.ezchestshop.Utils.WorldGuard.FlagRegistry;
 import me.deadlight.ezchestshop.Utils.WorldGuard.WorldGuardUtils;

@@ -41,13 +41,16 @@ public class LogsGUI {
         Gui gui = new Gui(container.getRows(), Utils.colorify(guititle));
         gui.setDefaultClickAction(event -> event.setCancelled(true));
 
-
-        ContainerGuiItem door = container.getItem("back").setName(lm.backToSettingsButton());
-        GuiItem doorItem = new GuiItem(door.getItem(), event -> {
-           event.setCancelled(true);
-           SettingsGUI settingsGUI = new SettingsGUI();
-           settingsGUI.showGUI(player, containerBlock, isAdmin);
-        });
+        ContainerGuiItem door = null;
+        if (container.hasItem("back")) {
+            door = container.getItem("back").setName(lm.backToSettingsButton());
+            GuiItem doorItem = new GuiItem(door.getItem(), event -> {
+               event.setCancelled(true);
+               SettingsGUI settingsGUI = new SettingsGUI();
+               settingsGUI.showGUI(player, containerBlock, isAdmin);
+            });
+            Utils.addItemIfEnoughSlots(gui, door.getSlot(), doorItem);
+        }
 
 
         if (type == LogType.TRANSACTION) {
@@ -57,33 +60,33 @@ public class LogsGUI {
             Collections.reverse(transLogs);
 
             int slot = 0;
-            for (int count = 1; count <= transLogs.size(); count++) {
+            if (container.hasItem("transaction-item")) {
+                for (int count = 1; count <= transLogs.size(); count++) {
 
-                ContainerGuiItem transactionItem = container.getItem("transaction-item");
-                if (slot == door.getSlot()) {
+                    ContainerGuiItem transactionItem = container.getItem("transaction-item");
+                    if (door != null && slot == door.getSlot()) {
+                        slot++;
+                    }
+                    //set kardane etelaat
+                    TransactionLogObject thelog = transLogs.get(count - 1);
+                    EzChestShop.logDebug((count - 1) + ". Transaction log: Time " + thelog.time + " Name " + thelog.pname + " Type " + thelog.type + " Price " + thelog.price + " Count " + thelog.count);
+                    if (thelog.type.equalsIgnoreCase("buy")) {
+                        transactionItem.setName(lm.transactionPaperTitleBuy(thelog.pname));
+                        transactionItem.setLore(generateLore(thelog, lm));
+                    } else {
+                        transactionItem.setName(lm.transactionPaperTitleSell(thelog.pname));
+                        transactionItem.setLore(generateLore(thelog, lm));
+                    }
+                    GuiItem paper = new GuiItem(transactionItem.getItem(), event -> {
+                        event.setCancelled(true);
+                    });
+                    Utils.addItemIfEnoughSlots(gui, slot, paper);
                     slot++;
                 }
-                //set kardane etelaat
-                TransactionLogObject thelog = transLogs.get(count - 1);
-                EzChestShop.logDebug((count - 1) + ". Transaction log: Time " + thelog.time + " Name " + thelog.pname + " Type " + thelog.type + " Price " + thelog.price + " Count " + thelog.count);
-                if (thelog.type.equalsIgnoreCase("buy")) {
-                    transactionItem.setName(lm.transactionPaperTitleBuy(thelog.pname));
-                    transactionItem.setLore(generateLore(thelog, lm));
-                } else {
-                    transactionItem.setName(lm.transactionPaperTitleSell(thelog.pname));
-                    transactionItem.setLore(generateLore(thelog, lm));
-                }
-                GuiItem paper = new GuiItem(transactionItem.getItem(), event -> {
-                    event.setCancelled(true);
-                });
-                gui.setItem(slot, paper);
-                slot++;
             }
 
         }
 
-        //until slot 53 there is space
-        gui.setItem(door.getSlot(), doorItem);
         gui.open(player);
 
     }

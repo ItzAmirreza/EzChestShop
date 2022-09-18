@@ -45,22 +45,24 @@ public class UpdateChecker implements Listener{
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
-        if (Config.notify_updates && event.getPlayer().isOp() && isSpigotUpdateAvailable) {
-            Bukkit.getScheduler().runTaskLater(EzChestShop.getPlugin(), () -> {
-                event.getPlayer().spigot().sendMessage(lm.updateNotification(EzChestShop.getPlugin().getDescription().getVersion(), newVersion));
-            }, 10l);
-        }
-        // TODO remove the next 3 lines for production!
-        overlappingItems.clear();
-        requiredOverflowRows.clear();
-        checkGuiUpdate();
-        if (isGuiUpdateAvailable && event.getPlayer().isOp()) {
-            Bukkit.getScheduler().runTaskLater(EzChestShop.getPlugin(), () -> {
-                event.getPlayer().sendMessage("Your GUI is outdated! Please update it!\n" +
-                        "You have unusual overlapping items in" + overlappingItems.keySet().stream().map(Enum::name).collect(Collectors.joining(", "))
-                        + "! And you need more rows for overflow protection in " + requiredOverflowRows.keySet().stream().map(Enum::name).collect(Collectors.joining(", ")) + "!");
-            }, 10l);
-            EzChestShop.logDebug("Overlapping items: " + overlappingItems.entrySet().stream().map(entry -> entry.getKey().name() + ": " + entry.getValue().stream().map(List::toString).collect(Collectors.joining(", "))).collect(Collectors.joining("!\n")));
+        if (event.getPlayer().isOp()) {
+            if (Config.notify_updates && isSpigotUpdateAvailable) {
+                Bukkit.getScheduler().runTaskLater(EzChestShop.getPlugin(), () -> {
+                    event.getPlayer().spigot().sendMessage(lm.updateNotification(EzChestShop.getPlugin().getDescription().getVersion(), newVersion));
+                }, 10l);
+            }
+            if (isGuiUpdateAvailable) {
+                if (Config.notify_overflowing_gui_items && !requiredOverflowRows.isEmpty()) {
+                    Bukkit.getScheduler().runTaskLater(EzChestShop.getPlugin(), () -> {
+                        event.getPlayer().spigot().sendMessage(lm.overflowingGuiItemsNotification(requiredOverflowRows));
+                    }, 10l);
+                }
+                if (Config.notify_overlapping_gui_items && !overlappingItems.isEmpty()) {
+                    Bukkit.getScheduler().runTaskLater(EzChestShop.getPlugin(), () -> {
+                        event.getPlayer().spigot().sendMessage(lm.overlappingItemsNotification(overlappingItems));
+                    }, 10l);
+                }
+            }
         }
 
 
@@ -69,6 +71,21 @@ public class UpdateChecker implements Listener{
     public void check() {
         isSpigotUpdateAvailable = checkUpdate();
         checkGuiUpdate();
+    }
+
+    public void resetGuiCheck() {
+        overlappingItems.clear();
+        requiredOverflowRows.clear();
+        isGuiUpdateAvailable = false;
+        checkGuiUpdate();
+    }
+
+    public static int getGuiOverflow(GuiData.GuiType guiType) {
+        if (requiredOverflowRows.containsKey(guiType)) {
+            return requiredOverflowRows.get(guiType);
+        } else {
+            return -1;
+        }
     }
 
     private boolean checkUpdate() {

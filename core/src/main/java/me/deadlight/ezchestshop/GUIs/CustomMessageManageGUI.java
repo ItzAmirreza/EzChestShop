@@ -50,6 +50,7 @@ public class CustomMessageManageGUI {
         paginatedGui.getFiller().fillBottom(container.getBackground());
 
         // Previous item
+        if (container.hasItem("previous")) {
         ContainerGuiItem previous = container.getItem("previous")
                 .setName(lm.customMessageManagerPreviousPageTitle())
                 .setLore(lm.customMessageManagerPreviousPageLore());
@@ -57,46 +58,53 @@ public class CustomMessageManageGUI {
             event.setCancelled(true);
             paginatedGui.previous();
         });
-        paginatedGui.setItem(previous.getSlot(), previousItem);
+        Utils.addItemIfEnoughSlots(paginatedGui, previous.getSlot(), previousItem);
+        }
         // Next item
-        ContainerGuiItem next = container.getItem("next")
-                .setName(lm.customMessageManagerNextPageTitle())
-                .setLore(lm.customMessageManagerNextPageLore());
-        GuiItem nextItem = new GuiItem(next.getItem(), event -> {
-            event.setCancelled(true);
-            paginatedGui.next();
-        });
-        paginatedGui.setItem(next.getSlot(), nextItem);
-        // Back item
-        ContainerGuiItem back = container.getItem("back")
-                .setName(lm.backToSettingsButton());
-        GuiItem doorItem = new GuiItem(back.getItem(), event -> {
-            event.setCancelled(true);
-            SettingsGUI settingsGUI = new SettingsGUI();
-            settingsGUI.showGUI(player, containerBlock, isAdmin);
-        });
-        paginatedGui.setItem(back.getSlot(), doorItem);
-
-        for (Map.Entry<Location, String> entry : customMessages.entrySet()) {
-            Location loc = entry.getKey();
-            String message = entry.getValue();
-            List<String> messages = Arrays.asList(message.split("#,#")).stream().map(s -> Utils.colorify(s)).collect(Collectors.toList());
-
-            ContainerGuiItem item = container.getItem("hologram-message-item");
-            EzShop ezShop = ShopContainer.getShop(loc);
-            if (ezShop != null) {
-                item.setName(lm.customMessageManagerShopEntryTitle(ezShop.getShopItem()));
-            } else {
-                item.setName(lm.customMessageManagerShopEntryUnkownTitle());
-            }
-            item.setLore(lm.customMessageManagerShopEntryLore(loc, messages));
-
-            GuiItem shopItem = new GuiItem(item.getItem(), event -> {
+        if (container.hasItem("next")) {
+            ContainerGuiItem next = container.getItem("next")
+                    .setName(lm.customMessageManagerNextPageTitle())
+                    .setLore(lm.customMessageManagerNextPageLore());
+            GuiItem nextItem = new GuiItem(next.getItem(), event -> {
                 event.setCancelled(true);
-                showDeleteConfirm(player, containerBlock, isAdmin, loc);
+                paginatedGui.next();
             });
+            Utils.addItemIfEnoughSlots(paginatedGui, next.getSlot(), nextItem);
+        }
+        // Back item
+        if (container.hasItem("back")) {
+            ContainerGuiItem back = container.getItem("back")
+                    .setName(lm.backToSettingsButton());
+            GuiItem doorItem = new GuiItem(back.getItem(), event -> {
+                event.setCancelled(true);
+                SettingsGUI settingsGUI = new SettingsGUI();
+                settingsGUI.showGUI(player, containerBlock, isAdmin);
+            });
+            Utils.addItemIfEnoughSlots(paginatedGui, back.getSlot(), doorItem);
+        }
 
-            paginatedGui.addItem(shopItem);
+        if (container.hasItem("hologram-message-item")) {
+            for (Map.Entry<Location, String> entry : customMessages.entrySet()) {
+                Location loc = entry.getKey();
+                String message = entry.getValue();
+                List<String> messages = Arrays.asList(message.split("#,#")).stream().map(s -> Utils.colorify(s)).collect(Collectors.toList());
+
+                ContainerGuiItem item = container.getItem("hologram-message-item");
+                EzShop ezShop = ShopContainer.getShop(loc);
+                if (ezShop != null) {
+                    item.setName(lm.customMessageManagerShopEntryTitle(ezShop.getShopItem()));
+                } else {
+                    item.setName(lm.customMessageManagerShopEntryUnkownTitle());
+                }
+                item.setLore(lm.customMessageManagerShopEntryLore(loc, messages));
+
+                GuiItem shopItem = new GuiItem(item.getItem(), event -> {
+                    event.setCancelled(true);
+                    showDeleteConfirm(player, containerBlock, isAdmin, loc);
+                });
+
+                paginatedGui.addItem(shopItem);
+            }
         }
 
         paginatedGui.open(player);

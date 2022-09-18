@@ -316,3 +316,5 @@ shulkershop-dropped-lore:
   - " &7Verkaufspreis: &6%currency%%sell_price%"
 other:
   update-notifications: "&c[&eEzChestShop&c] &eNeue Version gefunden: &b%new_version%&e! Du verwendest immer noch &c%current_version%&e!"
+  overflowing-gui-items-notification: "&c[&eEzChestShop&c] &eDu hast Items die über die außerhalb der Grenzen deines GUIs liegen! Füge in diesen GUIs weitere Reihen hinzu um alle Items anzuzeigen: &c%overflow%"
+  overlapping-gui-items-notification: "&c[&eEzChestShop&c] &eEinige Items überlappen sich in deinem GUI! Hier ist eine Liste aller unüblichen überlappenden Items: &c%overlap%"

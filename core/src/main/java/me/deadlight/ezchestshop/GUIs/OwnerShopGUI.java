@@ -51,19 +51,21 @@ public class OwnerShopGUI {
 
         ContainerGui container = GuiData.getShop();
 
-
-        ItemStack mainitem = Utils.decodeItem(data.get(new NamespacedKey(EzChestShop.getPlugin(), "item"), PersistentDataType.STRING));
-        ItemStack guiMainItem = mainitem.clone();
-        ItemMeta mainmeta = guiMainItem.getItemMeta();
-        List<String> mainItemLore = Arrays.asList(lm.initialBuyPrice(buyPrice), lm.initialSellPrice(sellPrice));
-        mainmeta.setLore(mainItemLore);
-        guiMainItem.setItemMeta(mainmeta);
-        GuiItem guiitem = new GuiItem(guiMainItem, event -> {
-            event.setCancelled(true);
-        });
-
         Gui gui = new Gui(container.getRows(), lm.guiOwnerTitle(shopOwner));
         gui.getFiller().fill(container.getBackground());
+
+        ItemStack mainitem = Utils.decodeItem(data.get(new NamespacedKey(EzChestShop.getPlugin(), "item"), PersistentDataType.STRING));
+        if (container.hasItem("shop-item")) {
+            ItemStack guiMainItem = mainitem.clone();
+            ItemMeta mainmeta = guiMainItem.getItemMeta();
+            List<String> mainItemLore = Arrays.asList(lm.initialBuyPrice(buyPrice), lm.initialSellPrice(sellPrice));
+            mainmeta.setLore(mainItemLore);
+            guiMainItem.setItemMeta(mainmeta);
+            GuiItem guiitem = new GuiItem(guiMainItem, event -> {
+                event.setCancelled(true);
+            });
+            Utils.addItemIfEnoughSlots(gui, container.getItem("shop-item").getSlot(), guiitem);
+        }
 
         container.getItemKeys().forEach(key -> {
             if (key.startsWith("sell-")) {
@@ -90,7 +92,7 @@ public class OwnerShopGUI {
                     showGUI(player, data, containerBlock, isAdmin);
                 });
 
-                gui.setItem(sellItemStack.getSlot(), sellItem);
+                Utils.addItemIfEnoughSlots(gui, sellItemStack.getSlot(), sellItem);
             } else if (key.startsWith("buy-")) {
                 String amountString = key.split("-")[1];
                 int amount = 1;
@@ -115,62 +117,68 @@ public class OwnerShopGUI {
                     showGUI(player, data, containerBlock, isAdmin);
                 });
 
-                gui.setItem(buyItemStack.getSlot(), buyItem);
+                Utils.addItemIfEnoughSlots(gui, buyItemStack.getSlot(), buyItem);
             }
         });
 
-        ContainerGuiItem guiStorageItem = container.getItem("storage").setName(lm.buttonAdminView());
+        if (container.hasItem("storage")) {
+            ContainerGuiItem guiStorageItem = container.getItem("storage").setName(lm.buttonAdminView());
 
-        GuiItem storageGUI = new GuiItem(guiStorageItem.getItem(), event -> {
-            event.setCancelled(true);
-            Inventory lastinv = Utils.getBlockInventory(containerBlock);
-            if (lastinv instanceof DoubleChestInventory) {
-                DoubleChest doubleChest = (DoubleChest) lastinv.getHolder();
-                lastinv = doubleChest.getInventory();
-            }
-            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 0.5f, 0.5f);
-            player.openInventory(lastinv);
-        });
+            GuiItem storageGUI = new GuiItem(guiStorageItem.getItem(), event -> {
+                event.setCancelled(true);
+                Inventory lastinv = Utils.getBlockInventory(containerBlock);
+                if (lastinv instanceof DoubleChestInventory) {
+                    DoubleChest doubleChest = (DoubleChest) lastinv.getHolder();
+                    lastinv = doubleChest.getInventory();
+                }
+                player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 0.5f, 0.5f);
+                player.openInventory(lastinv);
+            });
 
-        //settings item
-        ContainerGuiItem settingsItemStack = container.getItem("settings");
-        settingsItemStack.setName(lm.settingsButton());
-        GuiItem settingsGui = new GuiItem(settingsItemStack.getItem(), event -> {
-           event.setCancelled(true);
-           //opening the settigns menu
-            SettingsGUI settingsGUI = new SettingsGUI();
-            settingsGUI.showGUI(player, containerBlock, isAdmin);
-            player.playSound(player.getLocation(), Sound.BLOCK_PISTON_EXTEND, 0.5f, 0.5f);
-        });
-
-        List<String> possibleCounts = Utils.calculatePossibleAmount(Bukkit.getOfflinePlayer(player.getUniqueId()), offlinePlayerOwner, player.getInventory().getStorageContents(), Utils.getBlockInventory(containerBlock).getStorageContents(), buyPrice, sellPrice, mainitem);
-        ContainerGuiItem customBuySellItemStack = container.getItem("custom-buy-sell").setName(lm.customAmountSignTitle()).setLore(lm.customAmountSignLore(possibleCounts.get(0), possibleCounts.get(1)));
-
-        GuiItem guiSignItem = new GuiItem(customBuySellItemStack.getItem(), event -> {
-            event.setCancelled(true);
-            if (event.isRightClick()) {
-                //buy
-                player.sendMessage(lm.selfTransaction());
-
-
-            } else if (event.isLeftClick()) {
-                //sell
-                player.sendMessage(lm.selfTransaction());
-
-
-            }
-        });
-
-        gui.setItem(container.getItem("shop-item").getSlot(), guiitem);
-        //containerBlock storage
-        gui.setItem(guiStorageItem.getSlot(), storageGUI);
-        //settings item
-        gui.setItem(settingsItemStack.getSlot(), settingsGui);
-
-        if (Config.settings_custom_amout_transactions) {
-            //sign item
-            gui.setItem(customBuySellItemStack.getSlot(), guiSignItem);
+            //containerBlock storage
+            Utils.addItemIfEnoughSlots(gui, guiStorageItem.getSlot(), storageGUI);
         }
+
+        //settings item
+        if (container.hasItem("settings")) {
+            ContainerGuiItem settingsItemStack = container.getItem("settings");
+            settingsItemStack.setName(lm.settingsButton());
+            GuiItem settingsGui = new GuiItem(settingsItemStack.getItem(), event -> {
+               event.setCancelled(true);
+               //opening the settigns menu
+                SettingsGUI settingsGUI = new SettingsGUI();
+                settingsGUI.showGUI(player, containerBlock, isAdmin);
+                player.playSound(player.getLocation(), Sound.BLOCK_PISTON_EXTEND, 0.5f, 0.5f);
+            });
+            //settings item
+            Utils.addItemIfEnoughSlots(gui, settingsItemStack.getSlot(), settingsGui);
+        }
+
+        if (container.hasItem("custom-buy-sell")) {
+            List<String> possibleCounts = Utils.calculatePossibleAmount(Bukkit.getOfflinePlayer(player.getUniqueId()), offlinePlayerOwner, player.getInventory().getStorageContents(), Utils.getBlockInventory(containerBlock).getStorageContents(), buyPrice, sellPrice, mainitem);
+            ContainerGuiItem customBuySellItemStack = container.getItem("custom-buy-sell").setName(lm.customAmountSignTitle()).setLore(lm.customAmountSignLore(possibleCounts.get(0), possibleCounts.get(1)));
+
+            GuiItem guiSignItem = new GuiItem(customBuySellItemStack.getItem(), event -> {
+                event.setCancelled(true);
+                if (event.isRightClick()) {
+                    //buy
+                    player.sendMessage(lm.selfTransaction());
+
+
+                } else if (event.isLeftClick()) {
+                    //sell
+                    player.sendMessage(lm.selfTransaction());
+
+
+                }
+            });
+
+            if (Config.settings_custom_amout_transactions) {
+                //sign item
+                Utils.addItemIfEnoughSlots(gui, customBuySellItemStack.getSlot(), guiSignItem);
+            }
+        }
+
         gui.open(player);
 
 

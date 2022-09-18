@@ -1,6 +1,7 @@
 package me.deadlight.ezchestshop.Data.GUI;
 
 import me.deadlight.ezchestshop.EzChestShop;
+import me.deadlight.ezchestshop.Listeners.UpdateChecker;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -25,16 +26,6 @@ public class GuiData {
 
     private static FileConfiguration config;
 
-    //TODO implement a way to upgrade GUIs and apply our changes, without disturbing player settings.
-    // solution (probably):
-    // If a gui is identical value wise with our gui, update it automatically. If it differs,
-    // send the OPs a message that a new GUI element is available and should be implemented using the
-    // /ecsadmin configure-guis command.
-    // New Idea:
-    // Just add the data! Multiple items can be in multiple places, so we just need a way to add them like in
-    // the config.yml. This way, we don't have to deal with any problems at all and server owners just need to
-    // move the items around if they think they don't fit in.
-
     public static void loadGuiData() {
         File customConfigFile = new File(EzChestShop.getPlugin().getDataFolder(), "guis.yml");
         if (!customConfigFile.exists()) {
@@ -49,6 +40,7 @@ public class GuiData {
         logs = new ContainerGui(guisConfig, "transaction-logs");
         messageManager = new ContainerGui(guisConfig, "hologram-messages-manager");
         config = guisConfig;
+        new UpdateChecker().resetGuiCheck();
     }
 
     public static ContainerGui getLogs() {
@@ -84,11 +76,22 @@ public class GuiData {
 
     public static void checkForGuiDataYMLupdate() throws IOException {
         FileConfiguration fc = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "guis.yml"));
+        boolean changed = false;
 
-        //TODO implement the updater. Once needed.
+        // Use this once needed, it's tested and works.
+//        if (!fc.contains("shop-settings.items.coupon")) {
+//            fc.set("shop-settings.items.coupon.row", 3);
+//            fc.set("shop-settings.items.coupon.column", 2);
+//            fc.set("shop-settings.items.coupon.material", "PAPER");
+//            fc.set("shop-settings.items.coupon.enchanted", false);
+//            changed = true;
+//        }
 
-        fc.save(new File(EzChestShop.getPlugin().getDataFolder(), "guis.yml"));
-        loadGuiData();
+        if (changed) {
+            EzChestShop.logConsole("&c[&eEzChestShop&c] &eUpdating guis.yml file...");
+            fc.save(new File(EzChestShop.getPlugin().getDataFolder(), "guis.yml"));
+            loadGuiData();
+        }
     }
 
     public static FileConfiguration getConfig() {

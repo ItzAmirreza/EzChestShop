@@ -2,7 +2,6 @@ package me.deadlight.ezchestshop.Data.GUI;
 
 import dev.triumphteam.gui.guis.GuiItem;
 import me.deadlight.ezchestshop.Utils.Utils;
-import org.apache.commons.lang.SerializationUtils;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;

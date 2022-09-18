@@ -3,6 +3,7 @@ package me.deadlight.ezchestshop.Data;
 import de.themoep.minedown.MineDown;
 import me.deadlight.ezchestshop.Commands.EcsAdmin;
 import me.deadlight.ezchestshop.Commands.MainCommands;
+import me.deadlight.ezchestshop.Data.GUI.GuiData;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.Listeners.ChatListener;
 import me.deadlight.ezchestshop.Utils.Objects.CheckProfitEntry;
@@ -22,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -105,11 +107,24 @@ public class LanguageManager {
     public static void applySpecialChanges(FileConfiguration fc, String local) {
         boolean changes = false;
 
-        //TODO implement the special changes. It is needed for buyX and sellX, as well as the new admin command infos.
-//        if (fc.contains("shop-gui.buttons.sellX-title")) {
-//            fc.set("shop-gui.buttons.sellX-title", );
-//            changes = true;
-//        }
+        // Internal File configuration
+        FileConfiguration ifc = YamlConfiguration.loadConfiguration(
+                new InputStreamReader(EzChestShop.getPlugin().getResource("translations/" + local + ".yml")));
+
+        if (!fc.contains("shop-gui.buttons.sellX-title")) {
+
+            fc.set("shop-gui.buttons.sellone-title", null);
+            fc.set("shop-gui.buttons.sellone-lore", null);
+            fc.set("shop-gui.buttons.buyone-title", null);
+            fc.set("shop-gui.buttons.buyone-lore", null);
+            fc.set("shop-gui.buttons.sell64-title", null);
+            fc.set("shop-gui.buttons.sell64-lore", null);
+            fc.set("shop-gui.buttons.buy64-title", null);
+            fc.set("shop-gui.buttons.buy64-lore", null);
+
+            fc.set("command-messages.adminhelp", ifc.get("command-messages.adminhelp"));
+            changes = true;
+        }
 
 
         if (changes) {
@@ -140,9 +155,10 @@ public class LanguageManager {
                             getResource("translations/" + Config.language + ".yml")))
                     .getString(string);
             if (result == null) {
-                FileConfiguration fc = YamlConfiguration.loadConfiguration(
+                result = YamlConfiguration.loadConfiguration(
                         new File(EzChestShop.getPlugin().getDataFolder(),
-                                "translations/Locale_EN.yml"));
+                                "translations/Locale_EN.yml"))
+                        .getString(string);
                 if (result == null) {
                     result = YamlConfiguration.loadConfiguration(
                             new InputStreamReader(EzChestShop.getPlugin().
@@ -174,9 +190,10 @@ public class LanguageManager {
                             getResource("translations/" + Config.language + ".yml")))
                     .getStringList(string);
             if (result == null || result.isEmpty()) {
-                FileConfiguration fc = YamlConfiguration.loadConfiguration(
+                result = YamlConfiguration.loadConfiguration(
                         new File(EzChestShop.getPlugin().getDataFolder(),
-                                "translations/Locale_EN.yml"));
+                                "translations/Locale_EN.yml"))
+                        .getStringList(string);
                 if (result == null || result.isEmpty()) {
                     result = YamlConfiguration.loadConfiguration(
                             new InputStreamReader(EzChestShop.getPlugin().
@@ -856,6 +873,40 @@ public class LanguageManager {
                 .event(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.spigotmc.org/resources/ez-chest-shop-ecs-1-14-x-1-17-x.90411/"))
                 .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(Utils.colorify("&cClick to check out the Spigot Page!")))).create();
     }
+
+    public BaseComponent[] overflowingGuiItemsNotification(HashMap<GuiData.GuiType, Integer> requiredOverflowRows) {
+        String[] messages = getString("other.overflowing-gui-items-notification").split("%overflow%");
+
+        ComponentBuilder compb = new ComponentBuilder("");
+
+        compb.append(TextComponent.fromLegacyText(Utils.colorify(messages[0])));
+        compb.append(TextComponent.fromLegacyText(requiredOverflowRows.entrySet().stream().map(entry ->
+                Utils.colorify(Utils.capitalizeFirstSplit(entry.getKey().toString()) + ">= " + entry.getValue())).collect(Collectors.joining(", "))));
+        compb.append(TextComponent.fromLegacyText(Utils.colorify(messages[1])));
+
+        return compb.create();
+    }
+
+    public BaseComponent[] overlappingItemsNotification(HashMap<GuiData.GuiType, List<List<String>>> overlappingItems) {
+        String[] messages = getString("other.overlapping-gui-items-notification").split("%overlap%");
+
+        ComponentBuilder compb = new ComponentBuilder("");
+
+        compb.append(TextComponent.fromLegacyText(Utils.colorify(messages[0])));
+        overlappingItems.entrySet().forEach(entry -> {
+            compb.append(TextComponent.fromLegacyText(Utils.colorify("\n&e" + Utils.capitalizeFirstSplit(entry.getKey().toString()) + "&c: \n  &c>> ")));
+            compb.append(TextComponent.fromLegacyText(Utils.colorify("&7" + entry.getValue().stream().map(list -> Utils.colorify(list.stream()
+                    .collect(Collectors.joining(Utils.colorify("&e, &7"))))).collect(Collectors.joining(Utils.colorify("\n  &c>> &7"))))));
+        });
+//        compb.append(TextComponent.fromLegacyText("\n" + overlappingItems.entrySet().stream().map(entry ->
+//                Utils.colorify(Utils.capitalizeFirstSplit(entry.getKey().toString()) + ": " + entry.getValue().stream().map(list -> list.stream().collect(Collectors.joining(", "))).collect(Collectors.joining(" and "))))
+//                .collect(Collectors.joining(",\n"))));
+        compb.append(TextComponent.fromLegacyText(Utils.colorify(messages[1])));
+
+        return compb.create();
+    }
+
+
 
 
 

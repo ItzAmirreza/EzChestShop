@@ -34,7 +34,6 @@ public class ContainerGuiItem {
             } else {
                 Material mat = Material.matchMaterial(material);
                 if (mat == null) {
-                    EzChestShop.logDebug("Material " + material + " is not valid!");
                     item = new ItemStack(Material.AIR);
                 } else {
                     item = new ItemStack(mat);

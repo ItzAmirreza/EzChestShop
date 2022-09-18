@@ -1,6 +1,10 @@
 package me.deadlight.ezchestshop.Utils;
 
+import dev.triumphteam.gui.guis.Gui;
+import dev.triumphteam.gui.guis.GuiItem;
+import dev.triumphteam.gui.guis.PaginatedGui;
 import me.deadlight.ezchestshop.Data.Config;
+import me.deadlight.ezchestshop.Data.GUI.ContainerGuiItem;
 import me.deadlight.ezchestshop.Data.ShopContainer;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.Utils.Objects.EzShop;
@@ -783,6 +787,18 @@ public class Utils {
         }
         return discordLink;
 
+    }
+
+    public static void addItemIfEnoughSlots(Gui gui, int slot, GuiItem item) {
+        if ((gui.getRows() * 9) > slot) {
+            gui.setItem(slot, item);
+        }
+    }
+
+    public static void addItemIfEnoughSlots(PaginatedGui gui, int slot, GuiItem item) {
+        if ((gui.getRows() * 9) > slot) {
+            gui.setItem(slot, item);
+        }
     }
 
 
