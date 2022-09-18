@@ -1,5 +1,4 @@
 package me.deadlight.ezchestshop.Utils;
-
 import net.minecraft.core.BlockPosition;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.protocol.game.PacketPlayOutOpenSignEditor;
@@ -8,14 +7,14 @@ import net.minecraft.server.network.PlayerConnection;
 import net.minecraft.world.level.block.entity.TileEntityTypes;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_18_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_19_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Objects;
 
-public class MenuOpener {
+public class MenuOpener_v1_19_R1 {
 
     private static Constructor<PacketPlayOutTileEntityData> constructor;
 

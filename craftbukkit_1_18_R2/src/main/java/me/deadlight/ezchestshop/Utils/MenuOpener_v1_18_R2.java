@@ -14,7 +14,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Objects;
 
-public class MenuOpener {
+public class MenuOpener_v1_18_R2 {
 
     private static Constructor<PacketPlayOutTileEntityData> constructor;
 
