@@ -149,12 +149,12 @@ public class v1_18_R1 extends VersionUtils {
 
     @Override
     void openMenu(SignMenuFactory.Menu menu, Player player) {
-        MenuOpener.openMenu(menu, player);
+        MenuOpener_v1_18_R1.openMenu(menu, player);
     }
 
     @Override
     public void injectConnection(Player player) {
-        ((CraftPlayer) player).getHandle().b.a.k.pipeline().addBefore("packet_handler", "ecs_listener", new ChannelHandler(player));
+        ((CraftPlayer) player).getHandle().b.a.k.pipeline().addBefore("packet_handler", "ecs_listener", new ChannelHandler_v1_18_R1(player));
     }
 
     @Override

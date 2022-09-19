@@ -473,7 +473,7 @@ public class ShopContainer {
         }, 0, 20 * 60); //for now leaving it as non-editable value
     }
 
-    public static void saveSqlQueueCache() {
+    public static void saveSqlQueueCache() { //This part needs to change, it causes lag for big servers, have to save all changes in one query only!
         for (EzShop shop : shopMap.values()) {
             if (shop.getSettings().getSqlQueue().isChanged()) {
                 runSqlTask(shop, shop.getSettings().getSqlQueue());

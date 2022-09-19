@@ -1,27 +1,19 @@
 package me.deadlight.ezchestshop.Utils;
 import io.netty.channel.Channel;
 import me.deadlight.ezchestshop.EzChestShop;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.chat.IChatBaseComponent;
-import net.minecraft.network.protocol.game.PacketPlayOutEntityMetadata;
-import net.minecraft.network.protocol.game.PacketPlayOutSpawnEntity;
-import net.minecraft.server.level.EntityPlayer;
-import net.minecraft.server.network.PlayerConnection;
-import net.minecraft.world.entity.decoration.EntityArmorStand;
-import net.minecraft.world.entity.item.EntityItem;
-import net.minecraft.world.level.World;
+import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_17_R1.CraftWorld;
-import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_17_R1.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_16_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_16_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_16_R1.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class v1_17_R1 extends VersionUtils {
+public class v1_16_R1 extends VersionUtils {
 
     private static final Map<SignMenuFactory, UpdateSignListener> listeners = new HashMap<>();
 
@@ -36,7 +28,7 @@ public class v1_17_R1 extends VersionUtils {
     @Override
     String ItemToTextCompoundString(ItemStack itemStack) {
         // First we convert the item stack into an NMS itemstack
-        net.minecraft.world.item.ItemStack nmsItemStack = CraftItemStack.asNMSCopy(itemStack);
+        net.minecraft.server.v1_16_R1.ItemStack nmsItemStack = CraftItemStack.asNMSCopy(itemStack);
         NBTTagCompound compound = new NBTTagCompound();
         compound = nmsItemStack.save(compound);
 
@@ -55,7 +47,7 @@ public class v1_17_R1 extends VersionUtils {
 
     @Override
     void destroyEntity(Player player, int entityID) {
-        ((org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer) player).getHandle().b.sendPacket(new net.minecraft.network.protocol.game.PacketPlayOutEntityDestroy(entityID));
+        ((org.bukkit.craftbukkit.v1_16_R1.entity.CraftPlayer) player).getHandle().playerConnection.sendPacket(new PacketPlayOutEntityDestroy(entityID));
     }
 
     @Override
@@ -63,7 +55,7 @@ public class v1_17_R1 extends VersionUtils {
 
         CraftPlayer craftPlayer = (CraftPlayer) player;
         EntityPlayer entityPlayer = craftPlayer.getHandle();
-        PlayerConnection playerConnection = entityPlayer.b;
+        PlayerConnection playerConnection = entityPlayer.playerConnection;
         CraftWorld craftWorld = (CraftWorld) location.getWorld();
         World world = craftWorld.getHandle();
         //------------------------------------------------------
@@ -71,7 +63,7 @@ public class v1_17_R1 extends VersionUtils {
         EntityArmorStand armorstand = new EntityArmorStand(world, location.getX(), location.getY(), location.getZ());
         armorstand.setInvisible(true); //invisible
         armorstand.setMarker(true); //Marker
-        armorstand.setCustomName(IChatBaseComponent.a(line)); //set custom name
+        armorstand.setCustomName(IChatBaseComponent.ChatSerializer.a("{\"text\": \"" + line + "\"}")); //set custom name
         armorstand.setCustomNameVisible(true); //make custom name visible
         armorstand.setNoGravity(true); //no gravity
         armorstand.e(ID); //set entity id
@@ -90,7 +82,7 @@ public class v1_17_R1 extends VersionUtils {
 
         CraftPlayer craftPlayer = (CraftPlayer) player;
         EntityPlayer entityPlayer = craftPlayer.getHandle();
-        PlayerConnection playerConnection = entityPlayer.b;
+        PlayerConnection playerConnection = entityPlayer.playerConnection;
         CraftWorld craftWorld = (CraftWorld) location.getWorld();
         World world = craftWorld.getHandle();
         //------------------------------------------------------
@@ -153,17 +145,17 @@ public class v1_17_R1 extends VersionUtils {
 
     @Override
     void openMenu(SignMenuFactory.Menu menu, Player player) {
-        MenuOpener_v1_17_R1.openMenu(menu, player);
+        MenuOpener_v1_16_R1.openMenu(menu, player);
     }
 
     @Override
     public void injectConnection(Player player) {
-        ((CraftPlayer) player).getHandle().b.a.k.pipeline().addBefore("packet_handler", "ecs_listener", new ChannelHandler_v1_17_R1(player));
+        ((CraftPlayer) player).getHandle().playerConnection.networkManager.channel.pipeline().addBefore("packet_handler", "ecs_listener", new ChannelHandler_v1_16_R1(player));
     }
 
     @Override
     public void ejectConnection(Player player) {
-        Channel channel = ((CraftPlayer) player).getHandle().b.a.k;
+        Channel channel = ((CraftPlayer) player).getHandle().playerConnection.networkManager.channel;
         channel.eventLoop().submit(() -> channel.pipeline().remove("ecs_listener"));
     }
 

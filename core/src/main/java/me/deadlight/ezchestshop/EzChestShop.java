@@ -1,5 +1,4 @@
 package me.deadlight.ezchestshop;
-
 import me.deadlight.ezchestshop.Commands.CommandCheckProfits;
 import me.deadlight.ezchestshop.Commands.EcsAdmin;
 import me.deadlight.ezchestshop.Commands.MainCommands;
@@ -17,7 +16,6 @@ import me.deadlight.ezchestshop.Utils.WorldGuard.FlagRegistry;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -26,13 +24,11 @@ import java.io.IOException;
 public final class EzChestShop extends JavaPlugin {
 
     private static EzChestShop plugin;
-    private static FileConfiguration languages;
 
     private static Economy econ = null;
 
     private Database db;
 
-    public static boolean protocollib = false;
     public static boolean slimefun = false;
     public static boolean worldguard = false;
 
@@ -58,8 +54,8 @@ public final class EzChestShop extends JavaPlugin {
 
         Config.loadConfig();
         // Plugin startup logic
-        if (!(getServer().getVersion().contains("1.19") || getServer().getVersion().contains("1.18") || getServer().getVersion().contains("1.17"))) {
-            logConsole("&c[&eEzChestShop&c] &4This is an 1.19/1.18/1.17 only version, your build is outdated! Self disabling...");
+        if (!(getServer().getVersion().contains("1.19") || getServer().getVersion().contains("1.18") || getServer().getVersion().contains("1.17") || getServer().getVersion().contains("1.16") || getServer().getVersion().contains("1.15") || getServer().getVersion().contains("1.14"))) {
+            logConsole("&c[&eEzChestShop&c] &4This plugin only supports 1.14 - 1.19!, &cself disabling...");
             Bukkit.getPluginManager().disablePlugin(this);
             return;
         } else {
