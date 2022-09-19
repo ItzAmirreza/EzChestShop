@@ -64,6 +64,8 @@ public class Config {
     public static boolean debug_logging;
     public static boolean notify_updates;
 
+    public static boolean worldguard_integration;
+
 
 
     public static void loadConfig() {
@@ -130,6 +132,7 @@ public class Config {
         }
         debug_logging = config.getBoolean("debug.logging");
         notify_updates = config.getBoolean("other.notify-op-of-updates");
+        worldguard_integration = config.getBoolean("integration.worldguard");
     }
 
 
@@ -138,9 +141,9 @@ public class Config {
 
         YamlConfiguration fc = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml"));
         //update 1.3.3 new config file model update constructed by ElitoGame
-        boolean isOldConfigModel = fc.isBoolean("show-holograms");
+        boolean is1_3_3OldConfigModel = fc.isBoolean("show-holograms");
         //if true, then we have to implement the new config model and delete old ones
-        if (isOldConfigModel) {
+        if (is1_3_3OldConfigModel) {
             //getting current values of configs
             //show-holograms
             boolean show_holograms = fc.getBoolean("show-holograms");
@@ -231,7 +234,7 @@ public class Config {
             fc.save(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml"));
             Config.loadConfig();
         }
-
+        //1.5.0 config update
         if (!fc.isBoolean("shops.settings.hologram-messages.enabled")) {
             fc.set("shops.settings.hologram-messages.enabled", true);
             fc.set("shops.settings.hologram-messages.show-always", false);
@@ -246,6 +249,19 @@ public class Config {
             List<String> structureAdmin = new ArrayList<>(fc.getStringList("shops.hologram.holo-structure-adminshop"));
             structureAdmin.addAll(0, Arrays.asList("<custom1/>", "<custom2/>", "<custom3/>", "<custom4/>"));
             fc.set("shops.hologram.holo-structure-adminshop", structureAdmin);
+            //database update
+            fc.set("database.type", "SQLite");
+            fc.set("database.mysql.ip", "127.0.0.1");
+            fc.set("database.mysql.port", 3306);
+            fc.set("database.mysql.tables-prefix", "ecs_");
+            fc.set("database.mysql.database", "TheDatabaseName");
+            fc.set("database.mysql.usernmae", "TheUsername");
+            fc.set("database.mysql.password", "ThePassword");
+            fc.set("database.mysql.ssl", false);
+            fc.set("database.mongodb.connection-string", "connection string");
+
+            //integration update
+            fc.set("integration.worldguard", true);
 
             fc.save(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml"));
             Config.loadConfig();
