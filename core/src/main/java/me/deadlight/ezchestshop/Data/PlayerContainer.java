@@ -1,7 +1,6 @@
 package me.deadlight.ezchestshop.Data;
 
 
-import me.deadlight.ezchestshop.Data.SQLite.Database;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.Utils.Objects.CheckProfitEntry;
 import org.bukkit.OfflinePlayer;
@@ -46,7 +45,7 @@ public class PlayerContainer {
     public HashMap<String, CheckProfitEntry> getProfits() {
         if (checkProfits == null) {
             checkProfits = new HashMap<>();
-            Database db = EzChestShop.getPlugin().getDatabase();
+            DatabaseManager db = EzChestShop.getPlugin().getDatabase();
             String checkProfitsList = db.getString("uuid", suuid, "checkprofits", "playerdata");
             if (checkProfitsList == null || checkProfitsList.equalsIgnoreCase("") || checkProfitsList.equalsIgnoreCase("NULL")) {
                 checkProfits = new HashMap<>();
@@ -78,7 +77,7 @@ public class PlayerContainer {
             entry.setSellPrice(entry.getSellPrice() + sellPrice);
             checkProfits.put(id, entry);
         }
-        Database db = EzChestShop.getPlugin().getDatabase();
+        DatabaseManager db = EzChestShop.getPlugin().getDatabase();
         String profit_string = checkProfits.entrySet().stream().map(x -> x.getValue().toString())
                 .collect(Collectors.joining(CheckProfitEntry.itemSpacer));
         //EzChestShop.logDebug("Profit: " + (profit_string == null ? "NULL" : profit_string) + "\n Map: " + checkProfits.size());
@@ -89,7 +88,7 @@ public class PlayerContainer {
     }
 
     public void clearProfits() {
-        Database db = EzChestShop.getPlugin().getDatabase();
+        DatabaseManager db = EzChestShop.getPlugin().getDatabase();
         checkProfits.clear();
         db.setString("uuid", suuid, "checkprofits", "playerdata", "NULL");
     }

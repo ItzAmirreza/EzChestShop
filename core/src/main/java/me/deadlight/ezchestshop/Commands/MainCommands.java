@@ -1,8 +1,8 @@
 package me.deadlight.ezchestshop.Commands;
 
 import me.deadlight.ezchestshop.Data.Config;
+import me.deadlight.ezchestshop.Data.DatabaseManager;
 import me.deadlight.ezchestshop.Data.LanguageManager;
-import me.deadlight.ezchestshop.Data.SQLite.Database;
 import me.deadlight.ezchestshop.Data.ShopContainer;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.GUIs.SettingsGUI;
@@ -631,7 +631,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
             // owner confirmed
             PersistentDataContainer container = ((TileState) blockState).getPersistentDataContainer();
             ShopSettings settings = settingsHashMap.get(player.getUniqueId());
-            Database db = EzChestShop.getPlugin().getDatabase();
+            DatabaseManager db = EzChestShop.getPlugin().getDatabase();
             String sloc = Utils.LocationtoString(blockState.getLocation());
             String admins = settings.getAdmins() == null ? "none" : settings.getAdmins();
             db.setBool("location", sloc,
@@ -678,7 +678,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
             // owner confirmed
             PersistentDataContainer container = ((TileState) blockState).getPersistentDataContainer();
             ShopSettings settings = settingsHashMap.get(player.getUniqueId());
-            Database db = EzChestShop.getPlugin().getDatabase();
+            DatabaseManager db = EzChestShop.getPlugin().getDatabase();
             String sloc = Utils.LocationtoString(blockState.getLocation());
 
             for (String arg : args.split(",")) {
@@ -746,7 +746,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
         BlockState blockState = getLookedAtBlockStateIfOwner(player, true, false, target);
         if (blockState != null) {
             ShopSettings settings = ShopContainer.getShopSettings(blockState.getLocation());
-            Database db = EzChestShop.getPlugin().getDatabase();
+            DatabaseManager db = EzChestShop.getPlugin().getDatabase();
             String sloc = Utils.LocationtoString(blockState.getLocation());
             PersistentDataContainer container = ((TileState) blockState).getPersistentDataContainer();
             switch (type) {

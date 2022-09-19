@@ -1,6 +1,5 @@
 package me.deadlight.ezchestshop.Data;
 
-import me.deadlight.ezchestshop.Data.SQLite.Database;
 import me.deadlight.ezchestshop.Enums.Changes;
 import me.deadlight.ezchestshop.Events.PlayerTransactEvent;
 import me.deadlight.ezchestshop.EzChestShop;
@@ -40,7 +39,7 @@ public class ShopContainer {
      * so querying all shops is less resource expensive
      */
     public static void queryShopsToMemory() {
-        Database db = EzChestShop.getPlugin().getDatabase();
+        DatabaseManager db = EzChestShop.getPlugin().getDatabase();
         shopMap = db.queryShops();
     }
 
@@ -50,7 +49,7 @@ public class ShopContainer {
      * @param loc the Location of the Shop.
      */
     public static void deleteShop(Location loc) {
-        Database db = EzChestShop.getPlugin().getDatabase();
+        DatabaseManager db = EzChestShop.getPlugin().getDatabase();
         db.deleteEntry("location", Utils.LocationtoString(loc),
                 "shopdata");
         shopMap.remove(loc);
@@ -69,7 +68,7 @@ public class ShopContainer {
     public static void createShop(Location loc, Player p, ItemStack item, double buyprice, double sellprice, boolean msgtoggle,
                                   boolean dbuy, boolean dsell, String admins, boolean shareincome,
                                   String trans, boolean adminshop, String rotation) {
-        Database db = EzChestShop.getPlugin().getDatabase();
+        DatabaseManager db = EzChestShop.getPlugin().getDatabase();
         String sloc = Utils.LocationtoString(loc);
         String encodedItem = Utils.encodeItem(item);
         db.insertShop(sloc, p.getUniqueId().toString(), encodedItem == null ? "Error" : encodedItem, buyprice, sellprice, msgtoggle, dbuy, dsell, admins, shareincome, trans, adminshop, rotation, new ArrayList<>());
@@ -79,7 +78,7 @@ public class ShopContainer {
     }
 
     public static void loadShop(Location loc, PersistentDataContainer dataContainer) {
-        Database db = EzChestShop.getPlugin().getDatabase();
+        DatabaseManager db = EzChestShop.getPlugin().getDatabase();
         String sloc = Utils.LocationtoString(loc);
 
         boolean msgtoggle = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "msgtoggle"), PersistentDataType.INTEGER) == 1;
@@ -140,7 +139,7 @@ public class ShopContainer {
      * @return the amount of shops a player owns.
      */
     public static int getShopCount(Player p) {
-        Database db = EzChestShop.getPlugin().getDatabase();
+        DatabaseManager db = EzChestShop.getPlugin().getDatabase();
         return db.getKeysByExpresion("location", "owner", "shopdata",
                 "IS \"" + p.getUniqueId().toString() + "\"").size();
     }
@@ -485,7 +484,7 @@ public class ShopContainer {
     }
 
     private static void runSqlTask(EzShop shop, SqlQueue queue) {
-        Database db = EzChestShop.getPlugin().getDatabase();
+        DatabaseManager db = EzChestShop.getPlugin().getDatabase();
         //ok then it's time to execute the mysql thingys
         HashMap<Changes, Object> changes = queue.getChangesList();
         String sloc = shop.getSettings().getSloc();

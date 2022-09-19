@@ -1,7 +1,12 @@
 package me.deadlight.ezchestshop.Utils;
 
 import me.deadlight.ezchestshop.Data.Config;
+import me.deadlight.ezchestshop.Data.DatabaseManager;
+import me.deadlight.ezchestshop.Data.MongoDB.MongoDB;
+import me.deadlight.ezchestshop.Data.MySQL.MySQL;
+import me.deadlight.ezchestshop.Data.SQLite.SQLite;
 import me.deadlight.ezchestshop.Data.ShopContainer;
+import me.deadlight.ezchestshop.Enums.Database;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.Utils.Objects.EzShop;
 import me.deadlight.ezchestshop.Utils.Objects.TransactionLogObject;
@@ -43,6 +48,7 @@ public class Utils {
     private static String discordLink;
 
     public static VersionUtils versionUtils;
+    public static DatabaseManager databaseManager;
 
     static {
         try {
@@ -783,6 +789,26 @@ public class Utils {
         }
         return discordLink;
 
+    }
+
+    public static void recognizeDatabase(){
+        if (Config.database_type == Database.SQLITE) {
+            EzChestShop.logConsole("&c[&eEzChestShop&c] &eInitializing SQLite database...");
+            //initialize SQLite
+            databaseManager = new SQLite();
+            databaseManager.load();
+            EzChestShop.logConsole("&c[&eEzChestShop&c] &aSQLite &7database initialized!");
+
+        } else if (Config.database_type == Database.MYSQL) {
+            //initialize MySQL
+            databaseManager = new MySQL(EzChestShop.getPlugin());
+            databaseManager.load();
+        } else if (Config.database_type == Database.MONGODB) {
+            //initialize MongoDB
+            databaseManager = new MongoDB(EzChestShop.getPlugin());
+            databaseManager.load();
+        }
+        //shouldn't technically happen
     }
 
 

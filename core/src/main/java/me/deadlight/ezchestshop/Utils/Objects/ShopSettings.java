@@ -1,7 +1,7 @@
 package me.deadlight.ezchestshop.Utils.Objects;
 
 import me.deadlight.ezchestshop.Data.Config;
-import me.deadlight.ezchestshop.Data.SQLite.Database;
+import me.deadlight.ezchestshop.Data.DatabaseManager;
 import me.deadlight.ezchestshop.Enums.Changes;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.Utils.Utils;
@@ -166,7 +166,7 @@ public class ShopSettings {
 
     public static Map<Location, String> getAllCustomMessages(String owner) {
         if (!customMessagesInitialChecked) {
-            Database db = EzChestShop.getPlugin().getDatabase();
+            DatabaseManager db = EzChestShop.getPlugin().getDatabase();
             Map<String, String> data = db.getKeysWithValueByExpresion("location", "customMessages", "owner", "shopdata",
                     "IS \"" + owner + "\" AND customMessages IS NOT NULL AND trim(customMessages, \" \") IS NOT \"\"");
             Map<Location, String> converted = data.entrySet().stream().collect(Collectors.toMap(e -> Utils.StringtoLocation(e.getKey()),e -> e.getValue()));
@@ -178,7 +178,7 @@ public class ShopSettings {
     }
 
     private static Map<Location, String> fetchAllCustomMessages(String owner) {
-        Database db = EzChestShop.getPlugin().getDatabase();
+        DatabaseManager db = EzChestShop.getPlugin().getDatabase();
         Map<String, String> data = db.getKeysWithValueByExpresion("location", "customMessages", "owner", "shopdata",
                 "IS \"" + owner + "\" AND customMessages IS NOT NULL AND trim(customMessages, \" \") IS NOT \"\"");
         Map<Location, String> converted = data.entrySet().stream().collect(Collectors.toMap(e -> Utils.StringtoLocation(e.getKey()),e -> e.getValue()));

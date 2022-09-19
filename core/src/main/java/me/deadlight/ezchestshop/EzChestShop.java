@@ -3,9 +3,8 @@ import me.deadlight.ezchestshop.Commands.CommandCheckProfits;
 import me.deadlight.ezchestshop.Commands.EcsAdmin;
 import me.deadlight.ezchestshop.Commands.MainCommands;
 import me.deadlight.ezchestshop.Data.Config;
+import me.deadlight.ezchestshop.Data.DatabaseManager;
 import me.deadlight.ezchestshop.Data.LanguageManager;
-import me.deadlight.ezchestshop.Data.SQLite.Database;
-import me.deadlight.ezchestshop.Data.SQLite.SQLite;
 import me.deadlight.ezchestshop.Data.ShopContainer;
 import me.deadlight.ezchestshop.Listeners.*;
 import me.deadlight.ezchestshop.Tasks.LoadedChunksTask;
@@ -26,11 +25,10 @@ public final class EzChestShop extends JavaPlugin {
 
     private static Economy econ = null;
 
-    private Database db;
+    private DatabaseManager db;
 
     public static boolean slimefun = false;
     public static boolean worldguard = false;
-
 
     @Override
     public void onLoad() {
@@ -48,10 +46,23 @@ public final class EzChestShop extends JavaPlugin {
         logConsole("&c[&eEzChestShop&c] &aEnabling EzChestShop - version " + this.getDescription().getVersion());
         saveDefaultConfig();
 
-        this.db = new SQLite(this);
-        this.db.load();
+//        this.db = new SQLite(this);
+//        this.db.load();
+
 
         Config.loadConfig();
+
+
+        //load database
+        if (Config.database_type != null) {
+            Utils.recognizeDatabase();
+        } else {
+            logConsole("&c[&eEzChestShop&c] &cDatabase type not specified/or is wrong in config.yml! Disabling plugin...");
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+
+
         // Plugin startup logic
         if (!(getServer().getVersion().contains("1.19") || getServer().getVersion().contains("1.18") || getServer().getVersion().contains("1.17") || getServer().getVersion().contains("1.16") || getServer().getVersion().contains("1.15") || getServer().getVersion().contains("1.14"))) {
             logConsole("&c[&eEzChestShop&c] &4This plugin only supports 1.14 - 1.19!, &cself disabling...");
@@ -109,7 +120,6 @@ public final class EzChestShop extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PlayerTransactionListener(), this);
         getServer().getPluginManager().registerEvents(new ChatListener(), this);
         getServer().getPluginManager().registerEvents(new BlockPistonExtendListener(), this);
-        getServer().getPluginManager().registerEvents(new SQLite(this), this);
         getServer().getPluginManager().registerEvents(new CommandCheckProfits(), this);
         getServer().getPluginManager().registerEvents(new UpdateChecker(), this);
         getServer().getPluginManager().registerEvents(new PlayerJoinListener(), this);
@@ -211,7 +221,7 @@ public final class EzChestShop extends JavaPlugin {
         return econ;
     }
 
-    public Database getDatabase() {
+    public DatabaseManager getDatabase() {
         return this.db;
     }
 

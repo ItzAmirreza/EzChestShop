@@ -1,5 +1,6 @@
 package me.deadlight.ezchestshop.Data;
 
+import me.deadlight.ezchestshop.Enums.Database;
 import me.deadlight.ezchestshop.EzChestShop;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -65,6 +66,15 @@ public class Config {
     public static boolean notify_updates;
 
     public static boolean worldguard_integration;
+    public static Database database_type;
+    public static String databasemysql_ip;
+    public static int databasemysql_port;
+    public static String databasemysqltables_prefix;
+    public static String databasemysql_databasename;
+    public static String databasemysql_username;
+    public static String databasemysql_password;
+    public static boolean databasemysql_use_ssl;
+    public static String databasemongodb_connection_string;
 
 
 
@@ -133,6 +143,15 @@ public class Config {
         debug_logging = config.getBoolean("debug.logging");
         notify_updates = config.getBoolean("other.notify-op-of-updates");
         worldguard_integration = config.getBoolean("integration.worldguard");
+        database_type = Database.valueOf(config.getString("database.type").toUpperCase());
+        databasemysql_ip = config.getString("database.mysql.ip");
+        databasemysql_port = config.getInt("database.mysql.port");
+        databasemysqltables_prefix = config.getString("database.mysql.tables-prefix");
+        databasemysql_databasename = config.getString("database.mysql.database");
+        databasemysql_username = config.getString("database.mysql.username");
+        databasemysql_password = config.getString("database.mysql.password");
+        databasemysql_use_ssl = config.getBoolean("database.mysql.ssl");
+        databasemongodb_connection_string = config.getString("database.mongodb.connection-string");
     }
 
 
