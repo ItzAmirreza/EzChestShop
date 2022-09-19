@@ -239,6 +239,14 @@ public class Config {
             fc.set("permissions.hologram-message-limit", false);
             fc.set("permissions.hologram-message-line-count", false);
 
+            List<String> structure = new ArrayList<>(fc.getStringList("shops.hologram.holo-structure"));
+            structure.addAll(0, Arrays.asList("<custom1/>", "<custom2/>", "<custom3/>", "<custom4/>"));
+            fc.set("shops.hologram.holo-structure", structure);
+
+            List<String> structureAdmin = new ArrayList<>(fc.getStringList("shops.hologram.holo-structure-adminshop"));
+            structureAdmin.addAll(0, Arrays.asList("<custom1/>", "<custom2/>", "<custom3/>", "<custom4/>"));
+            fc.set("shops.hologram.holo-structure-adminshop", structureAdmin);
+
             fc.save(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml"));
             Config.loadConfig();
         }
