@@ -21,7 +21,8 @@ public class SQLite extends DatabaseManager {
         EzChestShop plugin;
         Connection connection;
 
-        public SQLite() {
+        public SQLite(EzChestShop instance) {
+            plugin = instance;
             dbname = "ecs-database"; // Set the table name here
         }
         public void initialize() {

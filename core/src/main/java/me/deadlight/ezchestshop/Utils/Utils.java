@@ -818,7 +818,7 @@ public class Utils {
         if (Config.database_type == Database.SQLITE) {
             EzChestShop.logConsole("&c[&eEzChestShop&c] &eInitializing SQLite database...");
             //initialize SQLite
-            databaseManager = new SQLite();
+            databaseManager = new SQLite(EzChestShop.getPlugin());
             databaseManager.load();
             EzChestShop.logConsole("&c[&eEzChestShop&c] &aSQLite &7database initialized!");
 
