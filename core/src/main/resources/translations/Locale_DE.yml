@@ -123,11 +123,11 @@ settings:
     hologramMessage:
       Title: "&eBearbeite dein Hologram"
       Lore:
-        - "&7Linksklick um dein Hologram"
-        - "&7mit einem benutzerdefinierten Text"
-        - "&7zu bearbeiten!"
-        - "&7Rechtsklick um deine Hologram"
-        - "&7zu verwalten!"
+        - "&cLinksklick um dein Hologram"
+        - "&cmit einem benutzerdefinierten Text"
+        - "&chinzuzufügen!"
+        - "&aRechtsklick um deine Hologram"
+        - "&azu verwalten!"
         - " &d "
         - "&8Du kannst %lineNumbers% Zeilen verwenden!"
         - "<ifhasmax>&8Du hast noch %messagesleft% Texte übrig!</ifhasmax>"
@@ -136,6 +136,15 @@ settings:
         - "&c%maxLines% Zeilen haben!"
         - "&7Klick hier um deine Hologram"
         - "&7Texte zu verwalten!"
+      LoreEdit:
+        - "&cLinksklick um dein Hologram"
+        - "&cmit einem benutzerdefinierten Text"
+        - "&czu bearbeiten!"
+        - "&aRechtsklick um deine Hologram"
+        - "&azu verwalten!"
+        - " &d "
+        - "&8Du kannst %lineNumbers% Zeilen verwenden!"
+        - "<ifhasmax>&8Du hast noch %messagesleft% Texte übrig!</ifhasmax>"
       SignPlaceholderTexts: "###############"
     other:
       backToShopGuiButton: "&eZurück zum Shop"
@@ -195,17 +204,26 @@ customMessageManager:
         - "&eHologram Text:"
         - "&7%hologram-messages%"
         - ""
-        - "&cRechtsklick um den Text"
+        - "&cLinksklick um den Text"
         - "&czu löschen!"
+        - "&aRechtsklick um den Text"
+        - "&azu bearbeiten!"
     confirmDelete:
       Title: "&cBist du dir sicher?"
       Lore:
         - "&7Du kannst diesen Text"
         - "&7nicht wiederherstellen!"
-        - "&cRechtsklick zum Löschen!"
+        - "&cKlick zum Löschen!"
     backToCustomMessageManager:
-      Title: "&eBack to Custom Messages Manager"
+      Title: "&eZurück zur Hologram Text Verwaltung"
       Lore:
+    modifyCurrentHologram:
+      Title: "&eBearbeite das aktuelle Hologram"
+      Lore:
+        - "&cLinksklick um den aktuellen"
+        - "&cHologramtext zu löschen!"
+        - "&aRechtsklick um den aktuellen"
+        - "&aHologramtext zu löschen!"
 customBuySell:
   gui-customAmountSign-title: "&eBenutzerdefierter Verkauf/Kauf"
   gui-customAmountSign-lore:

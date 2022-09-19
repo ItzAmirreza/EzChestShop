@@ -111,10 +111,10 @@ settings:
     hologramMessage:
       Title: "&eCustomize your Hologram"
       Lore:
-        - "&7Left Click to add a custom"
-        - "&7Hologram message!"
-        - "&7Right Click to manage your"
-        - "&7current Hologram messages!"
+        - "&cLeft Click to add a custom"
+        - "&cHologram message!"
+        - "&aRight Click to manage your"
+        - "&acurrent Hologram messages!"
         - " &d "
         - "&8You can use line %lineNumbers%!"
         - "<ifhasmax>&8You can have %messagesleft% more messages!</ifhasmax>"
@@ -123,6 +123,14 @@ settings:
         - "&c%maxLines% lines!"
         - "&7Click here to manage"
         - "&7your hologram messages!"
+      LoreEdit:
+        - "&cLeft Click to edit your custom"
+        - "&cHologram message!"
+        - "&aRight Click to manage your"
+        - "&acurrent Hologram messages!"
+        - " &d "
+        - "&8You can use line %lineNumbers%!"
+        - "<ifhasmax>&8You can have %messagesleft% more messages!</ifhasmax>"
       SignPlaceholderTexts: "###############"
     other:
       backToShopGuiButton: "&e回到商店"
@@ -182,18 +190,27 @@ customMessageManager:
         - "&eHologram messages:"
         - "&7%hologram-messages%"
         - ""
-        - "&cRight Click to delete this"
+        - "&cLeft Click to delete this"
         - "&chologram message!"
+        - "&aRight Click to edit this"
+        - "&ahologram message!"
     confirmDelete:
       Title: "&cAre you sure?"
       Lore:
         - "&7You are about to delete"
         - "&7this hologram message!"
         - "&7This action cannot be undone!"
-        - "&cRight Click to confirm!"
+        - "&cClick to confirm!"
     backToCustomMessageManager:
       Title: "&eBack to Custom Messages Manager"
       Lore:
+    modifyCurrentHologram:
+      Title: "&eModify current hologram"
+      Lore:
+        - "&cLeft Click to delete the current"
+        - "&chologram message!"
+        - "&aRight Click to edit the current"
+        - "&ahologram message!"
 customBuySell:
   gui-customAmountSign-title: "&eCustom Sell/Buy"
   gui-customAmountSign-lore:

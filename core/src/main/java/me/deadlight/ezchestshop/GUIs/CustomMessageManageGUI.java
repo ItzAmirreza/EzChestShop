@@ -100,11 +100,30 @@ public class CustomMessageManageGUI {
 
                 GuiItem shopItem = new GuiItem(item.getItem(), event -> {
                     event.setCancelled(true);
-                    showDeleteConfirm(player, containerBlock, isAdmin, loc);
+                    if (event.isLeftClick()) {
+                        showDeleteConfirm(player, containerBlock, isAdmin, loc);
+                    } else if (event.isRightClick()) {
+                        SettingsGUI.openCustomMessageEditor(player, loc);
+                    }
                 });
 
                 paginatedGui.addItem(shopItem);
             }
+        }
+
+        if (container.hasItem("modify-current-hologram")) {
+            ContainerGuiItem modify = container.getItem("modify-current-hologram")
+                    .setName(lm.customMessageManagerModifyCurrentHologramTitle())
+                    .setLore(lm.customMessageManagerModifyCurrentHologramLore());
+            GuiItem modifyItem = new GuiItem(modify.getItem(), event -> {
+                event.setCancelled(true);
+                if (event.isLeftClick()) {
+                    showDeleteConfirm(player, containerBlock, isAdmin, containerBlock.getLocation());
+                } else if (event.isRightClick()) {
+                    SettingsGUI.openCustomMessageEditor(player, containerBlock.getLocation());
+                }
+            });
+            Utils.addItemIfEnoughSlots(paginatedGui, modify.getSlot(), modifyItem);
         }
 
         paginatedGui.open(player);

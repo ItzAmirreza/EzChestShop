@@ -1,5 +1,6 @@
 package me.deadlight.ezchestshop.Utils.Objects;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import me.deadlight.ezchestshop.Data.Config;
 import me.deadlight.ezchestshop.Data.SQLite.Database;
 import me.deadlight.ezchestshop.Enums.Changes;
@@ -26,7 +27,7 @@ public class ShopSettings {
     private EzShop assignedShop;
     // Use some form of static Hashmap to cash this per shop/location/player smth. Querying is only viable once, since we have the SQL Queue which makes things pretty hard to track.
     // Unless I compare it with the previous customMessages, then it could work! Seems like less of a hassle.
-    private static boolean customMessagesInitialChecked = false;
+    private static List<String> customMessagesInitialChecked = new ArrayList<>();
     private static Map<UUID, Map<Location, String>> customMessagesTotal = new HashMap<>();
 
     public ShopSettings(String sloc, boolean msgtoggle, boolean dbuy, boolean dsell, String admins, boolean shareincome,
@@ -143,8 +144,8 @@ public class ShopSettings {
     }
 
     public List<String> getCustomMessages() {
-        if (!customMessagesInitialChecked) {
-            customMessagesInitialChecked = true;
+        if (!customMessagesInitialChecked.contains(assignedShop.getOwnerID().toString())) {
+            customMessagesInitialChecked.add(assignedShop.getOwnerID().toString());
             customMessagesTotal.put(assignedShop.getOwnerID(), fetchAllCustomMessages(assignedShop.getOwnerID().toString()));
         }
         return customMessages;
@@ -165,12 +166,12 @@ public class ShopSettings {
     }
 
     public static Map<Location, String> getAllCustomMessages(String owner) {
-        if (!customMessagesInitialChecked) {
+        if (!customMessagesInitialChecked.contains(owner)) {
             Database db = EzChestShop.getPlugin().getDatabase();
             Map<String, String> data = db.getKeysWithValueByExpresion("location", "customMessages", "owner", "shopdata",
                     "IS \"" + owner + "\" AND customMessages IS NOT NULL AND trim(customMessages, \" \") IS NOT \"\"");
             Map<Location, String> converted = data.entrySet().stream().collect(Collectors.toMap(e -> Utils.StringtoLocation(e.getKey()),e -> e.getValue()));
-            customMessagesInitialChecked = true;
+            customMessagesInitialChecked.add(owner);
             customMessagesTotal.put(UUID.fromString(owner), converted);
             return converted;
         }

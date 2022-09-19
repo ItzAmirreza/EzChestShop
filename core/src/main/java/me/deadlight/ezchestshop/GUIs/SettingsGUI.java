@@ -254,36 +254,7 @@ public class SettingsGUI {
                             CustomMessageManageGUI customMessageManageGUI = new CustomMessageManageGUI();
                             customMessageManageGUI.showGUI(player, containerBlock, isAdmin);
                         } else {
-                            player.closeInventory();
-                            player.playSound(player.getLocation(), Sound.ITEM_BOOK_PAGE_TURN, 1.0f, 1.0f);
-                            SignMenuFactory signMenuFactory = new SignMenuFactory(EzChestShop.getPlugin());
-                            SignMenuFactory.Menu menu = signMenuFactory.newMenu(lm.hologramMessageSingGUI(player, containerBlock.getLocation()))
-                                    .reopenIfFail(false).response((thatplayer, strings) -> {
-                                        try {
-                                            // Run checks here if allowed
-                                            Bukkit.getScheduler().scheduleSyncDelayedTask(EzChestShop.getPlugin(),
-                                                    () -> {
-                                                        int lines = Config.settings_hologram_message_line_count_default;
-                                                        if (Config.permission_hologram_message_line_count) {
-                                                            int maxShops = Utils.getMaxPermission(player, "ecs.shops.hologram.messages.lines.");
-                                                            maxShops = maxShops == -1 ? 4 : maxShops == 0 ? 1 : maxShops;
-                                                            lines = maxShops;
-                                                        }
-                                                        List<String> messages = Arrays.asList(strings).subList(0, lines).stream()
-                                                                .filter(s -> !s.trim().equals("")).collect(Collectors.toList());
-                                                        // Save data!
-                                                        ShopContainer.getShopSettings(containerBlock.getLocation())
-                                                                .setCustomMessages(messages);
-                                                        PlayerCloseToChestListener.hideHologram(containerBlock.getState().getLocation(), true);
-
-                                                    });
-
-                                        } catch (Exception e) {
-                                            return false;
-                                        }
-                                        return true;
-                                    });
-                            menu.open(player);
+                            openCustomMessageEditor(player, containerBlock.getLocation());
                         }
                     } else {
                         CustomMessageManageGUI customMessageManageGUI = new CustomMessageManageGUI();
@@ -605,6 +576,39 @@ public class SettingsGUI {
              }
          }
          return true;
+     }
+
+     public static void openCustomMessageEditor(Player player, Location location) {
+         player.closeInventory();
+         player.playSound(player.getLocation(), Sound.ITEM_BOOK_PAGE_TURN, 1.0f, 1.0f);
+         SignMenuFactory signMenuFactory = new SignMenuFactory(EzChestShop.getPlugin());
+         SignMenuFactory.Menu menu = signMenuFactory.newMenu(lm.hologramMessageSingGUI(player, location))
+                 .reopenIfFail(false).response((thatplayer, strings) -> {
+                     try {
+                         // Run checks here if allowed
+                         Bukkit.getScheduler().scheduleSyncDelayedTask(EzChestShop.getPlugin(),
+                                 () -> {
+                                     int lines = Config.settings_hologram_message_line_count_default;
+                                     if (Config.permission_hologram_message_line_count) {
+                                         int maxShops = Utils.getMaxPermission(player, "ecs.shops.hologram.messages.lines.");
+                                         maxShops = maxShops == -1 ? 4 : maxShops == 0 ? 1 : maxShops;
+                                         lines = maxShops;
+                                     }
+                                     List<String> messages = Arrays.asList(strings).subList(0, lines).stream()
+                                             .filter(s -> !s.trim().equals("")).collect(Collectors.toList());
+                                     // Save data!
+                                     ShopContainer.getShopSettings(location)
+                                             .setCustomMessages(messages);
+                                     PlayerCloseToChestListener.hideHologram(location, true);
+
+                                 });
+
+                     } catch (Exception e) {
+                         return false;
+                     }
+                     return true;
+                 });
+         menu.open(player);
      }
 
 

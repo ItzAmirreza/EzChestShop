@@ -160,3 +160,8 @@ hologram-messages-manager:
       column: 7
       material: arrow
       count: 1
+    modify-current-hologram:
+      row: 6
+      column: 9
+      material: compass
+      count: 1

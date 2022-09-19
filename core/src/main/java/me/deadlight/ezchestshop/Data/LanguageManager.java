@@ -424,7 +424,7 @@ public class LanguageManager {
         // if hasNoMaxShopLimit is false and hasPermissionLimit is true, value should be true.
         // if hasNoMaxShopLimit is false and hasPermissionLimit is false, value should be false.
         boolean value = hasNoMaxShopLimit && hasPermissionLimit ? false : hasNoMaxShopLimit ? false : hasPermissionLimit;
-        return getList("settings.buttons.hologramMessage.Lore").stream()
+        return getList(currentMessages == 0 ? "settings.buttons.hologramMessage.Lore" : "settings.buttons.hologramMessage.LoreEdit").stream()
                 .filter(s -> ((value) || !s.startsWith("<ifhasmax>")))
                 .map(s -> Utils.colorify(s).replace("%lineNumbers%", lineMsg).replace("%messagesleft%",  "" + (maxMessages - currentMessages))
                         .replace("<ifhasmax>", "").replace("</ifhasmax>", "")).collect(Collectors.toList());
@@ -625,6 +625,13 @@ public class LanguageManager {
     }
     public List<String> customMessageManagerBackToCustomMessageManagerLore() {
         return getList("customMessageManager.buttons.backToCustomMessageManager.Lore").stream().map(s -> Utils.colorify(s)).collect(Collectors.toList());
+    }
+    //customMessageManager.buttons.modifyCurrentHologram.
+    public String customMessageManagerModifyCurrentHologramTitle() {
+        return Utils.colorify(getString("customMessageManager.buttons.modifyCurrentHologram.Title"));
+    }
+    public List<String> customMessageManagerModifyCurrentHologramLore() {
+        return getList("customMessageManager.buttons.modifyCurrentHologram.Lore").stream().map(s -> Utils.colorify(s)).collect(Collectors.toList());
     }
 
     //customBuySell.
