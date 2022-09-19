@@ -1,9 +1,11 @@
 package me.deadlight.ezchestshop;
+
 import me.deadlight.ezchestshop.Commands.CommandCheckProfits;
 import me.deadlight.ezchestshop.Commands.EcsAdmin;
 import me.deadlight.ezchestshop.Commands.MainCommands;
 import me.deadlight.ezchestshop.Data.Config;
 import me.deadlight.ezchestshop.Data.DatabaseManager;
+import me.deadlight.ezchestshop.Data.GUI.GuiData;
 import me.deadlight.ezchestshop.Data.LanguageManager;
 import me.deadlight.ezchestshop.Data.ShopContainer;
 import me.deadlight.ezchestshop.Listeners.*;
@@ -46,25 +48,25 @@ public final class EzChestShop extends JavaPlugin {
         logConsole("&c[&eEzChestShop&c] &aEnabling EzChestShop - version " + this.getDescription().getVersion());
         saveDefaultConfig();
 
-//        this.db = new SQLite(this);
-//        this.db.load();
-
+        // this.db = new SQLite(this);
+        // this.db.load();
 
         Config.loadConfig();
 
-
-        //load database
+        // load database
         if (Config.database_type != null) {
             Utils.recognizeDatabase();
         } else {
-            logConsole("&c[&eEzChestShop&c] &cDatabase type not specified/or is wrong in config.yml! Disabling plugin...");
+            logConsole(
+                    "&c[&eEzChestShop&c] &cDatabase type not specified/or is wrong in config.yml! Disabling plugin...");
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
 
-
         // Plugin startup logic
-        if (!(getServer().getVersion().contains("1.19") || getServer().getVersion().contains("1.18") || getServer().getVersion().contains("1.17") || getServer().getVersion().contains("1.16") || getServer().getVersion().contains("1.15") || getServer().getVersion().contains("1.14"))) {
+        if (!(getServer().getVersion().contains("1.19") || getServer().getVersion().contains("1.18")
+                || getServer().getVersion().contains("1.17") || getServer().getVersion().contains("1.16")
+                || getServer().getVersion().contains("1.15") || getServer().getVersion().contains("1.14"))) {
             logConsole("&c[&eEzChestShop&c] &4This plugin only supports 1.14 - 1.19!, &cself disabling...");
             Bukkit.getPluginManager().disablePlugin(this);
             return;
@@ -72,8 +74,9 @@ public final class EzChestShop extends JavaPlugin {
             logConsole("&c[&eEzChestShop&c] &eCurrent Protocol version initialized.");
         }
 
-        if (!setupEconomy() ) {
-            logConsole("&c[&eEzChestShop&c] &4Cannot find vault or economy plugin. Self disabling... &ePlease note that you need vault and at least one economy plugin installed.");
+        if (!setupEconomy()) {
+            logConsole(
+                    "&c[&eEzChestShop&c] &4Cannot find vault or economy plugin. Self disabling... &ePlease note that you need vault and at least one economy plugin installed.");
             Bukkit.getPluginManager().disablePlugin(this);
             return;
         }
@@ -91,17 +94,23 @@ public final class EzChestShop extends JavaPlugin {
             e.printStackTrace();
         }
 
+        GuiData.loadGuiData();
+        try {
+            GuiData.checkForGuiDataYMLupdate();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         registerListeners();
         registerCommands();
         registerTabCompleters();
-        //metrics
+        // metrics
         Metrics metrics = new Metrics(this, 10756);
 
         if (getServer().getPluginManager().getPlugin("Slimefun") != null) {
             slimefun = true;
             logConsole("&c[&eEzChestShop&c] &eSlimefun integration initialized.");
         }
-
 
         ShopContainer.queryShopsToMemory();
         ShopContainer.startSqlQueueTask();
@@ -123,8 +132,8 @@ public final class EzChestShop extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new CommandCheckProfits(), this);
         getServer().getPluginManager().registerEvents(new UpdateChecker(), this);
         getServer().getPluginManager().registerEvents(new PlayerJoinListener(), this);
-        //Add Config check over here, to change the Shop display varient.
-        //PlayerLooking is less laggy but probably harder to spot.
+        // Add Config check over here, to change the Shop display varient.
+        // PlayerLooking is less laggy but probably harder to spot.
         if (Config.holodistancing) {
             getServer().getPluginManager().registerEvents(new PlayerCloseToChestListener(), this);
         } else {
@@ -133,6 +142,7 @@ public final class EzChestShop extends JavaPlugin {
         }
 
     }
+
     private void registerCommands() {
         PluginCommand ecs = getCommand("ecs");
         PluginCommand ecsadmin = getCommand("ecsadmin");
@@ -157,8 +167,6 @@ public final class EzChestShop extends JavaPlugin {
         getCommand("ecsadmin").setTabCompleter(new EcsAdmin());
         getCommand("checkprofits").setTabCompleter(new CommandCheckProfits());
     }
-
-
 
     @Override
     public void onDisable() {
@@ -188,9 +196,7 @@ public final class EzChestShop extends JavaPlugin {
 
         }
 
-
     }
-
 
     public static EzChestShop getPlugin() {
         return plugin;
@@ -225,9 +231,4 @@ public final class EzChestShop extends JavaPlugin {
         return this.db;
     }
 
-
-
-
 }
-
-

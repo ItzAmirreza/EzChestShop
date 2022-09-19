@@ -1,10 +1,14 @@
 package me.deadlight.ezchestshop.Utils;
 
+import dev.triumphteam.gui.guis.Gui;
+import dev.triumphteam.gui.guis.GuiItem;
+import dev.triumphteam.gui.guis.PaginatedGui;
 import me.deadlight.ezchestshop.Data.Config;
 import me.deadlight.ezchestshop.Data.DatabaseManager;
 import me.deadlight.ezchestshop.Data.MongoDB.MongoDB;
 import me.deadlight.ezchestshop.Data.MySQL.MySQL;
 import me.deadlight.ezchestshop.Data.SQLite.SQLite;
+import me.deadlight.ezchestshop.Data.GUI.ContainerGuiItem;
 import me.deadlight.ezchestshop.Data.ShopContainer;
 import me.deadlight.ezchestshop.Enums.Database;
 import me.deadlight.ezchestshop.EzChestShop;
@@ -55,14 +59,16 @@ public class Utils {
             String packageName = Utils.class.getPackage().getName();
             String internalsName = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
             versionUtils = (VersionUtils) Class.forName(packageName + "." + internalsName).newInstance();
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | ClassCastException exception) {
-            Bukkit.getLogger().log(Level.SEVERE, "EzChestShop could not find a valid implementation for this server version.");
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+                | ClassCastException exception) {
+            Bukkit.getLogger().log(Level.SEVERE,
+                    "EzChestShop could not find a valid implementation for this server version.");
         }
     }
 
-
     /**
      * Store a ItemStack into a persistent Data Container using Base64 encoding.
+     * 
      * @param item
      * @param data
      * @throws IOException
@@ -74,11 +80,11 @@ public class Utils {
             data.set(new NamespacedKey(EzChestShop.getPlugin(), "item"), PersistentDataType.STRING, encodedItem);
         }
 
-
     }
 
     /**
      * Encode a ItemStack into a Base64 encoded String
+     * 
      * @param item
      * @return
      */
@@ -105,6 +111,7 @@ public class Utils {
 
     /**
      * Decode a ItemStack from Base64 into a ItemStack
+     * 
      * @param encodedItem
      * @return
      */
@@ -142,25 +149,26 @@ public class Utils {
         return versionUtils.ItemToTextCompoundString(itemStack);
     }
 
-
     /**
      * Get the Inventory of the given Block if it is a Chest, Barrel or any Shulker
+     * 
      * @param block
      * @return
      */
     public static Inventory getBlockInventory(Block block) {
         if (block.getType() == Material.CHEST || block.getType() == Material.TRAPPED_CHEST) {
-            return  ((Chest) block.getState()).getInventory();
+            return ((Chest) block.getState()).getInventory();
         } else if (block.getType() == Material.BARREL) {
-            return  ((Barrel) block.getState()).getInventory();
-        }
-        else if (isShulkerBox(block)) {
-            return  ((ShulkerBox) block.getState()).getInventory();
-        }
-        else return null;
+            return ((Barrel) block.getState()).getInventory();
+        } else if (isShulkerBox(block)) {
+            return ((ShulkerBox) block.getState()).getInventory();
+        } else
+            return null;
     }
+
     /**
      * Check if the given Block is a Shulker box (dye check)
+     * 
      * @param block
      * @return
      */
@@ -170,6 +178,7 @@ public class Utils {
 
     /**
      * Check if the given Material is a Shulker box (dye check)
+     * 
      * @param type
      * @return
      */
@@ -184,6 +193,7 @@ public class Utils {
 
     /**
      * Check if the given Block is a applicable Shop.
+     * 
      * @param block
      * @return
      */
@@ -193,6 +203,7 @@ public class Utils {
 
     /**
      * Check if the given Material is a applicable Shop.
+     * 
      * @param type
      * @return
      */
@@ -203,13 +214,10 @@ public class Utils {
                 || (isShulkerBox(type) && Config.container_shulkers);
     }
 
-
-
-
     public static List<UUID> getAdminsList(PersistentDataContainer data) {
 
         String adminsString = data.get(new NamespacedKey(EzChestShop.getPlugin(), "admins"), PersistentDataType.STRING);
-        //UUID@UUID@UUID
+        // UUID@UUID@UUID
         if (adminsString.equalsIgnoreCase("none")) {
             return new ArrayList<>();
         } else {
@@ -222,9 +230,8 @@ public class Utils {
         }
     }
 
-
     public static List<TransactionLogObject> getListOfTransactions(Block containerBlock) {
-        TileState state = ((TileState)containerBlock.getState());
+        TileState state = ((TileState) containerBlock.getState());
         PersistentDataContainer data = state.getPersistentDataContainer();
         String wholeString = data.get(new NamespacedKey(EzChestShop.getPlugin(), "trans"), PersistentDataType.STRING);
         if (wholeString == null || wholeString.equalsIgnoreCase("none")) {
@@ -265,7 +272,6 @@ public class Utils {
         return colorify(itemname).trim();
     }
 
-
     /**
      * Convert a Location to a String
      *
@@ -284,7 +290,8 @@ public class Utils {
     }
 
     /**
-     * Convert a Location to a String with the Location rounded as defined via the decimal argument
+     * Convert a Location to a String with the Location rounded as defined via the
+     * decimal argument
      *
      * @param loc
      * @param decimals
@@ -351,9 +358,10 @@ public class Utils {
      * Get the max permission level of a permission object (e.g. player)
      *
      * @param permissible a object using the Permissible System e.g. a Player.
-     * @param permission a Permission String to check e.g. ecs.shops.limit.
-     * @return the maximum int found, unless user is an Operator or has the ecs.admin permission.
-     * Then the returned result will be -1
+     * @param permission  a Permission String to check e.g. ecs.shops.limit.
+     * @return the maximum int found, unless user is an Operator or has the
+     *         ecs.admin permission.
+     *         Then the returned result will be -1
      */
     public static int getMaxPermission(Permissible permissible, String permission) {
         if (permissible.isOp() || permissible.hasPermission("ecs.admin"))
@@ -364,29 +372,27 @@ public class Utils {
         permissible.getEffectivePermissions().stream().map(PermissionAttachmentInfo::getPermission)
                 .map(String::toLowerCase).filter(value -> value.startsWith(permission))
                 .map(value -> value.replace(permission, "")).forEach(value -> {
-            if (value.equalsIgnoreCase("*")) {
-                max.set(-1);
-                return;
-            }
+                    if (value.equalsIgnoreCase("*")) {
+                        max.set(-1);
+                        return;
+                    }
 
-            if (max.get() == -1)
-                return;
+                    if (max.get() == -1)
+                        return;
 
-            try {
-                int amount = Integer.parseInt(value);
+                    try {
+                        int amount = Integer.parseInt(value);
 
-                if (amount > max.get())
-                    max.set(amount);
-            } catch (NumberFormatException ignored) {
-            }
-        });
+                        if (amount > max.get())
+                            max.set(amount);
+                    } catch (NumberFormatException ignored) {
+                    }
+                });
 
         return max.get();
     }
 
-
     //
-
 
     /**
      * Split a String by "_" and capitalize each First word, then join them together
@@ -404,7 +410,6 @@ public class Utils {
         }
         return n_string;
     }
-
 
     public static boolean hasEnoughSpace(Player player, int amount, ItemStack item) {
         int emptySlots = 0;
@@ -469,7 +474,6 @@ public class Utils {
             return Integer.MAX_VALUE;
         }
 
-
         int amount = 0;
         for (ItemStack item : itemStacks) {
             if (item == null || item.getType() == Material.AIR) {
@@ -483,7 +487,6 @@ public class Utils {
         return amount;
 
     }
-
 
     public static boolean containerHasEnoughSpace(Inventory container, int amount, ItemStack item) {
         int emptySlots = 0;
@@ -514,73 +517,79 @@ public class Utils {
         return true;
     }
 
-    public static List<String> calculatePossibleAmount(OfflinePlayer offlineCustomer, OfflinePlayer offlineSeller, ItemStack[] playerInventory, ItemStack[] storageInventory, double eachBuyPrice, double eachSellPrice, ItemStack itemStack) {
+    public static List<String> calculatePossibleAmount(OfflinePlayer offlineCustomer, OfflinePlayer offlineSeller,
+            ItemStack[] playerInventory, ItemStack[] storageInventory, double eachBuyPrice, double eachSellPrice,
+            ItemStack itemStack) {
 
         List<String> results = new ArrayList<>();
 
-        String buyCount = calculateBuyPossibleAmount(offlineCustomer, playerInventory, storageInventory, eachBuyPrice, itemStack);
-        String sellCount = calculateSellPossibleAmount(offlineSeller, playerInventory, storageInventory, eachSellPrice, itemStack);
+        String buyCount = calculateBuyPossibleAmount(offlineCustomer, playerInventory, storageInventory, eachBuyPrice,
+                itemStack);
+        String sellCount = calculateSellPossibleAmount(offlineSeller, playerInventory, storageInventory, eachSellPrice,
+                itemStack);
 
         results.add(buyCount);
         results.add(sellCount);
         return results;
     }
 
+    public static String calculateBuyPossibleAmount(OfflinePlayer offlinePlayer, ItemStack[] playerInventory,
+            ItemStack[] storageInventory, double eachBuyPrice, ItemStack itemStack) {
+        // I was going to run this in async but maybe later...
+        int possibleCount = 0;
+        double buyerBalance = EzChestShop.getEconomy().getBalance(offlinePlayer);
+        int emptyCount = playerEmptyCount(playerInventory, itemStack);
+        int howManyExists = howManyOfItemExists(storageInventory, itemStack);
 
-    public static String calculateBuyPossibleAmount(OfflinePlayer offlinePlayer, ItemStack[] playerInventory, ItemStack[] storageInventory, double eachBuyPrice, ItemStack itemStack) {
-        //I was going to run this in async but maybe later...
-                int possibleCount = 0;
-                double buyerBalance = EzChestShop.getEconomy().getBalance(offlinePlayer);
-                int emptyCount = playerEmptyCount(playerInventory, itemStack);
-                int howManyExists = howManyOfItemExists(storageInventory, itemStack);
+        for (int num = 0; num < emptyCount; num++) {
+            if (possibleCount + 1 > howManyExists) {
+                break;
+            }
+            possibleCount += 1;
+        }
 
-                for (int num = 0; num < emptyCount; num++) {
-                    if (possibleCount + 1 > howManyExists) {
-                        break;
-                    }
-                    possibleCount += 1;
-                }
-
-                int result = 0;
-                for (int num = 0; num < possibleCount; num++) {
-                    result += 1;
-                    if ((num + 1) * eachBuyPrice > buyerBalance) {
-                        return String.valueOf(num);
-                    }
-                }
+        int result = 0;
+        for (int num = 0; num < possibleCount; num++) {
+            result += 1;
+            if ((num + 1) * eachBuyPrice > buyerBalance) {
+                return String.valueOf(num);
+            }
+        }
 
         return String.valueOf(result);
     }
-    public static String calculateSellPossibleAmount(OfflinePlayer offlinePlayer, ItemStack[] playerInventory, ItemStack[] storageInventory, double eachSellPrice, ItemStack itemStack) {
 
-                int possibleCount = 0;
-                double buyerBalance;
-                if (offlinePlayer == null) {
-                    buyerBalance = Double.MAX_VALUE;
-                } else {
-                    if (offlinePlayer.hasPlayedBefore()) {
-                        buyerBalance = EzChestShop.getEconomy().getBalance(offlinePlayer);
-                    } else {
-                        buyerBalance = 0;
-                    }
-                }
-                int emptyCount = containerEmptyCount(storageInventory, itemStack);
-                int howManyExists = howManyOfItemExists(playerInventory, itemStack);
+    public static String calculateSellPossibleAmount(OfflinePlayer offlinePlayer, ItemStack[] playerInventory,
+            ItemStack[] storageInventory, double eachSellPrice, ItemStack itemStack) {
 
-                for (int num = 0; num < emptyCount; num++) {
-                    if (possibleCount + 1 > howManyExists) {
-                        break;
-                    }
-                    possibleCount += 1;
-                }
+        int possibleCount = 0;
+        double buyerBalance;
+        if (offlinePlayer == null) {
+            buyerBalance = Double.MAX_VALUE;
+        } else {
+            if (offlinePlayer.hasPlayedBefore()) {
+                buyerBalance = EzChestShop.getEconomy().getBalance(offlinePlayer);
+            } else {
+                buyerBalance = 0;
+            }
+        }
+        int emptyCount = containerEmptyCount(storageInventory, itemStack);
+        int howManyExists = howManyOfItemExists(playerInventory, itemStack);
 
-                int result = 0;
-                for (int num = 0; num < possibleCount; num++) {
-                    result += 1;
-                    if ((num + 1) * eachSellPrice > buyerBalance) {
-                        return String.valueOf(num);
-                    }
-                }
+        for (int num = 0; num < emptyCount; num++) {
+            if (possibleCount + 1 > howManyExists) {
+                break;
+            }
+            possibleCount += 1;
+        }
+
+        int result = 0;
+        for (int num = 0; num < possibleCount; num++) {
+            result += 1;
+            if ((num + 1) * eachSellPrice > buyerBalance) {
+                return String.valueOf(num);
+            }
+        }
 
         return String.valueOf(result);
     }
@@ -595,14 +604,16 @@ public class Utils {
     }
 
     public static String getNextRotation(String current) {
-        if (current == null) current = Config.settings_defaults_rotation;
+        if (current == null)
+            current = Config.settings_defaults_rotation;
         int i = rotations.indexOf(current);
         String result = i == rotations.size() - 1 ? rotations.get(0) : rotations.get(i + 1);
         return result;
     }
 
     public static String getPreviousRotation(String current) {
-        if (current == null) current = Config.settings_defaults_rotation;
+        if (current == null)
+            current = Config.settings_defaults_rotation;
         int i = rotations.indexOf(current);
         String result = i == 0 ? rotations.get(rotations.size() - 1) : rotations.get(i - 1);
         return result;
@@ -611,6 +622,7 @@ public class Utils {
     /**
      * Apply & color translating, as well as #ffffff hex color encoding to a String.
      * Versions below 1.16 will only get the last hex color symbol applied to them.
+     * 
      * @param str
      * @return
      */
@@ -619,32 +631,34 @@ public class Utils {
     }
 
     /**
-     * Apply hex color coding to a String. possibility to add a special start or end tag to the String.
+     * Apply hex color coding to a String. possibility to add a special start or end
+     * tag to the String.
      * Versions below 1.16 will only get the last hex color symbol applied to them.
+     * 
      * @param startTag
      * @param endTag
      * @param message
      * @return
      */
-    public static  String translateHexColorCodes(String startTag, String endTag, String message)
-    {
+    public static String translateHexColorCodes(String startTag, String endTag, String message) {
         final Pattern hexPattern = Pattern.compile(startTag + "([A-Fa-f0-9]{6})" + endTag);
         final char COLOR_CHAR = ChatColor.COLOR_CHAR;
         Matcher matcher = hexPattern.matcher(message);
         StringBuffer buffer = new StringBuffer(message.length() + 4 * 8);
-        while (matcher.find())
-        {
+        while (matcher.find()) {
             String group = matcher.group(1);
             matcher.appendReplacement(buffer, COLOR_CHAR + "x"
                     + COLOR_CHAR + group.charAt(0) + COLOR_CHAR + group.charAt(1)
                     + COLOR_CHAR + group.charAt(2) + COLOR_CHAR + group.charAt(3)
-                    + COLOR_CHAR + group.charAt(4) + COLOR_CHAR + group.charAt(5)
-            );
+                    + COLOR_CHAR + group.charAt(4) + COLOR_CHAR + group.charAt(5));
         }
         return matcher.appendTail(buffer).toString();
     }
 
-    public enum FormatType {GUI, CHAT, HOLOGRAM}
+    public enum FormatType {
+        GUI, CHAT, HOLOGRAM
+    }
+
     public static String formatNumber(double number, FormatType type) {
         String result = "Error";
         DecimalFormat decimalFormat;
@@ -666,14 +680,23 @@ public class Utils {
     }
 
     public static void sendVersionMessage(Player player) {
-        player.spigot().sendMessage(new ComponentBuilder("Ez Chest Shop plugin, " + EzChestShop.getPlugin().getDescription().getVersion())
-                .color(net.md_5.bungee.api.ChatColor.GREEN)
-                .append("\nSpigot: ").color(net.md_5.bungee.api.ChatColor.GOLD).append("LINK").color(net.md_5.bungee.api.ChatColor.GRAY).bold(true)
-                .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(colorify("&fClick to open the plugins Spigot page!"))))
-                .event(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.spigotmc.org/resources/ez-chest-shop-ecs-1-14-x-1-17-x.90411/"))
-                .append("\nGitHub: ", ComponentBuilder.FormatRetention.NONE).color(net.md_5.bungee.api.ChatColor.RED).append("LINK").color(net.md_5.bungee.api.ChatColor.GRAY).bold(true)
-                .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(colorify("&fClick to check out the plugins\n Open Source GitHub repository!"))))
-                .event(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://github.com/ItzAmirreza/EzChestShop")).create());
+        player.spigot().sendMessage(
+                new ComponentBuilder("Ez Chest Shop plugin, " + EzChestShop.getPlugin().getDescription().getVersion())
+                        .color(net.md_5.bungee.api.ChatColor.GREEN)
+                        .append("\nSpigot: ").color(net.md_5.bungee.api.ChatColor.GOLD).append("LINK")
+                        .color(net.md_5.bungee.api.ChatColor.GRAY).bold(true)
+                        .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+                                TextComponent.fromLegacyText(colorify("&fClick to open the plugins Spigot page!"))))
+                        .event(new ClickEvent(ClickEvent.Action.OPEN_URL,
+                                "https://www.spigotmc.org/resources/ez-chest-shop-ecs-1-14-x-1-17-x.90411/"))
+                        .append("\nGitHub: ", ComponentBuilder.FormatRetention.NONE)
+                        .color(net.md_5.bungee.api.ChatColor.RED).append("LINK")
+                        .color(net.md_5.bungee.api.ChatColor.GRAY).bold(true)
+                        .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+                                TextComponent.fromLegacyText(
+                                        colorify("&fClick to check out the plugins\n Open Source GitHub repository!"))))
+                        .event(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://github.com/ItzAmirreza/EzChestShop"))
+                        .create());
     }
 
     public static PersistentDataContainer getDataContainer(Block block) {
@@ -686,7 +709,6 @@ public class Utils {
                 DoubleChest doubleChest = (DoubleChest) inventory.getHolder();
                 Chest chestleft = (Chest) doubleChest.getLeftSide();
                 Chest chestright = (Chest) doubleChest.getRightSide();
-
 
                 if (!chestleft.getPersistentDataContainer().isEmpty()) {
                     dataContainer = chestleft.getPersistentDataContainer();
@@ -704,9 +726,8 @@ public class Utils {
         return dataContainer;
     }
 
-
     public static boolean validateContainerValues(PersistentDataContainer container, EzShop shop) {
-        //if true, then it means there is a problem
+        // if true, then it means there is a problem
 
         if (container == null || shop == null) {
             return true;
@@ -720,9 +741,11 @@ public class Utils {
                 return true;
             }
         } else {
-            //owner, buy, sell, msgtoggle, dbuy, dsell, admins, shareincome, trans, adminshop, rotation
+            // owner, buy, sell, msgtoggle, dbuy, dsell, admins, shareincome, trans,
+            // adminshop, rotation
             List<String> emptyList = new ArrayList<>();
-            List<String> keys = Arrays.asList("owner", "buy", "sell", "msgtoggle", "dbuy", "dsell", "admins", "shareincome", "trans", "adminshop", "rotation", "item");
+            List<String> keys = Arrays.asList("owner", "buy", "sell", "msgtoggle", "dbuy", "dsell", "admins",
+                    "shareincome", "trans", "adminshop", "rotation", "item");
             List<String> strings = Arrays.asList("owner", "admins", "trans", "rotation", "item");
             List<String> integers = Arrays.asList("msgtoggle", "dbuy", "dsell", "shareincome", "adminshop");
             List<String> doubles = Arrays.asList("buy", "sell");
@@ -746,9 +769,9 @@ public class Utils {
                 return false;
             } else {
                 ShopContainer.deleteShop(shop.getLocation());
-                //removing everything
+                // removing everything
                 Block shopBlock = shop.getLocation().getBlock();
-                TileState state = ((TileState)shopBlock.getState());
+                TileState state = ((TileState) shopBlock.getState());
                 PersistentDataContainer data = state.getPersistentDataContainer();
                 data.remove(new NamespacedKey(EzChestShop.getPlugin(), "owner"));
                 data.remove(new NamespacedKey(EzChestShop.getPlugin(), "buy"));
@@ -772,13 +795,15 @@ public class Utils {
     public static String getDiscordLink() {
         if (discordLink == null) {
             try {
-                HttpsURLConnection connection = (HttpsURLConnection) new URL("https://api.spiget.org/v2/resources/90411").openConnection();
+                HttpsURLConnection connection = (HttpsURLConnection) new URL(
+                        "https://api.spiget.org/v2/resources/90411").openConnection();
                 connection.setRequestMethod("GET");
                 BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                 String inputLine;
                 while ((inputLine = br.readLine()) != null) {
                     if (inputLine.contains("RGlzY29yZCBTZXJ2ZXI=")) {
-                        inputLine = inputLine.replace("\"RGlzY29yZCBTZXJ2ZXI=\": \"", "").replace("\"", "").replace(",", "").trim();
+                        inputLine = inputLine.replace("\"RGlzY29yZCBTZXJ2ZXI=\": \"", "").replace("\"", "")
+                                .replace(",", "").trim();
                         discordLink = inputLine;
                         break;
                     }
@@ -808,9 +833,18 @@ public class Utils {
             databaseManager = new MongoDB(EzChestShop.getPlugin());
             databaseManager.load();
         }
-        //shouldn't technically happen
+
+    // shouldn't technically happen
+    public static void addItemIfEnoughSlots(Gui gui, int slot, GuiItem item) {
+        if ((gui.getRows() * 9) > slot) {
+            gui.setItem(slot, item);
+        }
     }
 
-
+    public static void addItemIfEnoughSlots(PaginatedGui gui, int slot, GuiItem item) {
+        if ((gui.getRows() * 9) > slot) {
+            gui.setItem(slot, item);
+        }
+    }
 
 }

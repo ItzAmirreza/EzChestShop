@@ -13,17 +13,11 @@ shop-gui:
   owner-title: "&c%shopowner%'s Kistenshop"
   adminshop-title: "&cAdminshop"
   buttons:
-    sellone-title: "&cVerkauf 1x"
-    sellone-lore:
+    sellX-title: "&7Verkauf %amount%x"
+    sellX-lore:
       - "&7Verkauf für &e%price% $"
-    sell64-title: "&7Verkauf 64x"
-    sell64-lore:
-      - "&7Verkauf für &e%price% $"
-    buyone-title: "&aKauf 1x"
-    buyone-lore:
-      - "&7Kauf für &e%price% $"
-    buy64-title: "&aKauf 64x"
-    buy64-lore:
+    buyX-title: "&aKauf %amount%x"
+    buyX-lore:
       - "&7Kauf für &e%price% $"
     adminview: "&c&lAdmin Sicht"
     storage: "&e&lLager"
@@ -129,11 +123,11 @@ settings:
     hologramMessage:
       Title: "&eBearbeite dein Hologram"
       Lore:
-        - "&7Linksklick um dein Hologram"
-        - "&7mit einem benutzerdefinierten Text"
-        - "&7zu bearbeiten!"
-        - "&7Rechtsklick um deine Hologram"
-        - "&7zu verwalten!"
+        - "&cLinksklick um dein Hologram"
+        - "&cmit einem benutzerdefinierten Text"
+        - "&chinzuzufügen!"
+        - "&aRechtsklick um deine Hologram"
+        - "&azu verwalten!"
         - " &d "
         - "&8Du kannst %lineNumbers% Zeilen verwenden!"
         - "<ifhasmax>&8Du hast noch %messagesleft% Texte übrig!</ifhasmax>"
@@ -142,6 +136,15 @@ settings:
         - "&c%maxLines% Zeilen haben!"
         - "&7Klick hier um deine Hologram"
         - "&7Texte zu verwalten!"
+      LoreEdit:
+        - "&cLinksklick um dein Hologram"
+        - "&cmit einem benutzerdefinierten Text"
+        - "&czu bearbeiten!"
+        - "&aRechtsklick um deine Hologram"
+        - "&azu verwalten!"
+        - " &d "
+        - "&8Du kannst %lineNumbers% Zeilen verwenden!"
+        - "<ifhasmax>&8Du hast noch %messagesleft% Texte übrig!</ifhasmax>"
       SignPlaceholderTexts: "###############"
     other:
       backToShopGuiButton: "&eZurück zum Shop"
@@ -201,17 +204,26 @@ customMessageManager:
         - "&eHologram Text:"
         - "&7%hologram-messages%"
         - ""
-        - "&cRechtsklick um den Text"
+        - "&cLinksklick um den Text"
         - "&czu löschen!"
+        - "&aRechtsklick um den Text"
+        - "&azu bearbeiten!"
     confirmDelete:
       Title: "&cBist du dir sicher?"
       Lore:
         - "&7Du kannst diesen Text"
         - "&7nicht wiederherstellen!"
-        - "&cRechtsklick zum Löschen!"
+        - "&cKlick zum Löschen!"
     backToCustomMessageManager:
-      Title: "&eBack to Custom Messages Manager"
+      Title: "&eZurück zur Hologram Text Verwaltung"
       Lore:
+    modifyCurrentHologram:
+      Title: "&eBearbeite das aktuelle Hologram"
+      Lore:
+        - "&cLinksklick um den aktuellen"
+        - "&cHologramtext zu löschen!"
+        - "&aRechtsklick um den aktuellen"
+        - "&aHologramtext zu löschen!"
 customBuySell:
   gui-customAmountSign-title: "&eBenutzerdefierter Verkauf/Kauf"
   gui-customAmountSign-lore:
@@ -322,3 +334,5 @@ shulkershop-dropped-lore:
   - " &7Verkaufspreis: &6%currency%%sell_price%"
 other:
   update-notifications: "&c[&eEzChestShop&c] &eNeue Version gefunden: &b%new_version%&e! Du verwendest immer noch &c%current_version%&e!"
+  overflowing-gui-items-notification: "&c[&eEzChestShop&c] &eDu hast Items die über die außerhalb der Grenzen deines GUIs liegen! Füge in diesen GUIs weitere Reihen hinzu um alle Items anzuzeigen: &c%overflow%"
+  overlapping-gui-items-notification: "&c[&eEzChestShop&c] &eEinige Items überlappen sich in deinem GUI! Hier ist eine Liste aller unüblichen überlappenden Items: &c%overlap%"
