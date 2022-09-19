@@ -27,8 +27,6 @@ public final class EzChestShop extends JavaPlugin {
 
     private static Economy econ = null;
 
-    private DatabaseManager db;
-
     public static boolean slimefun = false;
     public static boolean worldguard = false;
 
@@ -228,7 +226,7 @@ public final class EzChestShop extends JavaPlugin {
     }
 
     public DatabaseManager getDatabase() {
-        return this.db;
+        return Utils.databaseManager;
     }
 
 }
