@@ -93,6 +93,22 @@ permissions:
 tasks:
   # Normally, This option is for when server(basically other plugins) remove the chest shop, in this case, it could result in some issues
   # if this is causing so much lag, you can turn this off (requires restart)
-  check-for-removed-shops: true
+  check-for-removed-shops: false
+#databases section
+database:
+  #available types SQLite, MySQL & MongoDB (MySQL & MongoDB is recommended for the best performance)
+  type: SQLite
+  #MySQL database information in case of usage
+  mysql:
+    ip: 127.0.0.1
+    tables-prefix: ecs_
+    database: TheDatabaseName
+    username: TheUsername
+    password: ThePassword
+    ssl: false
+  #MongoDB database information in case of usage
+  mongodb:
+    #Lazy devs only accept connection string sry buddy ^_^
+    connection-string: "connection string"
 other:
   notify-op-of-updates: true
