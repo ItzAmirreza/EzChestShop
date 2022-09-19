@@ -38,8 +38,18 @@ public class CustomMessageManageGUI {
 
         Map<Location, String> customMessages = ShopSettings.getAllCustomMessages(ShopContainer.getShop(containerBlock.getLocation()).getOwnerID().toString());
 
+        ItemStack glassis = new ItemStack(Material.BLACK_STAINED_GLASS_PANE, 1);
+        ItemMeta glassmeta = glassis.getItemMeta();
+        glassmeta.setDisplayName(Utils.colorify("&d"));
+        glassis.setItemMeta(glassmeta);
+
+        GuiItem glasses = new GuiItem(glassis, event -> {
+            // Handle your click action here
+            event.setCancelled(true);
+        });
+
         // Fill the bottom bar:
-        paginatedGui.getFiller().fillBottom(ItemBuilder.from(Material.BLACK_STAINED_GLASS_PANE).name(Component.text("")).asGuiItem(event -> event.setCancelled(true)));
+        paginatedGui.getFiller().fillBottom(glasses);
 
         // Previous item
         ItemStack previous = new ItemStack(Material.ARROW, 1);
