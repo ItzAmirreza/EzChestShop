@@ -171,7 +171,7 @@ public class ShopSettings {
 
     public static Map<Location, String> getAllCustomMessages(String owner) {
         if (!customMessagesInitialChecked.contains(owner)) {
-            Database db = EzChestShop.getPlugin().getDatabase();
+            DatabaseManager db = EzChestShop.getPlugin().getDatabase();
             Map<String, String> data = db.getKeysWithValueByExpresion("location", "customMessages", "owner", "shopdata",
                     "IS \"" + owner + "\" AND customMessages IS NOT NULL AND trim(customMessages, \" \") IS NOT \"\"");
             Map<Location, String> converted = data.entrySet().stream()

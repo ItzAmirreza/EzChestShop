@@ -1,5 +1,4 @@
 package me.deadlight.ezchestshop.Utils;
-
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
 import dev.triumphteam.gui.guis.PaginatedGui;
@@ -8,7 +7,6 @@ import me.deadlight.ezchestshop.Data.DatabaseManager;
 import me.deadlight.ezchestshop.Data.MongoDB.MongoDB;
 import me.deadlight.ezchestshop.Data.MySQL.MySQL;
 import me.deadlight.ezchestshop.Data.SQLite.SQLite;
-import me.deadlight.ezchestshop.Data.GUI.ContainerGuiItem;
 import me.deadlight.ezchestshop.Data.ShopContainer;
 import me.deadlight.ezchestshop.Enums.Database;
 import me.deadlight.ezchestshop.EzChestShop;
@@ -68,7 +66,7 @@ public class Utils {
 
     /**
      * Store a ItemStack into a persistent Data Container using Base64 encoding.
-     * 
+     *
      * @param item
      * @param data
      * @throws IOException
@@ -84,7 +82,7 @@ public class Utils {
 
     /**
      * Encode a ItemStack into a Base64 encoded String
-     * 
+     *
      * @param item
      * @return
      */
@@ -111,7 +109,7 @@ public class Utils {
 
     /**
      * Decode a ItemStack from Base64 into a ItemStack
-     * 
+     *
      * @param encodedItem
      * @return
      */
@@ -141,9 +139,9 @@ public class Utils {
      * Convert a Item to a Text Compount. Used in Text Component Builders to show
      * items in chat.
      *
-     * @category ItemUtils
      * @param itemStack
      * @return
+     * @category ItemUtils
      */
     public static String ItemToTextCompoundString(ItemStack itemStack) {
         return versionUtils.ItemToTextCompoundString(itemStack);
@@ -151,7 +149,7 @@ public class Utils {
 
     /**
      * Get the Inventory of the given Block if it is a Chest, Barrel or any Shulker
-     * 
+     *
      * @param block
      * @return
      */
@@ -168,7 +166,7 @@ public class Utils {
 
     /**
      * Check if the given Block is a Shulker box (dye check)
-     * 
+     *
      * @param block
      * @return
      */
@@ -178,7 +176,7 @@ public class Utils {
 
     /**
      * Check if the given Material is a Shulker box (dye check)
-     * 
+     *
      * @param type
      * @return
      */
@@ -193,7 +191,7 @@ public class Utils {
 
     /**
      * Check if the given Block is a applicable Shop.
-     * 
+     *
      * @param block
      * @return
      */
@@ -203,7 +201,7 @@ public class Utils {
 
     /**
      * Check if the given Material is a applicable Shop.
-     * 
+     *
      * @param type
      * @return
      */
@@ -360,8 +358,8 @@ public class Utils {
      * @param permissible a object using the Permissible System e.g. a Player.
      * @param permission  a Permission String to check e.g. ecs.shops.limit.
      * @return the maximum int found, unless user is an Operator or has the
-     *         ecs.admin permission.
-     *         Then the returned result will be -1
+     * ecs.admin permission.
+     * Then the returned result will be -1
      */
     public static int getMaxPermission(Permissible permissible, String permission) {
         if (permissible.isOp() || permissible.hasPermission("ecs.admin"))
@@ -518,8 +516,8 @@ public class Utils {
     }
 
     public static List<String> calculatePossibleAmount(OfflinePlayer offlineCustomer, OfflinePlayer offlineSeller,
-            ItemStack[] playerInventory, ItemStack[] storageInventory, double eachBuyPrice, double eachSellPrice,
-            ItemStack itemStack) {
+                                                       ItemStack[] playerInventory, ItemStack[] storageInventory, double eachBuyPrice, double eachSellPrice,
+                                                       ItemStack itemStack) {
 
         List<String> results = new ArrayList<>();
 
@@ -534,7 +532,7 @@ public class Utils {
     }
 
     public static String calculateBuyPossibleAmount(OfflinePlayer offlinePlayer, ItemStack[] playerInventory,
-            ItemStack[] storageInventory, double eachBuyPrice, ItemStack itemStack) {
+                                                    ItemStack[] storageInventory, double eachBuyPrice, ItemStack itemStack) {
         // I was going to run this in async but maybe later...
         int possibleCount = 0;
         double buyerBalance = EzChestShop.getEconomy().getBalance(offlinePlayer);
@@ -560,7 +558,7 @@ public class Utils {
     }
 
     public static String calculateSellPossibleAmount(OfflinePlayer offlinePlayer, ItemStack[] playerInventory,
-            ItemStack[] storageInventory, double eachSellPrice, ItemStack itemStack) {
+                                                     ItemStack[] storageInventory, double eachSellPrice, ItemStack itemStack) {
 
         int possibleCount = 0;
         double buyerBalance;
@@ -622,7 +620,7 @@ public class Utils {
     /**
      * Apply & color translating, as well as #ffffff hex color encoding to a String.
      * Versions below 1.16 will only get the last hex color symbol applied to them.
-     * 
+     *
      * @param str
      * @return
      */
@@ -634,7 +632,7 @@ public class Utils {
      * Apply hex color coding to a String. possibility to add a special start or end
      * tag to the String.
      * Versions below 1.16 will only get the last hex color symbol applied to them.
-     * 
+     *
      * @param startTag
      * @param endTag
      * @param message
@@ -816,7 +814,7 @@ public class Utils {
 
     }
 
-    public static void recognizeDatabase(){
+    public static void recognizeDatabase() {
         if (Config.database_type == Database.SQLITE) {
             EzChestShop.logConsole("&c[&eEzChestShop&c] &eInitializing SQLite database...");
             //initialize SQLite
@@ -833,18 +831,17 @@ public class Utils {
             databaseManager = new MongoDB(EzChestShop.getPlugin());
             databaseManager.load();
         }
+    }
 
-    // shouldn't technically happen
-    public static void addItemIfEnoughSlots(Gui gui, int slot, GuiItem item) {
+    public static void addItemIfEnoughSlots (Gui gui,int slot, GuiItem item){
         if ((gui.getRows() * 9) > slot) {
             gui.setItem(slot, item);
         }
     }
 
-    public static void addItemIfEnoughSlots(PaginatedGui gui, int slot, GuiItem item) {
+    public static void addItemIfEnoughSlots (PaginatedGui gui,int slot, GuiItem item){
         if ((gui.getRows() * 9) > slot) {
             gui.setItem(slot, item);
         }
     }
-
 }
