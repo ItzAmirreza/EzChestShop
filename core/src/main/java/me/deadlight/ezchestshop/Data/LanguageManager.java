@@ -3,6 +3,7 @@ package me.deadlight.ezchestshop.Data;
 import de.themoep.minedown.MineDown;
 import me.deadlight.ezchestshop.Commands.EcsAdmin;
 import me.deadlight.ezchestshop.Commands.MainCommands;
+import me.deadlight.ezchestshop.Data.GUI.GuiData;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.Listeners.ChatListener;
 import me.deadlight.ezchestshop.Utils.Objects.CheckProfitEntry;
@@ -22,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -105,6 +107,25 @@ public class LanguageManager {
     public static void applySpecialChanges(FileConfiguration fc, String local) {
         boolean changes = false;
 
+        // Internal File configuration
+        FileConfiguration ifc = YamlConfiguration.loadConfiguration(
+                new InputStreamReader(EzChestShop.getPlugin().getResource("translations/" + local + ".yml")));
+
+        if (!fc.contains("shop-gui.buttons.sellX-title")) {
+
+            fc.set("shop-gui.buttons.sellone-title", null);
+            fc.set("shop-gui.buttons.sellone-lore", null);
+            fc.set("shop-gui.buttons.buyone-title", null);
+            fc.set("shop-gui.buttons.buyone-lore", null);
+            fc.set("shop-gui.buttons.sell64-title", null);
+            fc.set("shop-gui.buttons.sell64-lore", null);
+            fc.set("shop-gui.buttons.buy64-title", null);
+            fc.set("shop-gui.buttons.buy64-lore", null);
+
+            fc.set("command-messages.adminhelp", ifc.get("command-messages.adminhelp"));
+            changes = true;
+        }
+
 
         if (changes) {
             fc.options().copyHeader(true);
@@ -134,9 +155,10 @@ public class LanguageManager {
                             getResource("translations/" + Config.language + ".yml")))
                     .getString(string);
             if (result == null) {
-                FileConfiguration fc = YamlConfiguration.loadConfiguration(
+                result = YamlConfiguration.loadConfiguration(
                         new File(EzChestShop.getPlugin().getDataFolder(),
-                                "translations/Locale_EN.yml"));
+                                "translations/Locale_EN.yml"))
+                        .getString(string);
                 if (result == null) {
                     result = YamlConfiguration.loadConfiguration(
                             new InputStreamReader(EzChestShop.getPlugin().
@@ -168,9 +190,10 @@ public class LanguageManager {
                             getResource("translations/" + Config.language + ".yml")))
                     .getStringList(string);
             if (result == null || result.isEmpty()) {
-                FileConfiguration fc = YamlConfiguration.loadConfiguration(
+                result = YamlConfiguration.loadConfiguration(
                         new File(EzChestShop.getPlugin().getDataFolder(),
-                                "translations/Locale_EN.yml"));
+                                "translations/Locale_EN.yml"))
+                        .getStringList(string);
                 if (result == null || result.isEmpty()) {
                     result = YamlConfiguration.loadConfiguration(
                             new InputStreamReader(EzChestShop.getPlugin().
@@ -220,41 +243,22 @@ public class LanguageManager {
 
 
     //shop-gui.buttons.
-    public String buttonSell1Title() {
-
-        return Utils.colorify(getString("shop-gui.buttons.sellone-title"));
+    public String buttonSellXTitle(int amount) {
+        return Utils.colorify(getString("shop-gui.buttons.sellX-title").replace("%amount%", "" + amount));
     }
-    public List<String> buttonSell1Lore(double price) {
-        return getList("shop-gui.buttons.sellone-lore").stream().map(s -> Utils.colorify(s.replace("%price%",
-                Utils.formatNumber(price, Utils.FormatType.GUI)).replace("%currency%", Config.currency)))
-                .collect(Collectors.toList());
-    }
-    public String buttonSell64Title() {
-
-        return Utils.colorify(getString("shop-gui.buttons.sell64-title"));
-    }
-    public List<String> buttonSell64Lore(double price) {
-        return getList("shop-gui.buttons.sell64-lore").stream().map(s -> Utils.colorify(s.replace("%price%",
-                Utils.formatNumber(price, Utils.FormatType.GUI)).replace("%currency%", Config.currency)))
+    public List<String> buttonSellXLore(double price, int amount) {
+        return getList("shop-gui.buttons.sellX-lore").stream().map(s -> Utils.colorify(s.replace("%price%",
+                Utils.formatNumber(price, Utils.FormatType.GUI)).replace("%currency%", Config.currency).replace("%amount%", "" + amount)))
                 .collect(Collectors.toList());
     }
 
-    public String buttonBuy1Title() {
+    public String buttonBuyXTitle(int amount) {
 
-        return Utils.colorify(getString("shop-gui.buttons.buyone-title"));
+        return Utils.colorify(getString("shop-gui.buttons.buyX-title").replace("%amount%", "" + amount));
     }
-    public List<String> buttonBuy1Lore(double price) {
-        return getList("shop-gui.buttons.buyone-lore").stream().map(s -> Utils.colorify(s.replace("%price%",
-                Utils.formatNumber(price, Utils.FormatType.GUI)).replace("%currency%", Config.currency)))
-                .collect(Collectors.toList());
-    }
-    public String buttonBuy64Title() {
-
-        return Utils.colorify(getString("shop-gui.buttons.buy64-title"));
-    }
-    public List<String> buttonBuy64Lore(double price) {
-        return getList("shop-gui.buttons.buy64-lore").stream().map(s -> Utils.colorify(s.replace("%price%",
-                Utils.formatNumber(price, Utils.FormatType.GUI)).replace("%currency%", Config.currency)))
+    public List<String> buttonBuyXLore(double price, int amount) {
+        return getList("shop-gui.buttons.buyX-lore").stream().map(s -> Utils.colorify(s.replace("%price%",
+                Utils.formatNumber(price, Utils.FormatType.GUI)).replace("%currency%", Config.currency).replace("%amount%", "" + amount)))
                 .collect(Collectors.toList());
     }
 
@@ -420,7 +424,7 @@ public class LanguageManager {
         // if hasNoMaxShopLimit is false and hasPermissionLimit is true, value should be true.
         // if hasNoMaxShopLimit is false and hasPermissionLimit is false, value should be false.
         boolean value = hasNoMaxShopLimit && hasPermissionLimit ? false : hasNoMaxShopLimit ? false : hasPermissionLimit;
-        return getList("settings.buttons.hologramMessage.Lore").stream()
+        return getList(currentMessages == 0 ? "settings.buttons.hologramMessage.Lore" : "settings.buttons.hologramMessage.LoreEdit").stream()
                 .filter(s -> ((value) || !s.startsWith("<ifhasmax>")))
                 .map(s -> Utils.colorify(s).replace("%lineNumbers%", lineMsg).replace("%messagesleft%",  "" + (maxMessages - currentMessages))
                         .replace("<ifhasmax>", "").replace("</ifhasmax>", "")).collect(Collectors.toList());
@@ -621,6 +625,13 @@ public class LanguageManager {
     }
     public List<String> customMessageManagerBackToCustomMessageManagerLore() {
         return getList("customMessageManager.buttons.backToCustomMessageManager.Lore").stream().map(s -> Utils.colorify(s)).collect(Collectors.toList());
+    }
+    //customMessageManager.buttons.modifyCurrentHologram.
+    public String customMessageManagerModifyCurrentHologramTitle() {
+        return Utils.colorify(getString("customMessageManager.buttons.modifyCurrentHologram.Title"));
+    }
+    public List<String> customMessageManagerModifyCurrentHologramLore() {
+        return getList("customMessageManager.buttons.modifyCurrentHologram.Lore").stream().map(s -> Utils.colorify(s)).collect(Collectors.toList());
     }
 
     //customBuySell.
@@ -869,6 +880,40 @@ public class LanguageManager {
                 .event(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.spigotmc.org/resources/ez-chest-shop-ecs-1-14-x-1-17-x.90411/"))
                 .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(Utils.colorify("&cClick to check out the Spigot Page!")))).create();
     }
+
+    public BaseComponent[] overflowingGuiItemsNotification(HashMap<GuiData.GuiType, Integer> requiredOverflowRows) {
+        String[] messages = getString("other.overflowing-gui-items-notification").split("%overflow%");
+
+        ComponentBuilder compb = new ComponentBuilder("");
+
+        compb.append(TextComponent.fromLegacyText(Utils.colorify(messages[0])));
+        compb.append(TextComponent.fromLegacyText(requiredOverflowRows.entrySet().stream().map(entry ->
+                Utils.colorify(Utils.capitalizeFirstSplit(entry.getKey().toString()) + ">= " + entry.getValue())).collect(Collectors.joining(", "))));
+        compb.append(TextComponent.fromLegacyText(Utils.colorify(messages[1])));
+
+        return compb.create();
+    }
+
+    public BaseComponent[] overlappingItemsNotification(HashMap<GuiData.GuiType, List<List<String>>> overlappingItems) {
+        String[] messages = getString("other.overlapping-gui-items-notification").split("%overlap%");
+
+        ComponentBuilder compb = new ComponentBuilder("");
+
+        compb.append(TextComponent.fromLegacyText(Utils.colorify(messages[0])));
+        overlappingItems.entrySet().forEach(entry -> {
+            compb.append(TextComponent.fromLegacyText(Utils.colorify("\n&e" + Utils.capitalizeFirstSplit(entry.getKey().toString()) + "&c: \n  &c>> ")));
+            compb.append(TextComponent.fromLegacyText(Utils.colorify("&7" + entry.getValue().stream().map(list -> Utils.colorify(list.stream()
+                    .collect(Collectors.joining(Utils.colorify("&e, &7"))))).collect(Collectors.joining(Utils.colorify("\n  &c>> &7"))))));
+        });
+//        compb.append(TextComponent.fromLegacyText("\n" + overlappingItems.entrySet().stream().map(entry ->
+//                Utils.colorify(Utils.capitalizeFirstSplit(entry.getKey().toString()) + ": " + entry.getValue().stream().map(list -> list.stream().collect(Collectors.joining(", "))).collect(Collectors.joining(" and "))))
+//                .collect(Collectors.joining(",\n"))));
+        compb.append(TextComponent.fromLegacyText(Utils.colorify(messages[1])));
+
+        return compb.create();
+    }
+
+
 
 
 

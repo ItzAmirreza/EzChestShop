@@ -10,17 +10,11 @@ shop-gui:
   owner-title: "&c%shopowner%的箱子商店"
   adminshop-title: "&c管理員商店"
   buttons:
-    sellone-title: "&c賣出1個"
-    sellone-lore: 
+    sellX-title: "&c賣出%amount%個"
+    sellX-lore:
       - "&7以 &e%price% %currency% 販售"
-    sell64-title: "&c賣出64個"
-    sell64-lore:
-      - "&7以 &e%price% %currency% 販售"
-    buyone-title: "&a購買1個"
-    buyone-lore:
-      - "&7以 &e%price% %currency% 購買"
-    buy64-title: "&a購買64個"
-    buy64-lore:
+    buyX-title: "&a購買%amount%個"
+    buyX-lore:
       - "&7以 &e%price% %currency% 購買"
     adminview: "&c&l管理庫存"
     storage: "&e&l庫存"
@@ -117,10 +111,10 @@ settings:
     hologramMessage:
       Title: "&eCustomize your Hologram"
       Lore:
-        - "&7Left Click to add a custom"
-        - "&7Hologram message!"
-        - "&7Right Click to manage your"
-        - "&7current Hologram messages!"
+        - "&cLeft Click to add a custom"
+        - "&cHologram message!"
+        - "&aRight Click to manage your"
+        - "&acurrent Hologram messages!"
         - " &d "
         - "&8You can use line %lineNumbers%!"
         - "<ifhasmax>&8You can have %messagesleft% more messages!</ifhasmax>"
@@ -129,6 +123,14 @@ settings:
         - "&c%maxLines% lines!"
         - "&7Click here to manage"
         - "&7your hologram messages!"
+      LoreEdit:
+        - "&cLeft Click to edit your custom"
+        - "&cHologram message!"
+        - "&aRight Click to manage your"
+        - "&acurrent Hologram messages!"
+        - " &d "
+        - "&8You can use line %lineNumbers%!"
+        - "<ifhasmax>&8You can have %messagesleft% more messages!</ifhasmax>"
       SignPlaceholderTexts: "###############"
     other:
       backToShopGuiButton: "&e回到商店"
@@ -188,18 +190,27 @@ customMessageManager:
         - "&eHologram messages:"
         - "&7%hologram-messages%"
         - ""
-        - "&cRight Click to delete this"
+        - "&cLeft Click to delete this"
         - "&chologram message!"
+        - "&aRight Click to edit this"
+        - "&ahologram message!"
     confirmDelete:
       Title: "&cAre you sure?"
       Lore:
         - "&7You are about to delete"
         - "&7this hologram message!"
         - "&7This action cannot be undone!"
-        - "&cRight Click to confirm!"
+        - "&cClick to confirm!"
     backToCustomMessageManager:
       Title: "&eBack to Custom Messages Manager"
       Lore:
+    modifyCurrentHologram:
+      Title: "&eModify current hologram"
+      Lore:
+        - "&cLeft Click to delete the current"
+        - "&chologram message!"
+        - "&aRight Click to edit the current"
+        - "&ahologram message!"
 customBuySell:
   gui-customAmountSign-title: "&eCustom Sell/Buy"
   gui-customAmountSign-lore:
@@ -309,3 +320,5 @@ shulkershop-dropped-lore:
   - " &7Sell: &6%currency%%sell_price%"
 other:
   update-notifications: "&c[&eEzChestShop&c] &eDetected a new version: &b%new_version%&e! You are still using &c%current_version%&e!"
+  overflowing-gui-items-notification: "&c[&eEzChestShop&c] &eYou have overflowing items in your customized GUI! Make sure these items are in a large enough GUI: &c%overflow%"
+  overlapping-gui-items-notification: "&c[&eEzChestShop&c] &eYou have overlapping items in your customized GUI! Here's a list of the unusual overlapping items: &c%overlap%"

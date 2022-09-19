@@ -62,7 +62,10 @@ public class Config {
 
     public static String language;
     public static boolean debug_logging;
+
     public static boolean notify_updates;
+    public static boolean notify_overlapping_gui_items;
+    public static boolean notify_overflowing_gui_items;
 
     public static boolean worldguard_integration;
 
@@ -131,7 +134,10 @@ public class Config {
             }
         }
         debug_logging = config.getBoolean("debug.logging");
+
         notify_updates = config.getBoolean("other.notify-op-of-updates");
+        notify_overlapping_gui_items = config.getBoolean("other.notify-op-of-overlapping-gui-items");
+        notify_overflowing_gui_items = config.getBoolean("other.notify-op-of-overflowing-gui-items");
         worldguard_integration = config.getBoolean("integration.worldguard");
     }
 
@@ -241,6 +247,9 @@ public class Config {
             fc.set("shops.settings.hologram-messages.line-count-default", 1);
             fc.set("permissions.hologram-message-limit", false);
             fc.set("permissions.hologram-message-line-count", false);
+
+            fc.set("other.notify-op-of-overlapping-gui-items", true);
+            fc.set("other.notify-op-of-overflowing-gui-items", true);
 
             List<String> structure = new ArrayList<>(fc.getStringList("shops.hologram.holo-structure"));
             structure.addAll(0, Arrays.asList("<custom1/>", "<custom2/>", "<custom3/>", "<custom4/>"));

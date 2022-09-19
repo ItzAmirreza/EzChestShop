@@ -2,15 +2,16 @@ package me.deadlight.ezchestshop.GUIs;
 
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
+import me.deadlight.ezchestshop.Data.GUI.ContainerGui;
+import me.deadlight.ezchestshop.Data.GUI.ContainerGuiItem;
+import me.deadlight.ezchestshop.Data.GUI.GuiData;
 import me.deadlight.ezchestshop.Data.LanguageManager;
 import me.deadlight.ezchestshop.Enums.LogType;
+import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.Utils.Objects.TransactionLogObject;
 import me.deadlight.ezchestshop.Utils.Utils;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 
 import java.time.LocalDateTime;
@@ -35,20 +36,21 @@ public class LogsGUI {
             guititle = "&aAction logs";
         }
 
-        Gui gui = new Gui(6, Utils.colorify(guititle));
+        ContainerGui container = GuiData.getLogs();
 
-        ItemStack door = new ItemStack(Material.DARK_OAK_DOOR, 1);
-        ItemMeta doorMeta = door.getItemMeta();
-        doorMeta.setDisplayName(lm.backToSettingsButton());
-        door.setItemMeta(doorMeta);
-        gui.setDefaultClickAction(event -> {
-            event.setCancelled(true);
-        });
-        GuiItem doorItem = new GuiItem(door, event -> {
-           event.setCancelled(true);
-           SettingsGUI settingsGUI = new SettingsGUI();
-           settingsGUI.showGUI(player, containerBlock, isAdmin);
-        });
+        Gui gui = new Gui(container.getRows(), Utils.colorify(guititle));
+        gui.setDefaultClickAction(event -> event.setCancelled(true));
+
+        ContainerGuiItem door = null;
+        if (container.hasItem("back")) {
+            door = container.getItem("back").setName(lm.backToSettingsButton());
+            GuiItem doorItem = new GuiItem(door.getItem(), event -> {
+               event.setCancelled(true);
+               SettingsGUI settingsGUI = new SettingsGUI();
+               settingsGUI.showGUI(player, containerBlock, isAdmin);
+            });
+            Utils.addItemIfEnoughSlots(gui, door.getSlot(), doorItem);
+        }
 
 
         if (type == LogType.TRANSACTION) {
@@ -57,31 +59,34 @@ public class LogsGUI {
             List<TransactionLogObject> transLogs = Utils.getListOfTransactions(containerBlock);
             Collections.reverse(transLogs);
 
-            for (int count = 1; count <= transLogs.size(); count++) {
+            int slot = 0;
+            if (container.hasItem("transaction-item")) {
+                for (int count = 1; count <= transLogs.size(); count++) {
 
-                ItemStack paperItem = new ItemStack(Material.PAPER);
-                ItemMeta paperMeta = paperItem.getItemMeta();
-                //set kardane etelaat
-                TransactionLogObject thelog = transLogs.get(count - 1);
-                if (thelog.type.equalsIgnoreCase("buy")) {
-                    paperMeta.setDisplayName(lm.transactionPaperTitleBuy(thelog.pname));
-                    paperMeta.setLore(generateLore(thelog, lm));
-                } else {
-                    paperMeta.setDisplayName(lm.transactionPaperTitleSell(thelog.pname));
-                    paperMeta.setLore(generateLore(thelog, lm));
+                    ContainerGuiItem transactionItem = container.getItem("transaction-item");
+                    if (door != null && slot == door.getSlot()) {
+                        slot++;
+                    }
+                    //set kardane etelaat
+                    TransactionLogObject thelog = transLogs.get(count - 1);
+                    EzChestShop.logDebug((count - 1) + ". Transaction log: Time " + thelog.time + " Name " + thelog.pname + " Type " + thelog.type + " Price " + thelog.price + " Count " + thelog.count);
+                    if (thelog.type.equalsIgnoreCase("buy")) {
+                        transactionItem.setName(lm.transactionPaperTitleBuy(thelog.pname));
+                        transactionItem.setLore(generateLore(thelog, lm));
+                    } else {
+                        transactionItem.setName(lm.transactionPaperTitleSell(thelog.pname));
+                        transactionItem.setLore(generateLore(thelog, lm));
+                    }
+                    GuiItem paper = new GuiItem(transactionItem.getItem(), event -> {
+                        event.setCancelled(true);
+                    });
+                    Utils.addItemIfEnoughSlots(gui, slot, paper);
+                    slot++;
                 }
-                paperItem.setItemMeta(paperMeta);
-                GuiItem paper = new GuiItem(paperItem, event -> {
-                    event.setCancelled(true);
-                });
-                gui.setItem(count, paper);
-
             }
 
         }
 
-        //until slot 53 there is space
-        gui.setItem(0, doorItem);
         gui.open(player);
 
     }

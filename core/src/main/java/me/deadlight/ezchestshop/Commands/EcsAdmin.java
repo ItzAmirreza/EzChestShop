@@ -1,10 +1,13 @@
 package me.deadlight.ezchestshop.Commands;
 
 import me.deadlight.ezchestshop.Data.Config;
+import me.deadlight.ezchestshop.Data.GUI.GuiData;
 import me.deadlight.ezchestshop.Data.LanguageManager;
 import me.deadlight.ezchestshop.Data.ShopContainer;
 import me.deadlight.ezchestshop.EzChestShop;
+import me.deadlight.ezchestshop.GUIs.GuiEditorGUI;
 import me.deadlight.ezchestshop.Listeners.PlayerCloseToChestListener;
+import me.deadlight.ezchestshop.Listeners.UpdateChecker;
 import me.deadlight.ezchestshop.Utils.Utils;
 import me.deadlight.ezchestshop.Utils.WorldGuard.FlagRegistry;
 import me.deadlight.ezchestshop.Utils.WorldGuard.WorldGuardUtils;
@@ -65,8 +68,7 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
 
                     } else if (firstarg.equalsIgnoreCase("reload") && (player.hasPermission("ecs.admin.reload") || player.hasPermission("ecs.admin"))) {
 
-                        Config.loadConfig();
-                        LanguageManager.reloadLanguages();
+                        reload();
                         player.sendMessage(Utils.colorify("&aEzChestShop successfully reloaded!"));
 
                     } else if (firstarg.equalsIgnoreCase("create") && (player.hasPermission("ecs.admin.create") || player.hasPermission("ecs.admin"))) {
@@ -124,6 +126,8 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
                         } else {
                             sendHelp(player);
                         }
+                    } else if (firstarg.equalsIgnoreCase("configure-guis")) {
+                        new GuiEditorGUI().showGuiEditorOverview(player);
                     } else {
                         sendHelp(player);
                     }
@@ -139,16 +143,27 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
 
 
         } else {
-            sender.sendMessage("Cannot work with console execution.");
+            if (args.length == 1 && args[0].equalsIgnoreCase("reload")) {
+                reload();
+                sender.sendMessage(Utils.colorify("&aEzChestShop successfully reloaded!"));
+            } else {
+                sender.sendMessage(Utils.colorify("&cThis command can only be executed by a player or when used for reloading!"));
+            }
         }
 
         return false;
     }
 
+    private void reload() {
+        Config.loadConfig();
+        LanguageManager.reloadLanguages();
+        GuiData.loadGuiData();
+    }
+
     @Override
     public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
         List<String> fList = new ArrayList<String>();
-        List<String> list_firstarg = Arrays.asList("create", "reload", "remove", "help", "transfer-ownership");
+        List<String> list_firstarg = Arrays.asList("create", "reload", "remove", "help", "transfer-ownership", "configure-guis");
         List<String> list_create_1 = Arrays.asList("[BuyPrice]");
         List<String> list_create_2 = Arrays.asList("[SellPrice]");
         List<String> list_transfer_2 = Arrays.asList("-confirm");

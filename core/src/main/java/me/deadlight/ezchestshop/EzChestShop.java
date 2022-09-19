@@ -3,6 +3,7 @@ import me.deadlight.ezchestshop.Commands.CommandCheckProfits;
 import me.deadlight.ezchestshop.Commands.EcsAdmin;
 import me.deadlight.ezchestshop.Commands.MainCommands;
 import me.deadlight.ezchestshop.Data.Config;
+import me.deadlight.ezchestshop.Data.GUI.GuiData;
 import me.deadlight.ezchestshop.Data.LanguageManager;
 import me.deadlight.ezchestshop.Data.SQLite.Database;
 import me.deadlight.ezchestshop.Data.SQLite.SQLite;
@@ -76,6 +77,13 @@ public final class EzChestShop extends JavaPlugin {
         LanguageManager.loadLanguages();
         try {
             LanguageManager.checkForLanguagesYMLupdate();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        GuiData.loadGuiData();
+        try {
+            GuiData.checkForGuiDataYMLupdate();
         } catch (IOException e) {
             e.printStackTrace();
         }
