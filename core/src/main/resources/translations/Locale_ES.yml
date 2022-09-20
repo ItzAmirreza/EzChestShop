@@ -325,7 +325,14 @@ shulkershop-dropped-lore:
   - " &7Item: &6%item%"
   - " &7Buy: &6%currency%%buy_price%"
   - " &7Sell: &6%currency%%sell_price%"
+hologram:
+  shop-empty: "&cThis shop is empty!"
+  shulkerbox-item: "&7%item% x&e%amount%"
+  shulkerbox-item-more: "&7and &e%amount% &7more!"
+  item-enchantment: "&b%enchantment% &e%level-roman%"
+  item-enchantment-more: "&7and &e%amount% &7more!"
 other:
   update-notifications: "&c[&eEzChestShop&c] &eDetected a new version: &b%new_version%&e! You are still using &c%current_version%&e!"
   overflowing-gui-items-notification: "&c[&eEzChestShop&c] &eYou have overflowing items in your customized GUI! Make sure these items are in a large enough GUI: &c%overflow%"
   overlapping-gui-items-notification: "&c[&eEzChestShop&c] &eYou have overlapping items in your customized GUI! Here's a list of the unusual overlapping items: &c%overlap%"
+  hologram-shop-empty: "&cThis shop is empty!"

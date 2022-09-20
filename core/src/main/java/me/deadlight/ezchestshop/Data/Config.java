@@ -4,6 +4,7 @@ import me.deadlight.ezchestshop.Enums.Database;
 import me.deadlight.ezchestshop.EzChestShop;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import scala.Int;
 
 import java.io.File;
 import java.io.IOException;
@@ -50,6 +51,7 @@ public class Config {
     public static boolean settings_hologram_message_enabled;
     public static boolean settings_hologram_message_show_always;
     public static int settings_hologram_message_line_count_default;
+    public static boolean settings_hologram_message_show_empty_shop_always;
 
     public static boolean command_shop_alias;
     public static boolean command_adminshop_alias;
@@ -123,6 +125,7 @@ public class Config {
         settings_hologram_message_enabled = config.getBoolean("shops.settings.hologram-messages.enabled");
         settings_hologram_message_show_always = config.getBoolean("shops.settings.hologram-messages.show-always");
         settings_hologram_message_line_count_default = config.getInt("shops.settings.hologram-messages.line-count-default");
+        settings_hologram_message_show_empty_shop_always = config.getBoolean("shops.settings.hologram-messages.show-empty-shop-always");
 
         command_shop_alias = config.getBoolean("commands.alias.ecs-shop");
         command_adminshop_alias = config.getBoolean("commands.alias.ecsadmin-adminshop");
@@ -271,12 +274,18 @@ public class Config {
             fc.set("other.notify-op-of-overflowing-gui-items", true);
 
             List<String> structure = new ArrayList<>(fc.getStringList("shops.hologram.holo-structure"));
-            structure.addAll(0, Arrays.asList("<custom1/>", "<custom2/>", "<custom3/>", "<custom4/>"));
+            structure.addAll(0, Arrays.asList("<emptyShopInfo/>", "<custom1/>", "<custom2/>", "<custom3/>", "<custom4/>"));
+            Integer index = structure.indexOf("[item]");
+            structure.addAll(index == null ? structure.size() - 1 : index, Arrays.asList("<itemdata1/>", "<itemdata2/>", "<itemdata3/>", "<itemdata4/>", "<itemdataRest/>"));
             fc.set("shops.hologram.holo-structure", structure);
 
             List<String> structureAdmin = new ArrayList<>(fc.getStringList("shops.hologram.holo-structure-adminshop"));
-            structureAdmin.addAll(0, Arrays.asList("<custom1/>", "<custom2/>", "<custom3/>", "<custom4/>"));
+            structureAdmin.addAll(0, Arrays.asList("<emptyShopInfo/>", "<custom1/>", "<custom2/>", "<custom3/>", "<custom4/>"));
+            Integer indexAdmin = structureAdmin.indexOf("[item]");
+            structureAdmin.addAll(indexAdmin == null ? structureAdmin.size() - 1 : indexAdmin, Arrays.asList("<itemdata1/>", "<itemdata2/>", "<itemdata3/>", "<itemdata4/>", "<itemdataRest/>"));
             fc.set("shops.hologram.holo-structure-adminshop", structureAdmin);
+
+            fc.set("shop.settings.hologram-messages.show-empty-shop-always", true);
             //database update
             fc.set("database.type", "SQLite");
             fc.set("database.mysql.ip", "127.0.0.1");

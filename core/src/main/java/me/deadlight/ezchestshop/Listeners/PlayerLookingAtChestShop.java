@@ -6,13 +6,12 @@ import me.deadlight.ezchestshop.Data.ShopContainer;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.Utils.ASHologram;
 import me.deadlight.ezchestshop.Utils.FloatingItem;
+import me.deadlight.ezchestshop.Utils.Objects.EzShop;
 import me.deadlight.ezchestshop.Utils.Pair;
 import me.deadlight.ezchestshop.Utils.Utils;
 import org.bukkit.*;
-import org.bukkit.block.Block;
-import org.bukkit.block.Chest;
-import org.bukkit.block.DoubleChest;
-import org.bukkit.block.TileState;
+import org.bukkit.block.*;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -21,11 +20,13 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.DoubleChestInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Vector;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class PlayerLookingAtChestShop implements Listener {
 
@@ -66,7 +67,8 @@ public class PlayerLookingAtChestShop implements Listener {
 
                         //show the hologram
                         if (Utils.validateContainerValues(rightone, ShopContainer.getShop(target.getLocation()))) {
-                            System.out.println("[ECS] Something unexpected happened with container's data, shop got removed.");
+                            EzChestShop.logConsole(
+                                    "[ECS] Something unexpected happened with this container's data, so this shop has been removed.");
                             return;
                         }
                         ItemStack thatItem = Utils.decodeItem(rightone.get(new NamespacedKey(EzChestShop.getPlugin(), "item"), PersistentDataType.STRING));
@@ -99,7 +101,8 @@ public class PlayerLookingAtChestShop implements Listener {
                     if (container.has(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING)) {
 
                         if (Utils.validateContainerValues(container, ShopContainer.getShop(target.getLocation()))) {
-                            System.out.println("[ECS] Something unexpected happened with container's data, shop got removed.");
+                            EzChestShop.logConsole(
+                                    "[ECS] Something unexpected happened with this container's data, so this shop has been removed.");
                             return;
                         }
                         //show the hologram
@@ -152,6 +155,7 @@ public class PlayerLookingAtChestShop implements Listener {
 
         List<String> structure = new ArrayList<>(is_adminshop ? Config.holostructure_admin : Config.holostructure);
         if (ShopContainer.getShopSettings(shopLocation).getRotation().equals("down")) Collections.reverse(structure);
+        int lines = structure.stream().filter(s -> s.startsWith("<itemdata") && !s.startsWith("<itemdataRest")).collect(Collectors.toList()).size();
         for (String element : structure) {
             if (element.equalsIgnoreCase("[Item]")) {
                 lineLocation.add(0, 0.15 * Config.holo_linespacing, 0);
@@ -187,9 +191,41 @@ public class PlayerLookingAtChestShop implements Listener {
                         continue;
                     }
                 }
+                if (line.startsWith("<itemdata")) {
+                    if (player.isSneaking()) {
+                        ItemStack item = ShopContainer.getShop(shopLocation).getShopItem();
+                        if (item.getType().name().contains("SHULKER_BOX") || item.getEnchantments().size() > 0) {
+                            try {
+                                int lineNum = Integer.parseInt(line.replaceAll("\\D", ""));
+                                line = PlayerCloseToChestListener.getHologramItemData(lineNum, item, lines);
+                            } catch (NumberFormatException e) {
+                                line = PlayerCloseToChestListener.getHologramItemData(-1, item, lines);
+                            }
+                        } else {
+                            continue;
+                        }
+                    } else {
+                        continue;
+                    }
+                }
+                if (line.contains("<emptyShopInfo/>")) {
+                    EzShop shop = ShopContainer.getShop(shopLocation);
+                    // Shops that are not selling anything should not show this message.
+                    if (player.getUniqueId().equals(shop.getOwnerID()) && !is_dbuy && !is_adminshop) {
+                        // Check if the shop is empty by getting the inventory of the block
+                        Inventory inv = Utils.getBlockInventory(shopLocation.getBlock());
+                        if (inv.isEmpty()) {
+                            line = line.replace("<emptyShopInfo/>", lm.emptyShopHologramInfo());
+                        } else {
+                            continue;
+                        }
+                    } else {
+                        continue;
+                    }
+                }
                 if (line.trim().equals(""))
                     continue;
-                if (!line.equals("<empty>")) {
+                if (!line.equals("<empty/>")) {
                     ASHologram hologram = new ASHologram(player, line, EntityType.ARMOR_STAND, lineLocation, false);
                     Utils.onlinePackets.add(hologram);
                     holoTextList.add(hologram);

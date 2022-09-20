@@ -873,7 +873,67 @@ public class LanguageManager {
         return list;
     }
 
-    //Other
+    //hologram.
+    public String emptyShopHologramInfo() {
+        return Utils.colorify(getString("hologram.shop-empty"));
+    }
+    public String shulkerboxItemHologram(String item, int amount) {
+        return Utils.colorify(getString("hologram.shulkerbox-item")).replace("%item%", item).replace("%amount%", "" + amount);
+    }
+    public String shulkerboxItemHologramMore(int amount) {
+        return Utils.colorify(getString("hologram.shulkerbox-item-more")).replace("%amount%", "" + amount);
+    }
+    public String itemEnchantHologram(String enchant, int level) {
+        String msg = Utils.colorify(getString("hologram.item-enchantment")).replace("%enchantment%", enchant).replace("%level%", "" + level);
+        // Convert %level-roman% to a roman number for level 1-10, then just use the level.
+        if (msg.contains("%level-roman%")) {
+            String roman = "";
+            switch (level) {
+                case 1:
+                    roman = "I";
+                    break;
+                case 2:
+                    roman = "II";
+                    break;
+                case 3:
+                    roman = "III";
+                    break;
+                case 4:
+                    roman = "IV";
+                    break;
+                case 5:
+                    roman = "V";
+                    break;
+                case 6:
+                    roman = "VI";
+                    break;
+                case 7:
+                    roman = "VII";
+                    break;
+                case 8:
+                    roman = "VIII";
+                    break;
+                case 9:
+                    roman = "IX";
+                    break;
+                case 10:
+                    roman = "X";
+                    break;
+                default:
+                    roman = "" + level;
+                    break;
+            }
+            msg = msg.replace("%level-roman%", roman);
+        }
+        return msg;
+    }
+    public String itemEnchantHologramMore(int amount) {
+        return Utils.colorify(getString("hologram.item-enchantment-more")).replace("%amount%", "" + amount);
+    }
+
+
+
+    //other.
     public BaseComponent[] updateNotification(String curV, String newV) {
         return new ComponentBuilder("").append(TextComponent.fromLegacyText(
                 Utils.colorify(getString("other.update-notifications").replace("%current_version%", curV).replace("%new_version%", newV))))

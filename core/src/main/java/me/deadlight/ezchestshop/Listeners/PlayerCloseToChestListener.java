@@ -11,10 +11,8 @@ import me.deadlight.ezchestshop.Utils.Pair;
 import me.deadlight.ezchestshop.Utils.Utils;
 import me.mrCookieSlime.Slimefun.api.BlockStorage;
 import org.bukkit.*;
-import org.bukkit.block.Block;
-import org.bukkit.block.Chest;
-import org.bukkit.block.DoubleChest;
-import org.bukkit.block.TileState;
+import org.bukkit.block.*;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -22,9 +20,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.inventory.DoubleChestInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.RayTraceResult;
@@ -76,8 +76,8 @@ public class PlayerCloseToChestListener implements Listener {
                                 PersistentDataContainer container = ((TileState) target.getState())
                                         .getPersistentDataContainer();
                                 if (Utils.validateContainerValues(container, ShopContainer.getShop(loc))) {
-                                    System.out.println(
-                                            "[ECS] Something unexpected happened with container's data, shop got removed.");
+                                    EzChestShop.logConsole(
+                                            "[ECS] Something unexpected happened with this container's data, so this shop has been removed.");
                                     return;
                                 }
                                 Location holoLoc = getHoloLoc(target);
@@ -108,10 +108,10 @@ public class PlayerCloseToChestListener implements Listener {
                                 // showHologramText(holoLoc, loc, thatItem, buy, sell, player, is_adminshop,
                                 // shopOwner);
                                 showHologramTextOnHover(holoLoc, loc, thatItem, buy, sell, player, is_adminshop,
-                                        shopOwner, is_dbuy, is_dsell);
+                                        shopOwner, is_dbuy, is_dsell, player.isSneaking());
                                 alreadyRenderedHologram = true;
                             } else {
-                                if (Config.settings_hologram_message_show_always) {
+                                if (Config.settings_hologram_message_show_always || Config.settings_hologram_message_show_empty_shop_always) {
                                     rerenderHologramText(player);
                                 } else {
                                     hideHologramText(player, false);
@@ -119,14 +119,14 @@ public class PlayerCloseToChestListener implements Listener {
                             }
                         }
                     } else {
-                        if (Config.settings_hologram_message_show_always) {
+                        if (Config.settings_hologram_message_show_always || Config.settings_hologram_message_show_empty_shop_always) {
                             rerenderHologramText(player);
                         } else {
                             hideHologramText(player, false);
                         }
                     }
                 } else {
-                    if (Config.settings_hologram_message_show_always) {
+                    if (Config.settings_hologram_message_show_always || Config.settings_hologram_message_show_empty_shop_always) {
                         rerenderHologramText(player);
                     } else {
                         hideHologramText(player, false);
@@ -163,8 +163,8 @@ public class PlayerCloseToChestListener implements Listener {
                                             .getPersistentDataContainer();
                                     if (Utils.validateContainerValues(container,
                                             ShopContainer.getShop(target.getLocation()))) {
-                                        System.out.println(
-                                                "[ECS] Something unexpected happened with container's data, shop got removed.");
+                                        EzChestShop.logConsole(
+                                                "[ECS] Something unexpected happened with this container's data, so this shop has been removed.");
                                         return;
                                     }
                                     Location holoLoc = getHoloLoc(target);
@@ -242,31 +242,97 @@ public class PlayerCloseToChestListener implements Listener {
                 });
     }
 
+    @EventHandler
+    public void onPlayerSneak(PlayerToggleSneakEvent event) {
+        Player player = event.getPlayer();
+        RayTraceResult result = player.rayTraceBlocks(5);
+        if (result != null) {
+            Block target = result.getHitBlock();
+            Location loc = target.getLocation();
+            if (Utils.isApplicableContainer(target)) {
+                Inventory inventory = ((Container) target.getState()).getInventory();
+                if (inventory instanceof DoubleChestInventory) {
+                    DoubleChest doubleChest = (DoubleChest) inventory.getHolder();
+                    Chest leftchest = (Chest) doubleChest.getLeftSide();
+                    Chest rightchest = (Chest) doubleChest.getRightSide();
+
+                    if (leftchest.getPersistentDataContainer().has(
+                            new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING)) {
+                        target = leftchest.getBlock();
+                        loc = leftchest.getLocation();
+                    } else if (rightchest.getPersistentDataContainer().has(
+                            new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING)) {
+                        target = rightchest.getBlock();
+                        loc = rightchest.getLocation();
+                    }
+                }
+                hideHologramText(player, loc, true);
+                PersistentDataContainer container = ((TileState) target.getState())
+                        .getPersistentDataContainer();
+                if (Utils.validateContainerValues(container, ShopContainer.getShop(loc))) {
+                    EzChestShop.logConsole(
+                            "[ECS] Something unexpected happened with this container's data, so this shop has been removed.");
+                    return;
+                }
+                Location holoLoc = getHoloLoc(target);
+                ItemStack thatItem = Utils
+                        .decodeItem(container.get(new NamespacedKey(EzChestShop.getPlugin(),
+                                "item"), PersistentDataType.STRING));
+
+                double buy = container.get(new NamespacedKey(EzChestShop.getPlugin(), "buy"),
+                        PersistentDataType.DOUBLE);
+                double sell = container.get(new NamespacedKey(EzChestShop.getPlugin(), "sell"),
+                        PersistentDataType.DOUBLE);
+                boolean is_adminshop = container.get(
+                        new NamespacedKey(EzChestShop.getPlugin(), "adminshop"),
+                        PersistentDataType.INTEGER) == 1;
+                boolean is_dbuy = container.get(new NamespacedKey(EzChestShop.getPlugin(), "dbuy"),
+                        PersistentDataType.INTEGER) == 1;
+                boolean is_dsell = container.get(new NamespacedKey(EzChestShop.getPlugin(), "dsell"),
+                        PersistentDataType.INTEGER) == 1;
+
+                OfflinePlayer offlinePlayerOwner = Bukkit.getOfflinePlayer(UUID
+                        .fromString(container.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"),
+                                PersistentDataType.STRING)));
+                String shopOwner = offlinePlayerOwner.getName();
+                if (shopOwner == null) {
+                    shopOwner = ChatColor.RED + "Error";
+                }
+
+                lastContainermap.put(player.getUniqueId(), target);
+                // showHologramText(holoLoc, loc, thatItem, buy, sell, player, is_adminshop,
+                // shopOwner);
+                showHologramTextOnHover(holoLoc, loc, thatItem, buy, sell, player, is_adminshop,
+                        shopOwner, is_dbuy, is_dsell, event.isSneaking());
+            }
+        }
+    }
+
     private void showHologram(Location spawnLocation, Location shopLocation, ItemStack thatItem, double buy,
             double sell, Player player, boolean is_adminshop, String shop_owner, boolean is_dbuy, boolean is_dsell) {
 
         showHologramItem(spawnLocation, shopLocation, thatItem, player, is_adminshop);
         showHologramText(spawnLocation, shopLocation, thatItem, buy, sell, player, is_adminshop, shop_owner,
-                is_dbuy, is_dsell);
+                is_dbuy, is_dsell, player.isSneaking());
 
     }
 
     private void showHologramText(Location spawnLocation, Location shopLocation, ItemStack thatItem, double buy,
-            double sell, Player player, boolean is_adminshop, String shop_owner, boolean is_dbuy, boolean is_dsell) {
-        if (Config.holodistancing_show_item_first && !Config.settings_hologram_message_show_always) {
+            double sell, Player player, boolean is_adminshop, String shop_owner, boolean is_dbuy, boolean is_dsell, boolean is_sneaking) {
+        if (Config.holodistancing_show_item_first && !(Config.settings_hologram_message_show_always || Config.settings_hologram_message_show_empty_shop_always)) {
             return;
         }
         List<Pair<Location, ASHologram>> holoTextList = HoloTextMap.containsKey(player) ? HoloTextMap.get(player)
                 : new ArrayList<>();
         // Count the amount of Holograms at the shopLocation
-        long previousElements = holoTextList.stream().filter(pair -> pair.getFirst().equals(shopLocation)).count();
-        int messageCount = ShopContainer.getShopSettings(shopLocation).getCustomMessages().size();
         Location lineLocation = spawnLocation.clone().subtract(0, 0.1, 0);
         String itemname = "Error";
         itemname = Utils.getFinalItemName(thatItem);
         List<String> structure = new ArrayList<>(is_adminshop ? Config.holostructure_admin : Config.holostructure);
         if (ShopContainer.getShopSettings(shopLocation).getRotation().equals("down"))
             Collections.reverse(structure);
+        int lines = structure.stream().filter(s -> s.startsWith("<itemdata") && !s.startsWith("<itemdataRest")).collect(Collectors.toList()).size();
+        int i = 0;
         for (String element : structure) {
             if (element.equalsIgnoreCase("[Item]")) {
                 lineLocation.add(0, 0.15 * Config.holo_linespacing, 0);
@@ -277,15 +343,17 @@ public class PlayerCloseToChestListener implements Listener {
                         .replace("%sell%", Utils.formatNumber(sell, Utils.FormatType.HOLOGRAM))
                         .replace("%currency%", Config.currency).replace("%owner%", shop_owner));
                 // Show only custom messages if item first and show messages always is true. Everything else is skipped.
-                if (Config.holodistancing_show_item_first && Config.settings_hologram_message_show_always) {
-                    if (!line.startsWith("<custom") || previousElements > messageCount) {
+                if (Config.holodistancing_show_item_first && !(Config.settings_hologram_message_show_empty_shop_always && line.contains("<emptyShopInfo/>"))) {
+                    if (!((Config.settings_hologram_message_show_always && line.startsWith("<custom")))) {
                         continue;
                     }
                 }
                 if ((is_dbuy || is_dsell) && (line.contains("<buy>") || line.contains("<sell>"))) {
                     line = line.replaceAll("<separator>.*?<\\/separator>", "");
                     if (is_dbuy && is_dsell) {
-                        line = lm.disabledButtonTitle();
+                        if (i > 0) {
+                            line = lm.disabledButtonTitle();
+                        }
                     } else if (is_dbuy) {
                         line = line.replaceAll("<buy>.*?<\\/buy>", "").replaceAll("<sell>|<\\/sell>", "");
                     } else if (is_dsell) {
@@ -306,13 +374,46 @@ public class PlayerCloseToChestListener implements Listener {
                         continue;
                     }
                 }
+                if (line.startsWith("<itemdata")) {
+                    if (is_sneaking) {
+                        ItemStack item = ShopContainer.getShop(shopLocation).getShopItem();
+                        if (item.getType().name().contains("SHULKER_BOX") || item.getEnchantments().size() > 0) {
+                            try {
+                                int lineNum = Integer.parseInt(line.replaceAll("\\D", ""));
+                                line = getHologramItemData(lineNum, item, lines);
+                            } catch (NumberFormatException e) {
+                                line = getHologramItemData(-1, item, lines);
+                            }
+                        } else {
+                            continue;
+                        }
+                    } else {
+                        continue;
+                    }
+                }
+                if (line.contains("<emptyShopInfo/>")) {
+                    EzShop shop = ShopContainer.getShop(shopLocation);
+                    // Shops that are not selling anything should not show this message.
+                    if (player.getUniqueId().equals(shop.getOwnerID()) && !is_dbuy && !is_adminshop) {
+                        // Check if the shop is empty by getting the inventory of the block
+                        Inventory inv = Utils.getBlockInventory(shopLocation.getBlock());
+                        if (inv.isEmpty()) {
+                            line = line.replace("<emptyShopInfo/>", lm.emptyShopHologramInfo());
+                        } else {
+                            continue;
+                        }
+                    } else {
+                        continue;
+                    }
+                }
                 if (line.trim().equals(""))
                     continue;
-                if (!line.equals("<empty>")) {
+                if (!line.equals("<empty/>")) {
                     ASHologram hologram = new ASHologram(player, line, EntityType.ARMOR_STAND, lineLocation, false);
                     Utils.onlinePackets.add(hologram);
                     holoTextList.add(Pair.of(shopLocation, hologram));
                 }
+                i++;
                 lineLocation.add(0, 0.3 * Config.holo_linespacing, 0);
             }
         }
@@ -323,7 +424,7 @@ public class PlayerCloseToChestListener implements Listener {
     }
 
     private void showHologramTextOnHover(Location spawnLocation, Location shopLocation, ItemStack thatItem, double buy,
-            double sell, Player player, boolean is_adminshop, String shop_owner, boolean is_dbuy, boolean is_dsell) {
+            double sell, Player player, boolean is_adminshop, String shop_owner, boolean is_dbuy, boolean is_dsell, boolean is_sneaking) {
 
         List<Pair<Location, ASHologram>> holoTextList = HoloTextMap.containsKey(player) ? HoloTextMap.get(player)
                 : new ArrayList<>();
@@ -351,6 +452,8 @@ public class PlayerCloseToChestListener implements Listener {
         List<String> structure = new ArrayList<>(is_adminshop ? Config.holostructure_admin : Config.holostructure);
         if (ShopContainer.getShopSettings(shopLocation).getRotation().equals("down"))
             Collections.reverse(structure);
+        int lines = structure.stream().filter(s -> s.startsWith("<itemdata") && !s.startsWith("<itemdataRest")).collect(Collectors.toList()).size();
+        int i = 0;
         for (String element : structure) {
             if (element.equalsIgnoreCase("[Item]")) {
                 lineLocation.add(0, 0.15 * Config.holo_linespacing, 0);
@@ -365,6 +468,9 @@ public class PlayerCloseToChestListener implements Listener {
                 if (is_dbuy || is_dsell) {
                     line = line.replaceAll("<separator>.*?<\\/separator>", "");
                     if (is_dbuy && is_dsell) {
+                        if (i > 0) {
+                            continue;
+                        }
                         line = lm.disabledButtonTitle();
                     } else if (is_dbuy) {
                         line = line.replaceAll("<buy>.*?<\\/buy>", "").replaceAll("<sell>|<\\/sell>", "");
@@ -386,13 +492,46 @@ public class PlayerCloseToChestListener implements Listener {
                         continue;
                     }
                 }
+                if (line.startsWith("<itemdata")) {
+                    if (is_sneaking) {
+                        ItemStack item = ShopContainer.getShop(shopLocation).getShopItem();
+                        if (item.getType().name().contains("SHULKER_BOX") || item.getEnchantments().size() > 0) {
+                            try {
+                                int lineNum = Integer.parseInt(line.replaceAll("\\D", ""));
+                                line = getHologramItemData(lineNum, item, lines);
+                            } catch (NumberFormatException e) {
+                                line = getHologramItemData(-1, item, lines);
+                            }
+                        } else {
+                            continue;
+                        }
+                    } else {
+                        continue;
+                    }
+                }
+                if (line.contains("<emptyShopInfo/>")) {
+                    EzShop shop = ShopContainer.getShop(shopLocation);
+                    // Shops that are not selling anything should not show this message.
+                    if (player.getUniqueId().equals(shop.getOwnerID()) && !is_dbuy && !is_adminshop) {
+                        // Check if the shop is empty by getting the inventory of the block
+                        Inventory inv = Utils.getBlockInventory(shopLocation.getBlock());
+                        if (inv.isEmpty()) {
+                            line = line.replace("<emptyShopInfo/>", lm.emptyShopHologramInfo());
+                        } else {
+                            continue;
+                        }
+                    } else {
+                        continue;
+                    }
+                }
                 if (line.trim().equals(""))
                     continue;
-                if (!line.equals("<empty>")) {
+                if (!line.equals("<empty/>")) {
                     ASHologram hologram = new ASHologram(player, line, EntityType.ARMOR_STAND, lineLocation, false);
                     Utils.onlinePackets.add(hologram);
                     holoTextList.add(Pair.of(shopLocation, hologram));
                 }
+                i++;
                 lineLocation.add(0, 0.3 * Config.holo_linespacing, 0);
             }
         }
@@ -463,7 +602,7 @@ public class PlayerCloseToChestListener implements Listener {
         if (HoloTextMap.containsKey(p) && HoloTextMap.get(p).size() > 0) {
             new ArrayList<>(HoloTextMap.get(p)).stream().filter(holo -> loc.equals(holo.getFirst()))
                     .forEach(holo -> {
-                        if (Config.settings_hologram_message_show_always && !force && ShopContainer.getShopSettings(holo.getFirst()).getCustomMessages().stream().map(s -> Utils.colorify(s))
+                        if ((Config.settings_hologram_message_show_always || Config.settings_hologram_message_show_empty_shop_always) && !force && ShopContainer.getShopSettings(holo.getFirst()).getCustomMessages().stream().map(s -> Utils.colorify(s))
                                 .collect(Collectors.toList()).contains(holo.getSecond().getName())) {
                             return;
                         }
@@ -515,8 +654,10 @@ public class PlayerCloseToChestListener implements Listener {
         if (HoloTextMap.containsKey(player) && HoloTextMap.get(player).size() > 0) {
             new ArrayList<>(HoloTextMap.get(player)).stream()
                     .forEach(holo -> {
-                        if (Config.settings_hologram_message_show_always && !force && ShopContainer.getShopSettings(holo.getFirst()).getCustomMessages().stream().map(s -> Utils.colorify(s))
-                                .collect(Collectors.toList()).contains(holo.getSecond().getName())) {
+                        List<String> holos = ShopContainer.getShopSettings(holo.getFirst()).getCustomMessages().stream().map(s -> Utils.colorify(s))
+                                .collect(Collectors.toList());
+                        if ((Config.settings_hologram_message_show_always || Config.settings_hologram_message_show_empty_shop_always) && !force
+                                && (holos.contains(holo.getSecond().getName()) || ChatColor.stripColor(lm.emptyShopHologramInfo()).equals(ChatColor.stripColor(holo.getSecond().getName())))) {
                             return;
                         }
                         holo.getSecond().destroy();
@@ -546,8 +687,10 @@ public class PlayerCloseToChestListener implements Listener {
         if (HoloTextMap.containsKey(player) && HoloTextMap.get(player).size() > 0) {
             new ArrayList<>(HoloTextMap.get(player)).stream().filter(holo -> loc.equals(holo.getFirst()))
                     .forEach(holo -> {
-                        if (Config.settings_hologram_message_show_always && !force && ShopContainer.getShopSettings(holo.getFirst()).getCustomMessages().stream().map(s -> Utils.colorify(s))
-                                .collect(Collectors.toList()).contains(holo.getSecond().getName())) {
+                        List<String> holos = ShopContainer.getShopSettings(holo.getFirst()).getCustomMessages().stream().map(s -> Utils.colorify(s))
+                                .collect(Collectors.toList());
+                        if ((Config.settings_hologram_message_show_always || Config.settings_hologram_message_show_empty_shop_always) && !force
+                                && (holos.contains(holo.getSecond().getName()) || ChatColor.stripColor(lm.emptyShopHologramInfo()).equals(ChatColor.stripColor(holo.getSecond().getName())))) {
                             return;
                         }
                         holo.getSecond().destroy();
@@ -583,7 +726,7 @@ public class PlayerCloseToChestListener implements Listener {
                 hideHologramText(player, b.getLocation(), true);
                 lastContainermap.put(uuid, null);
                 showHologramText(getHoloLoc(b), shop.getLocation(), shop.getShopItem(), shop.getBuyPrice(), shop.getSellPrice(), player,
-                        shop.getSettings().isAdminshop(), shop.getOwnerID().toString(), shop.getSettings().isDbuy(), shop.getSettings().isDsell());
+                        shop.getSettings().isAdminshop(), shop.getOwnerID().toString(), shop.getSettings().isDbuy(), shop.getSettings().isDsell(), player.isSneaking());
             }
         } else {
             lastContainermap.put(uuid, null);
@@ -696,6 +839,61 @@ public class PlayerCloseToChestListener implements Listener {
             holoLoc = containerBlock.getLocation().clone().add(0.5D, 0, 0.5D).add(direction);
         }
         return holoLoc;
+    }
+
+    public static String getHologramItemData(int lineNum, ItemStack item, int lines) {
+        String line = "";
+        if (item.getType().name().contains("SHULKER_BOX")) {
+            // Get the shulker box inventory
+            if (item.getItemMeta() instanceof BlockStateMeta) {
+                BlockStateMeta im = (BlockStateMeta)item.getItemMeta();
+                if (im.getBlockState() instanceof ShulkerBox) {
+                    ShulkerBox shulker = (ShulkerBox) im.getBlockState();
+                    Inventory inv = Bukkit.createInventory(null, 27, "Shulker Box");
+                    inv.setContents(shulker.getInventory().getContents());
+
+                    // Collect all the item counts into a map and sort them by count
+                    Map<String, Integer> itemCounts = new HashMap<>();
+                    for (ItemStack itemStack : inv.getContents()) {
+                        if (itemStack != null) {
+                            String itemName = Utils.getFinalItemName(itemStack);
+                            if (itemCounts.containsKey(itemName)) {
+                                itemCounts.put(itemName, itemCounts.get(itemName) + itemStack.getAmount());
+                            } else {
+                                itemCounts.put(itemName, itemStack.getAmount());
+                            }
+                        }
+                    }
+                    List<Map.Entry<String, Integer>> sortedItems = new ArrayList<>(itemCounts.entrySet());
+                    sortedItems.sort(Map.Entry.comparingByValue());
+                    Collections.reverse(sortedItems);
+
+                    if (lineNum == -1 && sortedItems.size() - lines > 0) {
+                        line = lm.shulkerboxItemHologramMore(sortedItems.size() - lines);
+                    } else if (lineNum - 1 >= 0 && lineNum - 1 < sortedItems.size()) {
+                        line = lm.shulkerboxItemHologram(sortedItems.get(lineNum - 1).getKey(), sortedItems.get(lineNum - 1).getValue());
+                    } else {
+                        line = "";
+                    }
+                }
+            }
+        } else {
+            // Get the enchantments
+            Map<Enchantment, Integer> enchantments = item.getEnchantments();
+            List<Map.Entry<Enchantment, Integer>> sortedEnchants = new ArrayList<>(enchantments.entrySet());
+            sortedEnchants.sort(Map.Entry.comparingByValue());
+            Collections.reverse(sortedEnchants);
+
+            if (lineNum == -1 && sortedEnchants.size() - lines > 0) {
+                line = lm.itemEnchantHologramMore((sortedEnchants.size() - lines));
+            } else if (lineNum - 1 >= 0 && lineNum - 1 < sortedEnchants.size()) {
+                line = lm.itemEnchantHologram(Utils.capitalizeFirstSplit(sortedEnchants.get(lineNum - 1).getKey().getKey().getKey()),
+                        sortedEnchants.get(lineNum - 1).getValue());
+            } else {
+                line = "";
+            }
+        }
+        return line;
     }
 
 }

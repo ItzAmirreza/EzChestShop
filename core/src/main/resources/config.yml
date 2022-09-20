@@ -12,20 +12,32 @@ shops:
     # %maxbuy% & %maxsell% can be used to define the maximum amount a player can buy/sell to a shop at this time.
     # The HTML like <buy></buy> Syntax allows the plugin to remove parts of the message if buy/sell are disabled.
     holo-structure:
+      - "<emptyShopInfo/>"
       - "<custom1/>"
       - "<custom2/>"
       - "<custom3/>"
       - "<custom4/>"
       - "<buy>&fBuy: &a%buy% %currency%</buy><separator> &f| </separator><sell>&fSell: &c%sell% %currency%</sell>"
       - "&d%item%"
+      - "<itemdata1/>"
+      - "<itemdata2/>"
+      - "<itemdata3/>"
+      - "<itemdata4/>"
+      - "<itemdataRest/>"
       - "[item]"
     holo-structure-adminshop:
+      - "<emptyShopInfo/>"
       - "<custom1/>"
       - "<custom2/>"
       - "<custom3/>"
       - "<custom4/>"
       - "<buy>&fBuy: &a%buy% %currency%</buy><separator> &f| </separator><sell>&fSell: &c%sell% %currency%</sell>"
       - "&d%item%"
+      - "<itemdata1/>"
+      - "<itemdata2/>"
+      - "<itemdata3/>"
+      - "<itemdata4/>"
+      - "<itemdataRest/>"
       - "[item]"
     # Define a custom Line spacing multiplier. 1 is default.
     holo-line-spacing: 1
@@ -74,6 +86,8 @@ shops:
       show-always: false
       # Sets how many lines can be used for custom hologram messages. If permissions.hologram-message-line-count is true, this setting is overridden.
       line-count-default: 1
+      # If true, this will always show players if a shop is empty.
+      show-empty-shop-always: true
 economy:
   # Used to replace %currency% for the language files and the 2nd hologram line.
   server-currency: $
