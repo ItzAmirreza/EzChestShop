@@ -19,6 +19,9 @@ public class MongoDB extends DatabaseManager {
 
     @Override
     public void load() {
+        //first connect to the database
+
+        //then create a database named "ezchestshop" if it doesn't exist
 
     }
 

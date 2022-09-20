@@ -19,6 +19,10 @@ public class MySQL extends DatabaseManager {
 
     @Override
     public void load() {
+        //first connect to the database
+
+        //then create a database named that is stated in the config,
+        //if it doesn't exist, then stop the plugin and tell the user to create the database manually
 
     }
 

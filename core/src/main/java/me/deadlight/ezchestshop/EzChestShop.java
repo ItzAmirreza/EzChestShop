@@ -46,9 +46,6 @@ public final class EzChestShop extends JavaPlugin {
         logConsole("&c[&eEzChestShop&c] &aEnabling EzChestShop - version " + this.getDescription().getVersion());
         saveDefaultConfig();
 
-        // this.db = new SQLite(this);
-        // this.db.load();
-
         Config.loadConfig();
 
         // load database
