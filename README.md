@@ -1,11 +1,11 @@
 ![EzChestShop Banner](https://user-images.githubusercontent.com/43675593/191451557-5c25a6a0-6982-45f4-b7a9-a161953d2aaf.png)
 
-![Discord](https://img.shields.io/discord/902975048514678854?label=discord&logo=discord)
-![Download Size](https://img.shields.io/spiget/download-size/90411)
-![Total Spigot Downloads](https://img.shields.io/spiget/downloads/90411)
-![Spigot Rating](https://img.shields.io/spiget/rating/90411)
-![Current Version](https://img.shields.io/spiget/version/90411?label=version)
-![Servers](https://img.shields.io/bstats/servers/10756)
+<a href="https://discord.gg/rSfsqgCqBZ">![Discord](https://img.shields.io/discord/902975048514678854?label=discord&logo=discord)</a>
+<a href="https://www.spigotmc.org/resources/90411/">![Download Size](https://img.shields.io/spiget/download-size/90411)</a>
+<a href="https://www.spigotmc.org/resources/90411/">![Total Spigot Downloads](https://img.shields.io/spiget/downloads/90411)</a>
+<a href="https://www.spigotmc.org/resources/90411/">![Spigot Rating](https://img.shields.io/spiget/rating/90411)</a>
+<a href="https://www.spigotmc.org/resources/90411/">![Current Version](https://img.shields.io/spiget/version/90411?label=version)</a>
+<a href="https://bstats.org/plugin/bukkit/Ez%20Chest%20Shop/10756">![Servers](https://img.shields.io/bstats/servers/10756)</a>
 
 Welcome to EzChestShop! A Chest Shop plugin that's simple to use, filled with features and increadibly customizeable! Head over to [spigotmc.org](https://www.spigotmc.org/resources/90411/) to try the compiled version of EzChestShop for yourself!
 
