@@ -102,6 +102,23 @@ public class UpdateChecker implements Listener{
                 remoteVersion = raw;
             }
             newVersion = remoteVersion;
+            try {
+                // No version update required if the local version is newer. Doesn't work if you have a version like 1.2.3.4 or 1.2.
+                if (Integer.parseInt(localVersion.split(".")[0]) > Integer.parseInt(remoteVersion.split(".")[0])) {
+                    return false;
+                }
+                if (Integer.parseInt(localVersion.split(".")[0]) == Integer.parseInt(remoteVersion.split(".")[0]) &&
+                        Integer.parseInt(localVersion.split(".")[1]) > Integer.parseInt(remoteVersion.split(".")[1])) {
+                    return false;
+                }
+                if (Integer.parseInt(localVersion.split(".")[0]) == Integer.parseInt(remoteVersion.split(".")[0]) &&
+                        Integer.parseInt(localVersion.split(".")[1]) == Integer.parseInt(remoteVersion.split(".")[1]) &&
+                        Integer.parseInt(localVersion.split(".")[2]) > Integer.parseInt(remoteVersion.split(".")[2])) {
+                    return false;
+                }
+            }
+            catch (NumberFormatException e) {}
+            catch (IndexOutOfBoundsException e) {}
 
             if(!localVersion.equalsIgnoreCase(remoteVersion))
                 return true;
