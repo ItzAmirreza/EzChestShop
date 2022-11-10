@@ -270,6 +270,7 @@ public class Config {
             fc.set("permissions.hologram-message-limit", false);
             fc.set("permissions.hologram-message-line-count", false);
 
+            fc.set("other.notify-op-of-updates", true); // has been in the plugin for a while, but never added to existing configs
             fc.set("other.notify-op-of-overlapping-gui-items", true);
             fc.set("other.notify-op-of-overflowing-gui-items", true);
 
