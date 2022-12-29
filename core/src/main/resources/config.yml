@@ -1,4 +1,4 @@
-# EzChestShop plugin configuration #test jenkins
+# EzChestShop plugin configuration
 # Before starting to config, please note that any usage of TABs in the config file may break the plugin so avoid using tabs and use space.
 # If you need help/found a bug, please join our Discord: https://discord.gg/rSfsqgCqBZ
 language: Locale_EN
