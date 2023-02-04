@@ -146,6 +146,12 @@
             <version>3.3.0</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.pixeldv</groupId>
+            <artifactId>storage-sql-dist</artifactId>
+            <version>3.3.0</version>
+            <scope>provided</scope>
+        </dependency>
 
         <dependency>
             <groupId>org.spigotmc</groupId>
