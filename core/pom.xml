@@ -135,6 +135,25 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.pixeldv</groupId>
+            <artifactId>storage-api</artifactId>
+            <version>3.3.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.pixeldv</groupId>
+            <artifactId>storage-api-codec</artifactId>
+            <version>3.3.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.pixeldv</groupId>
+            <artifactId>storage-sql-dist</artifactId>
+            <version>3.3.0</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot</artifactId>
             <version>1.19-R0.1-SNAPSHOT</version>
