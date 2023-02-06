@@ -220,7 +220,7 @@ public class Config {
         boolean isUsingOldhologramLineSystem = fc.isString("shops.hologram.hologram-first-line");
 
         if (isUsingOldhologramLineSystem) {
-            EzChestShop.getPlugin().logConsole("Updated Hologram List!");
+            EzChestShop.logConsole("Updated Hologram List!");
 
             fc.set("shops.hologram.hologram-first-line", null);
             fc.set("shops.hologram.hologram-second-line", null);
