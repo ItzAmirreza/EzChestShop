@@ -116,8 +116,9 @@ public class GuiEditorGUI {
         }));
         ItemStack backgroundItem = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
         ItemMeta backgroundItemMeta = backgroundItem.getItemMeta();
-        if (container.getBackground() != null) {backgroundItemMeta.setDisplayName(ChatColor.YELLOW + "Background: " + ChatColor.WHITE +
-                (ContainerGui.getDefaultBackground().getItemStack().isSimilar(container.getBackground().getItemStack()) ? "Default" : "Custom"));
+        if (container.getBackground() != null) {
+            backgroundItemMeta.setDisplayName(ChatColor.YELLOW + "Background: " + ChatColor.WHITE +
+                    (ContainerGui.getDefaultBackground().getItemStack().isSimilar(container.getBackground().getItemStack()) ? "Default" : "Custom"));
         } else {
             backgroundItemMeta.setDisplayName(ChatColor.YELLOW + "Background: " + ChatColor.WHITE + "None");
         }
@@ -262,7 +263,7 @@ public class GuiEditorGUI {
                 }
                 ItemStack item = cgi.getItem();
                 ItemMeta meta = item.getItemMeta();
-                meta.setDisplayName(ChatColor.YELLOW +Utils.capitalizeFirstSplit(key.replace("-", "_")));
+                meta.setDisplayName(ChatColor.YELLOW + Utils.capitalizeFirstSplit(key.replace("-", "_")));
                 meta.setLore(Arrays.asList(ChatColor.GRAY + "- Left click to modify", ChatColor.GRAY + "  this item!",
                         ChatColor.GRAY + "- Drop click (Q) to remove", ChatColor.GRAY + "- Shift click to start moving",
                         ChatColor.GRAY + "  click again to place the item.", ChatColor.GRAY + "- Swap Hand click (F) to add",
@@ -300,7 +301,7 @@ public class GuiEditorGUI {
                 String key = sameSlotItems.get(slot).get(index);
                 ItemStack item = container.getItem(sameSlotItems.get(slot).get(index)).getItem();
                 ItemMeta meta = item.getItemMeta();
-                meta.setDisplayName(ChatColor.YELLOW +Utils.capitalizeFirstSplit(key.replace("-", "_")));
+                meta.setDisplayName(ChatColor.YELLOW + Utils.capitalizeFirstSplit(key.replace("-", "_")));
                 List<String> lore = sameSlotItems.get(slot).stream().map(s -> {
                     if (sameSlotItems.get(slot).indexOf(s) == index) {
                         return ChatColor.GREEN + "» " + ChatColor.GRAY + Utils.capitalizeFirstSplit(s.replace("-", "_"));
@@ -328,7 +329,7 @@ public class GuiEditorGUI {
                         }
                         guiEditorSameSlots.get(player).put(slot, newIndex);
                         showGuiInEditor(player, type);
-                    } else if (event.isLeftClick()){
+                    } else if (event.isLeftClick()) {
                         showItemEditor(player, type, key);
                     } else if (event.getClick() == ClickType.DROP) {
                         config.set(guiName + ".items." + key, null);

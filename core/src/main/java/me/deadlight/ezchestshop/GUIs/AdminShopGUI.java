@@ -77,7 +77,8 @@ public class AdminShopGUI {
                 } else {
                     try {
                         amount = Integer.parseInt(amountString);
-                    } catch (NumberFormatException e) {}
+                    } catch (NumberFormatException e) {
+                    }
                 }
 
                 ContainerGuiItem sellItemStack = container.getItem(key).setLore(lm.buttonSellXLore(sellPrice * amount, amount)).setName(lm.buttonSellXTitle(amount));
@@ -102,7 +103,8 @@ public class AdminShopGUI {
                 } else {
                     try {
                         amount = Integer.parseInt(amountString);
-                    } catch (NumberFormatException e) {}
+                    } catch (NumberFormatException e) {
+                    }
                 }
 
                 ContainerGuiItem buyItemStack = container.getItem(key).setLore(lm.buttonBuyXLore(buyPrice * amount, amount)).setName(lm.buttonBuyXTitle(amount));

@@ -49,7 +49,7 @@ public class SettingsGUI {
     public void showGUI(Player player, Block containerBlock, boolean isAdmin) {
 
         ContainerGui container = GuiData.getSettings();
-        PersistentDataContainer dataContainer = ((TileState)containerBlock.getState()).getPersistentDataContainer();
+        PersistentDataContainer dataContainer = ((TileState) containerBlock.getState()).getPersistentDataContainer();
 
         boolean isAdminShop = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"), PersistentDataType.INTEGER) == 1;
 
@@ -62,9 +62,9 @@ public class SettingsGUI {
         if (container.hasItem("latest-transactions")) {
             ContainerGuiItem lastTransItem = container.getItem("latest-transactions").setName(lm.latestTransactionsTitle());
             GuiItem lastTrans = new GuiItem(lastTransItem.getItem(), event -> {
-               event.setCancelled(true);
-               LogsGUI logsGUI = new LogsGUI();
-               logsGUI.showGUI(player, dataContainer, containerBlock, LogType.TRANSACTION, isAdmin);
+                event.setCancelled(true);
+                LogsGUI logsGUI = new LogsGUI();
+                logsGUI.showGUI(player, dataContainer, containerBlock, LogType.TRANSACTION, isAdmin);
             });
 
             Utils.addItemIfEnoughSlots(gui, lastTransItem.getSlot(), lastTrans);
@@ -92,14 +92,14 @@ public class SettingsGUI {
                 event.setCancelled(true);
                 //start the functionality for toggle message
                 if (dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "msgtoggle"), PersistentDataType.INTEGER) == 1) {
-                    TileState state = ((TileState)containerBlock.getState());
+                    TileState state = ((TileState) containerBlock.getState());
                     state.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "msgtoggle"), PersistentDataType.INTEGER, 0);
                     state.update();
                     player.sendMessage(lm.toggleTransactionMessageOffInChat());
                     showGUI(player, containerBlock, isAdmin);
                     ShopContainer.getShopSettings(containerBlock.getLocation()).setMsgtoggle(false);
                 } else {
-                    TileState state = ((TileState)containerBlock.getState());
+                    TileState state = ((TileState) containerBlock.getState());
                     state.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "msgtoggle"), PersistentDataType.INTEGER, 1);
                     state.update();
                     player.sendMessage(lm.toggleTransactionMessageOnInChat());
@@ -112,8 +112,6 @@ public class SettingsGUI {
         }
 
 
-
-
         //Message Toggle Item
         if (container.hasItem("disable-buy-on") && container.hasItem("disable-buy-off")) {
             boolean isBuyDisabled = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "dbuy"), PersistentDataType.INTEGER) == 1;
@@ -123,14 +121,14 @@ public class SettingsGUI {
                 event.setCancelled(true);
                 //start the functionality for disabling buy
                 if (dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "dbuy"), PersistentDataType.INTEGER) == 1) {
-                    TileState state = ((TileState)containerBlock.getState());
+                    TileState state = ((TileState) containerBlock.getState());
                     state.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "dbuy"), PersistentDataType.INTEGER, 0);
                     state.update();
                     player.sendMessage(lm.disableBuyingOffInChat());
                     showGUI(player, containerBlock, isAdmin);
                     ShopContainer.getShopSettings(containerBlock.getLocation()).setDbuy(false);
                 } else {
-                    TileState state = ((TileState)containerBlock.getState());
+                    TileState state = ((TileState) containerBlock.getState());
                     state.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "dbuy"), PersistentDataType.INTEGER, 1);
                     state.update();
                     player.sendMessage(lm.disableBuyingOnInChat());
@@ -150,14 +148,14 @@ public class SettingsGUI {
                 event.setCancelled(true);
                 //start the functionality for disabling sell
                 if (dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "dsell"), PersistentDataType.INTEGER) == 1) {
-                    TileState state = ((TileState)containerBlock.getState());
+                    TileState state = ((TileState) containerBlock.getState());
                     state.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "dsell"), PersistentDataType.INTEGER, 0);
                     state.update();
                     player.sendMessage(lm.disableSellingOffInChat());
                     showGUI(player, containerBlock, isAdmin);
                     ShopContainer.getShopSettings(containerBlock.getLocation()).setDsell(false);
                 } else {
-                    TileState state = ((TileState)containerBlock.getState());
+                    TileState state = ((TileState) containerBlock.getState());
                     state.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "dsell"), PersistentDataType.INTEGER, 1);
                     state.update();
                     player.sendMessage(lm.disableSellingOnInChat());
@@ -205,14 +203,14 @@ public class SettingsGUI {
                     //start the functionality for shared income
 
                     if (dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "shareincome"), PersistentDataType.INTEGER) == 1) {
-                        TileState state = ((TileState)containerBlock.getState());
+                        TileState state = ((TileState) containerBlock.getState());
                         state.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "shareincome"), PersistentDataType.INTEGER, 0);
                         state.update();
                         player.sendMessage(lm.sharedIncomeOffInChat());
                         showGUI(player, containerBlock, isAdmin);
                         ShopContainer.getShopSettings(containerBlock.getLocation()).setShareincome(false);
                     } else {
-                        TileState state = ((TileState)containerBlock.getState());
+                        TileState state = ((TileState) containerBlock.getState());
                         state.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "shareincome"), PersistentDataType.INTEGER, 1);
                         state.update();
                         player.sendMessage(lm.sharedIncomeOnInChat());
@@ -244,7 +242,7 @@ public class SettingsGUI {
                 // if hasNoMaxShopLimit is false and hasPermissionLimit is true, value should be true.
                 // if hasNoMaxShopLimit is false and hasPermissionLimit is false, value should be false.
                 boolean value = hasNoMaxShopLimit && hasPermissionLimit ? false : hasNoMaxShopLimit ? false : hasPermissionLimit;
-                customMessageItemStack.setLore(((maxMessages - currentMessages > 0 && hasPermissionLimit) || !hasPermissionLimit) || hasNoMaxShopLimit  ?
+                customMessageItemStack.setLore(((maxMessages - currentMessages > 0 && hasPermissionLimit) || !hasPermissionLimit) || hasNoMaxShopLimit ?
                         lm.hologramMessageButtonLore(player, ShopContainer.getShop(containerBlock.getLocation()).getOwnerID().toString()) :
                         lm.hologramMessageButtonLoreMaxReached(player));
                 GuiItem customMessageItem = new GuiItem(customMessageItemStack.getItem(), event -> {
@@ -290,7 +288,7 @@ public class SettingsGUI {
                 } else {
                     return;
                 }
-                TileState state = ((TileState)containerBlock.getState());
+                TileState state = ((TileState) containerBlock.getState());
                 state.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "rotation"), PersistentDataType.STRING, next_rotation);
                 state.update();
                 player.sendMessage(lm.rotateHologramInChat(next_rotation));
@@ -394,7 +392,7 @@ public class SettingsGUI {
             ContainerGuiItem backItemStack = container.getItem("back")
                     .setName(lm.backToShopGuiButton());
             GuiItem backItem = new GuiItem(backItemStack.getItem(), event -> {
-               event.setCancelled(true);
+                event.setCancelled(true);
                 String owneruuid = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING);
 
                 if (isAdminShop) {
@@ -453,19 +451,20 @@ public class SettingsGUI {
         lores = lm.toggleTransactionMessageButtonLore(status);
 
         return lores;
-     }
-     private List<String> buyMessageChooser(boolean data, LanguageManager lm) {
+    }
+
+    private List<String> buyMessageChooser(boolean data, LanguageManager lm) {
         List<String> lores;
         String status;
-         if (data) {
-             status = lm.statusOn();
-         } else {
-             status = lm.statusOff();
-         }
-         lores = lm.disableBuyingButtonLore(status);
+        if (data) {
+            status = lm.statusOn();
+        } else {
+            status = lm.statusOff();
+        }
+        lores = lm.disableBuyingButtonLore(status);
 
         return lores;
-     }
+    }
 
     private List<String> sellMessageChooser(boolean data, LanguageManager lm) {
         List<String> lores;
@@ -491,7 +490,7 @@ public class SettingsGUI {
         return lores;
     }
 
-     private List<String> signLoreChooser(boolean data, PersistentDataContainer container, LanguageManager lm) {
+    private List<String> signLoreChooser(boolean data, PersistentDataContainer container, LanguageManager lm) {
         List<String> lores;
         String status;
 
@@ -520,99 +519,96 @@ public class SettingsGUI {
         lores = lm.shopAdminsButtonLore(status);
 
         return lores;
-     }
+    }
 
-     private boolean checkIfOn(Material itemMat) {
+    private boolean checkIfOn(Material itemMat) {
         if (itemMat.equals(Material.LIME_DYE)) {
             return true;
         } else {
             return false;
         }
 
-     }
+    }
 
-     private boolean changePrice(BlockState blockState, boolean isBuy, double price, Player player, Block containerBlock) {
-         EzShop shop = ShopContainer.getShop(blockState.getLocation());
-         // Enforce buy > sell.
-         if (Config.settings_buy_greater_than_sell) {
-             if (
-                     (isBuy && shop.getSellPrice() > price && price != 0) ||
-                             (!isBuy && price > shop.getBuyPrice() && shop.getBuyPrice() != 0)
-             ) {
-                 player.sendMessage(lm.buyGreaterThanSellRequired());
-                 return false;
-             }
-         }
-         // Revert from disabling buy sell.
-         if (Config.settings_zero_equals_disabled && isBuy && shop.getBuyPrice() == 0 && price != 0) {
-             TileState state = ((TileState)containerBlock.getState());
-             state.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "dbuy"), PersistentDataType.INTEGER, 0);
-             state.update();
-             player.sendMessage(lm.disableBuyingOffInChat());
-             ShopContainer.getShopSettings(containerBlock.getLocation()).setDbuy(false);
-         }
-         if (Config.settings_zero_equals_disabled && !isBuy && shop.getSellPrice() == 0 && price != 0) {
-             TileState state = ((TileState)containerBlock.getState());
-             state.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "dsell"), PersistentDataType.INTEGER, 0);
-             state.update();
-             player.sendMessage(lm.disableSellingOffInChat());
-             ShopContainer.getShopSettings(containerBlock.getLocation()).setDsell(false);
-         }
-         // Disable buy/sell
-         if (price == 0 && Config.settings_zero_equals_disabled) {
-             if (isBuy && shop.getBuyPrice() != 0) {
-                 TileState state = ((TileState)containerBlock.getState());
-                 state.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "dbuy"), PersistentDataType.INTEGER, 1);
-                 state.update();
-                 player.sendMessage(lm.disableBuyingOffInChat());
-                 ShopContainer.getShopSettings(containerBlock.getLocation()).setDbuy(true);
-             }
-             if (!isBuy && shop.getSellPrice() != 0) {
-                 TileState state = ((TileState)containerBlock.getState());
-                 state.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "dsell"), PersistentDataType.INTEGER, 1);
-                 state.update();
-                 player.sendMessage(lm.disableSellingOffInChat());
-                 ShopContainer.getShopSettings(containerBlock.getLocation()).setDsell(true);
-             }
-         }
-         return true;
-     }
+    private boolean changePrice(BlockState blockState, boolean isBuy, double price, Player player, Block containerBlock) {
+        EzShop shop = ShopContainer.getShop(blockState.getLocation());
+        // Enforce buy > sell.
+        if (Config.settings_buy_greater_than_sell) {
+            if (
+                    (isBuy && shop.getSellPrice() > price && price != 0) ||
+                            (!isBuy && price > shop.getBuyPrice() && shop.getBuyPrice() != 0)
+            ) {
+                player.sendMessage(lm.buyGreaterThanSellRequired());
+                return false;
+            }
+        }
+        // Revert from disabling buy sell.
+        if (Config.settings_zero_equals_disabled && isBuy && shop.getBuyPrice() == 0 && price != 0) {
+            TileState state = ((TileState) containerBlock.getState());
+            state.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "dbuy"), PersistentDataType.INTEGER, 0);
+            state.update();
+            player.sendMessage(lm.disableBuyingOffInChat());
+            ShopContainer.getShopSettings(containerBlock.getLocation()).setDbuy(false);
+        }
+        if (Config.settings_zero_equals_disabled && !isBuy && shop.getSellPrice() == 0 && price != 0) {
+            TileState state = ((TileState) containerBlock.getState());
+            state.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "dsell"), PersistentDataType.INTEGER, 0);
+            state.update();
+            player.sendMessage(lm.disableSellingOffInChat());
+            ShopContainer.getShopSettings(containerBlock.getLocation()).setDsell(false);
+        }
+        // Disable buy/sell
+        if (price == 0 && Config.settings_zero_equals_disabled) {
+            if (isBuy && shop.getBuyPrice() != 0) {
+                TileState state = ((TileState) containerBlock.getState());
+                state.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "dbuy"), PersistentDataType.INTEGER, 1);
+                state.update();
+                player.sendMessage(lm.disableBuyingOffInChat());
+                ShopContainer.getShopSettings(containerBlock.getLocation()).setDbuy(true);
+            }
+            if (!isBuy && shop.getSellPrice() != 0) {
+                TileState state = ((TileState) containerBlock.getState());
+                state.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "dsell"), PersistentDataType.INTEGER, 1);
+                state.update();
+                player.sendMessage(lm.disableSellingOffInChat());
+                ShopContainer.getShopSettings(containerBlock.getLocation()).setDsell(true);
+            }
+        }
+        return true;
+    }
 
-     public static void openCustomMessageEditor(Player player, Location location) {
-         player.closeInventory();
-         player.playSound(player.getLocation(), Sound.ITEM_BOOK_PAGE_TURN, 1.0f, 1.0f);
-         SignMenuFactory signMenuFactory = new SignMenuFactory(EzChestShop.getPlugin());
-         SignMenuFactory.Menu menu = signMenuFactory.newMenu(lm.hologramMessageSingGUI(player, location))
-                 .reopenIfFail(false).response((thatplayer, strings) -> {
-                     try {
-                         // Run checks here if allowed
-                         Bukkit.getScheduler().scheduleSyncDelayedTask(EzChestShop.getPlugin(),
-                                 () -> {
-                                     int lines = Config.settings_hologram_message_line_count_default;
-                                     if (Config.permission_hologram_message_line_count) {
-                                         int maxShops = Utils.getMaxPermission(player, "ecs.shops.hologram.messages.lines.");
-                                         maxShops = maxShops == -1 ? 4 : maxShops == 0 ? 1 : maxShops;
-                                         lines = maxShops;
-                                     }
-                                     List<String> messages = Arrays.asList(strings).subList(0, lines).stream()
-                                             .filter(s -> !s.trim().equals("")).collect(Collectors.toList());
-                                     // Save data!
-                                     ShopContainer.getShopSettings(location)
-                                             .setCustomMessages(messages);
-                                     PlayerCloseToChestListener.hideHologram(location, true);
+    public static void openCustomMessageEditor(Player player, Location location) {
+        player.closeInventory();
+        player.playSound(player.getLocation(), Sound.ITEM_BOOK_PAGE_TURN, 1.0f, 1.0f);
+        SignMenuFactory signMenuFactory = new SignMenuFactory(EzChestShop.getPlugin());
+        SignMenuFactory.Menu menu = signMenuFactory.newMenu(lm.hologramMessageSingGUI(player, location))
+                .reopenIfFail(false).response((thatplayer, strings) -> {
+                    try {
+                        // Run checks here if allowed
+                        Bukkit.getScheduler().scheduleSyncDelayedTask(EzChestShop.getPlugin(),
+                                () -> {
+                                    int lines = Config.settings_hologram_message_line_count_default;
+                                    if (Config.permission_hologram_message_line_count) {
+                                        int maxShops = Utils.getMaxPermission(player, "ecs.shops.hologram.messages.lines.");
+                                        maxShops = maxShops == -1 ? 4 : maxShops == 0 ? 1 : maxShops;
+                                        lines = maxShops;
+                                    }
+                                    List<String> messages = Arrays.asList(strings).subList(0, lines).stream()
+                                            .filter(s -> !s.trim().equals("")).collect(Collectors.toList());
+                                    // Save data!
+                                    ShopContainer.getShopSettings(location)
+                                            .setCustomMessages(messages);
+                                    PlayerCloseToChestListener.hideHologram(location, true);
 
-                                 });
+                                });
 
-                     } catch (Exception e) {
-                         return false;
-                     }
-                     return true;
-                 });
-         menu.open(player);
-     }
-
-
-
+                    } catch (Exception e) {
+                        return false;
+                    }
+                    return true;
+                });
+        menu.open(player);
+    }
 
 
 }

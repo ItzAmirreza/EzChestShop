@@ -45,9 +45,9 @@ public class LogsGUI {
         if (container.hasItem("back")) {
             door = container.getItem("back").setName(lm.backToSettingsButton());
             GuiItem doorItem = new GuiItem(door.getItem(), event -> {
-               event.setCancelled(true);
-               SettingsGUI settingsGUI = new SettingsGUI();
-               settingsGUI.showGUI(player, containerBlock, isAdmin);
+                event.setCancelled(true);
+                SettingsGUI settingsGUI = new SettingsGUI();
+                settingsGUI.showGUI(player, containerBlock, isAdmin);
             });
             Utils.addItemIfEnoughSlots(gui, door.getSlot(), doorItem);
         }
@@ -101,7 +101,7 @@ public class LogsGUI {
             lore = lm.transactionPaperLoreBuy(log.price, log.count, getTimeString(time, lm));
             return lore;
         } else {
-           lore = lm.transactionPaperLoreSell(log.price, log.count, getTimeString(time, lm));
+            lore = lm.transactionPaperLoreSell(log.price, log.count, getTimeString(time, lm));
             return lore;
         }
 
@@ -126,7 +126,7 @@ public class LogsGUI {
                 if (hours < 24) {
                     finalString = lm.hoursago(hours);
                 } else {
-                    int days = (int) hours/24;
+                    int days = (int) hours / 24;
                     finalString = lm.daysago(days);
                 }
 

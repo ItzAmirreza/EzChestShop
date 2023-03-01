@@ -31,7 +31,8 @@ public class NonOwnerShopGUI {
 
     private Economy econ = EzChestShop.getEconomy();
 
-    public NonOwnerShopGUI() {}
+    public NonOwnerShopGUI() {
+    }
 
     public void showGUI(Player player, PersistentDataContainer data, Block containerBlock) {
         LanguageManager lm = new LanguageManager();
@@ -74,7 +75,8 @@ public class NonOwnerShopGUI {
                 } else {
                     try {
                         amount = Integer.parseInt(amountString);
-                    } catch (NumberFormatException e) {}
+                    } catch (NumberFormatException e) {
+                    }
                 }
 
                 ContainerGuiItem sellItemStack = container.getItem(key).setLore(lm.buttonSellXLore(sellPrice * amount, amount)).setName(lm.buttonSellXTitle(amount));
@@ -99,7 +101,8 @@ public class NonOwnerShopGUI {
                 } else {
                     try {
                         amount = Integer.parseInt(amountString);
-                    } catch (NumberFormatException e) {}
+                    } catch (NumberFormatException e) {
+                    }
                 }
 
                 ContainerGuiItem buyItemStack = container.getItem(key).setLore(lm.buttonBuyXLore(buyPrice * amount, amount)).setName(lm.buttonBuyXTitle(amount));
@@ -219,14 +222,12 @@ public class NonOwnerShopGUI {
         gui.open(player);
 
 
-
     }
 
-    
 
     private ItemStack disablingCheck(ItemStack mainItem, boolean disabling) {
         LanguageManager lm = new LanguageManager();
-        if (disabling){
+        if (disabling) {
             //disabled Item
             ItemStack disabledItemStack = new ItemStack(Material.BARRIER, mainItem.getAmount());
             ItemMeta disabledItemMeta = disabledItemStack.getItemMeta();
@@ -245,7 +246,7 @@ public class NonOwnerShopGUI {
         if (isSharedIncome) {
             UUID ownerUUID = UUID.fromString(data.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING));
             List<UUID> adminsList = Utils.getAdminsList(data);
-            double profit = price/(adminsList.size() + 1);
+            double profit = price / (adminsList.size() + 1);
             if (adminsList.size() > 0) {
                 if (econ.has(Bukkit.getOfflinePlayer(ownerUUID), profit * adminsList.size())) {
                     EconomyResponse details = econ.withdrawPlayer(Bukkit.getOfflinePlayer(ownerUUID), profit * adminsList.size());

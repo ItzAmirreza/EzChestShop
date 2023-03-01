@@ -32,7 +32,8 @@ import java.util.UUID;
 public class OwnerShopGUI {
     private Economy econ = EzChestShop.getEconomy();
 
-    public OwnerShopGUI() {}
+    public OwnerShopGUI() {
+    }
 
 
     public void showGUI(Player player, PersistentDataContainer data, Block containerBlock, boolean isAdmin) {
@@ -76,7 +77,8 @@ public class OwnerShopGUI {
                 } else {
                     try {
                         amount = Integer.parseInt(amountString);
-                    } catch (NumberFormatException e) {}
+                    } catch (NumberFormatException e) {
+                    }
                 }
 
                 ContainerGuiItem sellItemStack = container.getItem(key).setLore(lm.buttonSellXLore(sellPrice * amount, amount)).setName(lm.buttonSellXTitle(amount));
@@ -101,7 +103,8 @@ public class OwnerShopGUI {
                 } else {
                     try {
                         amount = Integer.parseInt(amountString);
-                    } catch (NumberFormatException e) {}
+                    } catch (NumberFormatException e) {
+                    }
                 }
 
                 ContainerGuiItem buyItemStack = container.getItem(key).setLore(lm.buttonBuyXLore(buyPrice * amount, amount)).setName(lm.buttonBuyXTitle(amount));
@@ -144,8 +147,8 @@ public class OwnerShopGUI {
             ContainerGuiItem settingsItemStack = container.getItem("settings");
             settingsItemStack.setName(lm.settingsButton());
             GuiItem settingsGui = new GuiItem(settingsItemStack.getItem(), event -> {
-               event.setCancelled(true);
-               //opening the settigns menu
+                event.setCancelled(true);
+                //opening the settigns menu
                 SettingsGUI settingsGUI = new SettingsGUI();
                 settingsGUI.showGUI(player, containerBlock, isAdmin);
                 player.playSound(player.getLocation(), Sound.BLOCK_PISTON_EXTEND, 0.5f, 0.5f);
@@ -182,15 +185,14 @@ public class OwnerShopGUI {
         gui.open(player);
 
 
-
     }
 
     private long roundDecimals(double num) {
-        return (long) (((long)(num * 1e1)) / 1e1);
+        return (long) (((long) (num * 1e1)) / 1e1);
     }
 
     private ItemStack disablingCheck(ItemStack mainItem, boolean disabling) {
-        if (disabling){
+        if (disabling) {
             //disabled Item
             LanguageManager lm = new LanguageManager();
             ItemStack disabledItemStack = new ItemStack(Material.BARRIER, mainItem.getAmount());

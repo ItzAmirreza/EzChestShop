@@ -28,6 +28,7 @@ import java.util.UUID;
 public class ServerShopGUI {
 
     private Economy econ = EzChestShop.getEconomy();
+
     public ServerShopGUI() {
 
     }
@@ -72,7 +73,8 @@ public class ServerShopGUI {
                 } else {
                     try {
                         amount = Integer.parseInt(amountString);
-                    } catch (NumberFormatException e) {}
+                    } catch (NumberFormatException e) {
+                    }
                 }
 
                 ContainerGuiItem sellItemStack = container.getItem(key).setLore(lm.buttonSellXLore(sellPrice * amount, amount)).setName(lm.buttonSellXTitle(amount));
@@ -97,7 +99,8 @@ public class ServerShopGUI {
                 } else {
                     try {
                         amount = Integer.parseInt(amountString);
-                    } catch (NumberFormatException e) {}
+                    } catch (NumberFormatException e) {
+                    }
                 }
 
                 ContainerGuiItem buyItemStack = container.getItem(key).setLore(lm.buttonBuyXLore(buyPrice * amount, amount)).setName(lm.buttonBuyXTitle(amount));
@@ -119,7 +122,7 @@ public class ServerShopGUI {
 
 
         //settings item
-        boolean result = isAdmin(((TileState)containerBlock.getState()).getPersistentDataContainer(), player.getUniqueId().toString());
+        boolean result = isAdmin(((TileState) containerBlock.getState()).getPersistentDataContainer(), player.getUniqueId().toString());
         //place moved vvv because of settingsGUI
         if (container.hasItem("settings")) {
             if (player.hasPermission("ecs.admin") || result) {
@@ -233,10 +236,8 @@ public class ServerShopGUI {
     }
 
 
-
-
     private ItemStack disablingCheck(ItemStack mainItem, boolean disabling) {
-        if (disabling){
+        if (disabling) {
             //disabled Item
             LanguageManager lm = new LanguageManager();
             ItemStack disabledItemStack = new ItemStack(Material.BARRIER, mainItem.getAmount());
@@ -250,7 +251,6 @@ public class ServerShopGUI {
             return mainItem;
         }
     }
-
 
 
     private boolean isAdmin(PersistentDataContainer data, String uuid) {

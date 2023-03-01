@@ -51,14 +51,14 @@ public class CustomMessageManageGUI {
 
         // Previous item
         if (container.hasItem("previous")) {
-        ContainerGuiItem previous = container.getItem("previous")
-                .setName(lm.customMessageManagerPreviousPageTitle())
-                .setLore(lm.customMessageManagerPreviousPageLore());
-        GuiItem previousItem = new GuiItem(previous.getItem(), event -> {
-            event.setCancelled(true);
-            paginatedGui.previous();
-        });
-        Utils.addItemIfEnoughSlots(paginatedGui, previous.getSlot(), previousItem);
+            ContainerGuiItem previous = container.getItem("previous")
+                    .setName(lm.customMessageManagerPreviousPageTitle())
+                    .setLore(lm.customMessageManagerPreviousPageLore());
+            GuiItem previousItem = new GuiItem(previous.getItem(), event -> {
+                event.setCancelled(true);
+                paginatedGui.previous();
+            });
+            Utils.addItemIfEnoughSlots(paginatedGui, previous.getSlot(), previousItem);
         }
         // Next item
         if (container.hasItem("next")) {
