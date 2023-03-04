@@ -361,7 +361,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                             Utils.storeItem(thatItem, container);
                             state.update();
                             ShopContainer.createShop(target.getLocation(), player, thatItem, buyprice, sellprice, false,
-                                    false, false, "none", true, "none", false, Config.settings_defaults_rotation);
+                                    false, false, "none", true, false, Config.settings_defaults_rotation);
 
                             player.sendMessage(lm.shopCreated());
 

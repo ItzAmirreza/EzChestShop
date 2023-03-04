@@ -135,25 +135,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.pixeldv</groupId>
-            <artifactId>storage-api</artifactId>
-            <version>3.3.0</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.pixeldv</groupId>
-            <artifactId>storage-api-codec</artifactId>
-            <version>3.3.0</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.pixeldv</groupId>
-            <artifactId>storage-sql-dist</artifactId>
-            <version>3.3.0</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot</artifactId>
             <version>1.19-R0.1-SNAPSHOT</version>
@@ -170,6 +151,7 @@
             <artifactId>triumph-gui</artifactId>
             <version>3.1.1</version>
         </dependency>
+
         <dependency>
             <groupId>com.github.Slimefun</groupId>
             <artifactId>Slimefun4</artifactId>
@@ -187,6 +169,12 @@
             <artifactId>worldguard-bukkit</artifactId>
             <version>7.0.5</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+            <version>4.0.2</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 </project>

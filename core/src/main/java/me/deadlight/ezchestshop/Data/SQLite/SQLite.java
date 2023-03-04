@@ -113,7 +113,6 @@ public class SQLite extends DatabaseManager {
                 put("sellDisabled", new SQLColumn("BOOLEAN", false, false));
                 put("admins", new SQLColumn("STRING (32)", false, false));
                 put("shareIncome", new SQLColumn("BOOLEAN", false, false));
-                put("transactions", new SQLColumn("STRING (32)", false, false));
                 put("adminshop", new SQLColumn("BOOLEAN", false, false));
                 put("rotation", new SQLColumn("STRING (32)", false, false));
                 put("customMessages", new SQLColumn("STRING (32)", false, false));
@@ -667,91 +666,6 @@ public class SQLite extends DatabaseManager {
     }
 
     /**
-     * Query the Database and return a List of all primary Keys based on a Expression that is executed on a Column.<br>
-     * Example: <br>
-     * getKeysByExpresiion("location", "owner", "shopdata", "IS \"8224bb2a-4c45-4798-84dc-73a0ed8048f5\"");
-     *
-     * @param primary_key the name of the primary key row.
-     * @param column the name of the column whose data needs to be queried
-     * @param table the table that is to be queried
-     * @param expression the Expression to be queried with
-     * @return a List of the resulting keys, if none the List will be empty
-     */
-    @Override
-    public List<String> getKeysByExpresion(String primary_key, String column, String table, String expression) {
-        Connection conn = null;
-        PreparedStatement ps = null;
-        ResultSet rs;
-        List<String> keys = new ArrayList<>();
-
-        try {
-            conn = getSQLConnection();
-            ps = conn.prepareStatement(
-                    "SELECT " + primary_key + " FROM " + table + " WHERE " + column + " " + expression + ";");
-
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                keys.add(rs.getString(primary_key));
-            }
-            return keys;
-        } catch (SQLException e) {
-            plugin.getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute(), e);
-        } finally {
-            try {
-                if (ps != null)
-                    ps.close();
-                if (conn != null)
-                    conn.close();
-            } catch (SQLException e) {
-                plugin.getLogger().log(Level.SEVERE, Errors.sqlConnectionClose(), e);
-            }
-        }
-        return keys;
-    }
-
-    /**
-     * Get a Hashmap of 2 Strings. Useful to get keep connections between the primary key and another data value.
-     * @param primary_key The primary key to query by. This will be the key in the Hashmap
-     * @param value_key The value associated with the primary key. This will be the value in the Hashmap
-     * @param column The column to search.
-     * @param table The table to seach.
-     * @param expression A SQL expression to narrow down the results.
-     * @return A Hashmap of <primary key result, value key result>.
-     */
-    @Override
-    public HashMap<String, String> getKeysWithValueByExpresion(String primary_key, String value_key, String column, String table, String expression) {
-        Connection conn = null;
-        PreparedStatement ps = null;
-        ResultSet rs;
-        HashMap<String, String> map = new HashMap<>();
-
-        try {
-            conn = getSQLConnection();
-            EzChestShop.logDebug("SELECT " + primary_key + ", " + value_key + " FROM " + table + " WHERE " + column + " " + expression + ";");
-            ps = conn.prepareStatement(
-                    "SELECT " + primary_key + ", " + value_key + " FROM " + table + " WHERE " + column + " " + expression + ";");
-
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                map.put(rs.getString(primary_key), rs.getString(value_key));
-            }
-            return map;
-        } catch (SQLException e) {
-            plugin.getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute(), e);
-        } finally {
-            try {
-                if (ps != null)
-                    ps.close();
-                if (conn != null)
-                    conn.close();
-            } catch (SQLException e) {
-                plugin.getLogger().log(Level.SEVERE, Errors.sqlConnectionClose(), e);
-            }
-        }
-        return map;
-    }
-
-    /**
      * Query the Database for a List of all primary Keys of a given table
      *
      * @param primary_key the name of the primary key row.
@@ -931,15 +845,15 @@ public class SQLite extends DatabaseManager {
 
     @Override
     public void insertShop(String sloc, String owner, String item, double buyprice, double sellprice, boolean msgtoggle,
-                           boolean dbuy, boolean dsell, String admins, boolean shareincome, String trans, boolean adminshop, String rotation, List<String> customMessages) {
+                           boolean dbuy, boolean dsell, String admins, boolean shareincome , boolean adminshop, String rotation, List<String> customMessages) {
         Connection conn = null;
         PreparedStatement ps = null;
         try {
             conn = getSQLConnection();
             ps = conn.prepareStatement(
                     "REPLACE INTO shopdata (location,owner,item,buyPrice,sellPrice,msgToggle,"
-                            + "buyDisabled,sellDisabled,admins,shareIncome,transactions,adminshop,rotation,customMessages) "
-                            + "VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+                            + "buyDisabled,sellDisabled,admins,shareIncome,adminshop,rotation,customMessages) "
+                            + "VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)");
 
             ps.setString(1, sloc);
             ps.setString(2, owner);
@@ -951,10 +865,9 @@ public class SQLite extends DatabaseManager {
             ps.setBoolean(8, dsell);
             ps.setString(9, admins);
             ps.setBoolean(10, shareincome);
-            ps.setString(11, trans);
-            ps.setBoolean(12, adminshop);
-            ps.setString(13, rotation);
-            ps.setString(14, customMessages.stream().collect(Collectors.joining("#,#")));
+            ps.setBoolean(11, adminshop);
+            ps.setString(12, rotation);
+            ps.setString(13, customMessages.stream().collect(Collectors.joining("#,#")));
             ps.executeUpdate();
             return;
         } catch (SQLException e) {
@@ -989,7 +902,7 @@ public class SQLite extends DatabaseManager {
                 map.put(Utils.StringtoLocation(sloc), new EzShop(Utils.StringtoLocation(sloc), rs.getString("owner"), Utils.decodeItem(rs.getString("item")),
                         rs.getDouble("buyPrice"), rs.getDouble("sellPrice"), new ShopSettings(sloc, rs.getBoolean("msgToggle"),
                         rs.getBoolean("buyDisabled"), rs.getBoolean("sellDisabled"), rs.getString("admins"),
-                        rs.getBoolean("shareIncome"), rs.getString("transactions"), rs.getBoolean("adminshop"),
+                        rs.getBoolean("shareIncome"), rs.getBoolean("adminshop"),
                         rs.getString("rotation"), Arrays.asList(customMessages.split("#,#")))));
             }
             return map;

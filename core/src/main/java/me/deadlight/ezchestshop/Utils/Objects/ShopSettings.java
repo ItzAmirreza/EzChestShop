@@ -3,10 +3,16 @@ package me.deadlight.ezchestshop.Utils.Objects;
 import com.sun.org.apache.xpath.internal.operations.Bool;
 import me.deadlight.ezchestshop.Data.Config;
 import me.deadlight.ezchestshop.Data.DatabaseManager;
+import me.deadlight.ezchestshop.Data.MySQL.MySQL;
+import me.deadlight.ezchestshop.Data.PlayerContainer;
+import me.deadlight.ezchestshop.Data.SQLite.SQLite;
+import me.deadlight.ezchestshop.Data.ShopContainer;
 import me.deadlight.ezchestshop.Enums.Changes;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.Utils.Utils;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -19,7 +25,6 @@ public class ShopSettings {
     private boolean dsell;
     private String admins;
     private boolean shareincome;
-    private String trans;
     private boolean adminshop;
     private String rotation;
     private List<String> customMessages;
@@ -34,14 +39,13 @@ public class ShopSettings {
     private static Map<UUID, Map<Location, String>> customMessagesTotal = new HashMap<>();
 
     public ShopSettings(String sloc, boolean msgtoggle, boolean dbuy, boolean dsell, String admins, boolean shareincome,
-            String trans, boolean adminshop, String rotation, List<String> customMessages) {
+             boolean adminshop, String rotation, List<String> customMessages) {
         this.sloc = sloc;
         this.msgtoggle = msgtoggle;
         this.dbuy = dbuy;
         this.dsell = dsell;
         this.admins = admins;
         this.shareincome = shareincome;
-        this.trans = trans;
         this.adminshop = adminshop;
         this.rotation = rotation;
         this.customMessages = customMessages;
@@ -54,7 +58,6 @@ public class ShopSettings {
         this.dsell = settings.dsell;
         this.admins = settings.admins;
         this.shareincome = settings.shareincome;
-        this.trans = settings.trans;
         this.adminshop = settings.adminshop;
         this.rotation = settings.rotation;
         this.customMessages = settings.customMessages;
@@ -116,15 +119,6 @@ public class ShopSettings {
         return this;
     }
 
-    public String getTrans() {
-        return trans;
-    }
-
-    public ShopSettings setTrans(String trans) {
-        sqlQueue.setChange(Changes.TRANSACTIONS, trans);
-        this.trans = trans;
-        return this;
-    }
 
     public boolean isAdminshop() {
         return adminshop;
@@ -170,26 +164,41 @@ public class ShopSettings {
     }
 
     public static Map<Location, String> getAllCustomMessages(String owner) {
-        if (!customMessagesInitialChecked.contains(owner)) {
-            DatabaseManager db = EzChestShop.getPlugin().getDatabase();
-            Map<String, String> data = db.getKeysWithValueByExpresion("location", "customMessages", "owner", "shopdata",
-                    "IS \"" + owner + "\" AND customMessages IS NOT NULL AND trim(customMessages, \" \") IS NOT \"\"");
-            Map<Location, String> converted = data.entrySet().stream()
-                    .collect(Collectors.toMap(e -> Utils.StringtoLocation(e.getKey()), e -> e.getValue()));
-            customMessagesInitialChecked.add(owner);
-            customMessagesTotal.put(UUID.fromString(owner), converted);
-            return converted;
+
+        Player player = Bukkit.getPlayer(UUID.fromString(owner));
+
+        List<EzShop> ezShops = ShopContainer.getShopFromOwner(UUID.fromString(owner)).stream().filter(
+                ezShop -> !ezShop.getSettings().customMessages.isEmpty()
+        ).collect(Collectors.toList());
+
+        Map<Location, String> stringMap = new HashMap<>();
+
+        for (EzShop ezShop : ezShops) {
+            stringMap.put(ezShop.getLocation(),ezShop.getSettings().customMessages.get(0));
         }
-        return customMessagesTotal.get(UUID.fromString(owner));
+
+        return stringMap;
+
+        /*if (!customMessagesInitialChecked.contains(owner)) {
+
+                DatabaseManager db = EzChestShop.getPlugin().getDatabase();
+
+                Map<String, String> data = db.getKeysWithValueByExpresion("location", "customMessages", "owner", "shopdata",
+                        "IS \"" + owner + "\" AND customMessages IS NOT NULL AND TRIM(customMessages, \" \") IS NOT \"\"");
+                Map<Location, String> converted = data.entrySet().stream()
+                        .collect(Collectors.toMap(e -> Utils.StringtoLocation(e.getKey()), e -> e.getValue()));
+
+                customMessagesInitialChecked.add(owner);
+                customMessagesTotal.put(UUID.fromString(owner), converted);
+                return converted;
+            }
+            return customMessagesTotal.get(UUID.fromString(owner));*/
+
+
     }
 
     private static Map<Location, String> fetchAllCustomMessages(String owner) {
-        DatabaseManager db = EzChestShop.getPlugin().getDatabase();
-        Map<String, String> data = db.getKeysWithValueByExpresion("location", "customMessages", "owner", "shopdata",
-                "IS \"" + owner + "\" AND customMessages IS NOT NULL AND trim(customMessages, \" \") IS NOT \"\"");
-        Map<Location, String> converted = data.entrySet().stream()
-                .collect(Collectors.toMap(e -> Utils.StringtoLocation(e.getKey()), e -> e.getValue()));
-        return converted;
+        return getAllCustomMessages(owner);
     }
 
     public void assignShop(EzShop shop) {

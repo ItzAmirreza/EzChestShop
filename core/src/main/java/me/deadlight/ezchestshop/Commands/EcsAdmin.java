@@ -370,12 +370,11 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
                                         : (Config.settings_defaults_dsell ? 1 : 0));
                                 container.set(new NamespacedKey(EzChestShop.getPlugin(), "admins"), PersistentDataType.STRING, "none");
                                 container.set(new NamespacedKey(EzChestShop.getPlugin(), "shareincome"), PersistentDataType.INTEGER, Config.settings_defaults_shareprofits ? 1 : 0);
-                                container.set(new NamespacedKey(EzChestShop.getPlugin(), "trans"), PersistentDataType.STRING, "none");
                                 container.set(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"), PersistentDataType.INTEGER, 1);
                                 container.set(new NamespacedKey(EzChestShop.getPlugin(), "rotation"), PersistentDataType.STRING, Config.settings_defaults_rotation);
 
                                 ShopContainer.createShop(target.getLocation(), player, thatItem, buyprice, sellprice, false,
-                                        false, false, "none", true, "none", true, Config.settings_defaults_rotation);
+                                        false, false, "none", true, true, Config.settings_defaults_rotation);
                                 //msgtoggle 0/1
                                 //dbuy 0/1
                                 //dsell 0/1

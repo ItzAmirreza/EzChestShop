@@ -20,7 +20,6 @@ public class EzShop {
     private double buyPrice;
     private double sellPrice;
     private SqlQueue sqlQueue;
-
     private List<String> shopViewers = new ArrayList<>();
     private List<String> shopLoaders = new ArrayList<>();
 

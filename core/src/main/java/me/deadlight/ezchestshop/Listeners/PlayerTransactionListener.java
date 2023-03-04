@@ -92,22 +92,9 @@ public class PlayerTransactionListener implements Listener {
 //        StringBuilder logString = new StringBuilder(event.getCustomer().getName());
 //        logString.append("@").append(ttype).append("@").append(event.getPrice()).append("@").append(formattedDateTime) + count;
         //convert all into strings
-        StringBuilder finalString = new StringBuilder();
-        boolean first = false;
-        for (TransactionLogObject log : logObjectList) {
 
-            if (first) {
-                finalString.append("#").append(log.pname).append("@").append(log.type).append("@").append(log.price).append("@").append(log.time).append("@").append(log.count);
-            } else {
-                first = true;
-                finalString.append(log.pname).append("@").append(log.type).append("@").append(log.price).append("@").append(log.time).append("@").append(log.count);
-            }
-        }
-
-        data.set(new NamespacedKey(EzChestShop.getPlugin(), "trans"), PersistentDataType.STRING, finalString.toString());
         //NEED TO CHECK FOR OFFICIAL RELEASE <---
         state.update();
-        ShopContainer.getShopSettings(event.getContainerBlock().getLocation()).setTrans(finalString.toString());
 
     }
 

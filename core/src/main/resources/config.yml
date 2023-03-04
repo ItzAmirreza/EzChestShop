@@ -120,6 +120,7 @@ database:
     database: TheDatabaseName
     username: TheUsername
     password: ThePassword
+    max-pool: 10
     ssl: false
   #MongoDB database information in case of usage
   mongodb:

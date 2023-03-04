@@ -18,7 +18,7 @@
 
     <description>Easy Chest Shop that any server owner wants that for his/her players</description>
     <properties>
-        <java.version>16</java.version>
+        <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 

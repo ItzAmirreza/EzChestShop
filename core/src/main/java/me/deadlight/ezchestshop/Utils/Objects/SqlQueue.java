@@ -82,9 +82,6 @@ public class SqlQueue {
         } else if (changes == Changes.SHAREINCOME) {
             boolean bool = (boolean) object;
             return settings.isShareincome() == bool;
-        } else if (changes == Changes.TRANSACTIONS) {
-            String str = (String) object;
-            return settings.getTrans().equalsIgnoreCase(str);
         } else if (changes == Changes.DISABLE_BUY) {
             boolean bool = (boolean) object;
             return settings.isDbuy() == bool;

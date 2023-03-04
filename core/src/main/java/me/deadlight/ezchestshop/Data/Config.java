@@ -74,6 +74,7 @@ public class Config {
     public static Database database_type;
     public static String databasemysql_ip;
     public static int databasemysql_port;
+    public static int databasemysql_maxpool;
     public static String databasemysqltables_prefix;
     public static String databasemysql_databasename;
     public static String databasemysql_username;
@@ -155,6 +156,7 @@ public class Config {
         database_type = Database.valueOf(config.getString("database.type").toUpperCase());
         databasemysql_ip = config.getString("database.mysql.ip");
         databasemysql_port = config.getInt("database.mysql.port");
+        databasemysql_maxpool = config.getInt("database.mysql.max-pool");
         databasemysqltables_prefix = config.getString("database.mysql.tables-prefix");
         databasemysql_databasename = config.getString("database.mysql.database");
         databasemysql_username = config.getString("database.mysql.username");
@@ -220,7 +222,7 @@ public class Config {
         boolean isUsingOldhologramLineSystem = fc.isString("shops.hologram.hologram-first-line");
 
         if (isUsingOldhologramLineSystem) {
-            EzChestShop.logConsole("Updated Hologram List!");
+            EzChestShop.getPlugin().logConsole("Updated Hologram List!");
 
             fc.set("shops.hologram.hologram-first-line", null);
             fc.set("shops.hologram.hologram-second-line", null);
