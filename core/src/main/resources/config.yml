@@ -110,7 +110,7 @@ tasks:
   check-for-removed-shops: false
 #databases section
 database:
-  #available types SQLite, MySQL & MongoDB (MySQL & MongoDB is recommended for the best performance)
+  #available types SQLite & MySQL (MySQL is recommended for the best performance and large servers)
   type: SQLite
   #MySQL database information in case of usage
   mysql:
@@ -122,10 +122,6 @@ database:
     password: ThePassword
     max-pool: 10
     ssl: false
-  #MongoDB database information in case of usage
-  mongodb:
-    #Lazy devs only accept connection string sry buddy ^_^
-    connection-string: "connection string"
 integration:
   worldguard: true
 other:
