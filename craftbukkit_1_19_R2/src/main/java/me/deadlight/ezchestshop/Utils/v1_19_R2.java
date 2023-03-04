@@ -1,5 +1,4 @@
 package me.deadlight.ezchestshop.Utils;
-
 import io.netty.channel.Channel;
 import me.deadlight.ezchestshop.EzChestShop;
 import net.minecraft.nbt.NBTTagCompound;
@@ -13,16 +12,15 @@ import net.minecraft.world.entity.item.EntityItem;
 import net.minecraft.world.level.World;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_19_R1.CraftWorld;
-import org.bukkit.craftbukkit.v1_19_R1.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_19_R1.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_19_R2.CraftWorld;
+import org.bukkit.craftbukkit.v1_19_R2.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_19_R2.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-
 import java.util.HashMap;
 import java.util.Map;
 
-public class v1_19_R1 extends VersionUtils {
+public class v1_19_R2 extends VersionUtils {
 
     private static final Map<SignMenuFactory, UpdateSignListener> listeners = new HashMap<>();
 
@@ -57,7 +55,7 @@ public class v1_19_R1 extends VersionUtils {
 
     @Override
     void destroyEntity(Player player, int entityID) {
-        ((org.bukkit.craftbukkit.v1_19_R1.entity.CraftPlayer) player).getHandle().b.a(new net.minecraft.network.protocol.game.PacketPlayOutEntityDestroy(entityID));
+        ((org.bukkit.craftbukkit.v1_19_R2.entity.CraftPlayer) player).getHandle().b.a(new net.minecraft.network.protocol.game.PacketPlayOutEntityDestroy(entityID));
     }
 
     @Override
@@ -81,8 +79,9 @@ public class v1_19_R1 extends VersionUtils {
         PacketPlayOutSpawnEntity packetPlayOutSpawnEntity = new PacketPlayOutSpawnEntity(armorstand, 0);
         playerConnection.a(packetPlayOutSpawnEntity);
         //------------------------------------------------------
-        // sending meta packet
-        PacketPlayOutEntityMetadata metaPacket = new PacketPlayOutEntityMetadata(ID, armorstand.ai(), true);
+        //create a list of datawatcher objects
+
+        PacketPlayOutEntityMetadata metaPacket = new PacketPlayOutEntityMetadata(ID, armorstand.al().c());
         playerConnection.a(metaPacket);
 
     }
@@ -106,7 +105,7 @@ public class v1_19_R1 extends VersionUtils {
         playerConnection.a(packetPlayOutSpawnEntity);
         //------------------------------------------------------
         // sending meta packet
-        PacketPlayOutEntityMetadata metaPacket = new PacketPlayOutEntityMetadata(ID, floatingItem.ai(), true);
+        PacketPlayOutEntityMetadata metaPacket = new PacketPlayOutEntityMetadata(ID, floatingItem.al().c());
         playerConnection.a(metaPacket);
 
     }
@@ -157,12 +156,12 @@ public class v1_19_R1 extends VersionUtils {
 
     @Override
     void openMenu(SignMenuFactory.Menu menu, Player player) {
-        MenuOpener_v1_19_R1.openMenu(menu, player);
+        MenuOpener_v1_19_R2.openMenu(menu, player);
     }
 
     @Override
     public void injectConnection(Player player) {
-        ((CraftPlayer) player).getHandle().b.a().m.pipeline().addBefore("packet_handler", "ecs_listener", new ChannelHandler_v1_19_R1(player));
+        ((CraftPlayer) player).getHandle().b.a().m.pipeline().addBefore("packet_handler", "ecs_listener", new ChannelHandler_v1_19_R2(player));
     }
 
     @Override

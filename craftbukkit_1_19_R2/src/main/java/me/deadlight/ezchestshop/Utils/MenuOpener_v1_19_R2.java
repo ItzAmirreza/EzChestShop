@@ -7,14 +7,13 @@ import net.minecraft.server.network.PlayerConnection;
 import net.minecraft.world.level.block.entity.TileEntityTypes;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_19_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_19_R2.entity.CraftPlayer;
 import org.bukkit.entity.Player;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Objects;
 
-public class MenuOpener_v1_19_R1 {
+public class MenuOpener_v1_19_R2 {
 
     private static Constructor<PacketPlayOutTileEntityData> constructor;
 

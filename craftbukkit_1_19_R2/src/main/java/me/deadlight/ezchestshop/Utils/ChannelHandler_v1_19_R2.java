@@ -6,7 +6,7 @@ import org.bukkit.entity.Player;
 import java.lang.reflect.Field;
 import java.util.Map;
 
-public class ChannelHandler_v1_19_R1 extends ChannelInboundHandlerAdapter {
+public class ChannelHandler_v1_19_R2 extends ChannelInboundHandlerAdapter {
 
     private final Player player;
     private static Field updateSignArrays;
@@ -20,7 +20,7 @@ public class ChannelHandler_v1_19_R1 extends ChannelInboundHandlerAdapter {
         }
     }
 
-    public ChannelHandler_v1_19_R1(Player player) {
+    public ChannelHandler_v1_19_R2(Player player) {
         this.player = player;
     }
 
@@ -28,7 +28,7 @@ public class ChannelHandler_v1_19_R1 extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
 
         if (msg instanceof PacketPlayInUpdateSign) {
-            for (Map.Entry<SignMenuFactory, UpdateSignListener> entry : v1_19_R1.getListeners().entrySet()) {
+            for (Map.Entry<SignMenuFactory, UpdateSignListener> entry : v1_19_R2.getListeners().entrySet()) {
                 UpdateSignListener listener = entry.getValue();
 
                 try {
