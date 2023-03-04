@@ -1,5 +1,4 @@
 package me.deadlight.ezchestshop;
-
 import me.deadlight.ezchestshop.Commands.CommandCheckProfits;
 import me.deadlight.ezchestshop.Commands.EcsAdmin;
 import me.deadlight.ezchestshop.Commands.MainCommands;

@@ -828,12 +828,6 @@ public class Utils {
             databaseManager = new MySQL(EzChestShop.getPlugin());
             databaseManager.load();
             EzChestShop.logConsole("&c[&eEzChestShop&c] &aMySQL &7database initialized!");
-        } else if (Config.database_type == Database.MONGODB) {
-            EzChestShop.logConsole("&c[&eEzChestShop&c] &eInitializing MongoDB database...");
-            //initialize MongoDB
-            databaseManager = new MongoDB(EzChestShop.getPlugin());
-            databaseManager.load();
-            EzChestShop.logConsole("&c[&eEzChestShop&c] &aMongoDB &7database initialized!");
         } else {
             //shouldn't happen technically
         }
