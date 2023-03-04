@@ -99,7 +99,7 @@ public class v1_19_R2 extends VersionUtils {
         EntityItem floatingItem = new EntityItem(world, location.getX(), location.getY(), location.getZ(), CraftItemStack.asNMSCopy(itemStack));
         floatingItem.e(true); //no gravity
         floatingItem.e(ID); //set entity id
-        floatingItem.n(0, 0, 0); //set velocity
+        floatingItem.o(0, 0, 0); //set velocity
 
         PacketPlayOutSpawnEntity packetPlayOutSpawnEntity = new PacketPlayOutSpawnEntity(floatingItem, 0);
         playerConnection.a(packetPlayOutSpawnEntity);
