@@ -6,7 +6,7 @@
 
     <groupId>me.deadlight</groupId>
     <artifactId>EzChestShop-parent</artifactId>
-    <version>1.4.6</version>
+    <version>1.4.7</version>
     <packaging>pom</packaging>
 
     <name>EzChestShop-parent</name>
@@ -30,6 +30,7 @@
         <module>craftbukkit_1_18_R1</module>
         <module>craftbukkit_1_18_R2</module>
         <module>craftbukkit_1_19_R1</module>
+        <module>craftbukkit_1_19_3_R1</module>
         <module>dist</module>
     </modules>
 </project>
