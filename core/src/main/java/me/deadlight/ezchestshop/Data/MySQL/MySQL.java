@@ -117,17 +117,22 @@ public class MySQL extends DatabaseManager {
 
                             row.getValue("buyPrice"),
                             row.getValue("sellPrice"),
-                            new ShopSettings(slocation, row.getValue("msgToggle"),
-                                    row.getValue("buyDisabled"),
-                                    row.getValue("sellDisabled"),
+                            new ShopSettings(slocation,
+                                    asBool(row.getValue("msgToggle")),
+                                    asBool(row.getValue("buyDisabled")),
+                                    asBool(row.getValue("sellDisabled")),
                                     row.getValue("admins"),
-                                    row.getValue("shareIncome"),
-                                    row.getValue("adminshop"),
+                                    asBool(row.getValue("shareIncome")),
+                                    asBool(row.getValue("adminshop")),
                                     row.getValue("rotation"),
                                     Arrays.asList(customMessages.split("#,#")))));
         }
 
         return ezShopMap;
+    }
+
+    public boolean asBool(int i){
+        return i ==1;
     }
 
     @Override
