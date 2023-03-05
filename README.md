@@ -1,4 +1,4 @@
-![EzChestShop Banner](https://user-images.githubusercontent.com/43675593/191451557-5c25a6a0-6982-45f4-b7a9-a161953d2aaf.png)
+![first img](https://user-images.githubusercontent.com/20891968/222954783-8d4dcfa0-6afd-4e1b-816b-10e0de407c58.png)
 
 <a href="https://discord.gg/rSfsqgCqBZ">![Discord](https://img.shields.io/discord/902975048514678854?label=discord&logo=discord)</a>
 <a href="https://www.spigotmc.org/resources/90411/">![Download Size](https://img.shields.io/spiget/download-size/90411)</a>
@@ -17,3 +17,4 @@ Create an [Issue](https://github.com/ItzAmirreza/EzChestShop/issues) or let us k
 
 ### Contributing:
 Want a feature implemented quickly? The fastest way is by creating the feature yourself via a [Pull Request](https://github.com/ItzAmirreza/EzChestShop/pulls)! See the Wiki for more Infos on how to [contribute](https://github.com/ItzAmirreza/EzChestShop/wiki/Contributing)!
+
