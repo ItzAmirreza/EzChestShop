@@ -43,8 +43,8 @@ transactions:
   minutesago: "&e%minutes% daghighe pish"
   hoursago: "&e%hours% saat pish"
   daysago: "&e%days% roz pish"
-  player-inform-buy: "&7[&aECS&7] &b%player% &7has bought &e%amount%x &7of &d%item%&7 with the worth of &a%price%%currency%"
-  player-inform-sell: "&7[&aECS&7] &b%player% &7has sold &e%amount%x &7of &d%item%&7 with the worth of &a%price%%currency%"
+  player-inform-buy: "&7[&aECS&7] &b%player% &7Kharid &e%amount%x &7Az &d%item%&7 Be Gheymate &a%price%%currency%"
+  player-inform-sell: "&7[&aECS&7] &b%player% &7Forokht &e%amount%x &7AZ &d%item%&7 Be Arzeshe &a%price%%currency%"
 # Bakhsh Settings GUI
 settings:
   GuiTitle: "&b&lTanzimat"
@@ -290,11 +290,11 @@ command-messages:
   maxShopLimitReached: "&cShoma az in bishtar nemitavanid shop besazid. Hade aksar: %shoplimit% shop!"
   slimeFunBlockNotSupported: "&cBebakhshid :(, Shoma ghader be estefade az block haye slimefun baraye chest shop nistid, az yek block mamoli estefade konid."
   buypriceGreaterThanSellRequired: "&cGheymate kharid az shoma bayad bozorg tar az gheymate forosh be shoma bashad."
-  invalidShopItem: "&cThe item you are trying to create a shop with is invalid here."
-  shopTransferConfirm: "&eAre you sure you want to permanently transfer this shops ownership to %player%? [&2&l[✔]](Click to confirm transfer! run_command=/ecs settings transfer-ownership %player% -confirm)"
-  shopTransferred: "&aYou have successfully transferred this shop to %player%!"
-  buyPriceUpdated: "&aBuy &7price has been updated!"
-  sellPriceUpdated: "&cSell &7price has been updated!"
+  invalidShopItem: "&cItemi Ke Darid Bahash Shop Ro Dorost Mikonid Invalid Hast."
+  shopTransferConfirm: "&eAya Motmaenid Ke Mikhahid Ownership Shop Ra Be &b%player% &eTransfer konid? [&2&l[✔]](Click to confirm transfer! run_command=/ecs settings transfer-ownership %player% -confirm)"
+  shopTransferred: "&aShoma Ba Movafaghiat Ownership Shop Ro Be %player% Transfer Kardid!"
+  buyPriceUpdated: "&7Gheymat &aKharid &7Beroz Shod."
+  sellPriceUpdated: "&7Gheymat &aForoosh &7Beroz Shod."
 checkprofits:
   landing-menu:
     - '&e========================================'
@@ -336,4 +336,4 @@ other:
   update-notifications: "&c[&eEzChestShop&c] &eDetected a new version: &b%new_version%&e! You are still using &c%current_version%&e!"
   overflowing-gui-items-notification: "&c[&eEzChestShop&c] &eYou have overflowing items in your customized GUI! Make sure these items are in a large enough GUI: &c%overflow%"
   overlapping-gui-items-notification: "&c[&eEzChestShop&c] &eYou have overlapping items in your customized GUI! Here's a list of the unusual overlapping items: &c%overlap%"
-  hologram-shop-empty: "&cThis shop is empty!"
+  hologram-shop-empty: "&cIn Shop Khali Ast."
