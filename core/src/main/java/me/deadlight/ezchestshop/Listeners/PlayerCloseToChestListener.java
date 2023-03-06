@@ -397,7 +397,7 @@ public class PlayerCloseToChestListener implements Listener {
                     if (player.getUniqueId().equals(shop.getOwnerID()) && !is_dbuy && !is_adminshop) {
                         // Check if the shop is empty by getting the inventory of the block
                         Inventory inv = Utils.getBlockInventory(shopLocation.getBlock());
-                        if (inv.isEmpty()) {
+                        if (!inv.contains(shop.getShopItem())) {
                             line = line.replace("<emptyShopInfo/>", lm.emptyShopHologramInfo());
                         } else {
                             continue;
@@ -515,7 +515,7 @@ public class PlayerCloseToChestListener implements Listener {
                     if (player.getUniqueId().equals(shop.getOwnerID()) && !is_dbuy && !is_adminshop) {
                         // Check if the shop is empty by getting the inventory of the block
                         Inventory inv = Utils.getBlockInventory(shopLocation.getBlock());
-                        if (inv.isEmpty()) {
+                        if (!inv.contains(shop.getShopItem())) {
                             line = line.replace("<emptyShopInfo/>", lm.emptyShopHologramInfo());
                         } else {
                             continue;
