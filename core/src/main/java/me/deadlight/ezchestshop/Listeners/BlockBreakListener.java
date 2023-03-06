@@ -33,7 +33,7 @@ public class BlockBreakListener implements Listener {
 
     private static LanguageManager lm = new LanguageManager();
 
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onBlockBreak(BlockBreakEvent event) {
 
         if (Utils.blockBreakMap.containsKey(event.getPlayer().getName())) {
