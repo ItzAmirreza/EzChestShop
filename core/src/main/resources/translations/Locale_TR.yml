@@ -1,0 +1,353 @@
+# plugin uses this file in order to display messages in plugin
+# For hologram messages, you have to check config.yml
+# NOTE: DO NOT USE TAB in yml file as it can cause serious performance problems and it sometimes can break the plugin
+# Don't forget to rate if you liked EzChestShop
+# Çeviri !Can#6872 tarafından gerçekleştirilmiştir. AsenalNetwork © 2021-2023
+shop-gui:
+  initialbuyprice: "&aMarketten &asatın alma &7fiyatı: &e%buyprice% %currency%"
+  initialsellprice: "&7Markete &csatış &7fiyatı: &6%sellprice% %currency%"
+  admin-title: "&c%shopowner%'nin marketi &4(Yönetici Görünümü)"
+  nonowner-title: "&c%shopowner%'nin marketi"
+  owner-title: "&c%shopowner%'nin marketi"
+  adminshop-title: "&cYönetici"
+  buttons:
+    sellX-title: "&7%amount%x &cSat"
+    sellX-lore:
+      - "&7Satış için alacağın tutar: &d%price% %currency%"
+    buyX-title: "&7%amount%x &aSatın Al"
+    buyX-lore:
+      - "&7Ödeyeceğiniz tutar: &d%price% %currency%"
+    adminview: "&cStok Takibi"
+    storage: "&6Depo"
+    settings: "&bAyarlar"
+    disabled-title: "&cMarkete ürün satamazsın!"
+    disabled-lore:
+      - ""
+      - "&7Bu seçenek market sahibi"
+      - "&7tarafından devre dışı bırakıldı!"
+transactions:
+  transactionButtonTitle: "&aİşlem geçmişi"
+  backToSettingsButton: "&eAyarlara geri dön"
+  PaperTitleBuy: "&7%player% &7Sizden ürün &asatın aldı!"
+  PaperTitleSell: "&7%player%&7 Size ürün &csattı!"
+  PaperLoreBuy:
+    - " &7Kazanılan para: %price% "
+    - " &7Satılan miktar: %count% "
+    - " &7İşlem Tipi: &aSatın aldı"
+    - " &7Zaman: &e%time%"
+  PaperLoreSell:
+    - " &7Ödenen Fiyat: %price% "
+    - " &7Miktar: %count% "
+    - " &7İşlem tipi: &cSattı"
+    - " &7Zaman: &e%time%"
+  lessthanminute: "&eAz önce"
+  minutesago: "&e%minutes% dakika önce"
+  hoursago: "&e%hours% saat önce"
+  daysago: "&e%days% gün önce"
+  player-inform-buy: " &7%player% &7marketinizden %price% %currency% &7fiyatından &e%amount%x &7%item% &asatın aldı!"
+  player-inform-sell: " &7%player% &7marketinize &6%price% %currency% &7fiyatından &e%amount%x &7%item% &csattı!"
+#settings gui section
+settings:
+  GuiTitle: "&7Ayarlar"
+  statusOn: "&aAçık"
+  statusOff: "&cKapalı"
+  buttons:
+    toggleTransactions:
+      Title: "&7Satın Alma Duyurusu"
+      Lore:
+        - ""
+        - " &7Bu seçeneği açarsanız bir"
+        - "&7 Oyuncular marketinizden ürün aldığında bildirecek"
+        - ""
+        - "&7Durum: %status% "
+    disableBuying:
+      Title: "&7Marketten Ürün Satın Alma"
+      Lore: 
+        - ""
+        - " &7Bu seçeneği açarsanız eğer marketinizden"
+        - " &7diğer oyuncular ürün satın alamayacaktır."
+        - ""
+        - "&7Durum: %status% "
+    disableSelling:
+      Title: "&eMarkete Ürün Satma"
+      Lore:
+        - ""
+        - " &7Bu seçeneği açarsanız eğer marketinize"
+        - " &7diğer oyuncular ürün &csatamayacaktır."
+        - ""
+        - "&7Durum: %status% "
+    shopAdmins:
+      Title: "&eYönetici Ekleme"
+      nobodyStatusAdmins: "&aSenden başka kimse yok."
+      Lore:
+        - ""
+        - " &7Buradan arkadaşlarınızı &7marketinize"
+        - " &7yönetici &7olarak ekleyebilirsiniz."
+        - " &7Yöneticilier şunları yapabilir&7:"
+        - ""
+        - "&7Mağaza deposuna erişebilir. "
+        - "&7Ayarlar menüsüne erişebilir."
+        - "&7Yönetici ekleyip&7/çıkartamaz."
+        - ""
+        - " &7Yönetici eklemek için Sol tıklayın!"
+        - " &7Yönetici çıkarmak için Sağ tıklayın!"
+        - ""
+        - " &7Mevcut yöneticiler:"
+        - "%admins%"
+    sharedIncome:
+      Title: "&eGelir Paylaşma"
+      Lore:
+        - ""
+        - " &7Bu seçeneği açık tutarsanız, "
+        - " &7YALNIZCA &7satışların karı, "
+        - " &7yöneticiler &7arasında paylaştırılır."
+        - ""
+        - " &7Şu anki durum: %status% "
+    hologramRotation:
+      Title: "&eHologram Döndürme"
+      Lore:
+        - ""
+        - " &3Hologramın yönünü buradan değişebilirsiniz"
+
+    changePrices:
+      Title: "&eMarket Fiyat Düzenleme"
+      Lore:
+        - ""
+        - "&7Alış veya Satış fiyatını &7düzenleyin&7."
+        - " &d "
+        - " &7Alış &7Fiyatı İçin   &7Satış &7Fiyatı İçin  "
+        - ' &l  &r&7Sol Tıkla!    &l   &r  &7Sağ Tıkla!'
+      SignPlaceholderBuy:
+        - ""
+        - "&a^^ &7Buraya &a^^ "
+        - " &7Yeni &aSatış "
+        - " &7Fiyatını gir!"
+      SignPlaceholderSell:
+        - ""
+        - "&c^^ &7Enter &c^^ "
+        - " &7your new "
+        - " &csell &7price!"
+    hologramMessage:
+      Title: "&eHolograma Yazı Ekle"
+      Lore:
+        - ""
+        - "&7Mesajı eklemek için &7Sol tıklayın!"
+        - "&7Mesajı düzenlemek için &7Sağ tıklayın!"
+        - " &d "
+        - "&7Sadece &b%lineNumbers%&7 satır ekliyebilirsin!"
+        - ""
+        - "<ifhasmax>&8You can have %messagesleft% more messages!</ifhasmax>"
+      LoreMaxReached:
+        - "&cYou can only have"
+        - "&c%maxLines% lines!"
+        - "&7Click here to manage"
+        - "&7your hologram messages!"
+      LoreEdit:
+        - ""
+        - "&7Mesajı eklemek için &3Sol tıklayın!"
+        - "&7Mesajı düzenlemek için &bSağ tıklayın!"
+        - " &d "
+        - "&7Sadece &d%lineNumbers%&7 satır ekliyebilirsin!"
+        - ""
+        - "&CUNUTMA!"
+        - "&7Hakaret içerikli &9mesaj yazanlar &7hakkında"
+        - "&ccezai &7işlem &2uygulanacaktır!"
+        - ""
+        - "&7Hareket yazılı bir market gördüğünüz zaman"
+        - "&bYardımcı &7ile iletişime geçin!"
+        - ""
+        - "<ifhasmax>&8You can have %messagesleft% more messages!</ifhasmax>"
+      SignPlaceholderTexts: "^^^^^^^^^^^"
+    other:
+      backToShopGuiButton: "&eMarkete geri dön"
+      latestTransactionsTitle: "&aSon İşlemler"
+  chat:
+    toggleTransactions:
+      MessageOn: " &7Satın alma mesajları açıldı!"
+      MessageOff: " &7Satın alma mesajları kapandı!"
+    disableBuying:
+      MessageOn: " &7Artık marketinizden ürün satın alamayacaklar."
+      MessageOff: " &7Artık marketinizden ürün satın alabilecekler."
+    disableSelling:
+      MessageOn: " &7Artık marketinize ürün satamayacaklar."
+      MessageOff: " &7Artık marketinize ürün satabilecekler."
+    shopAdmins:
+      addingAdminWaiting: " &eLütfen yönetici listesine eklemek istediğiniz kişinin adını giriniz:"
+      removingAdminWaiting: " &eLütfen yönetici listesinden çıkarmak istediğiniz kişinin adını girin:"
+      selfAdmin: " &cKendinizi yönetici listesine ekleyemez veya listeden çıkaramazsınız!"
+      sucAdminAdded: " &7%player% &7adlı oyuncu yönetici listesine &abaşarıyla eklendi."
+      alreadyAdmin: " &cBu oyuncu zaten yönetici listesinde!"
+      noPlayer: " &cBu oyuncu oyunda yok veya yanlış kullanıcı adı girdiniz."
+      sucAdminRemoved: " &7%player% &7adlı oyuncu yönetici listesinden başarıyla &ckaldırıldı."
+      notInAdminList: " &cBu oyuncu yöneticiler listesinde yok!"
+      clearedAdmins: " &cBu dükkandan tüm yöneticiler kaldırıldı."
+    sharedIncome:
+      MessageOn: "&7Paylaşılan gelir: &aAÇIK"
+      MessageOff: "&7Paylaşılan gelir: &cKAPALI"
+    copy-paste:
+      copiedShopSettings: "[&6kopyalandı &7dükkan ayarları!](%settings%)"
+      pastedShopSettings: "&eYapıştırıldı &7dükkan ayarları!"
+    hologramRotation:
+      rotateHologramInChat: " &7Hologramın konumu : %rotation%"
+      rotation:
+        Up: "&aYukarı"
+        North: "&aSol"
+        East: "&aArka"
+        South: "&aSağ"
+        West: "&aÖn"
+        Down: "&aAşağı"
+# Custom Messages Manager GUI section
+customMessageManager:
+  GuiTitle: "&7Hologram Mesajını Yönet"
+  ConfirmDeleteGuiTitle: "&7Metni Silmeyi Onayla"
+  buttons:
+    previousPage:
+      Title: "&eÖnceki"
+      Lore:
+    nextPage:
+      Title: "&eSonrki"
+      Lore:
+    shopEntry:
+      Title: "&6%shopitem% &7Marketi"
+      UnkownTitle: "&cBilinmeyen Market"
+      Lore:
+        - ""
+        - "&7Konumu: &eX:%x%, Y:%y%, Z:%z%"
+        - ""
+        - "&7Hologram mesajı:"
+        - "&7%hologram-messages%"
+        - ""
+        - "&7Mesajı silmek için &7Sol tıklayın!"
+        - "&7Mesajı düzenlemek için &7Sağ tıklayın!"
+    confirmDelete:
+      Title: "&cEmin misin?"
+      Lore:
+        - "&7Bu mesajı silmek üzeresiniz"
+        - "&7Bu işlem &cgeri alınamaz!"
+        - "&7onaylıyor musunuz?"
+    backToCustomMessageManager:
+      Title: "&eÖzel Mesaj Yöneticisine Geri Dön"
+      Lore:
+    modifyCurrentHologram:
+      Title: "&eHologramı Düzenle"
+      Lore:
+        - "&7Mesajı silmek için &3Sol tıklayın!"
+        - "&7Mesajı düzenlemek için &bSağ tıklayın!"
+customBuySell:
+  gui-customAmountSign-title: "&eÖzel Miktar"
+  gui-customAmountSign-lore:
+    - ""
+    - " &7İstediğiniz miktarda ürün &aAlıp/&cSatabilirsiniz."
+    - ""
+    - " &7Satın almak için sağ tıkla "
+    - " &7Satış yapmak için sol tıkla "
+    - ""
+  #15 characters per line (without color codes) and "\n" for next line (starting from second line)
+  signEditorGui:
+    buy:
+      - "&a^^ Maks: %max% ^^ "
+      - " &bİstediğiniz"
+      - " &bMiktarı girin"
+    sell:
+      - "&c^^ Maks: %max% ^^ "
+      - " &bİstediğiniz"
+      - " &bMiktarı girin"
+  errors:
+    buyingIsDisabled: " &cBu markette satın alma işlemi devre dışı bırakıldı."
+    sellingIsDisabled: " &cBu markete ürün satamazsınız!"
+    wrongInput: " &cHatalı karakter,lütfen bir sayı girin!"
+    enterTheAmount: " &aLütfen istediğiniz miktarı tabelaya yazınız."
+    unsupportedInteger: " &cHey! iyimisin?, miktar sıfır veya negatif olamaz."
+shop-messages:
+  successful-buy: " &7%price% %currency% Ürünü başarıyla &7fiyatına satın aldınız."
+  fullinv: " &cBu miktarda öğe için yeterli alanınız yok"
+  cannotafford: " &cBakineyniz yeterli değil!"
+  outofstock: " &cMarkette stokta yok!"
+  successful-sell: " &7%price% %currency% Ürünlerinizi başarıyla &7fiyatına sattınız."
+  shopcannotafford: " &cMarketten artık alışveriş yapılamaz."
+  notenoughitemtosell: " &cBu üründen satmaya yetecek kadar yok!"
+  chestisFull: " &cMarket dolmuş daha fazla satış yapamazsınız!"
+  selftransaction: " &cKendinizden satın alamaz veya satamazsınız!"
+  openingShopProblem: " &cBu marketi açarken bir sorun oluştu, lütfen ASENAL ile iletişime geçin!"
+command-messages:
+  negativeprice: " &cOlumsuz fiyat? olumlu fiyat kullanmalısın..."
+  notenoughargs: " &cYanlış komut kullandınız. \n &cDoğru kullanım: &f/ecs create &f(Satış fiyatı) (Alış fiyatı)"
+  consolenotallowed: " &cKonsoldan herhangi bir komut yürütmenize izin verilmiyor."
+  help:
+    - "             &6  ECS Yardım&7 "
+    - ""
+    - "&a/ecs create &e(Satış Fiyatı) (Alış Fiyatı)"
+    - "&a/ecs remove &7| &7Baktığınız marketi kaldırır "
+    - "&a/ecs settings &e(ayar) &7| &7Market ayarlarınızı kopyalayıp diğer marketlere yapıştırabilirsiniz!"
+    - "&eAyarlar: &7[copy, paste]"
+  help-admin-view-addition:
+    - ""
+  adminhelp:
+    - "&cYönetici Yardım: "
+    - "&7- &c/&eecsadmin remove &7| baktığınız market (yine de kırarak kaldırabilirsiniz) "
+    - "&7- &c/&eecsadmin reload &7| eklenti yapılandırmalarını yeniden yükleyin"
+    - "&7- &c/&eecsadmin create (satın al) (sat) &7| bir yönetici dükkanı oluştur"
+    - "&7- &c/&eecsadmin transfer-ownership (player) &7| transfer the ownership of any shop to another player."
+    - "&7 For further help, join our [&bDiscord](%discord_link% Click to join the support Discord!)&7!"
+    - "&7 Çeviri: !Can#6872"
+  alreadyashop: "&cBu blok zaten bir market!"
+  shopcreated: "&aBaşarıyla market oluşturdunuz"
+  holdsomething: "&cLütfen elinizde bir şey tutun!"
+  notallowdtocreate: "&cBu konumda bir sandık dükkanı oluşturmanıza/kaldırmanıza izin verilmiyor."
+  notchest: "&cBaktığınız alanda bir sandık yok."
+  lookatchest: "&cBaktığınız alanda bir sandık yok."
+  csremoved: "&7Marketi başarıyla kaldırdınız."
+  notowner: "&7Bu market sahibi sen değilsin!"
+  notachestorcs: "&7Baktığınız blok zaten market değil."
+  maxShopLimitReached: "&7Market limitin dolu"
+  slimeFunBlockNotSupported: "&cÜzgünüm :(, ancak bu komutu bir slimefun bloğu ile çalıştıramazsınız / lütfen kalıp olarak normal bir blok kullanın"
+  buypriceGreaterThanSellRequired: "&cSatış Fiyatı Satma Fiyatından büyük olmalıdır!"
+  invalidShopItem: "&cMarket oluşturmya çalıştığınız item kullanılmıyor!"
+  shopTransferConfirm: "&eAre you sure you want to permanently transfer this shops ownership to %player%? [&2&l[✔]](Click to confirm transfer! run_command=/ecs settings transfer-ownership %player% -confirm)"
+  shopTransferred: "&aYou have successfully transferred this shop to %player%!"
+  buyPriceUpdated: "&7Satış  &7fiyatı güncellendi!"
+  sellPriceUpdated: "&7Alış &7fiyatı güncellendi!"
+checkprofits:
+  landing-menu:
+    - ''
+    - '   &7Satış Geliri: &7%sales% &7Adet ürün satıldı ve %income% %currency% &7kazandın.'
+    - '   &7Satın Alma Maliyeti: %purchases% &7Adet ürün satın alındı ve &7%cost% %currency% &7ödendi!'
+    - ''
+    - '   &7Toplam Kazanç: &e%total% %currency%'
+    - '   &7para: &e%balance% %currency%'
+    - ''
+    - '   &7Market özetini sıfırlamak için tıkla! [&c&l[X]](Tıkla ve temizle! run_command=/checkprofits clear)'
+    - ''
+  details-menu:
+    header:
+      - "&e----- &6Dükkan Karları Raporu &e-----"
+    content:
+      - " &e- &6%item%"
+      - "    &7Satış: [&e%sales%x %currency%%income%](Birim fiyat: %unit_income%) &7Satın alma: [&e%purchases%x %currency%%cost%](Birim fiyat: %unit_cost%)"
+    footer:
+      - "&6%button_previous%&7Sayfa %page%/%pages%&6%button_next%&7 | Bir sayfayı görüntülemek için \"[&6/cp p <page>] yazın(Sohbete yapıştırmak için tıklayın öneri_komutu=/cp p )&7\""
+    hover-extra:
+      button-next: "Sonraki"
+      button-previous: "Önceki"
+  confirm-clear:
+    - "&aTemizlemek istediğinize emin misiniz? [&2&l[✔]](Tıkla ve onayla! run_command=/checkprofits clear -confirm)"
+  confirm-clear-success: "&cTüm verilerinizi temizlediniz!"
+  join-notification:
+    - "&eMarket özetinizi görmek için tıklayın &7[&b&lTıkla&7](Tıkla ve görüntüle! run_command=/checkprofits)"
+shulkershop-dropped-lore:
+  - "&eShulkerbox Shop:"
+  - " &7Owner: &6%owner%"
+  - " &7Item: &6%item%"
+  - " &7Buy: &6%currency%%buy_price%"
+  - " &7Sell: &6%currency%%sell_price%"
+hologram:
+  shop-empty: "&cMarkette Stok Yok!"
+  shulkerbox-item: "&7%item% x&e%amount%"
+  shulkerbox-item-more: "&7and &e%amount% &7more!"
+  item-enchantment: "&b%enchantment% &e%level-roman%"
+  item-enchantment-more: "&7and &e%amount% &7more!"
+other:
+  update-notifications: ""
+  overflowing-gui-items-notification: "&c[&eEzChestShop&c] &eYou have overflowing items in your customized GUI! Make sure these items are in a large enough GUI: &c%overflow%"
+  overlapping-gui-items-notification: "&c[&eEzChestShop&c] &eYou have overlapping items in your customized GUI! Here's a list of the unusual overlapping items: &c%overlap%"
+#Çeviri bu kadardı :)
