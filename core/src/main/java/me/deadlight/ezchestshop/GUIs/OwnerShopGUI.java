@@ -127,6 +127,15 @@ public class OwnerShopGUI {
                 });
 
                 Utils.addItemIfEnoughSlots(gui, buyItemStack.getSlot(), buyItem);
+            } else if (key.startsWith("decorative-")) {
+
+                ContainerGuiItem decorativeItemStack = container.getItem(key).setName(Utils.colorify("&d"));
+
+                GuiItem buyItem = new GuiItem(decorativeItemStack.getItem(), event -> {
+                    event.setCancelled(true);
+                });
+
+                Utils.addItemIfEnoughSlots(gui, decorativeItemStack.getSlot(), buyItem);
             }
         });
 

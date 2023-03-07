@@ -397,7 +397,7 @@ public class GuiEditorGUI {
         // Set the Material and Amount:
         ItemStack material = cgi.getItem();
         // Set the item to a AIR placeholder if no item is available.
-        if (!material.hasItemMeta()) {
+        if (!material.hasItemMeta() && material.getType() == Material.AIR) {
             material = new ItemStack(Material.BLACK_STAINED_GLASS, 1);
             ItemMeta materialMeta = material.getItemMeta();
             materialMeta.setDisplayName(ChatColor.RED + "AIR");
@@ -511,16 +511,27 @@ public class GuiEditorGUI {
         FileConfiguration internalGuis = YamlConfiguration.loadConfiguration(
                 new InputStreamReader(EzChestShop.getPlugin().
                         getResource("guis.yml")));
-        EzChestShop.logDebug("Path: " + guiName + ".items");
-        EzChestShop.logDebug("internalGuis: " + (internalGuis.getConfigurationSection("gui." + guiName + ".items") == null));
-        EzChestShop.logDebug("externalGuis: " + (config.getConfigurationSection(guiName + ".items") == null));
-        List internal = new ArrayList<>(internalGuis.getConfigurationSection(guiName + ".items").getKeys(false).stream().collect(Collectors.toList()));
-        internal.removeAll(config.getConfigurationSection(guiName + ".items").getKeys(false));
+        List<String> internal = new ArrayList<>(internalGuis.getConfigurationSection(guiName + ".items").getKeys(false).stream().collect(Collectors.toList()));
+        List<String> external = config.getConfigurationSection(guiName + ".items").getKeys(false).stream().collect(Collectors.toList());
+        internal.removeAll(external);
+        internal.add("decorative");
 
         internal.forEach(key -> {
+            String mKey;
             String material = "chest";
             if (internalGuis.isString(guiName + ".items." + key + ".material")) {
                 material = internalGuis.getString(guiName + ".items." + key + ".material");
+            }
+            if (key == "decorative") {
+                material = "peony";
+                // update the key to have a unique ID
+                Integer max = external.stream()
+                        .filter(id -> id.startsWith("decorative"))
+                        .map(id -> Integer.parseInt(id.replace("decorative-", "")))
+                        .max(Integer::compareTo).orElse(0);
+                mKey = key + "-" + ++max;
+            } else {
+                mKey = key;
             }
             ItemStack item = new ItemStack(Material.matchMaterial(material));
             ItemMeta meta = item.getItemMeta();
@@ -528,11 +539,11 @@ public class GuiEditorGUI {
             item.setItemMeta(meta);
             gui.addItem(new GuiItem(item, event -> {
                 event.setCancelled(true);
-                config.set(guiName + ".items." + key + ".material", item.getType().toString().toLowerCase());
-                config.set(guiName + ".items." + key + ".count", 1);
-                config.set(guiName + ".items." + key + ".enchanted", false);
-                config.set(guiName + ".items." + key + ".row", row);
-                config.set(guiName + ".items." + key + ".column", column);
+                config.set(guiName + ".items." + mKey + ".material", item.getType().toString().toLowerCase());
+                config.set(guiName + ".items." + mKey + ".count", 1);
+                config.set(guiName + ".items." + mKey + ".enchanted", false);
+                config.set(guiName + ".items." + mKey + ".row", row);
+                config.set(guiName + ".items." + mKey + ".column", column);
 
                 try {
                     config.save(new File(EzChestShop.getPlugin().getDataFolder(), "guis.yml"));
