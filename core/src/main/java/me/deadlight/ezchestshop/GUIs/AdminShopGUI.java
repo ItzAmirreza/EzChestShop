@@ -59,8 +59,17 @@ public class AdminShopGUI {
         if (container.hasItem("shop-item")) {
             ItemStack guiMainItem = mainitem.clone();
             ItemMeta mainmeta = guiMainItem.getItemMeta();
-            List<String> mainItemLore = Arrays.asList(lm.initialBuyPrice(buyPrice), lm.initialSellPrice(sellPrice));
-            mainmeta.setLore(mainItemLore);
+            // Set the lore and keep the old one if available
+            if (mainmeta.hasLore()) {
+                List<String> prevLore = mainmeta.getLore();
+                prevLore.add("");
+                List<String> mainItemLore = Arrays.asList(lm.initialBuyPrice(buyPrice), lm.initialSellPrice(sellPrice));
+                prevLore.addAll(mainItemLore);
+                mainmeta.setLore(prevLore);
+            } else {
+                List<String> mainItemLore = Arrays.asList(lm.initialBuyPrice(buyPrice), lm.initialSellPrice(sellPrice));
+                mainmeta.setLore(mainItemLore);
+            }
             guiMainItem.setItemMeta(mainmeta);
             GuiItem guiitem = new GuiItem(guiMainItem, event -> {
                 event.setCancelled(true);

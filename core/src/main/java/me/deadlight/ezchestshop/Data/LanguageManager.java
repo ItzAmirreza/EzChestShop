@@ -949,7 +949,10 @@ public class LanguageManager {
         compb.append(TextComponent.fromLegacyText(Utils.colorify(messages[0])));
         compb.append(TextComponent.fromLegacyText(requiredOverflowRows.entrySet().stream().map(entry ->
                 Utils.colorify(Utils.capitalizeFirstSplit(entry.getKey().toString()) + ">= " + entry.getValue())).collect(Collectors.joining(", "))));
-        compb.append(TextComponent.fromLegacyText(Utils.colorify(messages[1])));
+
+        if (messages.length > 1) {
+            compb.append(TextComponent.fromLegacyText(Utils.colorify(messages[1])));
+        }
 
         return compb.create();
     }
@@ -968,7 +971,9 @@ public class LanguageManager {
 //        compb.append(TextComponent.fromLegacyText("\n" + overlappingItems.entrySet().stream().map(entry ->
 //                Utils.colorify(Utils.capitalizeFirstSplit(entry.getKey().toString()) + ": " + entry.getValue().stream().map(list -> list.stream().collect(Collectors.joining(", "))).collect(Collectors.joining(" and "))))
 //                .collect(Collectors.joining(",\n"))));
-        compb.append(TextComponent.fromLegacyText(Utils.colorify(messages[1])));
+        if (messages.length > 1) {
+            compb.append(TextComponent.fromLegacyText(Utils.colorify(messages[1])));
+        }
 
         return compb.create();
     }

@@ -79,7 +79,7 @@ public class GuiEditorGUI {
         FileConfiguration config = GuiData.getConfig();
         ContainerGui container = GuiData.getViaType(type);
 
-        Gui gui = Gui.gui().rows(4).title(Component.text(ChatColor.AQUA + Utils.capitalizeFirstSplit(type.toString()) + " Settings")).create();
+        Gui gui = Gui.gui().rows(4).title(Component.text(ChatColor.AQUA + Utils.capitalizeFirstSplit(type.toString()) + "Settings")).create();
         gui.setDefaultClickAction(event -> event.setCancelled(true));
         gui.getFiller().fill(ContainerGui.getDefaultBackground());
 
@@ -190,7 +190,7 @@ public class GuiEditorGUI {
         FileConfiguration config = GuiData.getConfig();
         ContainerGui container = GuiData.getViaType(type);
 
-        Gui gui = Gui.gui().rows(container.getRows()).title(Component.text(ChatColor.AQUA + Utils.capitalizeFirstSplit(type.toString()) + " Editor")).create();
+        Gui gui = Gui.gui().rows(container.getRows()).title(Component.text(ChatColor.AQUA + Utils.capitalizeFirstSplit(type.toString()) + "Editor")).create();
         gui.setDefaultClickAction(event -> event.setCancelled(true));
         GuiItem filler = container.getBackground();
         ItemStack fillerItem = new ItemStack(filler.getItemStack().clone());
@@ -203,8 +203,8 @@ public class GuiEditorGUI {
         ItemMeta fillerMeta = fillerItem.getItemMeta();
         fillerMeta.setLore(Arrays.asList(ChatColor.GRAY + "- Swap Hand click (F) to add", ChatColor.GRAY + "  a new (valid) item."));
         fillerItem.setItemMeta(fillerMeta);
-        filler.setItemStack(fillerItem);
-        gui.getFiller().fill(filler);
+        GuiItem fillerModified = new GuiItem(fillerItem, event -> event.setCancelled(true));
+        gui.getFiller().fill(fillerModified);
 
         HashMap<Integer, List<String>> sameSlotItems = new HashMap<>();
 
@@ -360,7 +360,7 @@ public class GuiEditorGUI {
         FileConfiguration config = GuiData.getConfig();
         ContainerGui container = GuiData.getViaType(type);
 
-        Gui gui = Gui.gui().rows(3).title(Component.text(ChatColor.AQUA + Utils.capitalizeFirstSplit(type.toString()) + " Item Editor")).create();
+        Gui gui = Gui.gui().rows(3).title(Component.text(ChatColor.AQUA + Utils.capitalizeFirstSplit(type.toString()) + "Item Editor")).create();
         gui.getFiller().fill(ContainerGui.getDefaultBackground());
 
         gui.setDefaultClickAction(event -> {
@@ -396,14 +396,18 @@ public class GuiEditorGUI {
 
         // Set the Material and Amount:
         ItemStack material = cgi.getItem();
+        // Set the item to a AIR placeholder if no item is available.
         if (!material.hasItemMeta()) {
             material = new ItemStack(Material.BLACK_STAINED_GLASS, 1);
             ItemMeta materialMeta = material.getItemMeta();
             materialMeta.setDisplayName(ChatColor.RED + "AIR");
             material.setItemMeta(materialMeta);
+        } else {
+            ItemMeta materialMeta = material.getItemMeta();
+            materialMeta.setDisplayName(ChatColor.GOLD + "Material & Amount");
+            material.setItemMeta(materialMeta);
         }
         ItemMeta materialMeta = material.getItemMeta();
-        materialMeta.setDisplayName(ChatColor.GOLD + "Material & Amount");
         List<String> materialLore = new ArrayList<>();
         materialLore.add(ChatColor.GRAY + "Material: " + ChatColor.YELLOW + material.getType().toString());
         materialLore.add(ChatColor.GRAY + "Amount: " + ChatColor.YELLOW + material.getAmount());
@@ -492,7 +496,7 @@ public class GuiEditorGUI {
         FileConfiguration config = GuiData.getConfig();
         ContainerGui container = GuiData.getViaType(type);
 
-        PaginatedGui gui = Gui.paginated().rows(3).title(Component.text(ChatColor.AQUA + Utils.capitalizeFirstSplit(type.toString()) + " Item Adder")).create();
+        PaginatedGui gui = Gui.paginated().rows(3).title(Component.text(ChatColor.AQUA + Utils.capitalizeFirstSplit(type.toString()) + "Item Adder")).create();
         gui.getFiller().fillBottom(ContainerGui.getDefaultBackground());
 
         gui.setDefaultClickAction(event -> {
@@ -514,7 +518,11 @@ public class GuiEditorGUI {
         internal.removeAll(config.getConfigurationSection(guiName + ".items").getKeys(false));
 
         internal.forEach(key -> {
-            ItemStack item = new ItemStack(Material.matchMaterial(internalGuis.getString(guiName + ".items." + key + ".material")));
+            String material = "chest";
+            if (internalGuis.isString(guiName + ".items." + key + ".material")) {
+                material = internalGuis.getString(guiName + ".items." + key + ".material");
+            }
+            ItemStack item = new ItemStack(Material.matchMaterial(material));
             ItemMeta meta = item.getItemMeta();
             meta.setDisplayName(ChatColor.RED + Utils.capitalizeFirstSplit(key.toString().replace("-", "_")));
             item.setItemMeta(meta);
