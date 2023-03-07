@@ -117,7 +117,7 @@ public class GuiEditorGUI {
         ItemStack backgroundItem = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
         ItemMeta backgroundItemMeta = backgroundItem.getItemMeta();
         if (container.getBackground() != null) {backgroundItemMeta.setDisplayName(ChatColor.YELLOW + "Background: " + ChatColor.WHITE +
-                (ContainerGui.getDefaultBackground().getItemStack().isSimilar(container.getBackground().getItemStack()) ? "Default" : "Custom"));
+                (config.isString(guiName + ".background") && config.getString(guiName + ".background").equals("default") ? "Default" : "Custom"));
         } else {
             backgroundItemMeta.setDisplayName(ChatColor.YELLOW + "Background: " + ChatColor.WHITE + "None");
         }
@@ -192,8 +192,14 @@ public class GuiEditorGUI {
 
         Gui gui = Gui.gui().rows(container.getRows()).title(Component.text(ChatColor.AQUA + Utils.capitalizeFirstSplit(type.toString()) + " Editor")).create();
         gui.setDefaultClickAction(event -> event.setCancelled(true));
-        GuiItem filler = ContainerGui.getDefaultBackground();
-        ItemStack fillerItem = filler.getItemStack();
+        GuiItem filler = container.getBackground();
+        ItemStack fillerItem = new ItemStack(filler.getItemStack().clone());
+        if (fillerItem.getType() == Material.AIR) {
+            fillerItem = new ItemStack(Material.BLACK_STAINED_GLASS, 1);
+            ItemMeta materialMeta = fillerItem.getItemMeta();
+            materialMeta.setDisplayName(ChatColor.RED + "AIR");
+            fillerItem.setItemMeta(materialMeta);
+        }
         ItemMeta fillerMeta = fillerItem.getItemMeta();
         fillerMeta.setLore(Arrays.asList(ChatColor.GRAY + "- Swap Hand click (F) to add", ChatColor.GRAY + "  a new (valid) item."));
         fillerItem.setItemMeta(fillerMeta);
@@ -260,7 +266,7 @@ public class GuiEditorGUI {
                     sameSlotItems.put(cgi.getSlot(),
                             new ArrayList<String>(Arrays.asList(key)));
                 }
-                ItemStack item = cgi.getItem();
+                ItemStack item = cgi.getItem().clone();
                 ItemMeta meta = item.getItemMeta();
                 meta.setDisplayName(ChatColor.YELLOW +Utils.capitalizeFirstSplit(key.replace("-", "_")));
                 meta.setLore(Arrays.asList(ChatColor.GRAY + "- Left click to modify", ChatColor.GRAY + "  this item!",
@@ -298,7 +304,7 @@ public class GuiEditorGUI {
                 }
                 int index = guiEditorSameSlots.get(player).get(slot);
                 String key = sameSlotItems.get(slot).get(index);
-                ItemStack item = container.getItem(sameSlotItems.get(slot).get(index)).getItem();
+                ItemStack item = container.getItem(sameSlotItems.get(slot).get(index)).getItem().clone();
                 ItemMeta meta = item.getItemMeta();
                 meta.setDisplayName(ChatColor.YELLOW +Utils.capitalizeFirstSplit(key.replace("-", "_")));
                 List<String> lore = sameSlotItems.get(slot).stream().map(s -> {
@@ -363,8 +369,14 @@ public class GuiEditorGUI {
                 if (guiItemSelector.containsKey(player)) {
                     ItemStack clicked = event.getView().getBottomInventory().getItem(event.getSlot()).clone();
                     guiItemSelector.remove(player);
-                    config.set(guiName + ".items." + item + ".material", clicked.getType().toString().toLowerCase());
-                    config.set(guiName + ".items." + item + ".count", clicked.getAmount());
+                    if (item.equals("background")) {
+                        config.set(guiName + "." + item + ".material", clicked.getType().toString().toLowerCase());
+                        config.set(guiName + "." + item + ".count", clicked.getAmount());
+                        container.setBackground(new ItemStack(clicked.getType(), clicked.getAmount()));
+                    } else {
+                        config.set(guiName + ".items." + item + ".material", clicked.getType().toString().toLowerCase());
+                        config.set(guiName + ".items." + item + ".count", clicked.getAmount());
+                    }
                     try {
                         config.save(new File(EzChestShop.getPlugin().getDataFolder(), "guis.yml"));
                         GuiData.loadGuiData();
@@ -384,6 +396,12 @@ public class GuiEditorGUI {
 
         // Set the Material and Amount:
         ItemStack material = cgi.getItem();
+        if (!material.hasItemMeta()) {
+            material = new ItemStack(Material.BLACK_STAINED_GLASS, 1);
+            ItemMeta materialMeta = material.getItemMeta();
+            materialMeta.setDisplayName(ChatColor.RED + "AIR");
+            material.setItemMeta(materialMeta);
+        }
         ItemMeta materialMeta = material.getItemMeta();
         materialMeta.setDisplayName(ChatColor.GOLD + "Material & Amount");
         List<String> materialLore = new ArrayList<>();
@@ -394,11 +412,34 @@ public class GuiEditorGUI {
         } else {
             materialLore.add(ChatColor.GREEN + "Click to select!");
         }
+        if (item.equals("background")) {
+            materialLore.add(ChatColor.GRAY + "Press Q to switch to and");
+            materialLore.add(ChatColor.GRAY + "between the default/air.");
+        }
         materialMeta.setLore(materialLore);
         material.setItemMeta(materialMeta);
+
         gui.setItem(2, 4, new GuiItem(material, event -> {
             event.setCancelled(true);
-            guiItemSelector.put(player, true);
+            if (event.getClick() == ClickType.DROP) {
+                // First drop click resets to Default type
+                // Second drop click transforms the item to air. These 2 can be alternated too.
+                if (config.isString(guiName + "." + item) && config.getString(guiName + "." + item).equals("default")) {
+                    config.set(guiName + "." + item + ".material", "air");
+                    config.set(guiName + "." + item + ".count", 0);
+                } else {
+                    config.set(guiName + "." + item, "default");
+                }
+                try {
+                    config.save(new File(EzChestShop.getPlugin().getDataFolder(), "guis.yml"));
+                    GuiData.loadGuiData();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                showItemEditor(player, type, item);
+            } else {
+                guiItemSelector.put(player, true);
+            }
         }));
 
         // Set is Enchanted:
@@ -413,7 +454,12 @@ public class GuiEditorGUI {
         enchanted.setItemMeta(enchantedMeta);
         gui.setItem(2, 6, new GuiItem(enchanted, event -> {
             event.setCancelled(true);
-            config.set(guiName + ".items." + item + ".enchanted", !isEnchanted);
+            if (item.equals("background")) {
+                config.set(guiName + "." + item + ".enchanted", !isEnchanted);
+                container.setBackground(ContainerGuiItem.fromPath(config, guiName + "." + item).getItem());
+            } else {
+                config.set(guiName + ".items." + item + ".enchanted", !isEnchanted);
+            }
             try {
                 config.save(new File(EzChestShop.getPlugin().getDataFolder(), "guis.yml"));
                 GuiData.loadGuiData();
@@ -430,7 +476,11 @@ public class GuiEditorGUI {
         back.setItemMeta(backMeta);
         gui.setItem(3, 1, new GuiItem(back, event -> {
             event.setCancelled(true);
-            showGuiInEditor(player, type);
+            if (item.equals("background")) {
+                showGuiSettingsEditor(player, type);
+            } else {
+                showGuiInEditor(player, type);
+            }
         }));
 
         gui.open(player);

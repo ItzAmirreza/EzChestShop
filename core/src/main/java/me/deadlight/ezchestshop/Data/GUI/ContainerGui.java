@@ -22,7 +22,9 @@ public class ContainerGui {
             if (config.isString(path + ".background") && config.getString(path + ".background").equalsIgnoreCase("default")) {
                 this.background = getDefaultBackground();
             } else {
-                this.background = getDefaultBackground();
+                this.background =  new GuiItem(ContainerGuiItem.fromPath(config, path + ".background").getItem(), event -> {
+                    event.setCancelled(true);
+                });
             }
         }
         // Convert the item stream to a Hashmap using the key as key and
@@ -43,6 +45,9 @@ public class ContainerGui {
     }
 
     public ContainerGuiItem getItem(String key) {
+        if (key.equals("background")) {
+            return new ContainerGuiItem("background", this.background.getItemStack(), -1, -1);
+        }
         return items.get(key);
     }
 
@@ -58,6 +63,15 @@ public class ContainerGui {
         return background;
     }
 
+    public void setBackground(ItemStack item) {
+        if (item.hasItemMeta()) {
+            ItemMeta itemmeta = item.getItemMeta();
+            itemmeta.setDisplayName(Utils.colorify("&d"));
+            item.setItemMeta(itemmeta);
+        }
+        this.background = new GuiItem(item, event -> event.setCancelled(true));
+    }
+
     public int getRows() {
         return rows;
     }
@@ -67,8 +81,6 @@ public class ContainerGui {
         ItemMeta glassmeta = glassis.getItemMeta();
         glassmeta.setDisplayName(Utils.colorify("&d"));
         glassis.setItemMeta(glassmeta);
-        return new GuiItem(glassis, event -> {
-            event.setCancelled(true);
-        });
+        return new GuiItem(glassis, event -> event.setCancelled(true));
     }
 }
