@@ -4,7 +4,6 @@ import dev.triumphteam.gui.guis.GuiItem;
 import dev.triumphteam.gui.guis.PaginatedGui;
 import me.deadlight.ezchestshop.Data.Config;
 import me.deadlight.ezchestshop.Data.DatabaseManager;
-import me.deadlight.ezchestshop.Data.MongoDB.MongoDB;
 import me.deadlight.ezchestshop.Data.MySQL.MySQL;
 import me.deadlight.ezchestshop.Data.SQLite.SQLite;
 import me.deadlight.ezchestshop.Data.ShopContainer;
@@ -743,8 +742,8 @@ public class Utils {
             // adminshop, rotation
             List<String> emptyList = new ArrayList<>();
             List<String> keys = Arrays.asList("owner", "buy", "sell", "msgtoggle", "dbuy", "dsell", "admins",
-                    "shareincome", "trans", "adminshop", "rotation", "item");
-            List<String> strings = Arrays.asList("owner", "admins", "trans", "rotation", "item");
+                    "shareincome", "adminshop", "rotation", "item");
+            List<String> strings = Arrays.asList("owner", "admins", "rotation", "item");
             List<String> integers = Arrays.asList("msgtoggle", "dbuy", "dsell", "shareincome", "adminshop");
             List<String> doubles = Arrays.asList("buy", "sell");
             for (String key : keys) {
@@ -780,7 +779,7 @@ public class Utils {
                 data.remove(new NamespacedKey(EzChestShop.getPlugin(), "dsell"));
                 data.remove(new NamespacedKey(EzChestShop.getPlugin(), "admins"));
                 data.remove(new NamespacedKey(EzChestShop.getPlugin(), "shareincome"));
-                data.remove(new NamespacedKey(EzChestShop.getPlugin(), "trans"));
+//                data.remove(new NamespacedKey(EzChestShop.getPlugin(), "trans"));
                 data.remove(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"));
                 data.remove(new NamespacedKey(EzChestShop.getPlugin(), "rotation"));
                 state.update();
