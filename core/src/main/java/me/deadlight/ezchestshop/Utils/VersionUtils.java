@@ -24,8 +24,8 @@ public abstract class VersionUtils {
 
     abstract void openMenu(SignMenuFactory.Menu menu, Player player);
 
-    public abstract void injectConnection(Player player);
+    public abstract void injectConnection(Player player) throws IllegalAccessException, NoSuchFieldException;
 
-    public abstract void ejectConnection(Player player);
+    public abstract void ejectConnection(Player player) throws NoSuchFieldException, IllegalAccessException;
 
 }

@@ -7,7 +7,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 public class PlayerLeavingListener implements Listener {
 
     @EventHandler
-    public void onLeave(PlayerQuitEvent event) {
+    public void onLeave(PlayerQuitEvent event) throws NoSuchFieldException, IllegalAccessException {
         Utils.versionUtils.ejectConnection(event.getPlayer());
         if (ChatListener.chatmap.containsKey(event.getPlayer().getUniqueId())) {
             ChatListener.chatmap.remove(event.getPlayer().getUniqueId());

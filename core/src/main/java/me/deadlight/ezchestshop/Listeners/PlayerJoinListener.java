@@ -15,7 +15,7 @@ import java.util.UUID;
 public class PlayerJoinListener implements Listener {
 
     @EventHandler
-    public void onJoin(PlayerJoinEvent event) {
+    public void onJoin(PlayerJoinEvent event) throws NoSuchFieldException, IllegalAccessException {
         Player player = event.getPlayer();
         Utils.versionUtils.injectConnection(player);
         /**
