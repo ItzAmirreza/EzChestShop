@@ -18,7 +18,6 @@ import org.bukkit.craftbukkit.v1_19_R3.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.v1_19_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
@@ -70,11 +69,10 @@ public class v1_19_R3 extends VersionUtils {
         CraftWorld craftWorld = (CraftWorld) location.getWorld();
         World world = craftWorld.getHandle();
         //------------------------------------------------------
-        Location loc = location.clone();
 
-        EntityArmorStand armorstand = new EntityArmorStand(world, location.getX(), loc.subtract(0, 0.8, 0).getY(), location.getZ());
+        EntityArmorStand armorstand = new EntityArmorStand(world, location.getX(), location.getY(), location.getZ());
         armorstand.j(true); //invisible
-        armorstand.t(true); //Marker
+        armorstand.u(true); //Marker
         armorstand.b(IChatBaseComponent.a(line)); //set custom name
         armorstand.n(true); //make custom name visible
         armorstand.e(true); //no gravity
