@@ -57,7 +57,7 @@ shops:
     chests: true
     trapped-chests: true
     barrels: true
-    shulkers: true
+    shulkers: false
   display:
     # define how the plugin should format displayed numbers, use: https://docs.oracle.com/en/java/javase/14/docs/api/java.base/java/text/DecimalFormat.html
     number-format:
@@ -129,4 +129,3 @@ other:
   # When certain items are overlapping/overflowing in the gui configuration, the plugin will notify ops to take actions.
   # If you don't temper with the guis, you should never receive a notification and gui updates will happen automatically.
   notify-op-of-overlapping-gui-items: true
-  notify-op-of-overflowing-gui-items: true

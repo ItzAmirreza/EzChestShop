@@ -11,6 +11,7 @@ import me.deadlight.ezchestshop.Listeners.*;
 import me.deadlight.ezchestshop.Tasks.LoadedChunksTask;
 import me.deadlight.ezchestshop.Utils.*;
 import me.deadlight.ezchestshop.Utils.Exceptions.CommandFetchException;
+import me.deadlight.ezchestshop.Utils.Objects.EzShop;
 import me.deadlight.ezchestshop.Utils.WorldGuard.FlagRegistry;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
@@ -19,6 +20,10 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Callable;
 
 public final class EzChestShop extends JavaPlugin {
 
@@ -100,6 +105,145 @@ public final class EzChestShop extends JavaPlugin {
         registerTabCompleters();
         // metrics
         Metrics metrics = new Metrics(this, 10756);
+        metrics.addCustomChart(new Metrics.SimplePie("database_type", () -> {
+            return Config.database_type.toString();
+        }));
+        metrics.addCustomChart(new Metrics.SimplePie("update_notification", () -> {
+            return String.valueOf(Config.notify_updates);
+        }));
+        metrics.addCustomChart(new Metrics.SimplePie("language", () -> {
+            return Config.language;
+        }));
+
+        metrics.addCustomChart(new Metrics.SingleLineChart("total_shops", new Callable<Integer>() {
+            @Override
+            public Integer call() throws Exception {
+                // (This is useless as there is already a player chart by default.)
+                return ShopContainer.getShops().size();
+            }
+        }));
+        metrics.addCustomChart(new Metrics.AdvancedPie("materials_used", new Callable<Map<String, Integer>>() {
+            @Override
+            public Map<String, Integer> call() throws Exception {
+                Map<String, Integer> valueMap = new HashMap<>();
+               for (EzShop shop : ShopContainer.getShops()) {
+                        String itemMaterial = shop.getShopItem().getType().toString();
+                        if (valueMap.containsKey(itemMaterial)) {
+                            valueMap.put(itemMaterial, valueMap.get(itemMaterial) + 1);
+                        } else {
+                            valueMap.put(itemMaterial, 1);
+                        }
+                    }
+                return valueMap;
+            }
+
+        }));
+        metrics.addCustomChart(new Metrics.AdvancedPie("rotation_used", new Callable<Map<String, Integer>>() {
+            @Override
+            public Map<String, Integer> call() throws Exception {
+                Map<String, Integer> valueMap = new HashMap<>();
+                for (EzShop shop : ShopContainer.getShops()) {
+                    String rotation = shop.getSettings().getRotation();
+                    if (valueMap.containsKey(rotation)) {
+                        valueMap.put(rotation, valueMap.get(rotation) + 1);
+                    } else {
+                        valueMap.put(rotation, 1);
+                    }
+                }
+
+                return valueMap;
+            }
+
+        }));
+        metrics.addCustomChart(new Metrics.AdvancedPie("is_admin_shop", new Callable<Map<String, Integer>>() {
+            @Override
+            public Map<String, Integer> call() throws Exception {
+                Map<String, Integer> valueMap = new HashMap<>();
+                for (EzShop shop : ShopContainer.getShops()) {
+                    boolean adminshop = shop.getSettings().isAdminshop();
+                    if (valueMap.containsKey(String.valueOf(adminshop))) {
+                        valueMap.put(String.valueOf(adminshop), valueMap.get(String.valueOf(adminshop)) + 1);
+                    } else {
+                        valueMap.put(String.valueOf(adminshop), 1);
+                    }
+                }
+
+                return valueMap;
+            }
+
+        }));
+
+        metrics.addCustomChart(new Metrics.AdvancedPie("disabled_buy_count", new Callable<Map<String, Integer>>() {
+            @Override
+            public Map<String, Integer> call() throws Exception {
+                Map<String, Integer> valueMap = new HashMap<>();
+                for (EzShop shop : ShopContainer.getShops()) {
+                    boolean disabledBuy = shop.getSettings().isDbuy();
+                    if (valueMap.containsKey(String.valueOf(disabledBuy))) {
+                        valueMap.put(String.valueOf(disabledBuy), valueMap.get(String.valueOf(disabledBuy)) + 1);
+                    } else {
+                        valueMap.put(String.valueOf(disabledBuy), 1);
+                    }
+                }
+
+                return valueMap;
+            }
+
+        }));
+
+        metrics.addCustomChart(new Metrics.AdvancedPie("disabled_sell_count", new Callable<Map<String, Integer>>() {
+            @Override
+            public Map<String, Integer> call() throws Exception {
+                Map<String, Integer> valueMap = new HashMap<>();
+                for (EzShop shop : ShopContainer.getShops()) {
+                    boolean disabledSell = shop.getSettings().isDsell();
+                    if (valueMap.containsKey(String.valueOf(disabledSell))) {
+                        valueMap.put(String.valueOf(disabledSell), valueMap.get(String.valueOf(disabledSell)) + 1);
+                    } else {
+                        valueMap.put(String.valueOf(disabledSell), 1);
+                    }
+                }
+
+                return valueMap;
+            }
+
+        }));
+
+        metrics.addCustomChart(new Metrics.AdvancedPie("message_toggle_count", new Callable<Map<String, Integer>>() {
+            @Override
+            public Map<String, Integer> call() throws Exception {
+                Map<String, Integer> valueMap = new HashMap<>();
+                for (EzShop shop : ShopContainer.getShops()) {
+                    boolean messageToggle = shop.getSettings().isMsgtoggle();
+                    if (valueMap.containsKey(String.valueOf(messageToggle))) {
+                        valueMap.put(String.valueOf(messageToggle), valueMap.get(String.valueOf(messageToggle)) + 1);
+                    } else {
+                        valueMap.put(String.valueOf(messageToggle), 1);
+                    }
+                }
+
+                return valueMap;
+            }
+
+        }));
+
+        metrics.addCustomChart(new Metrics.AdvancedPie("shared_income_count", new Callable<Map<String, Integer>>() {
+            @Override
+            public Map<String, Integer> call() throws Exception {
+                Map<String, Integer> valueMap = new HashMap<>();
+                for (EzShop shop : ShopContainer.getShops()) {
+                    boolean sharedIncome = shop.getSettings().isShareincome();
+                    if (valueMap.containsKey(String.valueOf(sharedIncome))) {
+                        valueMap.put(String.valueOf(sharedIncome), valueMap.get(String.valueOf(sharedIncome)) + 1);
+                    } else {
+                        valueMap.put(String.valueOf(sharedIncome), 1);
+                    }
+                }
+
+                return valueMap;
+            }
+
+        }));
 
         if (getServer().getPluginManager().getPlugin("Slimefun") != null) {
             slimefun = true;
