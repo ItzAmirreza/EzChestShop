@@ -99,6 +99,11 @@ public class v1_14_R1 extends VersionUtils {
         PacketPlayOutEntityMetadata metaPacket = new PacketPlayOutEntityMetadata(ID, floatingItem.getDataWatcher(), true);
         playerConnection.sendPacket(metaPacket);
 
+        //sending a velocity packet
+        floatingItem.setMot(0, 0, 0);
+        PacketPlayOutEntityVelocity velocityPacket = new PacketPlayOutEntityVelocity(floatingItem);
+        playerConnection.sendPacket(velocityPacket);
+
     }
 
     @Override

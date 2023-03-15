@@ -8,6 +8,7 @@ softdepend:
   - WorldGuard
   - Slimefun #in case just to load after the Slimefun
   - Multiverse-Core #preventing null worlds
+  - CMI
 authors: [Dead_Light, ElitoGame]
 description: ${project.description}
 commands:
