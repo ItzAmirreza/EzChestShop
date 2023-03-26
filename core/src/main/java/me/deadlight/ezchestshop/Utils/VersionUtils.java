@@ -27,5 +27,4 @@ public abstract class VersionUtils {
     public abstract void injectConnection(Player player) throws IllegalAccessException, NoSuchFieldException;
 
     public abstract void ejectConnection(Player player) throws NoSuchFieldException, IllegalAccessException;
-
 }

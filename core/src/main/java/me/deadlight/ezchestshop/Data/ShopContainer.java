@@ -208,7 +208,6 @@ public class ShopContainer {
 
         LanguageManager lm = new LanguageManager();
         //check for money
-
         if (Utils.getBlockInventory(containerBlock).containsAtLeast(thatItem , count)) {
 
             if (ifHasMoney(Bukkit.getOfflinePlayer(player.getUniqueId()), price)) {

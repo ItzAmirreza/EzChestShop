@@ -75,11 +75,11 @@ public class PlayerCloseToChestListener implements Listener {
                                 lastContainermap.put(player.getUniqueId(), target);
                                 PersistentDataContainer container = ((TileState) target.getState())
                                         .getPersistentDataContainer();
-                                if (Utils.validateContainerValues(container, ShopContainer.getShop(loc))) {
-                                    EzChestShop.logConsole(
-                                            "[ECS] Something unexpected happened with this container's data, so this shop has been removed.");
-                                    return;
-                                }
+//                                if (Utils.validateContainerValues(container, ShopContainer.getShop(loc))) {
+//                                    EzChestShop.logConsole(
+//                                            "[ECS] Something unexpected happened with this container's data, so this shop has been removed.");
+//                                    return;
+//                                }
                                 Location holoLoc = getHoloLoc(target);
                                 ItemStack thatItem = Utils
                                         .decodeItem(container.get(new NamespacedKey(EzChestShop.getPlugin(),
@@ -161,12 +161,12 @@ public class PlayerCloseToChestListener implements Listener {
                                 if (Utils.isApplicableContainer(target)) {
                                     PersistentDataContainer container = ((TileState) target.getState())
                                             .getPersistentDataContainer();
-                                    if (Utils.validateContainerValues(container,
-                                            ShopContainer.getShop(target.getLocation()))) {
-                                        EzChestShop.logConsole(
-                                                "[ECS] Something unexpected happened with this container's data, so this shop has been removed.");
-                                        return;
-                                    }
+//                                    if (Utils.validateContainerValues(container,
+//                                            ShopContainer.getShop(target.getLocation()))) {
+//                                        EzChestShop.logConsole(
+//                                                "[ECS] Something unexpected happened with this container's data, so this shop has been removed.");
+//                                        return;
+//                                    }
                                     Location holoLoc = getHoloLoc(target);
 
                                     ItemStack thatItem = Utils
@@ -269,11 +269,11 @@ public class PlayerCloseToChestListener implements Listener {
                 hideHologramText(player, loc, true);
                 PersistentDataContainer container = ((TileState) target.getState())
                         .getPersistentDataContainer();
-                if (Utils.validateContainerValues(container, ShopContainer.getShop(loc))) {
-                    EzChestShop.logConsole(
-                            "[ECS] Something unexpected happened with this container's data, so this shop has been removed.");
-                    return;
-                }
+//                if (Utils.validateContainerValues(container, ShopContainer.getShop(loc))) {
+//                    EzChestShop.logConsole(
+//                            "[ECS] Something unexpected happened with this container's data, so this shop has been removed.");
+//                    return;
+//                }
                 Location holoLoc = getHoloLoc(target);
                 ItemStack thatItem = Utils
                         .decodeItem(container.get(new NamespacedKey(EzChestShop.getPlugin(),

@@ -66,11 +66,11 @@ public class PlayerLookingAtChestShop implements Listener {
                         }
 
                         //show the hologram
-                        if (Utils.validateContainerValues(rightone, ShopContainer.getShop(target.getLocation()))) {
-                            EzChestShop.logConsole(
-                                    "[ECS] Something unexpected happened with this container's data, so this shop has been removed.");
-                            return;
-                        }
+//                        if (Utils.validateContainerValues(rightone, ShopContainer.getShop(target.getLocation()))) {
+//                            EzChestShop.logConsole(
+//                                    "[ECS] Something unexpected happened with this container's data, so this shop has been removed.");
+//                            return;
+//                        }
                         ItemStack thatItem = Utils.decodeItem(rightone.get(new NamespacedKey(EzChestShop.getPlugin(), "item"), PersistentDataType.STRING));
                         double buy = rightone.get(new NamespacedKey(EzChestShop.getPlugin(), "buy"), PersistentDataType.DOUBLE);
                         double sell = rightone.get(new NamespacedKey(EzChestShop.getPlugin(), "sell"), PersistentDataType.DOUBLE);
@@ -100,11 +100,11 @@ public class PlayerLookingAtChestShop implements Listener {
                     PersistentDataContainer container = ((TileState)target.getState()).getPersistentDataContainer();
                     if (container.has(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING)) {
 
-                        if (Utils.validateContainerValues(container, ShopContainer.getShop(target.getLocation()))) {
-                            EzChestShop.logConsole(
-                                    "[ECS] Something unexpected happened with this container's data, so this shop has been removed.");
-                            return;
-                        }
+//                        if (Utils.validateContainerValues(container, ShopContainer.getShop(target.getLocation()))) {
+//                            EzChestShop.logConsole(
+//                                    "[ECS] Something unexpected happened with this container's data, so this shop has been removed.");
+//                            return;
+//                        }
                         //show the hologram
                         ItemStack thatItem = Utils.decodeItem(container.get(new NamespacedKey(EzChestShop.getPlugin(), "item"), PersistentDataType.STRING));
                         double buy = container.get(new NamespacedKey(EzChestShop.getPlugin(), "buy"), PersistentDataType.DOUBLE);
