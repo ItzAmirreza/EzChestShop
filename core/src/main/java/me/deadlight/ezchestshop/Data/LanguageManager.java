@@ -884,7 +884,7 @@ public class LanguageManager {
         return Utils.colorify(getString("hologram.shulkerbox-item-more")).replace("%amount%", "" + amount);
     }
     public String cannotDestroyShop() {
-        return Utils.colorify(getString("chat.protection.cannotDestroyShop"));
+        return Utils.colorify(getString("settings.chat.protection.cannotDestroyShop"));
     }
     public String itemEnchantHologram(String enchant, int level) {
         String msg = Utils.colorify(getString("hologram.item-enchantment")).replace("%enchantment%", enchant).replace("%level%", "" + level);
