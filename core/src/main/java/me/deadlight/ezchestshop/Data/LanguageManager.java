@@ -32,7 +32,7 @@ public class LanguageManager {
     private static FileConfiguration languageConfig;
     private static Economy econ = EzChestShop.getEconomy();
 
-    private static List<String> supported_locales = Arrays.asList("Locale_EN", "Locale_DE", "Locale_ES", "Locale_CN", "Locale_FA", "Locale_PL", "Locale_TR");
+    private static List<String> supported_locales = Arrays.asList("Locale_EN", "Locale_DE", "Locale_ES", "Locale_CN", "Locale_FA", "Locale_PL", "Locale_TR", "Locale_UA");
     private static List<String> found_locales = new ArrayList<>();
 
     public static List<String> getSupportedLanguages() {
@@ -882,6 +882,9 @@ public class LanguageManager {
     }
     public String shulkerboxItemHologramMore(int amount) {
         return Utils.colorify(getString("hologram.shulkerbox-item-more")).replace("%amount%", "" + amount);
+    }
+    public String cannotDestroyShop() {
+        return Utils.colorify(getString("chat.protection.cannotDestroyShop"));
     }
     public String itemEnchantHologram(String enchant, int level) {
         String msg = Utils.colorify(getString("hologram.item-enchantment")).replace("%enchantment%", enchant).replace("%level%", "" + level);

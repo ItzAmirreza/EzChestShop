@@ -4,6 +4,7 @@ import me.deadlight.ezchestshop.Data.Config;
 import me.deadlight.ezchestshop.Data.LanguageManager;
 import me.deadlight.ezchestshop.Data.ShopContainer;
 import me.deadlight.ezchestshop.EzChestShop;
+import me.deadlight.ezchestshop.Utils.Objects.EzShop;
 import me.deadlight.ezchestshop.Utils.Utils;
 import me.deadlight.ezchestshop.Utils.WorldGuard.FlagRegistry;
 import me.deadlight.ezchestshop.Utils.WorldGuard.WorldGuardUtils;
@@ -57,12 +58,16 @@ public class BlockBreakListener implements Listener {
                 }
             }
         }
+
+
         if (!event.isCancelled()) {
             preventShopBreak(event);
+            if (event.isCancelled()) {
+                return;
+            }
 
             Location loc = event.getBlock().getLocation();
             if (ShopContainer.isShop(loc)) {
-                ShopContainer.deleteShop(loc);
                 if (Utils.isShulkerBox(event.getBlock())) {
                     if (event.isDropItems()) {
                         event.setDropItems(false);
@@ -81,7 +86,10 @@ public class BlockBreakListener implements Listener {
                         }
                     }
                 }
+                ShopContainer.deleteShop(loc);
             }
+
+
         }
     }
 
@@ -108,8 +116,7 @@ public class BlockBreakListener implements Listener {
         Block block = event.getBlock();
         Location loc = block.getLocation();
         if (ShopContainer.isShop(loc)) {
-            PersistentDataContainer container = ((TileState) block.getState()).getPersistentDataContainer();
-            boolean adminshop = container.get(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"), PersistentDataType.INTEGER) == 1;
+            boolean adminshop = ShopContainer.getShop(loc).getSettings().isAdminshop();
             Player player = event.getPlayer();
             if (EzChestShop.worldguard) {
                 if (adminshop) {
@@ -124,6 +131,20 @@ public class BlockBreakListener implements Listener {
                     }
                 }
             }
+
+            //shop protection section
+            if (Config.shopProtection) {
+
+                if (!event.getPlayer().hasPermission("ecs.admin")) {
+                    //check if player is owner of shop
+                    EzShop shop = ShopContainer.getShop(loc);
+                    if (!shop.getOwnerID().equals(event.getPlayer().getUniqueId())) {
+                        event.setCancelled(true);
+                        event.getPlayer().sendMessage(lm.cannotDestroyShop());
+                    }
+                }
+            }
+
         }
     }
 

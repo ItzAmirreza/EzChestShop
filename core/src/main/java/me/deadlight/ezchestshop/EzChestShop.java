@@ -270,6 +270,7 @@ public final class EzChestShop extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new CommandCheckProfits(), this);
         getServer().getPluginManager().registerEvents(new UpdateChecker(), this);
         getServer().getPluginManager().registerEvents(new PlayerJoinListener(), this);
+        getServer().getPluginManager().registerEvents(new ChestShopBreakPrevention(), this);
         // Add Config check over here, to change the Shop display varient.
         // PlayerLooking is less laggy but probably harder to spot.
         if (Config.holodistancing) {

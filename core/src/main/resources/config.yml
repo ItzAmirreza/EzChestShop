@@ -129,3 +129,5 @@ other:
   # When certain items are overlapping/overflowing in the gui configuration, the plugin will notify ops to take actions.
   # If you don't temper with the guis, you should never receive a notification and gui updates will happen automatically.
   notify-op-of-overlapping-gui-items: true
+protection:
+  prevent-shop-destruction: true

@@ -82,6 +82,8 @@ public class Config {
     public static boolean databasemysql_use_ssl;
     public static String databasemongodb_connection_string;
 
+    public static boolean shopProtection;
+
 
 
     public static void loadConfig() {
@@ -163,6 +165,8 @@ public class Config {
         databasemysql_password = config.getString("database.mysql.password");
         databasemysql_use_ssl = config.getBoolean("database.mysql.ssl");
         databasemongodb_connection_string = config.getString("database.mongodb.connection-string");
+
+        shopProtection = config.getBoolean("protection.prevent-shop-destruction");
     }
 
 
@@ -170,100 +174,7 @@ public class Config {
     public static void checkForConfigYMLupdate() throws IOException {
 
         YamlConfiguration fc = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml"));
-        //update 1.3.3 new config file model update constructed by ElitoGame
-        boolean is1_3_3OldConfigModel = fc.isBoolean("show-holograms");
-        //if true, then we have to implement the new config model and delete old ones
-        if (is1_3_3OldConfigModel) {
-            //getting current values of configs
-            //show-holograms
-            boolean show_holograms = fc.getBoolean("show-holograms");
-            String hologram_first_line = fc.getString("hologram-first-line");
-            String hologram_second_line = fc.getString("hologram-second-line");
-            int hologram_disappearance_delay = fc.getInt("hologram-disappearance-delay");
 
-
-            fc.set("show-holograms", null);
-            fc.set("hologram-first-line", null);
-            fc.set("hologram-second-line", null);
-            fc.set("hologram-disappearance-delay", null);
-
-            fc.set("shops.hologram.show-holograms", show_holograms);
-            fc.set("shops.hologram.hologram-first-line", hologram_first_line);
-            fc.set("shops.hologram.hologram-second-line", hologram_second_line);
-            fc.set("shops.hologram.hologram-disappearance-delay", hologram_disappearance_delay);
-            //new hologram settings:
-            fc.set("shops.hologram.distance.toggled", true);
-            fc.set("shops.hologram.distance.range", 10.0);
-
-            //new containers:
-            fc.set("shops.container.chests", true);
-            fc.set("shops.container.trapped-chests", true);
-            fc.set("shops.container.barrels", true);
-            fc.set("shops.container.shulkers", true);
-
-            //new commands section:
-            fc.set("commands.alias.ecs-shop", false);
-            fc.set("commands.alias.ecsadmin-adminshop", false);
-
-            //new permissions section:
-            fc.set("permissions.create-shops", false);
-
-            //new economy config section
-            fc.set("economy.server-currency", "$");
-
-            //tasks
-            fc.set("tasks.check-for-removed-shops", true);
-
-            fc.save(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml"));
-            Config.loadConfig();
-
-        }
-
-        boolean isUsingOldhologramLineSystem = fc.isString("shops.hologram.hologram-first-line");
-
-        if (isUsingOldhologramLineSystem) {
-            EzChestShop.getPlugin().logConsole("Updated Hologram List!");
-
-            fc.set("shops.hologram.hologram-first-line", null);
-            fc.set("shops.hologram.hologram-second-line", null);
-
-            List<String> holo = Arrays.asList("<buy>&fBuy: &a%buy% %currency%</buy><separator> &f| </separator><sell>&fSell: &c%sell% %currency%</sell>", "&d%item%", "[item]");
-
-            fc.set("shops.hologram.holo-structure", holo);
-            fc.set("shops.hologram.holo-structure-adminshop", new ArrayList<>(holo));
-            fc.set("shops.hologram.holo-line-spacing", 1);
-            fc.set("shops.hologram.distance.show-items-first", true);
-
-            fc.set("shops.hologram.allow-rotation", true);
-
-            fc.set("shops.display.number-format.gui", "###,###.##");
-            fc.set("shops.display.number-format.chat", "###,###.##");
-            fc.set("shops.display.number-format.hologram", "###,###.##");
-
-            fc.set("shops.settings.defaults.transaction-message", false);
-            fc.set("shops.settings.defaults.disable-buying", false);
-            fc.set("shops.settings.defaults.disable-selling", false);
-            fc.set("shops.settings.defaults.rotation", "up");
-            fc.set("shops.settings.defaults.share-profit", false);
-
-            fc.set("shops.settings.zero-price-equals-disabled", true);
-            fc.set("shops.settings.buy-greater-than-sell", true);
-            fc.set("shops.settings.add-shulkershop-lore", true);
-
-            fc.set("commands.checkprofit-lines-per-page", 4);
-
-            fc.set("language", "Locale_EN");
-
-            fc.save(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml"));
-            Config.loadConfig();
-        }
-
-        // Should work like the above stuff, but without the check if it exists.
-        if (!fc.isBoolean("shops.settings.custom-amount-transactions")) {
-            fc.set("shops.settings.custom-amount-transactions", true);
-            fc.save(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml"));
-            Config.loadConfig();
-        }
         //1.5.0 config update
         if (!fc.isBoolean("shops.settings.hologram-messages.enabled")) {
             fc.set("shops.settings.hologram-messages.enabled", true);
@@ -306,6 +217,13 @@ public class Config {
             fc.save(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml"));
             Config.loadConfig();
         }
+
+        //1.5.3 config update
+        boolean updated1_5_3 = fc.isBoolean("protection.prevent-shop-destruction");
+        if (!updated1_5_3) {
+            fc.set("protection.prevent-shop-destruction", true);
+        }
+
 
         //well then its already an updated config, no need to change
 

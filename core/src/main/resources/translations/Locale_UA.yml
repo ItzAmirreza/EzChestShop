@@ -1,0 +1,337 @@
+# plugin uses this file in order to display messages in plugin
+# For hologram messages, you have to check config.yml
+# NOTE: DO NOT USE TAB in yml file as it can cause serious performance problems and it sometimes can break the plugin
+# Don't forget to rate if you liked EzChestShop
+shop-gui:
+  initialbuyprice: "&aПочаткова ціна покупки: &e%buyprice% %currency%"
+  initialsellprice: "&cПочаткова ціна продажу: &e%sellprice% %currency%"
+  admin-title: "&c%shopowner%'s магазин &4(Перегляд адміністратора)"
+  nonowner-title: "&c%shopowner%'s магазин"
+  owner-title: "&c%shopowner%'s магазин"
+  adminshop-title: "&cАдмін-магазин"
+  buttons:
+    sellX-title: "&cПродаж %amount%x"
+    sellX-lore:
+      - "&7Продати за &e%price% %currency%"
+    buyX-title: "&aКупівля %amount%x"
+    buyX-lore:
+      - "&7Купити за &e%price% %currency%"
+    adminview: "&c&lПерегляд адміністратора"
+    storage: "&e&lЗберігання"
+    settings: "&b&lНалаштування"
+    disabled-title: "&cВимкнено"
+    disabled-lore:
+      - "&7Цей параметр вимкнено "
+      - " &7власником магазину."
+transactions:
+  transactionButtonTitle: "&aЖурнали транзакцій"
+  backToSettingsButton: "&eНазад до налаштувань"
+  PaperTitleBuy: "&aКупити | %player%"
+  PaperTitleSell: "&cПродати | %player%"
+  PaperLoreBuy:
+    - "&7Загальна сума: %price% "
+    - " &7Кількість: %count% "
+    - " &7Тип транзакції: &aBought from you "
+    - " &e%time%"
+  PaperLoreSell:
+    - "&7Загальна сума: %price% "
+    - " &7Кількість: %count% "
+    - " &7Тип транзакції: &cSold to you "
+    - " &e%time%"
+  lessthanminute: "&eменше хвилини тому"
+  minutesago: "&e%minutes% хвилин тому"
+  hoursago: "&e%hours% годин тому"
+  daysago: "&e%days% днів тому"
+  player-inform-buy: "&7[&aECS&7] &b%player% &7купив &e%amount%x &d%item%&7 за ціною &a%price%%currency%"
+  player-inform-sell: "&7[&aECS&7] &b%player% &7продав &e%amount%x &d%item%&7 за ціною &a%price%%currency%"
+#settings gui section
+settings:
+  GuiTitle: "&b&lНалаштування"
+  statusOn: "&aУвімкнено"
+  statusOff: "&cВимкнено"
+  buttons:
+    toggleTransactions:
+      Title: "&eПеремкнути повідомлення про транзакцію"
+      Lore:
+        - "&7Поточний стан: %status% "
+        - " &7Якщо залишити цю опцію увімкненою, "
+        - " &7ви почнети отримувати повідомлення "
+        - " &7про транзакцію в чаті, коли хтось "
+        - " &7купить/продасть щось у цьому магазині"
+    disableBuying:
+      Title: "&eВідключити покупку"
+      Lore:
+        - "&7Поточний стан: %status% "
+        - " &7Якщо залишити цю опцію увімкненою, "
+        - " &7магазин нікому не дозволить купляти "
+        - " &7щось з вашого магазину."
+    disableSelling:
+      Title: "&eВідключити продаж"
+      Lore:
+        - "&7Поточний стан: %status% "
+        - " &7Якщо залишити цю опцію увімкненою, "
+        - " &7магазин нікому не дасть продати "
+        - " &7що-небудь до магазину."
+    shopAdmins:
+      Title: "&eАдміністратори магазину"
+      nobodyStatusAdmins: "&aНіхто"
+      Lore:
+        - "&7Ви можете додавати або видаляти адміністраторів "
+        - " &7вашого магазину. Адміністратори можуть "
+        - " &7мати доступ до сховища магазину, та певний доступ "
+        - " &7до налаштувань (все, крім часткового доходу "
+        - " &7і додавання/видалення адмінів). "
+        - " &aЛКМ &7щоб додати адміністратора "
+        - " &cПКМ &7щоб видалити адміністратора "
+        - " &7Поточні адміни: %admins%"
+    sharedIncome:
+      Title: "&eСпільний дохід"
+      Lore:
+        - "&7Поточний стан: %status% "
+        - " &7Якщо залишити цю опцію увімкненою, "
+        - " &7прибуток ТІЛЬКИ від продажів, буде "
+        - " &7розподілятися між адміністраторами."
+        - " &7і вами"
+    hologramRotation:
+      Title: "&eОбертання голограми"
+      Lore:
+        - "&7Обертання: "
+        - "%rotations%"
+        - " &aЛКМ&7/&cПКМ&7-для перевертання"
+    changePrices:
+      Title: "&eЦіна покупки/продажу магазину"
+      Lore:
+        - "&7Відредагуйте ціну покупки або продажу "
+        - " &d "
+        - " &cЛКМ для   &aПКМ для  "
+        - ' &l  &r&cПродаж    &l&r&aПокупки'
+      SignPlaceholderBuy:
+        - ""
+        - "&a^^ &7Введіть &a^^ "
+        - " &7нову ціну для "
+        - " &aкупівлі&7!"
+      SignPlaceholderSell:
+        - ""
+        - "&c^^ &7Введіть &c^^ "
+        - " &7нову ціну для "
+        - " &cпродажу&7!"
+    hologramMessage:
+      Title: "&eНалаштуйте свою голограму"
+      Lore:
+        - "&cЛКМ, щоб додати спеціальний елемент"
+        - "&cтекст на голограмі"
+        - "&aПКМ, щоб керувати своїм"
+        - "&aпоточним текстом!"
+        - " &d "
+        - "&8Ви використовуєте лінію %lineNumbers%!"
+        - "<ifhasmax>&8Ти можеш мати на %messagesleft% символів більше!</ifhasmax>"
+      LoreMaxReached:
+        - "&cВи можете мати тільки"
+        - "&c%maxLines% ліній!"
+        - "&7Натисніть тут, щоб керувати"
+        - "&7вашам текстом на голограмі!"
+      LoreEdit:
+        - "&cЛКМ, щоб редагувати свій"
+        - "&cТекст на голограмі"
+        - "&aПКМ, щоб керувати своїм"
+        - "&aпоточним текстом!"
+        - " &d "
+        - "&8Ви використовуєте лінію %lineNumbers%!"
+        - "<ifhasmax>&8Ти можеш мати на %messagesleft% символів більше!</ifhasmax>"
+      SignPlaceholderTexts: "###############"
+    other:
+      backToShopGuiButton: "&eНазад до магазину"
+      latestTransactionsTitle: "&aОстанні транзакції"
+  chat:
+    toggleTransactions:
+      MessageУвімкнено: "&7Перемкнути повідомлення про транзакції: &aУвімкнено"
+      MessageВимкнено: "&7Перемкнути повідомлення про транзакції: &cВимкнено"
+    disableBuying:
+      MessageУвімкнено: "&7Відключити покупку: &aУвімкнено"
+      MessageВимкнено: "&7Відключити покупку: &cВимкнено"
+    disableSelling:
+      MessageУвімкнено: "&7Відключити продаж: &aУвімкнено"
+      MessageВимкнено: "&7Відключити продаж: &cВимкнено"
+    shopAdmins:
+      addingAdminWaiting: "&eБудь ласка, введіть нік того, кого ви хочете додати до списку адміністраторів."
+      removingAdminWaiting: "&eБудь ласка, введіть нік того, кого ви хочете видалити зі списку адміністраторів."
+      selfAdmin: "&cВи не можете додати або видалити себе з списку адміністраторів!"
+      sucAdminAdded: "&e%player% &aуспішно додано до списку адмінів."
+      alreadyAdmin: "&cЦей гравець вже є в списку адмінів!"
+      noPlayer: "&cЦей гравець не існує або не грав тут раніше."
+      sucAdminRemoved: "&e%player% &aуспішно видалено зі списку адміністраторів."
+      notInAdminList: "&cЦього гравця немає в списку адмінів!"
+      clearedAdmins: "&cВидалено всіх адмінів із цього магазину."
+    sharedIncome:
+      MessageOn: "&7Спільний дохід: &aУвімкнено"
+      MessageOff: "&7Спільний дохід: &cВимкнено"
+    copy-paste:
+      copiedShopSettings: "[&6Скопійовано &7налаштування магазину!](%settings%)"
+      pastedShopSettings: "&eВставлено &7налаштування магазину!"
+    hologramRotation:
+      rotateHologramInChat: "&7Оберт голограми: %rotation%"
+      rotation:
+        Up: "&aВверх"
+        North: "&aПівніч"
+        East: "&aСхід"
+        South: "&aПівдень"
+        West: "&aЗахід"
+        Down: "&aВниз"
+# Custom Messages Manager GUI section
+customMessageManager:
+  GuiTitle: "&b&lМенеджер голограмних повідомлень"
+  ConfirmDeleteGuiTitle: "&c&lПідтвердьте видалення тексту"
+  buttons:
+    previousPage:
+      Title: "&eПопередня"
+      Lore:
+    nextPage:
+      Title: "&eНаступна"
+      Lore:
+    shopEntry:
+      Title: "&7%shopitem% &7магазин"
+      UnkownTitle: "&cНевідомий магазин"
+      Lore:
+        - "&7Розташування: &eX:%x%, Y:%y%, Z:%z%"
+        - ""
+        - "&eHologram messages:"
+        - "&7%hologram-messages%"
+        - ""
+        - "&cЛКМ, щоб видалити"
+        - "&cтекст голограми"
+        - "&aПКМ, щоб редагувати"
+        - "&aтекст голограми"
+    confirmDelete:
+      Title: "&cТи впевнений?"
+      Lore:
+        - "&7Ви збираєтеся видалити"
+        - "&7це голограмне повідомлення"
+        - "&7Цю дію не можна скасувати!"
+        - "&cНатисніть для підтвердження!"
+    backToCustomMessageManager:
+      Title: "&eНазад до диспетчера спец. повідомлень"
+      Lore:
+    modifyCurrentHologram:
+      Title: "&eЗмінити поточну голограму"
+      Lore:
+        - "&cЛКМ, щоб видалити"
+        - "&cтекст голограми"
+        - "&aПКМ, щоб редагувати"
+        - "&aтекст голограми"
+customBuySell:
+  gui-customAmountSign-title: "&eПродаж/купівля"
+  gui-customAmountSign-lore:
+    - "&7Купуйте або продавайте на індивідуальну суму "
+    - " &d "
+    - " &cЛКМ для   &aПКМ для  "
+    - " &l &r&cпродажу    &l &r &aкупівлі"
+    - " &d "
+    - "         &7Ви цілком можете"
+    - "         &l &r&cпродати &e%sellcount% &7| &aкупити &e%buycount% "
+    - "          &l &r&7цього предмету."
+  #15 characters per line (without color codes) and "\n" for next line (starting from second line)
+  signEditorGui:
+    buy:
+      - "&a^^ Макс.: %max% ^^ "
+      - " &bВставте свою "
+      - " &bбажану суму"
+    sell:
+      - "&c^^ Макс.: %max% ^^ "
+      - " &bВставте свою "
+      - " &bбажану суму"
+  errors:
+    buyingIsDisabled: "&cКупівля в цьому магазині заборонена."
+    sellingIsDisabled: "&cПродажі в цьому магазині заборонені."
+    wrongInput: "&cВведено неправильно (або, ймовірно, дуже велике число), вставте число!"
+    enterTheAmount: "&eБудь ласка, впишіть бажану суму в знак"
+    unsupportedInteger: "&cПривіт! Очевидно, сума не може бути нульовою або від’ємною."
+shop-messages:
+  successful-buy: "&aВи успішно придбали цей товар за &e%price% %currency%"
+  fullinv: "&cУ вас недостатньо місця для такої кількості елементів"
+  cannotafford: "&cВи не можете дозволити собі стільки..."
+  outofstock: "&cВ магазині немає в наявності!"
+  successful-sell: "&aВи успішно продали свій товар(и) за &e%price% %currency%"
+  shopcannotafford: "&cМагазин більше не може собі це дозволити."
+  notenoughitemtosell: "&cУ вас недостатньо цього товару для продажу!"
+  chestisFull: "Скриня переповнена!"
+  selftransaction: "&cВи не можете купувати чи продавати самі!"
+  openingShopProblem: "&cВиникла проблема з відкриттям цього магазину скринь. Звˈяжіться з адміністратором і перевірте консоль."
+command-messages:
+  negativeprice: "&cВід'ємна ціна? Ви повинні використовувати ціну більше нуля..."
+  notenoughargs: "&cНедостатньо аргументів! \n &cПравильне використання: /ecs create (Ціна покупки) (Ціна продажу)"
+  consolenotallowed: "&cВам заборонено виконувати будь-які команди з консолі."
+  help:
+    - "&bEz&cChestShop &7Плагін від Dead_Light & ElitoGame©"
+    - "&7- &c/ecs create (Ціна покупки) (Ціна продажу) &7| Створіть магазин скринь, подивившись на скриню й тримаючи в руках предмет, який ви хочете продати. "
+    - "&7- &c/ecs remove &7| Видаляє магазин скринь, який ви дивитеся "
+    - "&7- &c/ecs settings (налаштування) &7| Копіювати/Вставляти/Перемикати налаштування, повˈязані з магазином скринь "
+    - "&eНалаштування: &7[copy, paste, admins, toggle-buying, toggle-selling, toggle-message, toggle-shared-income, change-rotation] "
+    - "&7 Легко правильно? :)"
+  help-admin-view-addition:
+    - "&cДопомога адмінам: "
+    - "&7- &c/ecsadmin"
+  adminhelp:
+    - "&cАдмін-команди: "
+    - "&7- &c/&eecsadmin remove &7| видаляє магазин, який ви переглядаєте (хоча ви можете видалити його, зламавши його) "
+    - "&7- &c/&eecsadmin reload &7| перезавантажте конфігурації плагіна"
+    - "&7- &c/&eecsadmin create (buy) (sell) &7| створити адмін-магазин"
+    - "&7- &c/&eecsadmin transfer-ownership (гравець) &7| передати право власності на будь-який магазин іншому гравцеві."
+    - "&7 Щоб отримати додаткову допомогу, приєднуйтеся до нашого [&bДіскорд](%discord_link% Натисніть, щоб приєднатися до підтримки Discord!)&7!"
+  alreadyashop: "&cЦя скриня вже є магазином!"
+  shopcreated: "&aВи успішно створили магазин!"
+  holdsomething: "&cБудь ласка, тримайте щось у своїй руці!"
+  notallowdtocreate: "&cВам не дозволено створювати/вилучати магазин скринь у цьому місці."
+  notchest: "&cБлок, який ви дивитеся, не підтримує тип скрині/не є скринею."
+  lookatchest: "&cБудь ласка, подивіться на скриню."
+  csremoved: "&eЦей магазин скринь успішно видалено."
+  notowner: "&aВи не власник цього магазину скринь!"
+  notachestorcs: "&cБлок, який ви дивитеся, не є скринею/або не є магазином."
+  maxShopLimitReached: "&cДосягнуто максимального ліміту магазину: %shoplimit%!"
+  slimeFunBlockNotSupported: "&cВибачте :(, але ви не можете виконати цю команду з блоком slimefun / використовуйте скриню"
+  buypriceGreaterThanSellRequired: "&cЦіна купівлі має бути більшою за ціну продажу!"
+  invalidShopItem: "&cПредмет, з яким ви намагаєтеся створити магазин, тут недійсний."
+  shopTransferConfirm: "&eВи впевнені, що хочете остаточно передати право власності на цей магазин %player%у? [&2&l[✔]](Натисніть, щоб підтвердити передачу! run_command=/ecs settings transfer-ownership %player% -confirm)"
+  shopTransferred: "&aВи успішно передали цей магазин %player%у!"
+  buyPriceUpdated: "&7Ціна &aкупівлі &7була оновлена!"
+  sellPriceUpdated: "&7Ціна &cпродажу &7була оновлена!"
+checkprofits:
+  landing-menu:
+    - '&e========================================'
+    - '&7Загальний дохід від продажу: &6%currency%%income% &7з &6%sales% &7продаж.'
+    - '&7Загальна вартість покупок: &6%currency%%cost% &7з &6%purchases% &7покупок.'
+    - '&7Всього: &6%currency%%total%'
+    - '&7Баланс: &6%currency%%balance%'
+    - '&7Натисніть [&b&lТУТ](Натисніть, щоб дізнатися більше! run_command=/checkprofits p 1) &7для детального звіту!'
+    - '&7Натисніть, щоб очистити звіт [&c&l[X]](Натисніть, щоб очистити! run_command=/checkprofits clear)'
+  details-menu:
+    header:
+      - "&e----- &6Звіт про прибуток магазину &e-----"
+    content:
+      - " &e- &6%item%"
+      - "    &7Продажі: [&e%sales%x %currency%%income%](Ціна за одиницю: %unit_income%) &7Покупки: [&e%purchases%x %currency%%cost%](Ціна за одиницю: %unit_cost%)"
+    footer:
+      - "&6%button_previous%&7Сторінка %page%/%pages%&6%button_next%&7 | Щоб переглянути сторінку, введіть \"[&6/cp p <page>](Натисніть, щоб вставити в чат suggest_command=/cp p )&7\""
+    hover-extra:
+      button-next: "Наступна"
+      button-previous: "Попередня"
+  confirm-clear:
+    - "&eВи дійсно хочете очистити всі дані про прибуток?? [&2&l[✔]](Натисніть, щоб підтвердити очищення! run_command=/checkprofits clear -confirm)"
+  confirm-clear-success: "&cВи очистили всі дані про прибутки!"
+  join-notification:
+    - "&eПеревірте прибуток свого магазину [&b&lТУТ](Натисніть, щоб показати run_command=/checkprofits)"
+shulkershop-dropped-lore:
+  - "&eМагазин-Шалкербокс:"
+  - " &7Власник: &6%owner%"
+  - " &7Предмет: &6%item%"
+  - " &7Купити: &6%currency%%buy_price%"
+  - " &7Продати: &6%currency%%sell_price%"
+hologram:
+  shop-empty: "&cЦей магазин порожній!"
+  shulkerbox-item: "&7%item% x&e%amount%"
+  shulkerbox-item-more: "&7та &e%amount% &7більше!"
+  item-enchantment: "&b%enchantment% &e%level-roman%"
+  item-enchantment-more: "&7і &e%amount% &7більше!"
+other:
+  update-notifications: "&c[&eEzChestShop&c] &eВиявлено нову версію: &b%new_version%&e! Ви все ще використовуєте &c%current_version%&e!"
+  overflowing-gui-items-notification: "&c[&eEzChestShop&c] &eУ вашому налаштованому графічному інтерфейсі є переповнені елементи! Переконайтеся, що ці елементи знаходяться в достатньо великому графічному інтерфейсі: &c%overflow%"
+  overlapping-gui-items-notification: "&c[&eEzChestShop&c] &eУ вашому налаштованому графічному інтерфейсі є елементи, що збігаються! Ось список незвичайних елементів, що перекриваються: &c%overlap%"
