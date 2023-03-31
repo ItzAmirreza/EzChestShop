@@ -185,7 +185,7 @@ settings:
         West: "&aWested"
         Down: "&aUnten"
     protection:
-      cannotDestroyShop: "&cYou cannot destroy this shop!"
+      cannotDestroyShop: "&cDu kannst diesen Shop nicht entfernen!"
 # Custom Messages Manager GUI section
 customMessageManager:
   GuiTitle: "&b&lHologram Text Verwaltung"
