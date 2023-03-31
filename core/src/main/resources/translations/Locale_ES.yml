@@ -177,6 +177,8 @@ settings:
         South: "&aSouth"
         West: "&aWest"
         Down: "&aDown"
+    protection:
+      cannotDestroyShop: "&cYou cannot destroy this shop!"
 # Custom Messages Manager GUI section
 customMessageManager:
   GuiTitle: "&b&lHologram Messages Manager"

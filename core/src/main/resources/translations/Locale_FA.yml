@@ -178,6 +178,8 @@ settings:
         South: "&aJonub"
         West: "&aGharb"
         Down: "&aPayin"
+    protection:
+      cannotDestroyShop: "&cShoma nemitonid in shop ro hazf konid."
 # Custom Messages Manager GUI section
 customMessageManager:
   GuiTitle: "&b&lHologram Messages Manager"

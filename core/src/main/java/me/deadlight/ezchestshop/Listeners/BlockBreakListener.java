@@ -67,7 +67,11 @@ public class BlockBreakListener implements Listener {
             }
 
             Location loc = event.getBlock().getLocation();
-            if (ShopContainer.isShop(loc)) {
+            boolean isPartOfShop = Utils.isPartOfTheChestShop(event.getBlock().getLocation()) != null;
+            if (isPartOfShop) {
+                loc = Utils.isPartOfTheChestShop(event.getBlock().getLocation()).getLocation();
+            }
+            if (ShopContainer.isShop(loc) || isPartOfShop) {
                 if (Utils.isShulkerBox(event.getBlock())) {
                     if (event.isDropItems()) {
                         event.setDropItems(false);
@@ -115,7 +119,11 @@ public class BlockBreakListener implements Listener {
     private void preventShopBreak(BlockBreakEvent event) {
         Block block = event.getBlock();
         Location loc = block.getLocation();
-        if (ShopContainer.isShop(loc)) {
+        boolean isPartOfShop = Utils.isPartOfTheChestShop(loc) != null;
+        if (isPartOfShop) {
+            loc = Utils.isPartOfTheChestShop(loc).getLocation();
+        }
+        if (ShopContainer.isShop(loc) || isPartOfShop) {
             boolean adminshop = ShopContainer.getShop(loc).getSettings().isAdminshop();
             Player player = event.getPlayer();
             if (EzChestShop.worldguard) {

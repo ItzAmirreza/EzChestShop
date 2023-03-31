@@ -166,7 +166,7 @@ public class Config {
         databasemysql_use_ssl = config.getBoolean("database.mysql.ssl");
         databasemongodb_connection_string = config.getString("database.mongodb.connection-string");
 
-        shopProtection = config.getBoolean("protection.prevent-shop-destruction");
+        shopProtection = config.getBoolean("protection.prevent-shop-destruction", true);
     }
 
 
@@ -222,10 +222,9 @@ public class Config {
         boolean updated1_5_3 = fc.isBoolean("protection.prevent-shop-destruction");
         if (!updated1_5_3) {
             fc.set("protection.prevent-shop-destruction", true);
+            fc.save(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml"));
+            Config.loadConfig();
         }
-
-
-        //well then its already an updated config, no need to change
 
     }
 }

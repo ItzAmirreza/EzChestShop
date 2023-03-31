@@ -844,4 +844,30 @@ public class Utils {
             gui.setItem(slot, item);
         }
     }
+
+    public static EzShop isPartOfTheChestShop(Location location) {
+
+        Block block = location.getBlock();
+        if (block.getType() == Material.CHEST || block.getType() == Material.TRAPPED_CHEST) {
+            Chest chest = (Chest) block.getState();
+            if (chest.getInventory().getHolder() instanceof DoubleChest) {
+                DoubleChest doubleChest = (DoubleChest) chest.getInventory().getHolder();
+                Chest left = (Chest) doubleChest.getLeftSide();
+                Chest right = (Chest) doubleChest.getRightSide();
+                //check if either of the chests is a shop
+                if (ShopContainer.isShop(left.getLocation()) || ShopContainer.isShop(right.getLocation())) {
+                    //return the part that is a shop
+                    if (ShopContainer.isShop(left.getLocation())) {
+                        return ShopContainer.getShop(left.getLocation());
+                    } else {
+                        return ShopContainer.getShop(right.getLocation());
+                    }
+                }
+            } else {
+                return null;
+            }
+        }
+        return null;
+    }
+
 }
