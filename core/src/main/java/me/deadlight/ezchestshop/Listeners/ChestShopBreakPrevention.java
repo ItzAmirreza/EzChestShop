@@ -10,6 +10,7 @@ import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.inventory.InventoryMoveItemEvent;
 
 public class ChestShopBreakPrevention implements Listener {
 
@@ -62,6 +63,17 @@ public class ChestShopBreakPrevention implements Listener {
                 event.setCancelled(true);
                 break;
             }
+        }
+    }
+
+    @EventHandler
+    public void onInventoryMoveItem(InventoryMoveItemEvent event) {
+        if (!Config.shopProtection) {
+            return;
+        }
+
+        if (ShopContainer.isShop(event.getSource().getLocation()) || Utils.isPartOfTheChestShop(event.getSource().getLocation()) != null) {
+            event.setCancelled(true);
         }
     }
 
