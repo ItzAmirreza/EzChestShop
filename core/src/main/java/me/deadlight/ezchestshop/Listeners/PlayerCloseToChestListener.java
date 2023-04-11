@@ -266,6 +266,7 @@ public class PlayerCloseToChestListener implements Listener {
                         loc = rightchest.getLocation();
                     }
                 }
+                if (!ShopContainer.isShop(loc)) return;
                 hideHologramText(player, loc, true);
                 PersistentDataContainer container = ((TileState) target.getState())
                         .getPersistentDataContainer();
