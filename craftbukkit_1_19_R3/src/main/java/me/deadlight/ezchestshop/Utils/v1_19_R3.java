@@ -8,12 +8,19 @@ import net.minecraft.network.protocol.game.PacketPlayOutEntityMetadata;
 import net.minecraft.network.protocol.game.PacketPlayOutEntityVelocity;
 import net.minecraft.network.protocol.game.PacketPlayOutSpawnEntity;
 import net.minecraft.server.level.EntityPlayer;
+import net.minecraft.server.level.WorldServer;
 import net.minecraft.server.network.PlayerConnection;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.decoration.EntityArmorStand;
 import net.minecraft.world.entity.item.EntityItem;
+import net.minecraft.world.entity.monster.EntityShulker;
 import net.minecraft.world.level.World;
+import net.minecraft.world.phys.AxisAlignedBB;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_19_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_19_R3.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.v1_19_R3.entity.CraftPlayer;
@@ -182,6 +189,33 @@ public class v1_19_R3 extends VersionUtils {
         NetworkManager netManager = (NetworkManager) field.get(((CraftPlayer) player).getHandle().b);
         Channel channel = netManager.m;
         channel.eventLoop().submit(() -> channel.pipeline().remove("ecs_listener"));
+    }
+
+    @Override
+    void showOutline(Player player, Block block, int eID) {
+        WorldServer worldServer = ((CraftWorld) block.getLocation().getWorld()).getHandle();
+        CraftPlayer craftPlayer = (CraftPlayer) player;
+        EntityPlayer entityPlayer = craftPlayer.getHandle();
+        PlayerConnection playerConnection = entityPlayer.b;
+
+        EntityShulker shulker = new EntityShulker(EntityTypes.aG, worldServer);
+        shulker.j(true); //invisible
+        shulker.e(true); //no gravity
+        shulker.o(0, 0, 0); //set velocity
+        shulker.e(eID); //set entity id
+        shulker.i(true); //set outline
+        shulker.t(true); //set noAI
+        Location newLoc = block.getLocation().clone();
+        //make location be center of the block vertically and horizontally
+        newLoc.add(0.5, 0, 0.5);
+        shulker.e(newLoc.getX(), newLoc.getY(), newLoc.getZ()); //set position
+
+        PacketPlayOutSpawnEntity spawnPacket = new PacketPlayOutSpawnEntity(shulker);
+        playerConnection.a(spawnPacket);
+
+        PacketPlayOutEntityMetadata metaPacket = new PacketPlayOutEntityMetadata(eID, shulker.aj().c());
+        playerConnection.a(metaPacket);
+
     }
 
     public static Map<SignMenuFactory, UpdateSignListener> getListeners() {

@@ -21,7 +21,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.DoubleChestInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.permissions.Permissible;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -46,6 +45,8 @@ public class Utils {
 
     public static HashMap<String, Block> blockBreakMap = new HashMap<>();
     public static HashMap<Location, List<String>> sqlQueue = new HashMap<>();
+
+    public static HashMap<String, List<BlockOutline>> activeOutlines = new HashMap<>(); //player uuid, list of outlines
 
     private static String discordLink;
 
@@ -868,6 +869,61 @@ public class Utils {
             }
         }
         return null;
+    }
+
+
+    public static List<UUID> getAdminsForShop(EzShop shop) {
+        List<UUID> admins = new ArrayList<>();
+        admins.add(shop.getOwnerID());
+        String adminsString = shop.getSettings().getAdmins();
+        List<String> adminList = Arrays.asList(adminsString.split("@"));
+        for (String admin : adminList) {
+            if (!admin.equalsIgnoreCase("") && !admin.equalsIgnoreCase(" ") && !admin.equalsIgnoreCase("null") && !admin.equalsIgnoreCase("NULL")) {
+                //check if its a valid uuid
+                boolean isValid = true;
+                try {
+                    UUID.fromString(admin);
+                } catch (IllegalArgumentException exception) {
+                    isValid = false;
+                }
+                if (isValid) {
+                    admins.add(UUID.fromString(admin));
+                }
+            }
+        }
+
+        return admins;
+    }
+
+    public static List<Block> getEmptyShopForOwner(Player player) {
+        List<Block> emptyShops = new ArrayList<>();
+        //We gonna check the area the maximum of 5 chunks away from the player
+        //We gonna check if the shop is for the owner or its admins
+        //We gonna check if the shop is empty
+
+        //first we get the shops
+        List<EzShop> shops = ShopContainer.getShops();
+        //then we check if the shop is for the owner or its admins
+        for (EzShop shop : shops) {
+            if (shop.getOwnerID().equals(player.getUniqueId()) || getAdminsForShop(shop).contains(player.getUniqueId())) {
+                //then we check if the shop is empty
+
+                if (Utils.getBlockInventory(shop.getLocation().getBlock()) == null) {
+                    continue;
+                }
+
+                if (Utils.getBlockInventory(shop.getLocation().getBlock()).isEmpty()) {
+                    //then we check if the shop is in the area
+                    if (shop.getLocation().getWorld().equals(player.getWorld())) {
+                        if (shop.getLocation().distance(player.getLocation()) <= 125) {
+                            emptyShops.add(shop.getLocation().getBlock());
+                        }
+                    }
+                }
+            }
+        }
+
+        return emptyShops;
     }
 
 }

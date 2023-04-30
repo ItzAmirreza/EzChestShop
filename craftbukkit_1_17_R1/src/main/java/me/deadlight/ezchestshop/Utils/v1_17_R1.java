@@ -13,6 +13,7 @@ import net.minecraft.world.entity.item.EntityItem;
 import net.minecraft.world.level.World;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_17_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_17_R1.inventory.CraftItemStack;
@@ -172,6 +173,12 @@ public class v1_17_R1 extends VersionUtils {
         Channel channel = ((CraftPlayer) player).getHandle().b.a.k;
         channel.eventLoop().submit(() -> channel.pipeline().remove("ecs_listener"));
     }
+
+    @Override
+    void showOutline(Player player, Block block, int eID) {
+
+    }
+
 
     public static Map<SignMenuFactory, UpdateSignListener> getListeners() {
         return listeners;

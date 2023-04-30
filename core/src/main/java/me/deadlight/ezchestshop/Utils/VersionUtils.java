@@ -1,6 +1,7 @@
 package me.deadlight.ezchestshop.Utils;
 
 import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -27,4 +28,6 @@ public abstract class VersionUtils {
     public abstract void injectConnection(Player player) throws IllegalAccessException, NoSuchFieldException;
 
     public abstract void ejectConnection(Player player) throws NoSuchFieldException, IllegalAccessException;
+
+    abstract void showOutline(Player player, Block block, int eID);
 }
