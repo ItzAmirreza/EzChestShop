@@ -7,6 +7,7 @@ import me.deadlight.ezchestshop.Data.ShopContainer;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.GUIs.SettingsGUI;
 import me.deadlight.ezchestshop.Listeners.PlayerCloseToChestListener;
+import me.deadlight.ezchestshop.Utils.BlockOutline;
 import me.deadlight.ezchestshop.Utils.Objects.EzShop;
 import me.deadlight.ezchestshop.Utils.Objects.ShopSettings;
 import me.deadlight.ezchestshop.Utils.Utils;
@@ -32,6 +33,7 @@ import org.bukkit.util.StringUtil;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 public class MainCommands implements CommandExecutor, TabCompleter {
@@ -106,6 +108,10 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                 } else if (mainarg.equalsIgnoreCase("version")) {
 
                 Utils.sendVersionMessage(player);
+
+                } else if (mainarg.equalsIgnoreCase("emptyshops")) {
+
+                    emptyShopsCommand(player);
 
                 } else {
                     sendHelp(player);
@@ -1029,6 +1035,66 @@ public class MainCommands implements CommandExecutor, TabCompleter {
             }
         }
         return target;
+    }
+
+    private void emptyShopsCommand(Player player) {
+
+        if (Utils.enabledOutlines.contains(player.getUniqueId())) {
+
+            List<BlockOutline> playerOutlinedShops = new ArrayList<>(Utils.activeOutlines.values());
+            for (BlockOutline outline : playerOutlinedShops) {
+                if (outline.player.getUniqueId().equals(player.getUniqueId())) {
+                    outline.hideOutline();
+                }
+            }
+            Utils.enabledOutlines.remove(player.getUniqueId());
+            player.sendMessage(Utils.colorify("&cToggled OFF, &bNearby &eshops that you own & empty are no longer highlighted for you."));
+
+        } else {
+            Utils.enabledOutlines.add(player.getUniqueId());
+            List<Note.Tone> tones = new ArrayList<>();
+            //add the tones to the list altogether
+            AtomicInteger noteIndex = new AtomicInteger();
+            tones.add(Note.Tone.A);
+            tones.add(Note.Tone.B);
+            tones.add(Note.Tone.C);
+            tones.add(Note.Tone.D);
+            tones.add(Note.Tone.E);
+            tones.add(Note.Tone.F);
+            tones.add(Note.Tone.G);
+
+            List<Block> blocks = Utils.getNearbyEmptyShopForAdmins(player);
+            player.sendMessage(Utils.colorify("&aToggled ON, &bNearby &eshops that you own & empty are now highlighted for you. \n &eTotal empty shops near you: &b" + blocks.size()));
+            AtomicInteger actionBarCounter = new AtomicInteger();
+            EzChestShop.getPlugin().getServer().getScheduler().runTaskLaterAsynchronously(EzChestShop.getPlugin(), () -> {
+
+                //Iterate through each block with an asychronous delay of 5 ticks
+                blocks.forEach(b -> {
+                    BlockOutline outline = new BlockOutline(player, b);
+                    int index = blocks.indexOf(b);
+                    EzChestShop.getPlugin().getServer().getScheduler().runTaskLater(EzChestShop.getPlugin(), () -> {
+                        outline.showOutline();
+                        if (outline.muted) {
+                            return;
+                        }
+                        actionBarCounter.getAndIncrement();
+                        Utils.sendActionBar(
+                                player,
+                                "&b&l" + actionBarCounter.get() + " &c&lempty shops near you!"
+                        );
+                        player.playNote(player.getLocation(), Instrument.BIT, Note.flat(1, tones.get(noteIndex.get())));
+                        noteIndex.getAndIncrement();
+                        if (noteIndex.get() == 7) {
+                            noteIndex.set(0);
+                        }
+
+                    }, 2L * index);
+                });
+
+            }, 1L);
+
+        }
+
     }
 
 }

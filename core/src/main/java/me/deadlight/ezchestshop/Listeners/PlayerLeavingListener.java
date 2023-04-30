@@ -12,6 +12,7 @@ public class PlayerLeavingListener implements Listener {
         if (ChatListener.chatmap.containsKey(event.getPlayer().getUniqueId())) {
             ChatListener.chatmap.remove(event.getPlayer().getUniqueId());
         }
+        Utils.enabledOutlines.remove(event.getPlayer().getUniqueId());
     }
 
 

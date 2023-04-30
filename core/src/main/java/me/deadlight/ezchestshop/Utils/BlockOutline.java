@@ -2,9 +2,13 @@ package me.deadlight.ezchestshop.Utils;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.Utils.Utils;
 import org.bukkit.Instrument;
+import org.bukkit.Material;
 import org.bukkit.Note;
 import org.bukkit.block.Block;
+import org.bukkit.block.DoubleChest;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.DoubleChestInventory;
+import org.bukkit.inventory.Inventory;
 
 import static me.deadlight.ezchestshop.Utils.Utils.versionUtils;
 
@@ -14,6 +18,8 @@ public class BlockOutline {
     public Block block;
     public int outlineID;
     public int destroyAfter; //set seconds to destroy after
+    public boolean muted = false;
+    public boolean isMadeFromACheck = false;
 
     public BlockOutline(Player player, Block block) {
         this.player = player;
@@ -21,27 +27,54 @@ public class BlockOutline {
     }
 
     public void showOutline() {
+        if (!isMadeFromACheck) {
+            checkForDoubleChestShop();
+        }
         outlineID = (int) (Math.random() * Integer.MAX_VALUE);
         versionUtils.showOutline(player, block, outlineID);
-        if (Utils.activeOutlines.containsKey(player.getUniqueId().toString())) {
-            //Then add the outline to the map with the player's uuid as key in the List
-            Utils.activeOutlines.get(player.getUniqueId().toString()).add(this);
-        } else {
-            //if the player's uuid is not in the map, then create a new list and add the outline to it
-            Utils.activeOutlines.put(player.getUniqueId().toString(), new java.util.ArrayList<BlockOutline>());
-            Utils.activeOutlines.get(player.getUniqueId().toString()).add(this);
-        }
+        Utils.activeOutlines.put(outlineID, this);
         //check if destroyAfter is not null
         if (destroyAfter != 0) {
             EzChestShop.getPlugin().getServer().getScheduler().runTaskLaterAsynchronously(EzChestShop.getPlugin(), () -> {
                 versionUtils.destroyEntity(player, outlineID);
-                Utils.activeOutlines.get(player.getUniqueId().toString()).remove(this);
+                Utils.activeOutlines.remove(outlineID);
             }, destroyAfter * 20L);
         }
     }
 
     public void hideOutline() {
         versionUtils.destroyEntity(player, outlineID);
+        Utils.activeOutlines.remove(outlineID);
+    }
+
+    private void checkForDoubleChestShop() {
+        //check if the block is a chest and if it is a double chest
+        if (block.getType().equals(Material.CHEST) || block.getType().equals(Material.TRAPPED_CHEST)) {
+            //now we check if its a double chest instance
+            Inventory blockInv = Utils.getBlockInventory(block);
+            if (blockInv instanceof DoubleChestInventory) {
+                //get the other half of the double chest
+                DoubleChest doubleChest = (DoubleChest) blockInv.getHolder();
+                boolean isLeft = doubleChest.getLeftSide().getInventory().getLocation().equals(block.getLocation());
+                if (isLeft) {
+                    //so if it is left, we get the right side
+                    Block rightBlock = doubleChest.getRightSide().getInventory().getLocation().getBlock();
+                    BlockOutline outline = new BlockOutline(player, rightBlock);
+                    outline.destroyAfter = this.destroyAfter;
+                    outline.isMadeFromACheck = true;
+                    outline.showOutline();
+                } else {
+                    Block leftBlock = doubleChest.getLeftSide().getInventory().getLocation().getBlock();
+                    BlockOutline outline = new BlockOutline(player, leftBlock);
+                    outline.destroyAfter = this.destroyAfter;
+                    outline.isMadeFromACheck = true;
+                    outline.showOutline();
+                }
+
+            }
+
+        }
+
     }
 
 

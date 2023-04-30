@@ -11,6 +11,7 @@ import me.deadlight.ezchestshop.Enums.Database;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.Utils.Objects.EzShop;
 import me.deadlight.ezchestshop.Utils.Objects.TransactionLogObject;
+import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -44,9 +45,8 @@ public class Utils {
     public static List<String> rotations = Arrays.asList("up", "north", "east", "south", "west", "down");
 
     public static HashMap<String, Block> blockBreakMap = new HashMap<>();
-    public static HashMap<Location, List<String>> sqlQueue = new HashMap<>();
-
-    public static HashMap<String, List<BlockOutline>> activeOutlines = new HashMap<>(); //player uuid, list of outlines
+    public static HashMap<Integer, BlockOutline> activeOutlines = new HashMap<>(); //player uuid, list of outlines
+    public static List<UUID> enabledOutlines = new ArrayList<>();
 
     private static String discordLink;
 
@@ -725,72 +725,6 @@ public class Utils {
         return dataContainer;
     }
 
-    public static boolean validateContainerValues(PersistentDataContainer container, EzShop shop) {
-        // if true, then it means there is a problem
-
-        if (container == null || shop == null) {
-            return true;
-        }
-
-        if (container.isEmpty()) {
-            if (ShopContainer.isShop(shop.getLocation())) {
-                ShopContainer.deleteShop(shop.getLocation());
-                return true;
-            } else {
-                return true;
-            }
-        } else {
-            // owner, buy, sell, msgtoggle, dbuy, dsell, admins, shareincome, trans,
-            // adminshop, rotation
-            List<String> emptyList = new ArrayList<>();
-            List<String> keys = Arrays.asList("owner", "buy", "sell", "msgtoggle", "dbuy", "dsell", "admins",
-                    "shareincome", "adminshop", "rotation", "item");
-            List<String> strings = Arrays.asList("owner", "admins", "rotation", "item");
-            List<String> integers = Arrays.asList("msgtoggle", "dbuy", "dsell", "shareincome", "adminshop");
-            List<String> doubles = Arrays.asList("buy", "sell");
-            for (String key : keys) {
-
-                if (strings.contains(key)) {
-                    if (!container.has(new NamespacedKey(EzChestShop.getPlugin(), key), PersistentDataType.STRING)) {
-                        emptyList.add(key);
-                    }
-                } else if (integers.contains(key)) {
-                    if (!container.has(new NamespacedKey(EzChestShop.getPlugin(), key), PersistentDataType.INTEGER)) {
-                        emptyList.add(key);
-                    }
-                } else if (doubles.contains(key)) {
-                    if (!container.has(new NamespacedKey(EzChestShop.getPlugin(), key), PersistentDataType.DOUBLE)) {
-                        emptyList.add(key);
-                    }
-                }
-            }
-            if (emptyList.isEmpty()) {
-                return false;
-            } else {
-                ShopContainer.deleteShop(shop.getLocation());
-                // removing everything
-                Block shopBlock = shop.getLocation().getBlock();
-                TileState state = ((TileState) shopBlock.getState());
-                PersistentDataContainer data = state.getPersistentDataContainer();
-                data.remove(new NamespacedKey(EzChestShop.getPlugin(), "owner"));
-                data.remove(new NamespacedKey(EzChestShop.getPlugin(), "buy"));
-                data.remove(new NamespacedKey(EzChestShop.getPlugin(), "sell"));
-                data.remove(new NamespacedKey(EzChestShop.getPlugin(), "item"));
-                data.remove(new NamespacedKey(EzChestShop.getPlugin(), "msgtoggle"));
-                data.remove(new NamespacedKey(EzChestShop.getPlugin(), "dbuy"));
-                data.remove(new NamespacedKey(EzChestShop.getPlugin(), "dsell"));
-                data.remove(new NamespacedKey(EzChestShop.getPlugin(), "admins"));
-                data.remove(new NamespacedKey(EzChestShop.getPlugin(), "shareincome"));
-//                data.remove(new NamespacedKey(EzChestShop.getPlugin(), "trans"));
-                data.remove(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"));
-                data.remove(new NamespacedKey(EzChestShop.getPlugin(), "rotation"));
-                state.update();
-                return true;
-            }
-
-        }
-    }
-
     public static String getDiscordLink() {
         if (discordLink == null) {
             try {
@@ -895,24 +829,49 @@ public class Utils {
         return admins;
     }
 
-    public static List<Block> getEmptyShopForOwner(Player player) {
+    public static List<Block> getNearbyEmptyShopForAdmins(Player player) {
         List<Block> emptyShops = new ArrayList<>();
         //We gonna check the area the maximum of 5 chunks away from the player
         //We gonna check if the shop is for the owner or its admins
         //We gonna check if the shop is empty
+        //We gonna check if the shop inventory has at least 1 item required for the shop
+        //We gonna check if the buy is enabled for the shop (Basically if shop owner is selling)
 
         //first we get the shops
         List<EzShop> shops = ShopContainer.getShops();
         //then we check if the shop is for the owner or its admins
         for (EzShop shop : shops) {
+            if (shop.getSettings().isDbuy()) {
+                continue;
+            }
+
             if (shop.getOwnerID().equals(player.getUniqueId()) || getAdminsForShop(shop).contains(player.getUniqueId())) {
                 //then we check if the shop is empty
+
+                if (!Utils.isApplicableContainer(shop.getLocation().getBlock())) {
+                    continue;
+                }
 
                 if (Utils.getBlockInventory(shop.getLocation().getBlock()) == null) {
                     continue;
                 }
 
                 if (Utils.getBlockInventory(shop.getLocation().getBlock()).isEmpty()) {
+
+                    //then we check if the shop is in the area
+                    if (shop.getLocation().getWorld().equals(player.getWorld())) {
+                        if (shop.getLocation().distance(player.getLocation()) <= 80) {
+                            emptyShops.add(shop.getLocation().getBlock());
+                        }
+                    }
+                } else {
+                    //then we check if the shop inventory has at least 1 item required for the shop
+                    ItemStack shopItem = shop.getShopItem().clone();
+                    Inventory inventory = Utils.getBlockInventory(shop.getLocation().getBlock());
+                    if (!inventory.containsAtLeast(shopItem, 1)) {
+                        continue;
+                    }
+
                     //then we check if the shop is in the area
                     if (shop.getLocation().getWorld().equals(player.getWorld())) {
                         if (shop.getLocation().distance(player.getLocation()) <= 125) {
@@ -924,6 +883,12 @@ public class Utils {
         }
 
         return emptyShops;
+    }
+
+    public static void sendActionBar(Player player, String message) {
+        // Apply color codes to the message using ChatColor.translateAlternateColorCodes
+        String coloredMessage = ChatColor.translateAlternateColorCodes('&', message);
+        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(coloredMessage));
     }
 
 }

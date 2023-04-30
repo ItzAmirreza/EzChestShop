@@ -216,6 +216,14 @@ public class PlayerCloseToChestListener implements Listener {
                         }
                     });
         }
+
+        //This section is for outlines of emptyshops
+//        if (Utils.enabledOutlines.contains(event.getPlayer().getUniqueId())) {
+//
+//            Not sure if implementing this will lag the big servers, so for now I'm not going to add it ...
+//
+//        }
+
     }
 
     @EventHandler
