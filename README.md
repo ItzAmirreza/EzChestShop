@@ -37,6 +37,9 @@ Ignore this part:
 
 ![commands](https://user-images.githubusercontent.com/20891968/222956230-d71ce7ea-4295-4440-bc44-e13da3d543d8.png)
 ![support](https://user-images.githubusercontent.com/20891968/222956443-00dc0c63-51dc-4e5d-86a3-b5e5dc70587f.png)
+![image](https://user-images.githubusercontent.com/20891968/235449301-7a12b967-a837-4e64-8e0b-c871a53e854e.png)
+![image](https://user-images.githubusercontent.com/20891968/235449309-ead31b66-7a06-4c1a-b79d-1c5cf2c41ed8.png)
+
 
 
 
