@@ -16,6 +16,7 @@ import me.deadlight.ezchestshop.Utils.WorldGuard.FlagRegistry;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import java.io.IOException;
@@ -252,6 +253,17 @@ public final class EzChestShop extends JavaPlugin {
         ShopContainer.startSqlQueueTask();
         if (Config.check_for_removed_shops) {
             LoadedChunksTask.startTask();
+        }
+
+        //loop through online players
+        for (Player player : getServer().getOnlinePlayers()) {
+            try {
+                Utils.versionUtils.injectConnection(player);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            } catch (NoSuchFieldException e) {
+                throw new RuntimeException(e);
+            }
         }
 
         UpdateChecker checker = new UpdateChecker();

@@ -47,8 +47,8 @@ shops:
     # an alternative hologram display system, which is slower but provides easier visibility of nearby shops.
     distance:
       toggled: true
-      # Defines the range at which shops will render holograms (default: 10.0)
-      range: 10.0
+      # Defines the range at which shops will render holograms (default: 20.0)
+      range: 20.0
       # Set if items should be rendered first and holograms only when looking at the shop directly.
       show-items-first: false
   # Define which containers are applicable for chest shops:
@@ -130,3 +130,85 @@ other:
   notify-op-of-overlapping-gui-items: true
 protection:
   prevent-shop-destruction: true
+notification:
+  #Notify users when their shop is empty on join
+  notify-empty-shop-on-join: true
+  discord:
+    #Enable Discord notifications
+    enabled: false
+    #Discord webhook url
+    webhook-url: "https://discord.com/api/webhooks/1102549187805065366/SqmQYq7oeoHhjkYz4RIJo4ekj0tuJP_SMhGsW6mUAYGDlH1UvRZaHexfd7s7wyoB8c5D"
+    #Discord message template
+    buy-sell-webhook:
+      enabled: true
+        #Discord message template
+      template:
+        content: null
+        embeds: #placeholders: %BUYER%, %SELLER%, %ITEM_NAME%, %PRICE%, %CURRENCY%, %SHOP_LOCATION%, %OWNER%, %COUNT%, %TIME%
+          - title: "New chest shop transaction is made!"
+            description: "Player %BUYER% has bought %ITEM_NAME% from %SELLER% for %PRICE% %CURRENCY%."
+            url: "https://www.spigotmc.org/resources/ez-chest-shop-ecs-1-14-x-1-19-x-mega-update.90411/"
+            color: 16753454
+            fields:
+              - name: "Shop Location:"
+                value: "%SHOP_LOCATION%"
+                inline: true
+              - name: "Shop Owner:"
+                value: "%OWNER%"
+                inline: true
+              - name: "Buyer:"
+                value: "%BUYER%"
+                inline: true
+              - name: "Seller:"
+                value: "%SELLER%"
+                inline: true
+              - name: "Amount:"
+                value: "%COUNT% %ITEM_NAME%"
+                inline: true
+              - name: "Time:"
+                value: "%TIME%"
+                inline: true
+            author:
+              name: "EzChestShop"
+              url: "https://www.spigotmc.org/resources/ez-chest-shop-ecs-1-14-x-1-19-x-mega-update.90411/"
+              icon_url: "https://cdn.discordapp.com/icons/902975048514678854/3f77b7a41dd80f018988d4a5d676273e.webp?size=128"
+            thumbnail:
+              url: "https://user-images.githubusercontent.com/20891968/235449301-7a12b967-a837-4e64-8e0b-c871a53e854e.png"
+        attachments: [ ]
+
+    new-shop-webhook:
+      enabled: true
+      template:
+        content: null
+        embeds: #placeholders: %OWNER%, %BUYING_PRICE%, %SELLING_PRICE%, %ITEM_NAME%, %MATERIAL%, %TIME%, %SHOP_LOCATION%
+          - title: New shop has been created!
+            description: "Player %OWNER% created a new shop for %ITEM_NAME%"
+            url: "https://www.spigotmc.org/resources/ez-chest-shop-ecs-1-14-x-1-19-x-mega-update.90411/"
+            color: 16753454
+            fields:
+              - name: "Shop Location:"
+                value: "%SHOP_LOCATION%"
+                inline: true
+              - name: "Buying Price"
+                value: "%BUYING_PRICE%"
+                inline: true
+              - name: "Selling Price:"
+                value: "%SELLING_PRICE%"
+                inline: true
+              - name: "Item Name:"
+                value: "%ITEM_NAME%"
+                inline: true
+              - name: "Material:"
+                value: "%MATERIAL%"
+                inline: true
+              - name: "Time:"
+                value: "%TIME%"
+                inline: true
+            author:
+              name: "EzChestShop"
+              url: "https://www.spigotmc.org/resources/ez-chest-shop-ecs-1-14-x-1-19-x-mega-update.90411/"
+              icon_url: "https://cdn.discordapp.com/icons/902975048514678854/3f77b7a41dd80f018988d4a5d676273e.webp?size=128"
+            thumbnail:
+              url: "https://user-images.githubusercontent.com/20891968/235449309-ead31b66-7a06-4c1a-b79d-1c5cf2c41ed8.png"
+        attachments: [ ]
+

@@ -8,6 +8,7 @@ import me.deadlight.ezchestshop.Utils.Objects.EzShop;
 import me.deadlight.ezchestshop.Utils.Objects.ShopSettings;
 import me.deadlight.ezchestshop.Utils.Objects.SqlQueue;
 import me.deadlight.ezchestshop.Utils.Utils;
+import me.deadlight.ezchestshop.Utils.WebhookSender;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.*;
@@ -17,6 +18,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,6 +33,8 @@ public class ShopContainer {
 
     private static Economy econ = EzChestShop.getEconomy();
     private static HashMap<Location, EzShop> shopMap = new HashMap<>();
+
+    static DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
 
     /**
      * Save all shops from the Database into memory,
@@ -73,6 +77,30 @@ public class ShopContainer {
         ShopSettings settings = new ShopSettings(sloc, msgtoggle, dbuy, dsell, admins, shareincome, adminshop, rotation, new ArrayList<>());
         EzShop shop = new EzShop(loc, p, item, buyprice, sellprice, settings);
         shopMap.put(loc, shop);
+        EzChestShop.getPlugin().getServer().getScheduler().runTaskAsynchronously(
+                EzChestShop.getPlugin(), () -> {
+
+                    try {
+                        WebhookSender.sendDiscordNewShopAlert(
+                                p.getName(),
+                                //Show buying price in string if dbuy is false, otherwise show "Disabled"
+                                dbuy ? "Disabled" : String.valueOf(buyprice),
+                                dsell ? "Disabled" : String.valueOf(sellprice),
+                                //Show Item name if it has custom name, otherwise show localized name
+                                item.getItemMeta().hasDisplayName() ? item.getItemMeta().getDisplayName() : item.getType().name(),
+                                item.getType().name(),
+                                //Display Current Time Like This: 2023/5/1 | 23:10:23
+                                formatter.format(java.time.LocalDateTime.now()).replace("T", " | "),
+                                //Display shop location as this: world, x, y, z
+                                loc.getWorld().getName() + ", " + loc.getBlockX() + ", " + loc.getBlockY() + ", " + loc.getBlockZ()
+                        );
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                }
+        );
+
     }
 
     public static void loadShop(Location loc, PersistentDataContainer dataContainer) {

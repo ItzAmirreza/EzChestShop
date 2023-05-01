@@ -5,6 +5,7 @@ import me.deadlight.ezchestshop.Data.SQLite.SQLite;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.Utils.BlockOutline;
 import me.deadlight.ezchestshop.Utils.Utils;
+import me.deadlight.ezchestshop.Utils.WebhookSender;
 import org.bukkit.Instrument;
 import org.bukkit.Note;
 import org.bukkit.block.Block;

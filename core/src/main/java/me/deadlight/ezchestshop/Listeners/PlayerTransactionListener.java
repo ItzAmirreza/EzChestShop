@@ -1,4 +1,5 @@
 package me.deadlight.ezchestshop.Listeners;
+import me.deadlight.ezchestshop.Data.Config;
 import me.deadlight.ezchestshop.Data.LanguageManager;
 import me.deadlight.ezchestshop.Data.PlayerContainer;
 import me.deadlight.ezchestshop.Data.ShopContainer;
@@ -6,6 +7,7 @@ import me.deadlight.ezchestshop.Events.PlayerTransactEvent;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.Utils.Objects.TransactionLogObject;
 import me.deadlight.ezchestshop.Utils.Utils;
+import me.deadlight.ezchestshop.Utils.WebhookSender;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.OfflinePlayer;
@@ -31,6 +33,7 @@ public class PlayerTransactionListener implements Listener {
     public void onTransaction(PlayerTransactEvent event) {
         log(event);
         logProfits(event);
+        sendDiscordWebhook(event);
         if (((TileState)event.getContainerBlock().getState()).getPersistentDataContainer().get(new NamespacedKey(EzChestShop.getPlugin(), "msgtoggle"), PersistentDataType.INTEGER) == 1) {
 
             OfflinePlayer owner = event.getOwner();
@@ -38,6 +41,8 @@ public class PlayerTransactionListener implements Listener {
             getters.add(owner.getUniqueId());
 
             if (event.isBuy()) {
+                event.getItem().getItemMeta().getDisplayName();
+
                 for (UUID adminUUID : getters) {
                     Player admin = Bukkit.getPlayer(adminUUID);
                     if (admin != null) {
@@ -66,6 +71,55 @@ public class PlayerTransactionListener implements Listener {
 
 
 
+        }
+
+    }
+
+
+    public void sendDiscordWebhook(PlayerTransactEvent event) {
+
+        if (event.isBuy()) {
+            //Discord Webhook
+            EzChestShop.getPlugin().getServer().getScheduler().runTaskAsynchronously(
+                    EzChestShop.getPlugin(), () -> {
+                        WebhookSender.sendDiscordNewTransactionAlert(
+                                event.getCustomer().getName(),
+                                event.getOwner().getName(),
+                                //Show Item name if it has custom name, otherwise show localized name
+                                event.getItem().getItemMeta().hasDisplayName() ? event.getItem().getItemMeta().getDisplayName() : event.getItemName(),
+                                //Turn the price into string
+                                String.valueOf(event.getPrice()),
+                                Config.currency,
+                                //Display shop location as this: world, x, y, z
+                                event.getContainerBlock().getWorld().getName() + ", " + event.getContainerBlock().getX() + ", " + event.getContainerBlock().getY() + ", " + event.getContainerBlock().getZ(),
+                                //Display Time as this: 2023/5/1 | 23:10:23
+                                formatter.format(event.getTime()).replace("T", " | ").replace("Z", "").replace("-", "/"),
+                                String.valueOf(event.getCount()),
+                                event.getOwner().getName()
+                        );
+                    }
+            );
+        } else {
+            //Discord Webhook
+            EzChestShop.getPlugin().getServer().getScheduler().runTaskAsynchronously(
+                    EzChestShop.getPlugin(), () -> {
+                        WebhookSender.sendDiscordNewTransactionAlert(
+                                event.getOwner().getName(),
+                                event.getCustomer().getName(),
+                                //Show Item name if it has custom name, otherwise show localized name
+                                event.getItem().getItemMeta().hasDisplayName() ? event.getItem().getItemMeta().getDisplayName() : event.getItemName(),
+                                //Turn the price into string
+                                String.valueOf(event.getPrice()),
+                                Config.currency,
+                                //Display shop location as this: world, x, y, z
+                                event.getContainerBlock().getWorld().getName() + ", " + event.getContainerBlock().getX() + ", " + event.getContainerBlock().getY() + ", " + event.getContainerBlock().getZ(),
+                                //Display Time as this: 2023/5/1 | 23:10:23
+                                formatter.format(event.getTime()),
+                                String.valueOf(event.getCount()),
+                                event.getOwner().getName()
+                        );
+                    }
+            );
         }
 
     }

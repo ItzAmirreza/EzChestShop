@@ -2,6 +2,7 @@ package me.deadlight.ezchestshop.Data;
 
 import me.deadlight.ezchestshop.Enums.Database;
 import me.deadlight.ezchestshop.EzChestShop;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import scala.Int;
@@ -83,6 +84,20 @@ public class Config {
     public static String databasemongodb_connection_string;
 
     public static boolean shopProtection;
+    public static boolean emptyShopNotificationOnJoin;
+
+    public static boolean isDiscordNotificationEnabled;
+
+    public static String discordWebhookUrl;
+
+    public static boolean isBuySellWebhookEnabled;
+
+    public static ConfigurationSection buySellWebhookTemplate;
+
+    public static boolean isNewShopWebhookEnabled;
+
+    public static ConfigurationSection newShopWebhookTemplate;
+
 
 
 
@@ -167,6 +182,15 @@ public class Config {
         databasemongodb_connection_string = config.getString("database.mongodb.connection-string");
 
         shopProtection = config.getBoolean("protection.prevent-shop-destruction", true);
+        emptyShopNotificationOnJoin = config.getBoolean("notification.notify-empty-shop-on-join", true);
+        //
+        isDiscordNotificationEnabled = config.getBoolean("notification.discord.enabled", false);
+        discordWebhookUrl = config.getString("notification.discord.webhook-url", "");
+        isBuySellWebhookEnabled = config.getBoolean("notification.discord.buy-sell-webhook.enabled", false);
+        buySellWebhookTemplate = config.getConfigurationSection("notification.discord.buy-sell-webhook.template");
+        isNewShopWebhookEnabled = config.getBoolean("notification.discord.new-shop-webhook.enabled", false);
+        newShopWebhookTemplate = config.getConfigurationSection("notification.discord.new-shop-webhook.template");
+
     }
 
 
@@ -222,6 +246,13 @@ public class Config {
         boolean updated1_5_3 = fc.isBoolean("protection.prevent-shop-destruction");
         if (!updated1_5_3) {
             fc.set("protection.prevent-shop-destruction", true);
+            fc.save(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml"));
+            Config.loadConfig();
+        }
+
+        boolean updated1_5_6 = fc.isBoolean("notification.notify-empty-shop-on-join");
+        if (!updated1_5_6) {
+            fc.set("notification.notify-empty-shop-on-join", true);
             fc.save(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml"));
             Config.loadConfig();
         }
