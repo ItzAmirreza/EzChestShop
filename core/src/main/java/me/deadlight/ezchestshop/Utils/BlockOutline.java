@@ -1,9 +1,6 @@
 package me.deadlight.ezchestshop.Utils;
 import me.deadlight.ezchestshop.EzChestShop;
-import me.deadlight.ezchestshop.Utils.Utils;
-import org.bukkit.Instrument;
 import org.bukkit.Material;
-import org.bukkit.Note;
 import org.bukkit.block.Block;
 import org.bukkit.block.DoubleChest;
 import org.bukkit.entity.Player;
@@ -21,6 +18,9 @@ public class BlockOutline {
     public boolean muted = false;
     public boolean isMadeFromACheck = false;
 
+    public BlockOutline aParentOrChild;
+
+
     public BlockOutline(Player player, Block block) {
         this.player = player;
         this.block = block;
@@ -36,8 +36,7 @@ public class BlockOutline {
         //check if destroyAfter is not null
         if (destroyAfter != 0) {
             EzChestShop.getPlugin().getServer().getScheduler().runTaskLaterAsynchronously(EzChestShop.getPlugin(), () -> {
-                versionUtils.destroyEntity(player, outlineID);
-                Utils.activeOutlines.remove(outlineID);
+                hideOutline();
             }, destroyAfter * 20L);
         }
     }
@@ -45,7 +44,19 @@ public class BlockOutline {
     public void hideOutline() {
         versionUtils.destroyEntity(player, outlineID);
         Utils.activeOutlines.remove(outlineID);
+
+        if (aParentOrChild != null) {
+            aParentOrChild.hideRequestedOutline();
+            aParentOrChild = null;
+        }
+
     }
+    public void hideRequestedOutline() {
+        versionUtils.destroyEntity(player, outlineID);
+        Utils.activeOutlines.remove(outlineID);
+        this.aParentOrChild = null;
+    }
+
 
     private void checkForDoubleChestShop() {
         //check if the block is a chest and if it is a double chest
@@ -62,12 +73,16 @@ public class BlockOutline {
                     BlockOutline outline = new BlockOutline(player, rightBlock);
                     outline.destroyAfter = this.destroyAfter;
                     outline.isMadeFromACheck = true;
+                    outline.aParentOrChild = this;
+                    this.aParentOrChild = outline;
                     outline.showOutline();
                 } else {
                     Block leftBlock = doubleChest.getLeftSide().getInventory().getLocation().getBlock();
                     BlockOutline outline = new BlockOutline(player, leftBlock);
                     outline.destroyAfter = this.destroyAfter;
                     outline.isMadeFromACheck = true;
+                    outline.aParentOrChild = this;
+                    this.aParentOrChild = outline;
                     outline.showOutline();
                 }
 

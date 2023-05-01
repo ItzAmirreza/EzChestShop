@@ -268,6 +268,7 @@ command-messages:
     - "&7- &c/ecs remove &7| Видаляє магазин скринь, який ви дивитеся "
     - "&7- &c/ecs settings (налаштування) &7| Копіювати/Вставляти/Перемикати налаштування, повˈязані з магазином скринь "
     - "&eНалаштування: &7[copy, paste, admins, toggle-buying, toggle-selling, toggle-message, toggle-shared-income, change-rotation] "
+    - "&7- &c/ecs emptyshops &7| Shows you nearby empty shops that YOU own."
     - "&7 Легко правильно? :)"
   help-admin-view-addition:
     - "&cДопомога адмінам: "

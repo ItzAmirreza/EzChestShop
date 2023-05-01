@@ -868,13 +868,13 @@ public class Utils {
                     //then we check if the shop inventory has at least 1 item required for the shop
                     ItemStack shopItem = shop.getShopItem().clone();
                     Inventory inventory = Utils.getBlockInventory(shop.getLocation().getBlock());
-                    if (!inventory.containsAtLeast(shopItem, 1)) {
+                    if (inventory.containsAtLeast(shopItem, 1)) {
                         continue;
                     }
 
                     //then we check if the shop is in the area
                     if (shop.getLocation().getWorld().equals(player.getWorld())) {
-                        if (shop.getLocation().distance(player.getLocation()) <= 125) {
+                        if (shop.getLocation().distance(player.getLocation()) <= 80) {
                             emptyShops.add(shop.getLocation().getBlock());
                         }
                     }

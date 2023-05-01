@@ -270,6 +270,7 @@ command-messages:
     - "&7- &c/ecs remove &7| Hazf kardan shopi ke dar hale negah kardan be un hastid "
     - "&7- &c/ecs settings (setting) &7| Copy/Paste/Taghir vaziate tanzimate shopi ke dar hale negah kardan hastid. "
     - "&eTanzimat: &7[copy, paste, admins, toggle-buying, toggle-selling, toggle-message, toggle-shared-income, change-rotation]"
+    - "&7- &c/ecs emptyshops &7| Neshon dadane shop haye khali va nazdik ke shoma sahebesh hastid "
   help-admin-view-addition:
     - "&cAdmin Help: "
     - "&7- &c/ecsadmin"

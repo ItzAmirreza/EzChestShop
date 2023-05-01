@@ -275,6 +275,7 @@ command-messages:
     - " &7- &c/ecs remove &7| Entfernt den Shop auf den du schaust. "
     - " &7- &c/ecs settings (setting) &7| Einstellungen kopieren/einfügen/bearbeiten "
     - " &eEinstellungen: &7[copy, paste, admins, toggle-buying, toggle-selling, toggle-message, toggle-shared-income, change-rotation] "
+    - "&7- &c/ecs emptyshops &7| Shows you nearby empty shops that YOU own."
     - " &7Einfach oder? :)"
   help-admin-view-addition:
     - "&cAdmin Hilfe: "

@@ -274,6 +274,7 @@ command-messages:
     - '&7- &c/ecs settings (setting) &7| Copy/Paste/Toggle ustawienia związane ze sklepem '
     - '&eUstawienia: &7[copy, paste, admins, toggle-buying, toggle-selling, toggle-message,
     toggle-shared-income, change-rotation] '
+    - "&7- &c/ecs emptyshops &7| Shows you nearby empty shops that YOU own."
   help-admin-view-addition:
     - '&cPomoc Admina: '
     - '&7- &c/ecsadmin'

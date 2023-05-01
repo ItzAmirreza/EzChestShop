@@ -268,6 +268,7 @@ command-messages:
     - "&7- &c/ecs remove &7| Removes the chest shop that you are looking at "
     - "&7- &c/ecs settings (setting) &7| Copy/Paste/Toggle settings related to the chest shop "
     - "&eSettings: &7[copy, paste, admins, toggle-buying, toggle-selling, toggle-message, toggle-shared-income, change-rotation] "
+    - "&7- &c/ecs emptyshops &7| Shows you nearby empty shops that YOU own."
     - "&7 Eazy right? :)"
   help-admin-view-addition:
     - "&cAdmin Help: "

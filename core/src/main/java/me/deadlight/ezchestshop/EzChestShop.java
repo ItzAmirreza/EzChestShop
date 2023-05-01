@@ -311,9 +311,10 @@ public final class EzChestShop extends JavaPlugin {
         getServer().getScheduler().cancelTasks(this);
         logConsole("&c[&eEzChestShop&c] &bSaving remained sql cache...");
         ShopContainer.saveSqlQueueCache();
-        logConsole("&c[&eEzChestShop&c] &aCompleted. ");
 
         getDatabase().disconnect();
+
+        logConsole("&c[&eEzChestShop&c] &aCompleted. ");
 
         try {
             for (Object object : Utils.onlinePackets) {
@@ -332,6 +333,20 @@ public final class EzChestShop extends JavaPlugin {
         } catch (Exception ignored) {
 
         }
+
+        try {
+            for (BlockOutline outline : Utils.activeOutlines.values()) {
+                outline.hideOutline();
+            }
+
+            Utils.activeOutlines.clear();
+            Utils.enabledOutlines.clear();
+
+        } catch (Exception ignored) {
+
+        }
+
+        logConsole("&c[&eEzChestShop&c] &4Plugin is now disabled. ");
 
     }
 

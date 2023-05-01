@@ -277,11 +277,12 @@ command-messages:
   consolenotallowed: " &cKonsoldan herhangi bir komut yürütmenize izin verilmiyor."
   help:
     - "             &6  ECS Yardım&7 "
-    - ""
+    - "&bEz&cChestShop &7Plugin By Dead_Light & ElitoGame©"
     - "&a/ecs create &e(Satış Fiyatı) (Alış Fiyatı)"
     - "&a/ecs remove &7| &7Baktığınız marketi kaldırır "
     - "&a/ecs settings &e(ayar) &7| &7Market ayarlarınızı kopyalayıp diğer marketlere yapıştırabilirsiniz!"
     - "&eAyarlar: &7[copy, paste]"
+    - "&7- &c/ecs emptyshops &7| Shows you nearby empty shops that YOU own."
   help-admin-view-addition:
     - ""
   adminhelp:

@@ -7,6 +7,7 @@ import me.deadlight.ezchestshop.GUIs.AdminShopGUI;
 import me.deadlight.ezchestshop.GUIs.NonOwnerShopGUI;
 import me.deadlight.ezchestshop.GUIs.OwnerShopGUI;
 import me.deadlight.ezchestshop.GUIs.ServerShopGUI;
+import me.deadlight.ezchestshop.Utils.BlockOutline;
 import me.deadlight.ezchestshop.Utils.Utils;
 import me.deadlight.ezchestshop.Utils.WorldGuard.FlagRegistry;
 import me.deadlight.ezchestshop.Utils.WorldGuard.WorldGuardUtils;
@@ -29,6 +30,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -84,14 +86,21 @@ public class ChestOpeningListener implements Listener {
 
             if (dataContainer.has(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING)) {
                 event.setCancelled(true);
-                ownerValueConvertor(chestblock);
-                insertNewValues(chestblock);
-
-
                 // Load old shops into the Database when clicked
                 if (!ShopContainer.isShop(loc)) {
                     ShopContainer.loadShop(loc, dataContainer);
                 }
+
+                List<BlockOutline> playerOutlinedShops = new ArrayList<>(Utils.activeOutlines.values());
+                for (BlockOutline outline : playerOutlinedShops) {
+                    if (outline.player.getUniqueId().equals(event.getPlayer().getUniqueId())) {
+                        if (outline.block.getLocation().equals(loc)) {
+                            outline.hideOutline();
+                        }
+                    }
+                }
+
+
 
                 //String owner = Bukkit.getOfflinePlayer(UUID.fromString(rightone.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING))).getName();
                 String owneruuid = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING);
@@ -137,40 +146,7 @@ public class ChestOpeningListener implements Listener {
         }
 
     }
-    private void ownerValueConvertor(Block chest) {
-        PersistentDataContainer data = ((TileState)chest.getState()).getPersistentDataContainer();
-        String shopOwner = data.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING);
-        try {
-            //is UUID
-            UUID.fromString(shopOwner);
-        } catch (Exception e) {
-            //then its old owner value and I have to change it immediately!
-            OfflinePlayer offplayer = Bukkit.getOfflinePlayer(shopOwner);
-            data.set(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING, offplayer.getUniqueId().toString());
-            chest.getState().update();
-        }
-    }
 
-    private void insertNewValues(Block containerBlock) {
-        //1.3.0 new values
-        TileState state = ((TileState)containerBlock.getState());
-        PersistentDataContainer data = state.getPersistentDataContainer();
-        if (!data.has(new NamespacedKey(EzChestShop.getPlugin(), "msgtoggle"), PersistentDataType.INTEGER)) {
-            data.set(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"), PersistentDataType.INTEGER, 0);
-            data.set(new NamespacedKey(EzChestShop.getPlugin(), "msgtoggle"), PersistentDataType.INTEGER, 0);
-            data.set(new NamespacedKey(EzChestShop.getPlugin(), "dbuy"), PersistentDataType.INTEGER, 0);
-            data.set(new NamespacedKey(EzChestShop.getPlugin(), "dsell"), PersistentDataType.INTEGER, 0);
-            data.set(new NamespacedKey(EzChestShop.getPlugin(), "admins"), PersistentDataType.STRING, "none");
-            data.set(new NamespacedKey(EzChestShop.getPlugin(), "shareincome"), PersistentDataType.INTEGER, 1);
-            data.set(new NamespacedKey(EzChestShop.getPlugin(), "trans"), PersistentDataType.STRING, "none");
-            state.update();
-        }
-        //hologram update values
-        if (!data.has(new NamespacedKey(EzChestShop.getPlugin(), "rotation"), PersistentDataType.STRING)) {
-            data.set(new NamespacedKey(EzChestShop.getPlugin(), "rotation"), PersistentDataType.STRING, Config.settings_defaults_rotation);
-            state.update();
-        }
-    }
 
 
     private boolean isAdmin(PersistentDataContainer data, String uuid) {
