@@ -7,9 +7,12 @@ import net.minecraft.network.protocol.game.PacketPlayOutEntityMetadata;
 import net.minecraft.network.protocol.game.PacketPlayOutEntityVelocity;
 import net.minecraft.network.protocol.game.PacketPlayOutSpawnEntity;
 import net.minecraft.server.level.EntityPlayer;
+import net.minecraft.server.level.WorldServer;
 import net.minecraft.server.network.PlayerConnection;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.decoration.EntityArmorStand;
 import net.minecraft.world.entity.item.EntityItem;
+import net.minecraft.world.entity.monster.EntityShulker;
 import net.minecraft.world.level.World;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -176,6 +179,29 @@ public class v1_17_R1 extends VersionUtils {
 
     @Override
     void showOutline(Player player, Block block, int eID) {
+        WorldServer worldServer = ((CraftWorld) block.getLocation().getWorld()).getHandle();
+        CraftPlayer craftPlayer = (CraftPlayer) player;
+        EntityPlayer entityPlayer = craftPlayer.getHandle();
+        PlayerConnection playerConnection = entityPlayer.b;
+
+        EntityShulker shulker = new EntityShulker(EntityTypes.ay, worldServer);
+        shulker.setNoGravity(true); //no gravity
+        shulker.setMot(0, 0, 0); //set velocity
+        shulker.e(eID); //set entity id
+
+        shulker.setInvisible(true); //invisible
+        shulker.setGlowingTag(true); //set outline
+        shulker.setNoAI(true); //set noAI
+        Location newLoc = block.getLocation().clone();
+        //make location be center of the block vertically and horizontally
+        newLoc.add(0.5, 0, 0.5);
+        shulker.setPosition(newLoc.getX(), newLoc.getY(), newLoc.getZ()); //set position
+
+        PacketPlayOutSpawnEntity spawnPacket = new PacketPlayOutSpawnEntity(shulker);
+        playerConnection.sendPacket(spawnPacket);
+
+        PacketPlayOutEntityMetadata metaPacket = new PacketPlayOutEntityMetadata(eID, shulker.getDataWatcher(), true);
+        playerConnection.sendPacket(metaPacket);
 
     }
 

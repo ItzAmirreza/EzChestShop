@@ -1,5 +1,6 @@
 package me.deadlight.ezchestshop.Listeners;
 
+import me.deadlight.ezchestshop.Data.Config;
 import me.deadlight.ezchestshop.Data.DatabaseManager;
 import me.deadlight.ezchestshop.Data.SQLite.SQLite;
 import me.deadlight.ezchestshop.EzChestShop;
@@ -41,51 +42,51 @@ public class PlayerJoinListener implements Listener {
         });
 
 
+        if (Config.emptyShopNotificationOnJoin) {
+            List<Block> blocks = Utils.getNearbyEmptyShopForAdmins(player);
+            if (blocks.isEmpty()) {
+                return;
+            }
+            List<Note.Tone> tones = new ArrayList<>();
+            //add the tones to the list altogether
+            AtomicInteger noteIndex = new AtomicInteger();
+            tones.add(Note.Tone.A);
+            tones.add(Note.Tone.B);
+            tones.add(Note.Tone.C);
+            tones.add(Note.Tone.D);
+            tones.add(Note.Tone.E);
+            tones.add(Note.Tone.F);
+            tones.add(Note.Tone.G);
+            AtomicInteger actionBarCounter = new AtomicInteger();
+            EzChestShop.getPlugin().getServer().getScheduler().runTaskLaterAsynchronously(EzChestShop.getPlugin(), () -> {
 
-        List<Block> blocks = Utils.getNearbyEmptyShopForAdmins(player);
-        if (blocks.isEmpty()) {
-            return;
+                //Iterate through each block with an asychronous delay of 5 ticks
+                blocks.forEach(b -> {
+                    BlockOutline outline = new BlockOutline(player, b);
+                    outline.destroyAfter = 10;
+                    int index = blocks.indexOf(b);
+                    EzChestShop.getPlugin().getServer().getScheduler().runTaskLater(EzChestShop.getPlugin(), () -> {
+                        outline.showOutline();
+                        if (outline.muted) {
+                            return;
+                        }
+                        actionBarCounter.getAndIncrement();
+                        Utils.sendActionBar(
+                                player,
+                                "&b&l" + actionBarCounter.get() + " &c&lempty shops near you!"
+                        );
+
+                        player.playNote(b.getLocation(), Instrument.BIT, Note.flat(1, tones.get(noteIndex.get())));
+                        noteIndex.getAndIncrement();
+                        if (noteIndex.get() == 7) {
+                            noteIndex.set(0);
+                        }
+
+                    }, 2L * index);
+                });
+
+            }, 80L);
         }
-        List<Note.Tone> tones = new ArrayList<>();
-        //add the tones to the list altogether
-        AtomicInteger noteIndex = new AtomicInteger();
-        tones.add(Note.Tone.A);
-        tones.add(Note.Tone.B);
-        tones.add(Note.Tone.C);
-        tones.add(Note.Tone.D);
-        tones.add(Note.Tone.E);
-        tones.add(Note.Tone.F);
-        tones.add(Note.Tone.G);
-        AtomicInteger actionBarCounter = new AtomicInteger();
-        EzChestShop.getPlugin().getServer().getScheduler().runTaskLaterAsynchronously(EzChestShop.getPlugin(), () -> {
-
-            //Iterate through each block with an asychronous delay of 5 ticks
-            blocks.forEach(b -> {
-                BlockOutline outline = new BlockOutline(player, b);
-                outline.destroyAfter = 10;
-                int index = blocks.indexOf(b);
-                EzChestShop.getPlugin().getServer().getScheduler().runTaskLater(EzChestShop.getPlugin(), () -> {
-                    outline.showOutline();
-                    if (outline.muted) {
-                        return;
-                    }
-                    actionBarCounter.getAndIncrement();
-                    Utils.sendActionBar(
-                            player,
-                            "&b&l" + actionBarCounter.get() + " &c&lempty shops near you!"
-                    );
-
-                    player.playNote(b.getLocation(), Instrument.BIT, Note.flat(1, tones.get(noteIndex.get())));
-                    noteIndex.getAndIncrement();
-                    if (noteIndex.get() == 7) {
-                        noteIndex.set(0);
-                    }
-
-                }, 2L * index);
-            });
-
-        }, 80L);
-
     }
 
 }

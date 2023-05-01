@@ -255,17 +255,6 @@ public final class EzChestShop extends JavaPlugin {
             LoadedChunksTask.startTask();
         }
 
-        //loop through online players
-        for (Player player : getServer().getOnlinePlayers()) {
-            try {
-                Utils.versionUtils.injectConnection(player);
-            } catch (IllegalAccessException e) {
-                throw new RuntimeException(e);
-            } catch (NoSuchFieldException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
         UpdateChecker checker = new UpdateChecker();
         checker.check();
     }

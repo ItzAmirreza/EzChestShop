@@ -137,7 +137,7 @@ notification:
     #Enable Discord notifications
     enabled: false
     #Discord webhook url
-    webhook-url: "https://discord.com/api/webhooks/1102549187805065366/SqmQYq7oeoHhjkYz4RIJo4ekj0tuJP_SMhGsW6mUAYGDlH1UvRZaHexfd7s7wyoB8c5D"
+    webhook-url: "https://discord.com/api/webhooks/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
     #Discord message template
     buy-sell-webhook:
       enabled: true

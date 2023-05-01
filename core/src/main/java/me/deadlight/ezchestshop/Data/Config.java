@@ -9,10 +9,7 @@ import scala.Int;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class Config {
 
@@ -253,6 +250,96 @@ public class Config {
         boolean updated1_5_6 = fc.isBoolean("notification.notify-empty-shop-on-join");
         if (!updated1_5_6) {
             fc.set("notification.notify-empty-shop-on-join", true);
+            fc.set("notification.notify-empty-shop-on-join", true);
+            fc.set("notification.discord.enabled", false);
+            fc.set("notification.discord.webhook-url", "https://discord.com/api/webhooks/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+
+            fc.set("notification.discord.buy-sell-webhook.enabled", true);
+            fc.set("notification.discord.buy-sell-webhook.template.content", null);
+
+            List<Map<String, Object>> buySellEmbeds = new ArrayList<>();
+            Map<String, Object> buySellEmbed = new HashMap<>();
+            buySellEmbed.put("title", "New chest shop transaction is made!");
+            buySellEmbed.put("description", "Player %BUYER% has bought %ITEM_NAME% from %SELLER% for %PRICE% %CURRENCY%.");
+            buySellEmbed.put("url", "https://www.spigotmc.org/resources/ez-chest-shop-ecs-1-14-x-1-19-x-mega-update.90411/");
+            buySellEmbed.put("color", 16753454);
+
+// Fields for buy-sell embed
+            List<Map<String, Object>> buySellFields = new ArrayList<>();
+// ... Add the remaining fields in a similar manner
+            String[] fieldNames = {"Shop Location:", "Shop Owner:", "Buyer:", "Seller:", "Amount:", "Time:"};
+            String[] fieldValues = {"%SHOP_LOCATION%", "%OWNER%", "%BUYER%", "%SELLER%", "%COUNT% %ITEM_NAME%", "%TIME%"};
+            boolean[] fieldInlines = {true, true, true, true, true, true};
+
+            for (int i = 0; i < fieldNames.length; i++) {
+                Map<String, Object> field = new HashMap<>();
+                field.put("name", fieldNames[i]);
+                field.put("value", fieldValues[i]);
+                field.put("inline", fieldInlines[i]);
+                buySellFields.add(field);
+            }
+
+            buySellEmbed.put("fields", buySellFields);
+
+// Author for buy-sell embed
+            Map<String, Object> buySellAuthor = new HashMap<>();
+            buySellAuthor.put("name", "EzChestShop");
+            buySellAuthor.put("url", "https://www.spigotmc.org/resources/ez-chest-shop-ecs-1-14-x-1-19-x-mega-update.90411/");
+            buySellAuthor.put("icon_url", "https://cdn.discordapp.com/icons/902975048514678854/3f77b7a41dd80f018988d4a5d676273e.webp?size=128");
+            buySellEmbed.put("author", buySellAuthor);
+
+// Thumbnail for buy-sell embed
+            Map<String, Object> buySellThumbnail = new HashMap<>();
+            buySellThumbnail.put("url", "https://user-images.githubusercontent.com/20891968/235449301-7a12b967-a837-4e64-8e0b-c871a53e854e.png");
+            buySellEmbed.put("thumbnail", buySellThumbnail);
+
+            buySellEmbeds.add(buySellEmbed);
+            fc.set("notification.discord.buy-sell-webhook.template.embeds", buySellEmbeds);
+            fc.set("notification.discord.buy-sell-webhook.template.attachments", new ArrayList<>());
+
+            fc.set("notification.discord.new-shop-webhook.enabled", true);
+            fc.set("notification.discord.new-shop-webhook.template.content", null);
+
+            List<Map<String, Object>> newShopEmbeds = new ArrayList<>();
+            Map<String, Object> newShopEmbed = new HashMap<>();
+            newShopEmbed.put("title", "New shop has been created!");
+            newShopEmbed.put("description", "Player %OWNER% created a new shop for %ITEM_NAME%");
+            newShopEmbed.put("url", "https://www.spigotmc.org/resources/ez-chest-shop-ecs-1-14-x-1-19-x-mega-update.90411/");
+            newShopEmbed.put("color", 16753454);
+
+// Fields for new-shop embed
+            List<Map<String, Object>> newShopFields = new ArrayList<>();
+// ... Add the remaining fields in a similar manner
+            String[] newShopFieldNames = {"Shop Location:", "Buying Price", "Selling Price:", "Item Name:", "Material:", "Time:"};
+            String[] newShopFieldValues = {"%SHOP_LOCATION%", "%BUYING_PRICE%", "%SELLING_PRICE%", "%ITEM_NAME%", "%MATERIAL%", "%TIME%"};
+            boolean[] newShopFieldInlines = {true, true, true, true, true, true};
+
+            for (int i = 0; i < newShopFieldNames.length; i++) {
+                Map<String, Object> field = new HashMap<>();
+                field.put("name", newShopFieldNames[i]);
+                field.put("value", newShopFieldValues[i]);
+                field.put("inline", newShopFieldInlines[i]);
+                newShopFields.add(field);
+            }
+
+            newShopEmbed.put("fields", newShopFields);
+
+// Author for new-shop embed
+            Map<String, Object> newShopAuthor = new HashMap<>();
+            newShopAuthor.put("name", "EzChestShop");
+            newShopAuthor.put("url", "https://www.spigotmc.org/resources/ez-chest-shop-ecs-1-14-x-1-19-x-mega-update.90411/");
+            newShopAuthor.put("icon_url", "https://cdn.discordapp.com/icons/902975048514678854/3f77b7a41dd80f018988d4a5d676273e.webp?size=128");
+            newShopEmbed.put("author", newShopAuthor);
+
+// Thumbnail for new-shop embed
+            Map<String, Object> newShopThumbnail = new HashMap<>();
+            newShopThumbnail.put("url", "https://user-images.githubusercontent.com/20891968/235449309-ead31b66-7a06-4c1a-b79d-1c5cf2c41ed8.png");
+            newShopEmbed.put("thumbnail", newShopThumbnail);
+
+            newShopEmbeds.add(newShopEmbed);
+            fc.set("notification.discord.new-shop-webhook.template.embeds", newShopEmbeds);
+            fc.set("notification.discord.new-shop-webhook.template.attachments", new ArrayList<>());
+
             fc.save(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml"));
             Config.loadConfig();
         }
