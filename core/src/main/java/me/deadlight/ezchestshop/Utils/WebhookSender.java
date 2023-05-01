@@ -1,35 +1,34 @@
 package me.deadlight.ezchestshop.Utils;
 
 import me.deadlight.ezchestshop.Data.Config;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 import org.bukkit.configuration.ConfigurationSection;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.io.IOException;
-
 public class WebhookSender {
 
     public static void sendDiscordWebhook(JSONObject messageJson) {
-        OkHttpClient client = new OkHttpClient();
-        MediaType JSON = MediaType.get("application/json; charset=utf-8");
+        try {
+            URL url = new URL(Config.discordWebhookUrl);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+            connection.setDoOutput(true);
 
-        RequestBody requestBody = RequestBody.create(JSON, messageJson.toString());
-        Request request = new Request.Builder()
-                .url(Config.discordWebhookUrl)
-                .post(requestBody)
-                .build();
-
-        try (Response response = client.newCall(request).execute()) {
-            if (!response.isSuccessful()) {
-                System.err.println("Failed to send webhook message: " + response);
+            try (OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream(), "UTF-8")) {
+                writer.write(messageJson.toString());
             }
+
+            int responseCode = connection.getResponseCode();
+            if (responseCode != 200) {
+                System.err.println("Failed to send webhook message: " + responseCode);
+            }
+
+            connection.disconnect();
         } catch (IOException e) {
             System.err.println("Error sending webhook message: " + e.getMessage());
         }
