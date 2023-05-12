@@ -1043,6 +1043,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
 
             List<BlockOutline> playerOutlinedShops = new ArrayList<>(Utils.activeOutlines.values());
             for (BlockOutline outline : playerOutlinedShops) {
+                if (outline == null) continue;
                 if (outline.player.getUniqueId().equals(player.getUniqueId())) {
                     outline.hideOutline();
                 }

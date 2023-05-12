@@ -9,6 +9,7 @@ import me.deadlight.ezchestshop.Data.GUI.GuiData;
 import me.deadlight.ezchestshop.Data.LanguageManager;
 import me.deadlight.ezchestshop.Data.ShopContainer;
 import me.deadlight.ezchestshop.EzChestShop;
+import me.deadlight.ezchestshop.Utils.Objects.EzShop;
 import me.deadlight.ezchestshop.Utils.SignMenuFactory;
 import me.deadlight.ezchestshop.Utils.Utils;
 import net.milkbowl.vault.economy.Economy;
@@ -38,8 +39,19 @@ public class NonOwnerShopGUI {
         OfflinePlayer offlinePlayerOwner = Bukkit.getOfflinePlayer(UUID.fromString(data.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING)));
         String shopOwner = offlinePlayerOwner.getName();
         if (shopOwner == null) {
-            player.sendMessage(lm.chestShopProblem());
-            return;
+            boolean result = Utils.reInstallNamespacedKeyValues(data, containerBlock.getLocation());
+            if (!result) {
+                player.sendMessage(lm.chestShopProblem());
+                return;
+            }
+            containerBlock.getState().update();
+            EzShop shop = ShopContainer.getShop(containerBlock.getLocation());
+            shopOwner = Bukkit.getOfflinePlayer(shop.getOwnerID()).getName();
+            if (shopOwner == null) {
+                player.sendMessage(lm.chestShopProblem());
+                System.out.println("EzChestShop ERROR: Shop owner is STILL null. Please report this to the EzChestShop developer for furthur investigation.");
+                return;
+            }
         }
         double sellPrice = data.get(new NamespacedKey(EzChestShop.getPlugin(), "sell"), PersistentDataType.DOUBLE);
         double buyPrice = data.get(new NamespacedKey(EzChestShop.getPlugin(), "buy"), PersistentDataType.DOUBLE);

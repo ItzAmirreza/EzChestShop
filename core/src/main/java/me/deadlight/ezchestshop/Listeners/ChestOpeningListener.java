@@ -93,6 +93,7 @@ public class ChestOpeningListener implements Listener {
 
                 List<BlockOutline> playerOutlinedShops = new ArrayList<>(Utils.activeOutlines.values());
                 for (BlockOutline outline : playerOutlinedShops) {
+                    if (outline == null) continue;
                     if (outline.player.getUniqueId().equals(event.getPlayer().getUniqueId())) {
                         if (outline.block.getLocation().equals(loc)) {
                             outline.hideOutline();

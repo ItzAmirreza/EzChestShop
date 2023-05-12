@@ -844,6 +844,10 @@ public class Utils {
             if (shop.getSettings().isDbuy()) {
                 continue;
             }
+            //new check for admin shops
+            if (shop.getSettings().isAdminshop()) {
+                continue;
+            }
 
             if (shop.getOwnerID().equals(player.getUniqueId()) || getAdminsForShop(shop).contains(player.getUniqueId())) {
                 //then we check if the shop is empty
@@ -890,5 +894,38 @@ public class Utils {
         String coloredMessage = ChatColor.translateAlternateColorCodes('&', message);
         player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(coloredMessage));
     }
+
+    public static boolean reInstallNamespacedKeyValues(PersistentDataContainer container, Location containerLocation) {
+
+        EzShop shop = ShopContainer.getShop(containerLocation);
+        if (shop == null) {
+            return false; //false means the shop doesn't even exist in the database, so we don't need to do anything and send the message
+        }
+
+        container.set(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING, shop.getOwnerID().toString());
+        container.set(new NamespacedKey(EzChestShop.getPlugin(), "buy"), PersistentDataType.DOUBLE, shop.getBuyPrice());
+        container.set(new NamespacedKey(EzChestShop.getPlugin(), "sell"), PersistentDataType.DOUBLE, shop.getSellPrice());
+        //add new settings data later
+        container.set(new NamespacedKey(EzChestShop.getPlugin(), "msgtoggle"), PersistentDataType.INTEGER, shop.getSettings().isMsgtoggle() ? 1 : 0);
+        container.set(new NamespacedKey(EzChestShop.getPlugin(), "dbuy"), PersistentDataType.INTEGER, shop.getSettings().isDbuy() ?
+                (shop.getBuyPrice() == 0 ? 1 : (Config.settings_defaults_dbuy ? 1 : 0))
+                : (Config.settings_defaults_dbuy ? 1 : 0));
+        container.set(new NamespacedKey(EzChestShop.getPlugin(), "dsell"), PersistentDataType.INTEGER, shop.getSettings().isDsell() ?
+                (shop.getSellPrice() == 0 ? 1 : (Config.settings_defaults_dsell ? 1 : 0))
+                : (Config.settings_defaults_dsell ? 1 : 0));
+        container.set(new NamespacedKey(EzChestShop.getPlugin(), "admins"), PersistentDataType.STRING, shop.getSettings().getAdmins());
+        container.set(new NamespacedKey(EzChestShop.getPlugin(), "shareincome"), PersistentDataType.INTEGER, shop.getSettings().isShareincome() ? 1 : 0);
+        container.set(new NamespacedKey(EzChestShop.getPlugin(), "trans"), PersistentDataType.STRING, "none");
+        container.set(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"), PersistentDataType.INTEGER, shop.getSettings().isAdminshop() ? 1 : 0);
+        container.set(new NamespacedKey(EzChestShop.getPlugin(), "rotation"), PersistentDataType.STRING, shop.getSettings().getRotation());
+
+        return true;
+
+    }
+
+
+//    public static Object getRequestedData(Contain) {
+//
+//    }
 
 }
