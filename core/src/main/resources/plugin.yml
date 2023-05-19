@@ -2,8 +2,8 @@ name: EzChestShop
 version: ${project.version}
 main: me.deadlight.ezchestshop.EzChestShop
 api-version: 1.14
-depend: [Vault]
 softdepend:
+  - Vault
   - WildChests
   - WorldGuard
   - Slimefun #in case just to load after the Slimefun
