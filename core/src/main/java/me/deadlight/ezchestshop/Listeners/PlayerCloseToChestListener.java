@@ -25,6 +25,7 @@ import org.bukkit.inventory.DoubleChestInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BlockStateMeta;
+import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.RayTraceResult;
@@ -381,7 +382,9 @@ public class PlayerCloseToChestListener implements Listener {
                 if (line.startsWith("<itemdata")) {
                     if (is_sneaking) {
                         ItemStack item = ShopContainer.getShop(shopLocation).getShopItem();
-                        if (item.getType().name().contains("SHULKER_BOX") || item.getEnchantments().size() > 0) {
+                        if (item.getType().name().contains("SHULKER_BOX") || item.getEnchantments().size() > 0 ||
+                                (item.getType() == Material.ENCHANTED_BOOK
+                                && ((EnchantmentStorageMeta) item.getItemMeta()).getStoredEnchants().size() > 1)) {
                             try {
                                 int lineNum = Integer.parseInt(line.replaceAll("\\D", ""));
                                 line = getHologramItemData(lineNum, item, lines);
@@ -485,7 +488,9 @@ public class PlayerCloseToChestListener implements Listener {
                 if (line.startsWith("<itemdata")) {
                     if (is_sneaking) {
                         ItemStack item = ShopContainer.getShop(shopLocation).getShopItem();
-                        if (item.getType().name().contains("SHULKER_BOX") || item.getEnchantments().size() > 0) {
+                        if (item.getType().name().contains("SHULKER_BOX") || item.getEnchantments().size() > 0 ||
+                                (item.getType() == Material.ENCHANTED_BOOK
+                                        && ((EnchantmentStorageMeta) item.getItemMeta()).getStoredEnchants().size() > 1)) {
                             try {
                                 int lineNum = Integer.parseInt(line.replaceAll("\\D", ""));
                                 line = getHologramItemData(lineNum, item, lines);
@@ -885,6 +890,22 @@ public class PlayerCloseToChestListener implements Listener {
                     }
                 }
             }
+        } else if (item.getType() == Material.ENCHANTED_BOOK) {
+            EnchantmentStorageMeta emeta = (EnchantmentStorageMeta) item.getItemMeta();
+            // Get the enchantments
+            Map<Enchantment, Integer> enchantments = emeta.getStoredEnchants();
+            List<Map.Entry<Enchantment, Integer>> sortedEnchants = new ArrayList<>(enchantments.entrySet());
+            sortedEnchants.sort(Map.Entry.comparingByValue());
+            Collections.reverse(sortedEnchants);
+
+            if (lineNum == -1 && sortedEnchants.size() - lines > 0) {
+                line = lm.itemEnchantHologramMore((sortedEnchants.size() - lines));
+            } else if (lineNum - 1 >= 0 && lineNum - 1 < sortedEnchants.size()) {
+                line = lm.itemEnchantHologram(sortedEnchants.get(lineNum - 1).getKey(),
+                        sortedEnchants.get(lineNum - 1).getValue());
+            } else {
+                line = "";
+            }
         } else {
             // Get the enchantments
             Map<Enchantment, Integer> enchantments = item.getEnchantments();
@@ -895,7 +916,7 @@ public class PlayerCloseToChestListener implements Listener {
             if (lineNum == -1 && sortedEnchants.size() - lines > 0) {
                 line = lm.itemEnchantHologramMore((sortedEnchants.size() - lines));
             } else if (lineNum - 1 >= 0 && lineNum - 1 < sortedEnchants.size()) {
-                line = lm.itemEnchantHologram(Utils.capitalizeFirstSplit(sortedEnchants.get(lineNum - 1).getKey().getKey().getKey()),
+                line = lm.itemEnchantHologram(sortedEnchants.get(lineNum - 1).getKey(),
                         sortedEnchants.get(lineNum - 1).getValue());
             } else {
                 line = "";

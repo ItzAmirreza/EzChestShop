@@ -16,6 +16,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -893,8 +894,12 @@ public class LanguageManager {
     public String cannotDestroyShop() {
         return Utils.colorify(getString("settings.chat.protection.cannotDestroyShop"));
     }
-    public String itemEnchantHologram(String enchant, int level) {
-        String msg = Utils.colorify(getString("hologram.item-enchantment")).replace("%enchantment%", enchant).replace("%level%", "" + level);
+    public String itemEnchantHologram(Enchantment enchant, int level) {
+        String msg = Utils.colorify(getString("hologram.item-enchantment")).replace("%enchantment%", Utils.capitalizeFirstSplit(enchant.getKey().getKey()));
+        if (enchant.getMaxLevel() == 1) {
+            return  msg.replace("%level%", "").replace("%level-roman%", "").trim();
+        }
+        msg = msg.replace("%level%", "" + level);
         // Convert %level-roman% to a roman number for level 1-10, then just use the level.
         if (msg.contains("%level-roman%")) {
             String roman = "";

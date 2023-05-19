@@ -4,6 +4,7 @@ import dev.triumphteam.gui.guis.GuiItem;
 import dev.triumphteam.gui.guis.PaginatedGui;
 import me.deadlight.ezchestshop.Data.Config;
 import me.deadlight.ezchestshop.Data.DatabaseManager;
+import me.deadlight.ezchestshop.Data.LanguageManager;
 import me.deadlight.ezchestshop.Data.MySQL.MySQL;
 import me.deadlight.ezchestshop.Data.SQLite.SQLite;
 import me.deadlight.ezchestshop.Data.ShopContainer;
@@ -18,10 +19,12 @@ import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
 import org.bukkit.block.*;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.DoubleChestInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.permissions.Permissible;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -47,6 +50,7 @@ public class Utils {
     public static HashMap<String, Block> blockBreakMap = new HashMap<>();
     public static HashMap<Integer, BlockOutline> activeOutlines = new HashMap<>(); //player uuid, list of outlines
     public static List<UUID> enabledOutlines = new ArrayList<>();
+    private static LanguageManager lm = new LanguageManager();
 
     private static String discordLink;
 
@@ -260,6 +264,12 @@ public class Utils {
         if (item.hasItemMeta()) {
             if (item.getItemMeta().hasDisplayName()) {
                 itemname = colorify(item.getItemMeta().getDisplayName());
+            } else if (item.getType() == Material.ENCHANTED_BOOK
+                    && ((EnchantmentStorageMeta) item.getItemMeta()).getStoredEnchants().size() == 1) {
+                EnchantmentStorageMeta emeta = (EnchantmentStorageMeta) item.getItemMeta();
+
+                Map.Entry<Enchantment,Integer> entry = emeta.getStoredEnchants().entrySet().iterator().next();
+                itemname = lm.itemEnchantHologram(entry.getKey(), entry.getValue());
             } else if (item.getItemMeta().hasLocalizedName()) {
                 itemname = item.getItemMeta().getLocalizedName();
             } else {
