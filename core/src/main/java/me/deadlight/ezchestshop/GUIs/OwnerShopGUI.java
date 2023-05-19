@@ -31,8 +31,6 @@ import java.util.UUID;
 //storage player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 0.5f, 0.5f);
 
 public class OwnerShopGUI {
-    private Economy econ = EzChestShop.getEconomy();
-
     public OwnerShopGUI() {}
 
 
@@ -213,10 +211,6 @@ public class OwnerShopGUI {
 
 
 
-    }
-
-    private long roundDecimals(double num) {
-        return (long) (((long)(num * 1e1)) / 1e1);
     }
 
     private ItemStack disablingCheck(ItemStack mainItem, boolean disabling) {

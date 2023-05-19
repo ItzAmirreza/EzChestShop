@@ -9,6 +9,7 @@ import me.deadlight.ezchestshop.Utils.Objects.ShopSettings;
 import me.deadlight.ezchestshop.Utils.Objects.SqlQueue;
 import me.deadlight.ezchestshop.Utils.Utils;
 import me.deadlight.ezchestshop.Utils.WebhookSender;
+import me.deadlight.ezchestshop.Utils.XPEconomy;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.*;
@@ -347,7 +348,7 @@ public class ShopContainer {
                 }
                 //For the transaction event
                 thatItem.setAmount(count);
-                take(price, Bukkit.getOfflinePlayer(player.getUniqueId()));
+                withdraw(price, Bukkit.getOfflinePlayer(player.getUniqueId()));
                 transactionMessage(data, Bukkit.getOfflinePlayer(UUID.fromString(
                         data.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING))),
                         Bukkit.getOfflinePlayer(player.getUniqueId()), price, true, tthatItem, count, containerBlock);
@@ -394,30 +395,38 @@ public class ShopContainer {
 
     }
 
-
     private static void deposit(double price, OfflinePlayer deposit) {
 
-        econ.depositPlayer(deposit, price);
+        if (Config.useXP) {
+            XPEconomy.depositPlayer(deposit, price);
+        } else {
+            econ.depositPlayer(deposit, price);
+        }
 
     }
-    private static void take(double price, OfflinePlayer deposit) {
 
-        econ.withdrawPlayer(deposit, price);
+    private static boolean withdraw(double price, OfflinePlayer deposit) {
+
+        if (Config.useXP) {
+            return XPEconomy.withDrawPlayer(deposit, price);
+        } else {
+            return econ.withdrawPlayer(deposit, price).transactionSuccess();
+        }
 
     }
 
     private static boolean ifHasMoney(OfflinePlayer player, double price) {
-        if (econ.has(player, price)) {
-            return true;
+        if (Config.useXP) {
+            return XPEconomy.has(player, price);
+        } else  {
+            return econ.has(player, price);
         }
-        return false;
     }
 
     private static void getandgive(OfflinePlayer withdraw, double price, OfflinePlayer deposit) {
 
-        econ.withdrawPlayer(withdraw, price);
-        econ.depositPlayer(deposit, price);
-
+        withdraw(price, withdraw);
+        deposit(price, deposit);
 
     }
 
@@ -436,11 +445,11 @@ public class ShopContainer {
             List<UUID> adminsList = Utils.getAdminsList(data);
             double profit = price/(adminsList.size() + 1);
             if (adminsList.size() > 0) {
-                if (econ.has(Bukkit.getOfflinePlayer(ownerUUID), profit * adminsList.size())) {
-                    EconomyResponse details = econ.withdrawPlayer(Bukkit.getOfflinePlayer(ownerUUID), profit * adminsList.size());
-                    if (details.transactionSuccess()) {
+                if (ifHasMoney(Bukkit.getOfflinePlayer(ownerUUID), profit * adminsList.size())) {
+                    boolean succesful = withdraw(profit * adminsList.size(), Bukkit.getOfflinePlayer(ownerUUID));
+                    if (succesful) {
                         for (UUID adminUUID : adminsList) {
-                            econ.depositPlayer(Bukkit.getOfflinePlayer(adminUUID), profit);
+                            deposit(profit, Bukkit.getOfflinePlayer(adminUUID));
                         }
                     }
                 }

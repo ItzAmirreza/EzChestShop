@@ -30,8 +30,6 @@ import java.util.UUID;
 
 public class NonOwnerShopGUI {
 
-    private Economy econ = EzChestShop.getEconomy();
-
     public NonOwnerShopGUI() {}
 
     public void showGUI(Player player, PersistentDataContainer data, Block containerBlock) {
@@ -269,27 +267,4 @@ public class NonOwnerShopGUI {
             return mainItem;
         }
     }
-
-    private void sharedIncomeCheck(PersistentDataContainer data, double price) {
-        boolean isSharedIncome = data.get(new NamespacedKey(EzChestShop.getPlugin(), "shareincome"), PersistentDataType.INTEGER) == 1;
-        if (isSharedIncome) {
-            UUID ownerUUID = UUID.fromString(data.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING));
-            List<UUID> adminsList = Utils.getAdminsList(data);
-            double profit = price/(adminsList.size() + 1);
-            if (adminsList.size() > 0) {
-                if (econ.has(Bukkit.getOfflinePlayer(ownerUUID), profit * adminsList.size())) {
-                    EconomyResponse details = econ.withdrawPlayer(Bukkit.getOfflinePlayer(ownerUUID), profit * adminsList.size());
-                    if (details.transactionSuccess()) {
-                        for (UUID adminUUID : adminsList) {
-                            econ.depositPlayer(Bukkit.getOfflinePlayer(adminUUID), profit);
-                        }
-                    }
-                }
-
-            }
-        }
-
-    }
-
-
 }

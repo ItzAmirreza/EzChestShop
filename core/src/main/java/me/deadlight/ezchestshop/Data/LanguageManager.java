@@ -9,6 +9,7 @@ import me.deadlight.ezchestshop.Listeners.ChatListener;
 import me.deadlight.ezchestshop.Utils.Objects.CheckProfitEntry;
 import me.deadlight.ezchestshop.Utils.Objects.ShopSettings;
 import me.deadlight.ezchestshop.Utils.Utils;
+import me.deadlight.ezchestshop.Utils.XPEconomy;
 import net.md_5.bungee.api.chat.*;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.ChatColor;
@@ -30,8 +31,6 @@ import java.util.stream.Collectors;
 public class LanguageManager {
 
     private static FileConfiguration languageConfig;
-    private static Economy econ = EzChestShop.getEconomy();
-
     private static List<String> supported_locales = Arrays.asList("Locale_EN", "Locale_DE", "Locale_ES", "Locale_CN", "Locale_FA", "Locale_PL", "Locale_TR", "Locale_UA");
     private static List<String> found_locales = new ArrayList<>();
 
@@ -788,9 +787,17 @@ public class LanguageManager {
 
     //checkprofits.
     public BaseComponent[] checkProfitsLandingpage(Player player, double buyCost, int buyAmount, double sellCost, int sellAmount) {
+
+        double balance = Config.useXP ?
+            XPEconomy.getXP(player) :
+            (EzChestShop.getEconomy() == null ?
+                0.0 :
+                EzChestShop.getEconomy().getBalance(player));
+
+
         return MineDown.parse( getList("checkprofits.landing-menu").stream().collect(Collectors.joining("\n"))
-                .replace("%currency%", Config.currency).replace("%balance%", Utils.formatNumber(
-                        EzChestShop.getEconomy() == null ? 0.0 : EzChestShop.getEconomy().getBalance(player), Utils.FormatType.CHAT))
+                .replace("%currency%", Config.currency)
+                .replace("%balance%", Utils.formatNumber(balance, Utils.FormatType.CHAT))
                 .replace("%income%","" + buyCost)
                 .replace("%sales%", "" + buyAmount)
                 .replace("%cost%","" + sellCost)

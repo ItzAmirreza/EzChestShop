@@ -90,6 +90,7 @@ shops:
 economy:
   # Used to replace %currency% for the language files and the 2nd hologram line.
   server-currency: $
+  use-xp: false
 commands:
   # Register easier to remember alias on server startup: /shop and /adminshop
   alias:

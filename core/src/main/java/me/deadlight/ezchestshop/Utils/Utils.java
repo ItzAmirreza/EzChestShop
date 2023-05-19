@@ -536,7 +536,8 @@ public class Utils {
                                                     ItemStack[] storageInventory, double eachBuyPrice, ItemStack itemStack) {
         // I was going to run this in async but maybe later...
         int possibleCount = 0;
-        double buyerBalance = EzChestShop.getEconomy().getBalance(offlinePlayer);
+        double buyerBalance =
+                Config.useXP ? XPEconomy.getXP(offlinePlayer) : EzChestShop.getEconomy().getBalance(offlinePlayer);
         int emptyCount = playerEmptyCount(playerInventory, itemStack);
         int howManyExists = howManyOfItemExists(storageInventory, itemStack);
 
@@ -567,7 +568,9 @@ public class Utils {
             buyerBalance = Double.MAX_VALUE;
         } else {
             if (offlinePlayer.hasPlayedBefore()) {
-                buyerBalance = EzChestShop.getEconomy().getBalance(offlinePlayer);
+                buyerBalance = Config.useXP ?
+                            XPEconomy.getXP(offlinePlayer) :
+                            EzChestShop.getEconomy().getBalance(offlinePlayer);
             } else {
                 buyerBalance = 0;
             }

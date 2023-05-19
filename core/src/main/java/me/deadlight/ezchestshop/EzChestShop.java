@@ -29,6 +29,7 @@ public final class EzChestShop extends JavaPlugin {
     private static EzChestShop plugin;
 
     private static Economy econ = null;
+    public static boolean economyPluginFound = true;
 
     public static boolean slimefun = false;
     public static boolean worldguard = false;
@@ -72,11 +73,14 @@ public final class EzChestShop extends JavaPlugin {
             logConsole("&c[&eEzChestShop&c] &eCurrent Protocol version initialized.");
         }
 
-        if (!setupEconomy()) {
+        economyPluginFound = setupEconomy();
+        if (!economyPluginFound) {
+            Config.useXP = true;
             logConsole(
-                    "&c[&eEzChestShop&c] &4Cannot find vault or economy plugin. Self disabling... &ePlease note that you need vault and at least one economy plugin installed.");
-            Bukkit.getPluginManager().disablePlugin(this);
-            return;
+            "&c[&eEzChestShop&c] &4Cannot find vault or economy plugin. Switching to XP based economy... " +
+                "&ePlease note that you need vault and at least one economy plugin installed to use a money based system.");
+//            Bukkit.getPluginManager().disablePlugin(this);
+//            return;
         }
 
         try {

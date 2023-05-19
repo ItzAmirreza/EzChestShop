@@ -26,7 +26,6 @@ import java.util.stream.IntStream;
 public class CommandCheckProfits implements CommandExecutor, Listener, TabCompleter {
 
     public static LanguageManager lm = new LanguageManager();
-    private static Economy econ = EzChestShop.getEconomy();
 
     @SuppressWarnings("deprecation")
     @Override

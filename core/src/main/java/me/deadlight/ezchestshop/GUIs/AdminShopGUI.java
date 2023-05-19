@@ -31,8 +31,6 @@ import java.util.List;
 import java.util.UUID;
 
 public class AdminShopGUI {
-    private Economy econ = EzChestShop.getEconomy();
-
     public AdminShopGUI() {
 
     }

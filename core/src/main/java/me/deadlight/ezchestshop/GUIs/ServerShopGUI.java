@@ -28,7 +28,6 @@ import java.util.UUID;
 
 public class ServerShopGUI {
 
-    private Economy econ = EzChestShop.getEconomy();
     public ServerShopGUI() {
 
     }

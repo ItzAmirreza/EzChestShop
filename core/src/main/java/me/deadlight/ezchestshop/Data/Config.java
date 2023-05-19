@@ -14,6 +14,7 @@ import java.util.*;
 public class Config {
 
     public static String currency;
+    public static boolean useXP;
 
     public static boolean showholo;
     public static List<String> holostructure;
@@ -104,6 +105,7 @@ public class Config {
         EzChestShop.getPlugin().reloadConfig();
         FileConfiguration config = EzChestShop.getPlugin().getConfig();
         currency = config.getString("economy.server-currency");
+        useXP = EzChestShop.economyPluginFound ? config.getBoolean("economy.use-xp") : true;
 
         showholo = config.getBoolean("shops.hologram.show-holograms");
         holostructure = config.getStringList("shops.hologram.holo-structure");
@@ -344,5 +346,11 @@ public class Config {
             Config.loadConfig();
         }
 
+        boolean updated1_5_7 = fc.isBoolean("economy.use-xp");
+        if (!updated1_5_7) {
+            fc.set("economy.use-xp", false);
+            fc.save(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml"));
+            Config.loadConfig();
+        }
     }
 }

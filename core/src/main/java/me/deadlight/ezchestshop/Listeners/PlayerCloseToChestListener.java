@@ -335,8 +335,6 @@ public class PlayerCloseToChestListener implements Listener {
                 : new ArrayList<>();
         // Count the amount of Holograms at the shopLocation
         Location lineLocation = spawnLocation.clone().subtract(0, 0.1, 0);
-        String itemname = "Error";
-        itemname = Utils.getFinalItemName(thatItem);
         List<String> structure = new ArrayList<>(is_adminshop ? Config.holostructure_admin : Config.holostructure);
         if (ShopContainer.getShopSettings(shopLocation).getRotation().equals("down"))
             Collections.reverse(structure);
@@ -347,10 +345,7 @@ public class PlayerCloseToChestListener implements Listener {
                 lineLocation.add(0, 0.15 * Config.holo_linespacing, 0);
                 lineLocation.add(0, 0.35 * Config.holo_linespacing, 0);
             } else {
-                String line = Utils.colorify(element.replace("%item%", itemname)
-                        .replace("%buy%", Utils.formatNumber(buy, Utils.FormatType.HOLOGRAM))
-                        .replace("%sell%", Utils.formatNumber(sell, Utils.FormatType.HOLOGRAM))
-                        .replace("%currency%", Config.currency).replace("%owner%", shop_owner));
+                String line = insertPlaceholders(element, thatItem, player, shopLocation, buy, sell, shop_owner);
                 // Show only custom messages if item first and show messages always is true. Everything else is skipped.
                 if (Config.holodistancing_show_item_first && !(Config.settings_hologram_message_show_empty_shop_always && line.contains("<emptyShopInfo/>"))) {
                     if (!((Config.settings_hologram_message_show_always && line.startsWith("<custom")))) {
@@ -449,15 +444,6 @@ public class PlayerCloseToChestListener implements Listener {
         }
 
         Location lineLocation = spawnLocation.clone().subtract(0, 0.1, 0);
-        String itemname = "Error";
-        itemname = Utils.getFinalItemName(thatItem);
-        List<String> possibleCounts = Utils.calculatePossibleAmount(Bukkit.getOfflinePlayer(player.getUniqueId()),
-                Bukkit.getOfflinePlayer(
-                        UUID.fromString(((TileState) shopLocation.getBlock().getState()).getPersistentDataContainer()
-                                .get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING))),
-                player.getInventory().getStorageContents(),
-                Utils.getBlockInventory(shopLocation.getBlock()).getStorageContents(),
-                buy, sell, thatItem);
         List<String> structure = new ArrayList<>(is_adminshop ? Config.holostructure_admin : Config.holostructure);
         if (ShopContainer.getShopSettings(shopLocation).getRotation().equals("down"))
             Collections.reverse(structure);
@@ -468,12 +454,7 @@ public class PlayerCloseToChestListener implements Listener {
                 lineLocation.add(0, 0.15 * Config.holo_linespacing, 0);
                 lineLocation.add(0, 0.35 * Config.holo_linespacing, 0);
             } else {
-                String line = Utils.colorify(element.replace("%item%", itemname)
-                        .replace("%buy%", Utils.formatNumber(buy, Utils.FormatType.HOLOGRAM))
-                        .replace("%sell%", Utils.formatNumber(sell, Utils.FormatType.HOLOGRAM))
-                        .replace("%currency%", Config.currency)
-                        .replace("%owner%", shop_owner).replace("%maxbuy%", possibleCounts.get(0))
-                        .replace("%maxsell%", possibleCounts.get(1)));
+                String line = insertPlaceholders(element, thatItem, player, shopLocation, buy, sell, shop_owner);
                 if (is_dbuy || is_dsell) {
                     line = line.replaceAll("<separator>.*?<\\/separator>", "");
                     if (is_dbuy && is_dsell) {
@@ -554,6 +535,24 @@ public class PlayerCloseToChestListener implements Listener {
         // Save the Hologram Data so it can be removed later
         HoloTextMap.put(player, holoTextList);
 
+    }
+
+    public String insertPlaceholders(String rawText, ItemStack thatItem, Player player, Location shopLocation, double buy, double sell, String shop_owner) {
+        String itemName = Utils.getFinalItemName(thatItem);
+        List<String> possibleCounts = Utils.calculatePossibleAmount(Bukkit.getOfflinePlayer(player.getUniqueId()),
+                Bukkit.getOfflinePlayer(
+                        UUID.fromString(((TileState) shopLocation.getBlock().getState()).getPersistentDataContainer()
+                                .get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING))),
+                player.getInventory().getStorageContents(),
+                Utils.getBlockInventory(shopLocation.getBlock()).getStorageContents(),
+                buy, sell, thatItem);
+        String line = Utils.colorify(rawText.replace("%item%", itemName)
+                .replace("%buy%", Utils.formatNumber(buy, Utils.FormatType.HOLOGRAM))
+                .replace("%sell%", Utils.formatNumber(sell, Utils.FormatType.HOLOGRAM))
+                .replace("%currency%", Config.currency)
+                .replace("%owner%", shop_owner).replace("%maxbuy%", possibleCounts.get(0))
+                .replace("%maxsell%", possibleCounts.get(1)));
+        return line;
     }
 
     private void showHologramItem(Location spawnLocation, Location shopLocation, ItemStack thatItem, Player player,
