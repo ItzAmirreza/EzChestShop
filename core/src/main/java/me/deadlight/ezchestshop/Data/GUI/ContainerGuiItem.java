@@ -116,4 +116,9 @@ public class ContainerGuiItem {
         item.setItemMeta(meta);
         return this;
     }
+
+    public ContainerGuiItem setAmount(int amount) {
+        item.setAmount(amount);
+        return this;
+    }
 }

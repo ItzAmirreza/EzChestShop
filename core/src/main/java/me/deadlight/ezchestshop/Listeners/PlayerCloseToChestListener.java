@@ -556,7 +556,9 @@ public class PlayerCloseToChestListener implements Listener {
                 .replace("%sell%", Utils.formatNumber(sell, Utils.FormatType.HOLOGRAM))
                 .replace("%currency%", Config.currency)
                 .replace("%owner%", shop_owner).replace("%maxbuy%", possibleCounts.get(0))
-                .replace("%maxsell%", possibleCounts.get(1)));
+                .replace("%maxsell%", possibleCounts.get(1))
+                .replace("%maxStackSize%", thatItem.getMaxStackSize() + "")
+        );
         return line;
     }
 

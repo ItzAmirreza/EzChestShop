@@ -89,6 +89,9 @@ public class ServerShopGUI {
                 int amount = 1;
                 if (amountString.equals("all")) {
                     amount = Integer.parseInt(Utils.calculateSellPossibleAmount(Bukkit.getOfflinePlayer(player.getUniqueId()), player.getInventory().getStorageContents(), Utils.getBlockInventory(containerBlock).getStorageContents(), sellPrice, mainitem));
+                } else if (amountString.equals("maxStackSize")) {
+                    amount = mainitem.getMaxStackSize();
+                    container.getItem(key).setAmount(amount);
                 } else {
                     try {
                         amount = Integer.parseInt(amountString);
@@ -114,6 +117,9 @@ public class ServerShopGUI {
                 int amount = 1;
                 if (amountString.equals("all")) {
                     amount = Integer.parseInt(Utils.calculateBuyPossibleAmount(Bukkit.getOfflinePlayer(player.getUniqueId()), player.getInventory().getStorageContents(), Utils.getBlockInventory(containerBlock).getStorageContents(), buyPrice, mainitem));
+                } else if (amountString.equals("maxStackSize")) {
+                    amount = mainitem.getMaxStackSize();
+                    container.getItem(key).setAmount(amount);
                 } else {
                     try {
                         amount = Integer.parseInt(amountString);

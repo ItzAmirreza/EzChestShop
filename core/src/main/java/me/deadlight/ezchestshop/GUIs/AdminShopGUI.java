@@ -93,6 +93,9 @@ public class AdminShopGUI {
                 int amount = 1;
                 if (amountString.equals("all")) {
                     amount = Integer.parseInt(Utils.calculateSellPossibleAmount(Bukkit.getOfflinePlayer(player.getUniqueId()), player.getInventory().getStorageContents(), Utils.getBlockInventory(containerBlock).getStorageContents(), sellPrice, mainitem));
+                } else if (amountString.equals("maxStackSize")) {
+                    amount = mainitem.getMaxStackSize();
+                    container.getItem(key).setAmount(amount);
                 } else {
                     try {
                         amount = Integer.parseInt(amountString);
@@ -108,6 +111,10 @@ public class AdminShopGUI {
                     if (disabledSell) {
                         return;
                     }
+                    if (offlinePlayerOwner.getUniqueId().equals(player.getUniqueId())) {
+                        player.sendMessage(lm.selfTransaction());
+                        return;
+                    }
                     ShopContainer.sellItem(containerBlock, sellPrice * finalAmount, finalAmount, mainitem, player, offlinePlayerOwner, data);
                     showGUI(player, data, containerBlock);
                 });
@@ -118,6 +125,9 @@ public class AdminShopGUI {
                 int amount = 1;
                 if (amountString.equals("all")) {
                     amount = Integer.parseInt(Utils.calculateBuyPossibleAmount(Bukkit.getOfflinePlayer(player.getUniqueId()), player.getInventory().getStorageContents(), Utils.getBlockInventory(containerBlock).getStorageContents(), buyPrice, mainitem));
+                } else if (amountString.equals("maxStackSize")) {
+                    amount = mainitem.getMaxStackSize();
+                    container.getItem(key).setAmount(amount);
                 } else {
                     try {
                         amount = Integer.parseInt(amountString);
@@ -131,6 +141,10 @@ public class AdminShopGUI {
                     // buy things
                     event.setCancelled(true);
                     if (disabledBuy) {
+                        return;
+                    }
+                    if (offlinePlayerOwner.getUniqueId().equals(player.getUniqueId())) {
+                        player.sendMessage(lm.selfTransaction());
                         return;
                     }
                     ShopContainer.buyItem(containerBlock, buyPrice * finalAmount, finalAmount, mainitem, player, offlinePlayerOwner, data);
@@ -195,6 +209,11 @@ public class AdminShopGUI {
 
             GuiItem guiSignItem = new GuiItem(customBuySellItemStack.getItem(), event -> {
                 event.setCancelled(true);
+                if (offlinePlayerOwner.getUniqueId().equals(player.getUniqueId())) {
+                    player.sendMessage(lm.selfTransaction());
+                    return;
+                }
+
                 if (event.isRightClick()) {
                     //buy
                     if (disabledBuy) {
