@@ -1,6 +1,7 @@
 package me.deadlight.ezchestshop.Listeners;
 
 import me.deadlight.ezchestshop.Data.Config;
+import me.deadlight.ezchestshop.Data.ShopCommandManager;
 import me.deadlight.ezchestshop.Data.ShopContainer;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.GUIs.AdminShopGUI;
@@ -115,6 +116,7 @@ public class ChestOpeningListener implements Listener {
                             return;
                         }
                     }
+                    Config.shopCommandManager.executeCommands(loc, ShopCommandManager.ShopType.ADMINSHOP, ShopCommandManager.ShopAction.OPEN);
                     ServerShopGUI serverShopGUI = new ServerShopGUI();
                     serverShopGUI.showGUI(player, dataContainer, chestblock);
                     return;
@@ -126,6 +128,8 @@ public class ChestOpeningListener implements Listener {
                         return;
                     }
                 }
+                // At this point it is clear that some shop will open, so run opening commands here.
+                Config.shopCommandManager.executeCommands(loc, ShopCommandManager.ShopType.SHOP, ShopCommandManager.ShopAction.OPEN);
                 if (player.hasPermission("ecs.admin") || player.hasPermission("ecs.admin.view")) {
                     adminShopGUI.showGUI(player, dataContainer, chestblock);
                     return;

@@ -363,6 +363,25 @@ public class Utils {
         return true;
     }
 
+    public static <T> List<T> moveListElement(List<T> list, int index, boolean up) {
+        if (up) {
+            if (index == 0) {
+                return list;
+            }
+            T element = list.get(index);
+            list.remove(index);
+            list.add(index - 1, element);
+        } else {
+            if (index == list.size() - 1) {
+                return list;
+            }
+            T element = list.get(index);
+            list.remove(index);
+            list.add(index + 1, element);
+        }
+        return list;
+    }
+
     /**
      * Get the max permission level of a permission object (e.g. player)
      *

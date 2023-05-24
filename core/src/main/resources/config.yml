@@ -87,6 +87,23 @@ shops:
       line-count-default: 1
       # If true, this will always show players if a shop is empty.
       show-empty-shop-always: true
+  commands:
+    enabled: false
+    shop:
+      buy:
+        - /tell %player% You bought an Item!
+        - /tell %player% Thanks for shopping!
+      sell:
+        - /tell %player% You sold an Item!
+      open:
+        - /tell %player% Opening shop!
+    adminshop:
+      buy:
+        - /tell %player% You bought an admin Item!
+      sell:
+        - /tell %player% You sold an admin Item!
+      open:
+        - /tell %player% Opening adminshop!
 economy:
   # Used to replace %currency% for the language files and the 2nd hologram line.
   server-currency: $

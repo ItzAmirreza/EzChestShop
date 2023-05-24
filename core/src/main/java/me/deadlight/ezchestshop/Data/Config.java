@@ -96,7 +96,8 @@ public class Config {
 
     public static ConfigurationSection newShopWebhookTemplate;
 
-
+    public static boolean shopCommandsEnabled;
+    public static ShopCommandManager shopCommandManager;
 
 
     public static void loadConfig() {
@@ -190,6 +191,8 @@ public class Config {
         isNewShopWebhookEnabled = config.getBoolean("notification.discord.new-shop-webhook.enabled", false);
         newShopWebhookTemplate = config.getConfigurationSection("notification.discord.new-shop-webhook.template");
 
+        shopCommandsEnabled = config.getBoolean("shops.commands.enabled");
+        shopCommandManager = new ShopCommandManager();
     }
 
 
@@ -349,6 +352,13 @@ public class Config {
         boolean updated1_5_7 = fc.isBoolean("economy.use-xp");
         if (!updated1_5_7) {
             fc.set("economy.use-xp", false);
+            fc.set("shops.commands.enabled", false);
+            fc.set("shops.commands.shop.buy", Arrays.asList("/tell %player% You bought an Item!", "/tell %player% Thanks for shopping!"));
+            fc.set("shops.commands.shop.sell", Arrays.asList("/tell %player% You sold an Item!"));
+            fc.set("shops.commands.shop.open", Arrays.asList("/tell %player% Opening shop!"));
+            fc.set("shops.commands.adminshop.buy", Arrays.asList("/tell %player% You bought an admin Item!"));
+            fc.set("shops.commands.adminshop.sell", Arrays.asList("/tell %player% You sold an admin Item!"));
+            fc.set("shops.commands.adminshop.open", Arrays.asList("/tell %player% Opening adminshop!"));
             fc.save(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml"));
             Config.loadConfig();
         }

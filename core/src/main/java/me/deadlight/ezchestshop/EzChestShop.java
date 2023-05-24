@@ -50,6 +50,11 @@ public final class EzChestShop extends JavaPlugin {
         logConsole("&c[&eEzChestShop&c] &aEnabling EzChestShop - version " + this.getDescription().getVersion());
         saveDefaultConfig();
 
+        try {
+            Config.checkForConfigYMLupdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         Config.loadConfig();
 
         // load database
@@ -83,11 +88,6 @@ public final class EzChestShop extends JavaPlugin {
 //            return;
         }
 
-        try {
-            Config.checkForConfigYMLupdate();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
         LanguageManager.loadLanguages();
         try {

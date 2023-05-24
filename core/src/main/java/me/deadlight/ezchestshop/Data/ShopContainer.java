@@ -259,7 +259,8 @@ public class ShopContainer {
                     transactionMessage(data, owner, player, price, true, tthatItem, count, containerBlock.getLocation().getBlock());
                     player.sendMessage(lm.messageSuccBuy(price));
                     player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 0.5f, 0.5f);
-
+                    Config.shopCommandManager.executeCommands(containerBlock.getLocation(),
+                            ShopCommandManager.ShopType.SHOP, ShopCommandManager.ShopAction.BUY);
 
                 } else {
                     player.sendMessage(lm.fullinv());
@@ -307,6 +308,8 @@ public class ShopContainer {
                     transactionMessage(data, owner, Bukkit.getOfflinePlayer(player.getUniqueId()), price, false, tthatItem, count, containerBlock.getLocation().getBlock());
                     player.sendMessage(lm.messageSuccSell(price));
                     player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 0.5f, 0.5f);
+                    Config.shopCommandManager.executeCommands(containerBlock.getLocation(),
+                            ShopCommandManager.ShopType.SHOP, ShopCommandManager.ShopAction.SELL);
 
                 } else {
                     player.sendMessage(lm.chestIsFull());
@@ -354,6 +357,8 @@ public class ShopContainer {
                         Bukkit.getOfflinePlayer(player.getUniqueId()), price, true, tthatItem, count, containerBlock);
                 player.sendMessage(lm.messageSuccBuy(price));
                 player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 0.5f, 0.5f);
+                Config.shopCommandManager.executeCommands(containerBlock.getLocation(),
+                        ShopCommandManager.ShopType.ADMINSHOP, ShopCommandManager.ShopAction.BUY);
 
             } else {
                 player.sendMessage(lm.fullinv());
@@ -387,6 +392,8 @@ public class ShopContainer {
             player.getInventory().removeItem(thatItem);
             player.sendMessage(lm.messageSuccSell(price));
             player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 0.5f, 0.5f);
+            Config.shopCommandManager.executeCommands(containerBlock.getLocation(),
+                    ShopCommandManager.ShopType.ADMINSHOP, ShopCommandManager.ShopAction.SELL);
 
         } else {
             player.sendMessage(lm.notEnoughItemToSell());
