@@ -311,9 +311,15 @@ public class Utils {
             return null;
         String sloc = "";
         sloc += ("W:" + loc.getWorld().getName() + ",");
-        sloc += ("X:" + round(loc.getX(), decimals) + ",");
-        sloc += ("Y:" + round(loc.getY(), decimals) + ",");
-        sloc += ("Z:" + round(loc.getZ(), decimals));
+        if (decimals <= 0) {
+            sloc += ("X:" + (int) round(loc.getX(), decimals) + ",");
+            sloc += ("Y:" + (int) round(loc.getY(), decimals) + ",");
+            sloc += ("Z:" + (int) round(loc.getZ(), decimals));
+        } else {
+            sloc += ("X:" + round(loc.getX(), decimals) + ",");
+            sloc += ("Y:" + round(loc.getY(), decimals) + ",");
+            sloc += ("Z:" + round(loc.getZ(), decimals));
+        }
         return sloc;
     }
 

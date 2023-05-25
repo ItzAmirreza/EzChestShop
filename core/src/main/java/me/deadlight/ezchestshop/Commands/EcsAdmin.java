@@ -150,42 +150,57 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
                         } else {
                             if (args[1].startsWith("W:")) {
                                 Location location = Utils.StringtoLocation(args[1]);
-                                if (args.length < 3) {
-                                    Config.shopCommandManager.showActionEditor(player, location);
-                                } else {
-                                    if (location != null) {
+                                if (location != null) {
+                                    if (args.length < 3) {
+                                        Config.shopCommandManager.showActionEditor(player, location);
+                                    } else if (args.length < 4) {
                                         ShopCommandManager.ShopAction action = ShopCommandManager.ShopAction.valueOf(args[2]);
-                                        if (args.length == 3) {
-                                            Config.shopCommandManager.showCommandEditor(player, location, action);
+                                        if (!Config.shopCommandManager.hasActionOptions(action)) {
+                                            // if the command doesn't have any options, directly show the command editor!
+                                            Config.shopCommandManager.showCommandEditor(player, location, action, null);
+                                        } else {
+                                            Config.shopCommandManager.showOptionEditor(player, location, action);
+                                        }
+                                    } else if (args.length >= 4) {
+                                        ShopCommandManager.ShopAction action = ShopCommandManager.ShopAction.valueOf(args[2]);
+                                        String option = args[3].equals("none") ? null : args[3];
+                                        if (args.length == 4) {
+                                            Config.shopCommandManager.showCommandEditor(player, location, action, option);
                                         } else {
                                             // longer then 3 args
-                                            if (args[3].equals("add")) {
+                                            if (args[4].equals("add")) {
                                                 if (args.length >= 5) {
-                                                    // get the command from any further args
-                                                    String newCommand = "";
-                                                    for (int i = 4; i < args.length; i++) {
-                                                        newCommand += args[i] + " ";
-                                                    }
-                                                    Config.shopCommandManager.addCommand(player, location, action, newCommand.trim());
-                                                }
-                                            } else if (args[3].equals("move")) {
-                                                if (args.length == 6) {
-                                                    Config.shopCommandManager.moveCommandIndex(player, location, action, Integer.parseInt(args[4]), args[5].equals("up"));
-                                                }
-
-                                            } else if (args[3].equals("edit")) {
-                                                if (args.length >= 6) {
                                                     // get the command from any further args
                                                     String newCommand = "";
                                                     for (int i = 5; i < args.length; i++) {
                                                         newCommand += args[i] + " ";
                                                     }
-                                                    Config.shopCommandManager.editCommand(player, location, action, Integer.parseInt(args[4]), newCommand.trim());
+                                                    if (!newCommand.trim().equals("")) {
+                                                        Config.shopCommandManager.addCommand(player, location, action, option, newCommand.trim());
+                                                    }
+                                                }
+                                            } else if (args[4].equals("move")) {
+                                                if (args.length == 7) {
+                                                    Config.shopCommandManager.moveCommandIndex(player, location, action, option, Integer.parseInt(args[5]), args[6].equals("up"));
                                                 }
 
-                                            } else if (args[3].equals("remove")) {
-                                                if (args.length == 5) {
-                                                    Config.shopCommandManager.removeCommand(player, location, action, Integer.parseInt(args[4]));
+                                            } else if (args[4].equals("edit")) {
+                                                if (args.length >= 7) {
+                                                    // get the command from any further args
+                                                    String newCommand = "";
+                                                    for (int i = 6; i < args.length; i++) {
+                                                        newCommand += args[i] + " ";
+                                                    }
+                                                    if (newCommand.trim().equals("")) {
+                                                        Config.shopCommandManager.removeCommand(player, location, action, option, Integer.parseInt(args[5]));
+                                                    } else {
+                                                        Config.shopCommandManager.editCommand(player, location, action, option, Integer.parseInt(args[5]), newCommand.trim());
+                                                    }
+                                                }
+
+                                            } else if (args[4].equals("remove")) {
+                                                if (args.length == 6) {
+                                                    Config.shopCommandManager.removeCommand(player, location, action, option, Integer.parseInt(args[5]));
                                                 }
                                             }
                                         }
@@ -236,10 +251,11 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
             Player p = (Player) sender;
             List<String> list_shop_commands_1 = Arrays.asList(Utils.LocationRoundedtoString(p.getTargetBlockExact(6).getLocation(), 0));
             List<String> list_shop_commands_2 = Arrays.asList(Arrays.stream(ShopCommandManager.ShopAction.values()).map(Enum::name).toArray(String[]::new));
-            List<String> list_shop_commands_3 = Arrays.asList("add", "move", "edit", "remove");
-            List<String> list_shop_commands_4 = Arrays.asList("[index]");
-            List<String> list_shop_commands_editcreate_5 = Arrays.asList("[command]");
-            List<String> list_shop_commands_move_5 = Arrays.asList("up", "down");
+            List<String> list_shop_commands_3 = Arrays.asList("[option]");
+            List<String> list_shop_commands_4 = Arrays.asList("add", "move", "edit", "remove");
+            List<String> list_shop_commands_5 = Arrays.asList("[index]");
+            List<String> list_shop_commands_editcreate_6 = Arrays.asList("[command]");
+            List<String> list_shop_commands_move_6 = Arrays.asList("up", "down");
             if (p.hasPermission("ecs.admin") || p.hasPermission("ecs.admin.reload") || p.hasPermission("ecs.admin.create") || p.hasPermission("ecs.admin.remove")) {
                 if (args.length == 1)
                     StringUtil.copyPartialMatches(args[0], list_firstarg, fList);
@@ -263,16 +279,18 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
                     } else if (args.length == 4) {
                         StringUtil.copyPartialMatches(args[3], list_shop_commands_3, fList);
                     } else if (args.length == 5) {
-                        if (args[3].equalsIgnoreCase("add")) {
-                            StringUtil.copyPartialMatches(args[4], list_shop_commands_editcreate_5, fList);
+                        StringUtil.copyPartialMatches(args[4], list_shop_commands_4, fList);
+                    } else if (args.length == 6) {
+                        if (args[4].equalsIgnoreCase("add")) {
+                            StringUtil.copyPartialMatches(args[5], list_shop_commands_editcreate_6, fList);
                         } else {
-                            StringUtil.copyPartialMatches(args[4], list_shop_commands_4, fList);
+                            StringUtil.copyPartialMatches(args[5], list_shop_commands_5, fList);
                         }
-                    } else if (args.length >= 6) {
-                        if (args[3].equalsIgnoreCase("add") || args[3].equalsIgnoreCase("edit")) {
-                            StringUtil.copyPartialMatches(args[args.length - 1], list_shop_commands_editcreate_5, fList);
-                        } else if (args[3].equalsIgnoreCase("move") && args.length == 6) {
-                            StringUtil.copyPartialMatches(args[5], list_shop_commands_move_5, fList);
+                    } else if (args.length >= 7) {
+                        if (args[4].equalsIgnoreCase("add") || args[4].equalsIgnoreCase("edit")) {
+                            StringUtil.copyPartialMatches(args[args.length - 1], list_shop_commands_editcreate_6, fList);
+                        } else if (args[4].equalsIgnoreCase("move") && args.length == 7) {
+                            StringUtil.copyPartialMatches(args[6], list_shop_commands_move_6, fList);
                         }
                     }
                 }

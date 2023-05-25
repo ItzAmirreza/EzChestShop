@@ -353,12 +353,12 @@ public class Config {
         if (!updated1_5_7) {
             fc.set("economy.use-xp", false);
             fc.set("shops.commands.enabled", false);
-            fc.set("shops.commands.shop.buy", Arrays.asList("/tell %player% You bought an Item!", "/tell %player% Thanks for shopping!"));
-            fc.set("shops.commands.shop.sell", Arrays.asList("/tell %player% You sold an Item!"));
-            fc.set("shops.commands.shop.open", Arrays.asList("/tell %player% Opening shop!"));
-            fc.set("shops.commands.adminshop.buy", Arrays.asList("/tell %player% You bought an admin Item!"));
-            fc.set("shops.commands.adminshop.sell", Arrays.asList("/tell %player% You sold an admin Item!"));
-            fc.set("shops.commands.adminshop.open", Arrays.asList("/tell %player% Opening adminshop!"));
+            fc.set("shops.commands.shop.buy.*", Arrays.asList("/tell %player_name% You bought an Item!", "/tell %player_name% Thanks for shopping!"));
+            fc.set("shops.commands.shop.sell.*", Arrays.asList("/tell %player_name% You sold an Item!"));
+            fc.set("shops.commands.shop.open", Arrays.asList("/tell %player_name% Opening shop!"));
+            fc.set("shops.commands.adminshop.buy.*", Arrays.asList("/tell %player_name% You bought an admin Item!"));
+            fc.set("shops.commands.adminshop.sell.*", Arrays.asList("/tell %player_name% You sold an admin Item!"));
+            fc.set("shops.commands.adminshop.open", Arrays.asList("/tell %player_name% Opening adminshop!"));
             fc.save(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml"));
             Config.loadConfig();
         }

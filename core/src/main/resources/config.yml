@@ -91,19 +91,19 @@ shops:
     enabled: false
     shop:
       buy:
-        - /tell %player% You bought an Item!
-        - /tell %player% Thanks for shopping!
+        - /tell %player_name% You bought an Item!
+        - /tell %player_name% Thanks for shopping!
       sell:
-        - /tell %player% You sold an Item!
+        - /tell %player_name% You sold an Item!
       open:
-        - /tell %player% Opening shop!
+        - /tell %player_name% Opening shop!
     adminshop:
       buy:
-        - /tell %player% You bought an admin Item!
+        - /tell %player_name% You bought an admin Item!
       sell:
-        - /tell %player% You sold an admin Item!
+        - /tell %player_name% You sold an admin Item!
       open:
-        - /tell %player% Opening adminshop!
+        - /tell %player_name% Opening adminshop!
 economy:
   # Used to replace %currency% for the language files and the 2nd hologram line.
   server-currency: $

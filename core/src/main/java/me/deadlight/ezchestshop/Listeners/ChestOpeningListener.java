@@ -116,7 +116,7 @@ public class ChestOpeningListener implements Listener {
                             return;
                         }
                     }
-                    Config.shopCommandManager.executeCommands(loc, ShopCommandManager.ShopType.ADMINSHOP, ShopCommandManager.ShopAction.OPEN);
+                    Config.shopCommandManager.executeCommands(player, loc, ShopCommandManager.ShopType.ADMINSHOP, ShopCommandManager.ShopAction.OPEN, null);
                     ServerShopGUI serverShopGUI = new ServerShopGUI();
                     serverShopGUI.showGUI(player, dataContainer, chestblock);
                     return;
@@ -129,7 +129,7 @@ public class ChestOpeningListener implements Listener {
                     }
                 }
                 // At this point it is clear that some shop will open, so run opening commands here.
-                Config.shopCommandManager.executeCommands(loc, ShopCommandManager.ShopType.SHOP, ShopCommandManager.ShopAction.OPEN);
+                Config.shopCommandManager.executeCommands(player, loc, ShopCommandManager.ShopType.SHOP, ShopCommandManager.ShopAction.OPEN, null);
                 if (player.hasPermission("ecs.admin") || player.hasPermission("ecs.admin.view")) {
                     adminShopGUI.showGUI(player, dataContainer, chestblock);
                     return;
