@@ -60,7 +60,7 @@ public class ShopCommandManager {
             // 4. Local command
 
             // If the option is a wildcard, we should not run the command twice.
-            boolean isNotAlreadyWildcard = option != null && option.equals("*");
+            boolean isNotAlreadyWildcard = option != null && !option.equals("*");
             if (isNotAlreadyWildcard) {
                 executeCommand(player, type, action, "*");
             }
@@ -195,6 +195,9 @@ public class ShopCommandManager {
      */
 
     public ShopCommandsAtLocation getCommandsOfShop(Location loc) {
+        if (!shopCommandEntryHashMap.containsKey(loc)) {
+            shopCommandEntryHashMap.put(loc, new ShopCommandsAtLocation());
+        }
         return shopCommandEntryHashMap.get(loc);
     }
 
@@ -366,7 +369,13 @@ public class ShopCommandManager {
         compb.append("Editing options of " + (shop.getSettings().isAdminshop() ? "admin " : "") + "shop trading " +
                 Utils.getFinalItemName(shop.getShopItem()) + "\n").color(ChatColor.YELLOW);
 
-        List<String> options = shopCommandEntryHashMap.get(location).getOptions(action);
+        ShopCommandsAtLocation commandsAtLocation;
+        if (shopCommandEntryHashMap.containsKey(location)) {
+            commandsAtLocation = shopCommandEntryHashMap.get(location);
+        } else {
+            commandsAtLocation = new ShopCommandsAtLocation();
+        }
+        List<String> options = commandsAtLocation.getOptions(action);
         // always show to wildcard option to raise awareness for it.
         if (!options.contains("*")) {
             options.add("*");
@@ -406,7 +415,7 @@ public class ShopCommandManager {
         if (shop == null) return;
         ShopCommandManager.ShopCommandsAtLocation cmdsAtLoc = getCommandsOfShop(location);
         if (cmdsAtLoc == null) {
-            return;
+            cmdsAtLoc = new ShopCommandManager.ShopCommandsAtLocation();
         }
         compb.append("----------------------------------------------------\n").color(ChatColor.YELLOW);
         compb.append("Editing " + action.name() + (option != null ? " " + option : "") + " commands of " + (shop.getSettings().isAdminshop() ? "admin " : "") + "shop trading " +

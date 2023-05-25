@@ -132,7 +132,7 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
                         new GuiEditorGUI().showGuiEditorOverview(player);
                     } else if (firstarg.equalsIgnoreCase("shop-commands")) {
                         if (!Config.shopCommandsEnabled) {
-                            player.sendMessage("Enable this setting in the config!");
+                            player.sendMessage(ChatColor.RED +  "Enable this setting in the config!");
                             return false;
                         }
                         if (args.length == 1) {
