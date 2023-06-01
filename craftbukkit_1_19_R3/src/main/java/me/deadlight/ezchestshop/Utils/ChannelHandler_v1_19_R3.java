@@ -40,7 +40,6 @@ public class ChannelHandler_v1_19_R3 extends ChannelInboundHandlerAdapter {
         if (msg instanceof PacketPlayInUseEntity) {
             //now we check if player is right clicking on the outline shulkerbox, if so we open the shop for them
             PacketPlayInUseEntity packet = (PacketPlayInUseEntity) msg;
-            printFields(packet);
             Field field = packet.getClass().getDeclaredField("a"); //The field a is entity ID
             field.setAccessible(true);
             int entityID = (int) field.get(packet);
@@ -72,21 +71,6 @@ public class ChannelHandler_v1_19_R3 extends ChannelInboundHandlerAdapter {
         }
 
         ctx.fireChannelRead(msg);
-    }
-
-    private void printFields(Object obj) {
-        Field[] fields = obj.getClass().getDeclaredFields();
-
-        for (Field field : fields) {
-            field.setAccessible(true); // You need this if fields are private
-            Object value;
-            try {
-                value = field.get(obj);
-                System.out.println("Field name: " + field.getName() + ", Field value: " + value);
-            } catch (IllegalAccessException e) {
-                System.out.println("Error accessing field: " + field.getName());
-            }
-        }
     }
 
 

@@ -3,6 +3,7 @@ package me.deadlight.ezchestshop.Listeners;
 import me.deadlight.ezchestshop.Data.Config;
 import me.deadlight.ezchestshop.Data.ShopContainer;
 import me.deadlight.ezchestshop.Utils.Utils;
+import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -72,7 +73,17 @@ public class ChestShopBreakPrevention implements Listener {
             return;
         }
 
-        if (ShopContainer.isShop(event.getSource().getLocation()) || Utils.isPartOfTheChestShop(event.getSource().getLocation()) != null) {
+        if (event == null || event.getSource() == null) {
+            return;
+        }
+
+        Location location = event.getSource().getLocation();
+
+        if (location == null) {
+            return;
+        }
+
+        if (ShopContainer.isShop(location) || Utils.isPartOfTheChestShop(location) != null) {
             event.setCancelled(true);
         }
     }
