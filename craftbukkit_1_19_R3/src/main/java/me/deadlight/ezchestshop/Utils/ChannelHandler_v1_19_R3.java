@@ -40,6 +40,7 @@ public class ChannelHandler_v1_19_R3 extends ChannelInboundHandlerAdapter {
         if (msg instanceof PacketPlayInUseEntity) {
 
             if (!Utils.enabledOutlines.contains(player.getUniqueId())) {
+                ctx.fireChannelRead(msg);
                 return;
             }
 
@@ -49,6 +50,7 @@ public class ChannelHandler_v1_19_R3 extends ChannelInboundHandlerAdapter {
             try {
                 field = packet.getClass().getDeclaredField("a"); //The field a is entity ID
             } catch (NoSuchFieldException e) {
+                ctx.fireChannelRead(msg);
                 return; //This is for ModelEngine
             }
 
