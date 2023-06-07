@@ -1,7 +1,7 @@
 name: EzChestShop
 version: ${project.version}
 main: me.deadlight.ezchestshop.EzChestShop
-api-version: 1.14
+api-version: 1.16
 softdepend:
   - Vault
   - WildChests
