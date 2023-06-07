@@ -349,7 +349,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                                             : (Config.settings_defaults_dsell ? 1 : 0));
                             container.set(new NamespacedKey(EzChestShop.getPlugin(), "admins"), PersistentDataType.STRING, "none");
                             container.set(new NamespacedKey(EzChestShop.getPlugin(), "shareincome"), PersistentDataType.INTEGER, Config.settings_defaults_shareprofits ? 1 : 0);
-                            container.set(new NamespacedKey(EzChestShop.getPlugin(), "trans"), PersistentDataType.STRING, "none");
+                            //container.set(new NamespacedKey(EzChestShop.getPlugin(), "trans"), PersistentDataType.STRING, "none");
                             container.set(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"), PersistentDataType.INTEGER, 0);
                             container.set(new NamespacedKey(EzChestShop.getPlugin(), "rotation"), PersistentDataType.STRING, Config.settings_defaults_rotation);
 
@@ -423,7 +423,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                 container.remove(new NamespacedKey(EzChestShop.getPlugin(), "dsell"));
                 container.remove(new NamespacedKey(EzChestShop.getPlugin(), "admins"));
                 container.remove(new NamespacedKey(EzChestShop.getPlugin(), "shareincome"));
-                container.remove(new NamespacedKey(EzChestShop.getPlugin(), "trans"));
+                //container.remove(new NamespacedKey(EzChestShop.getPlugin(), "trans"));
                 container.remove(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"));
                 container.remove(new NamespacedKey(EzChestShop.getPlugin(), "rotation"));
                 //msgtoggle 0/1

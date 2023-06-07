@@ -234,30 +234,9 @@ public class Utils {
         }
     }
 
-    public static List<TransactionLogObject> getListOfTransactions(Block containerBlock) {
-        TileState state = ((TileState) containerBlock.getState());
-        PersistentDataContainer data = state.getPersistentDataContainer();
-        String wholeString = data.get(new NamespacedKey(EzChestShop.getPlugin(), "trans"), PersistentDataType.STRING);
-        if (wholeString == null || wholeString.equalsIgnoreCase("none")) {
-            data.set(new NamespacedKey(EzChestShop.getPlugin(), "trans"), PersistentDataType.STRING, "none");
-            state.update();
-            return new ArrayList<>();
-        } else {
-            List<TransactionLogObject> logObjectList = new ArrayList<>();
-            String[] logs = wholeString.split("#");
-            for (String log : logs) {
-                String[] datas = log.split("@");
-                String pname = datas[0];
-                String type = datas[1];
-                String price = datas[2];
-                String time = datas[3];
-                int count = Integer.parseInt(datas[4]);
-                logObjectList.add(new TransactionLogObject(type, pname, price, time, count));
 
-            }
-            return logObjectList;
-
-        }
+    public static List<TransactionLogObject> getListOfTransactions(Location containerBlock) {
+        return null;
     }
 
     public static String getFinalItemName(ItemStack item) {
@@ -954,7 +933,7 @@ public class Utils {
                 : (Config.settings_defaults_dsell ? 1 : 0));
         container.set(new NamespacedKey(EzChestShop.getPlugin(), "admins"), PersistentDataType.STRING, shop.getSettings().getAdmins());
         container.set(new NamespacedKey(EzChestShop.getPlugin(), "shareincome"), PersistentDataType.INTEGER, shop.getSettings().isShareincome() ? 1 : 0);
-        container.set(new NamespacedKey(EzChestShop.getPlugin(), "trans"), PersistentDataType.STRING, "none");
+        //container.set(new NamespacedKey(EzChestShop.getPlugin(), "trans"), PersistentDataType.STRING, "none");
         container.set(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"), PersistentDataType.INTEGER, shop.getSettings().isAdminshop() ? 1 : 0);
         container.set(new NamespacedKey(EzChestShop.getPlugin(), "rotation"), PersistentDataType.STRING, shop.getSettings().getRotation());
 

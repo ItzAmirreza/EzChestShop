@@ -31,7 +31,6 @@ public class PlayerTransactionListener implements Listener {
 
     @EventHandler
     public void onTransaction(PlayerTransactEvent event) {
-        log(event);
         logProfits(event);
         sendDiscordWebhook(event);
         if (((TileState)event.getContainerBlock().getState()).getPersistentDataContainer().get(new NamespacedKey(EzChestShop.getPlugin(), "msgtoggle"), PersistentDataType.INTEGER) == 1) {
@@ -121,34 +120,6 @@ public class PlayerTransactionListener implements Listener {
                     }
             );
         }
-
-    }
-
-    private void log(PlayerTransactEvent event) {
-
-        TileState state = ((TileState)event.getContainerBlock().getState());
-        PersistentDataContainer data = state.getPersistentDataContainer();
-        //player name@buy|sell@price@time@count#
-
-        String ttype;
-        if (event.isBuy()) {
-            ttype = "buy";
-        } else {
-            ttype = "sell";
-        }
-        String formattedDateTime = event.getTime().format(formatter);
-
-        List<TransactionLogObject> logObjectList = Utils.getListOfTransactions(event.getContainerBlock());
-        if (logObjectList.size() == 53) {
-            logObjectList.remove(0);
-        }
-        logObjectList.add(new TransactionLogObject(ttype, event.getCustomer().getName(), String.valueOf(event.getPrice()), formattedDateTime, event.getCount()));
-//        StringBuilder logString = new StringBuilder(event.getCustomer().getName());
-//        logString.append("@").append(ttype).append("@").append(event.getPrice()).append("@").append(formattedDateTime) + count;
-        //convert all into strings
-
-        //NEED TO CHECK FOR OFFICIAL RELEASE <---
-        state.update();
 
     }
 

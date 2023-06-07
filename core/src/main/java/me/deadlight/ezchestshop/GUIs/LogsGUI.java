@@ -56,7 +56,7 @@ public class LogsGUI {
         if (type == LogType.TRANSACTION) {
 
             //trans
-            List<TransactionLogObject> transLogs = Utils.getListOfTransactions(containerBlock);
+            List<TransactionLogObject> transLogs = Utils.getListOfTransactions(containerBlock.getLocation());
             Collections.reverse(transLogs);
 
             int slot = 0;
