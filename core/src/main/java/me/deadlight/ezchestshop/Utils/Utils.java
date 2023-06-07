@@ -37,6 +37,7 @@ import java.io.*;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
@@ -48,7 +49,7 @@ public class Utils {
     public static List<String> rotations = Arrays.asList("up", "north", "east", "south", "west", "down");
 
     public static HashMap<String, Block> blockBreakMap = new HashMap<>();
-    public static HashMap<Integer, BlockOutline> activeOutlines = new HashMap<>(); //player uuid, list of outlines
+    public static ConcurrentHashMap<Integer, BlockOutline> activeOutlines = new ConcurrentHashMap<>(); //player uuid, list of outlines
     public static List<UUID> enabledOutlines = new ArrayList<>();
     private static LanguageManager lm = new LanguageManager();
 
