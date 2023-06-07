@@ -34,9 +34,20 @@ public class ChannelHandler_v1_18_R2 extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws NoSuchFieldException, IllegalAccessException {
 
         if (msg instanceof PacketPlayInUseEntity) {
+            if (!Utils.enabledOutlines.contains(player.getUniqueId())) {
+                ctx.fireChannelRead(msg);
+                return;
+            }
+
             //now we check if player is right clicking on the outline shulkerbox, if so we open the shop for them
             PacketPlayInUseEntity packet = (PacketPlayInUseEntity) msg;
-            Field field = packet.getClass().getDeclaredField("a"); //The field a is entity ID
+            Field field;
+            try {
+                field = packet.getClass().getDeclaredField("a"); //The field a is entity ID
+            } catch (NoSuchFieldException e) {
+                ctx.fireChannelRead(msg);
+                return; //This is for ModelEngine
+            }
             field.setAccessible(true);
             int entityID = (int) field.get(packet);
             if (Utils.activeOutlines.containsKey(entityID)) {
