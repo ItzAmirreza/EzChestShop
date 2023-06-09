@@ -58,17 +58,17 @@ public class SettingsGUI {
 
         gui.getFiller().fill(container.getBackground());
 
-        //trans
-        if (container.hasItem("latest-transactions")) {
-            ContainerGuiItem lastTransItem = container.getItem("latest-transactions").setName(lm.latestTransactionsTitle());
-            GuiItem lastTrans = new GuiItem(lastTransItem.getItem(), event -> {
-               event.setCancelled(true);
-               LogsGUI logsGUI = new LogsGUI();
-               logsGUI.showGUI(player, dataContainer, containerBlock, LogType.TRANSACTION, isAdmin);
-            });
-
-            Utils.addItemIfEnoughSlots(gui, lastTransItem.getSlot(), lastTrans);
-        }
+        //trans This menu will not be available for now, until I find a way to make it work properly
+//        if (container.hasItem("latest-transactions")) {
+//            ContainerGuiItem lastTransItem = container.getItem("latest-transactions").setName(lm.latestTransactionsTitle());
+//            GuiItem lastTrans = new GuiItem(lastTransItem.getItem(), event -> {
+//               event.setCancelled(true);
+//               LogsGUI logsGUI = new LogsGUI();
+//               logsGUI.showGUI(player, dataContainer, containerBlock, LogType.TRANSACTION, isAdmin);
+//            });
+//
+//            Utils.addItemIfEnoughSlots(gui, lastTransItem.getSlot(), lastTrans);
+//        }
 
         //I was going to add logs section which would be about actions in that containerBlock shop but I decided not to implement it. maybe later
 //        //settings change logs

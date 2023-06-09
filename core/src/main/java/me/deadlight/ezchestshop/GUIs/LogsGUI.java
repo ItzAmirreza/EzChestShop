@@ -28,6 +28,14 @@ public class LogsGUI {
     }
 
     public void showGUI(Player player, PersistentDataContainer data, Block containerBlock, LogType type, boolean isAdmin) {
+
+        if (true) {
+            player.sendMessage(Utils.colorify("&cUnfortunately, this feature is not available anymore, but it will be available again soon!"));
+            player.closeInventory();
+            return;
+        }
+
+
         LanguageManager lm = new LanguageManager();
         String guititle;
         if (type == LogType.TRANSACTION) {

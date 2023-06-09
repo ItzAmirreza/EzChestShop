@@ -1,6 +1,8 @@
 package me.deadlight.ezchestshop.Utils;
 import net.minecraft.core.BlockPosition;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagString;
 import net.minecraft.network.protocol.game.PacketPlayOutOpenSignEditor;
 import net.minecraft.network.protocol.game.PacketPlayOutTileEntityData;
 import net.minecraft.server.network.PlayerConnection;
@@ -33,7 +35,8 @@ public class MenuOpener_v1_20_R1 {
         }
 
         Location location = player.getLocation();
-        Location newLocation = location.clone().add(0, (255 - location.getBlockY()), 0);
+//        Location newLocation = location.clone().add(0, (255 - location.getBlockY()), 0);
+        Location newLocation = location.clone().add(0, 4, 0);
 
         menu.setLocation(newLocation);
 
@@ -45,14 +48,31 @@ public class MenuOpener_v1_20_R1 {
 
         NBTTagCompound compound = new NBTTagCompound();
 
+        NBTTagCompound frontText = new NBTTagCompound();
+        NBTTagCompound backText = new NBTTagCompound();
+        NBTTagList backMessages = new NBTTagList();
+        NBTTagList frontMessages = new NBTTagList();
+
+
         for (int line = 0; line < SignMenuFactory.SIGN_LINES; line++) {
-            compound.a("Text" + (line + 1), menu.getText().size() > line ? String.format(SignMenuFactory.NBT_FORMAT, menu.color(menu.getText().get(line))) : "");
+            String text = menu.getText().size() > line ? String.format(SignMenuFactory.NBT_FORMAT, menu.color(menu.getText().get(line))) : "";
+            NBTTagString nbtString = NBTTagString.a(text);
+
+            // Assuming you want to set the same text for both back and front
+            backMessages.add(nbtString);
+            frontMessages.add(nbtString);
         }
 
-        compound.a("x", newLocation.getBlockX());
-        compound.a("y", newLocation.getBlockY());
-        compound.a("z", newLocation.getBlockZ());
-        compound.a("id", SignMenuFactory.NBT_BLOCK_ID);
+        backText.a("messages", backMessages);
+        frontText.a("messages", frontMessages);
+        compound.a("back_text", backText);
+        compound.a("front_text", frontText);
+
+
+//        for (int line = 0; line < SignMenuFactory.SIGN_LINES; line++) {
+//            compound.a("Text" + (line + 1), menu.getText().size() > line ? String.format(SignMenuFactory.NBT_FORMAT, menu.color(menu.getText().get(line))) : "");
+//        } no loger works this way in 1.20, we need to use the new method above
+
 
         PacketPlayOutTileEntityData tileEntityDataPacket = null;
         try {
