@@ -558,6 +558,8 @@ public class PlayerCloseToChestListener implements Listener {
                 .replace("%owner%", shop_owner).replace("%maxbuy%", possibleCounts.get(0))
                 .replace("%maxsell%", possibleCounts.get(1))
                 .replace("%maxStackSize%", thatItem.getMaxStackSize() + "")
+                .replace("%stock%", Utils.howManyOfItemExists(Utils.getBlockInventory(shopLocation.getBlock()).getStorageContents(), thatItem) + "")
+                .replace("%capacity%", Utils.getBlockInventory(shopLocation.getBlock()).getSize() + "")
         );
         return line;
     }

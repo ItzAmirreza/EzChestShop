@@ -10,6 +10,9 @@ shops:
     # Use [item] for 1 Line to display the floating item. Use %buy% for buy price and %sell% for sell price.
     # %currency% is defined under economy.server-currency and %owner% represents the shops creator.
     # %maxbuy% & %maxsell% can be used to define the maximum amount a player can buy/sell to a shop at this time.
+    # %stock% can be used to display the amount of items stored in the shop.
+    # %capacity% can be used to display the maximum amount of items the shop can hold.
+    # %maxStackSize% displays the max stack size of the shop item.
     # The HTML like <buy></buy> Syntax allows the plugin to remove parts of the message if buy/sell are disabled.
     holo-structure:
       - "<emptyShopInfo/>"

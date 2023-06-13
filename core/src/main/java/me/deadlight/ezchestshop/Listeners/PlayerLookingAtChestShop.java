@@ -168,7 +168,9 @@ public class PlayerLookingAtChestShop implements Listener {
                 String line = Utils.colorify(element.replace("%item%", itemname).replace("%buy%", Utils.formatNumber(buy, Utils.FormatType.HOLOGRAM)).
                         replace("%sell%", Utils.formatNumber(sell, Utils.FormatType.HOLOGRAM)).replace("%currency%", Config.currency)
                         .replace("%owner%", shop_owner).replace("%maxbuy%", possibleCounts.get(0)).replace("%maxsell%", possibleCounts.get(1))
-                        .replace("%maxStackSize%", thatItem.getMaxStackSize() + ""));
+                        .replace("%maxStackSize%", thatItem.getMaxStackSize() + "")
+                        .replace("%stock%", Utils.howManyOfItemExists(Utils.getBlockInventory(shopLocation.getBlock()).getStorageContents(), thatItem) + "")
+                        .replace("%capacity%", Utils.getBlockInventory(shopLocation.getBlock()).getSize() + ""));
                 if (is_dbuy || is_dsell) {
                     line = line.replaceAll("<separator>.*?<\\/separator>", "");
                     if (is_dbuy && is_dsell) {
