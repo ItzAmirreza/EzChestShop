@@ -551,6 +551,14 @@ public class PlayerCloseToChestListener implements Listener {
                 player.getInventory().getStorageContents(),
                 Utils.getBlockInventory(shopLocation.getBlock()).getStorageContents(),
                 buy, sell, thatItem);
+        Inventory shopInventory = Utils.getBlockInventory(shopLocation.getBlock());
+        int availableSlots = shopInventory.getSize();
+        for (ItemStack item : shopInventory.getStorageContents()) {
+            // if item is one of the below, then it is a slot that can be used, otherwise subtract from available slots.
+            if (!(item == null || item.getType() == Material.AIR || item.isSimilar(thatItem))) {
+                availableSlots--;
+            }
+        }
         String line = Utils.colorify(rawText.replace("%item%", itemName)
                 .replace("%buy%", Utils.formatNumber(buy, Utils.FormatType.HOLOGRAM))
                 .replace("%sell%", Utils.formatNumber(sell, Utils.FormatType.HOLOGRAM))
@@ -558,8 +566,8 @@ public class PlayerCloseToChestListener implements Listener {
                 .replace("%owner%", shop_owner).replace("%maxbuy%", possibleCounts.get(0))
                 .replace("%maxsell%", possibleCounts.get(1))
                 .replace("%maxStackSize%", thatItem.getMaxStackSize() + "")
-                .replace("%stock%", Utils.howManyOfItemExists(Utils.getBlockInventory(shopLocation.getBlock()).getStorageContents(), thatItem) + "")
-                .replace("%capacity%", Utils.getBlockInventory(shopLocation.getBlock()).getSize() + "")
+                .replace("%stock%", Utils.howManyOfItemExists(shopInventory.getStorageContents(), thatItem) + "")
+                .replace("%capacity%", availableSlots * thatItem.getMaxStackSize() + "")
         );
         return line;
     }

@@ -249,8 +249,8 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
         List<String> list_transfer_2 = Arrays.asList("-confirm");
         if (sender instanceof Player) {
             Player p = (Player) sender;
-            List<String> list_shop_commands_1 = null;
-            if (p.getTargetBlockExact(6).getLocation() != null) {
+            List<String> list_shop_commands_1;
+            if (p.getTargetBlockExact(6) != null) {
                 list_shop_commands_1 = Arrays.asList(Utils.LocationRoundedtoString(p.getTargetBlockExact(6).getLocation(), 0));
             } else {
                 list_shop_commands_1 = Arrays.asList("Look at a shop for auto location completion!");
