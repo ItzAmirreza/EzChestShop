@@ -404,7 +404,7 @@ public class PlayerCloseToChestListener implements Listener {
                     if (player.getUniqueId().equals(shop.getOwnerID()) && !is_dbuy && !is_adminshop) {
                         // Check if the shop is empty by getting the inventory of the block
                         Inventory inv = Utils.getBlockInventory(shopLocation.getBlock());
-                        if (!inv.containsAtLeast(shop.getShopItem(), 1)) {
+                        if (!Utils.containsAtLeast(inv, shop.getShopItem(), 1)) {
                             line = line.replace("<emptyShopInfo/>", lm.emptyShopHologramInfo());
                         } else {
                             continue;
@@ -510,7 +510,7 @@ public class PlayerCloseToChestListener implements Listener {
                     if (player.getUniqueId().equals(shop.getOwnerID()) && !is_dbuy && !is_adminshop) {
                         // Check if the shop is empty by getting the inventory of the block
                         Inventory inv = Utils.getBlockInventory(shopLocation.getBlock());
-                        if (!inv.containsAtLeast(shop.getShopItem(), 1)) {
+                        if (!Utils.containsAtLeast(inv, shop.getShopItem(), 1)) {
                             line = line.replace("<emptyShopInfo/>", lm.emptyShopHologramInfo());
                         } else {
                             continue;
@@ -555,7 +555,7 @@ public class PlayerCloseToChestListener implements Listener {
         int availableSlots = shopInventory.getSize();
         for (ItemStack item : shopInventory.getStorageContents()) {
             // if item is one of the below, then it is a slot that can be used, otherwise subtract from available slots.
-            if (!(item == null || item.getType() == Material.AIR || item.isSimilar(thatItem))) {
+            if (!(item == null || item.getType() == Material.AIR || Utils.isSimilar(item, thatItem))) {
                 availableSlots--;
             }
         }
