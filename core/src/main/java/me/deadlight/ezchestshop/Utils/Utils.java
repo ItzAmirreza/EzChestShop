@@ -25,12 +25,15 @@ import org.bukkit.inventory.DoubleChestInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
+import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.permissions.Permissible;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.*;
@@ -431,7 +434,7 @@ public class Utils {
             if (content == null || content.getType() == Material.AIR) {
                 emptySlots += item.getMaxStackSize();
             } else {
-                if (content.isSimilar(item) && !(content.getAmount() >= content.getMaxStackSize())) {
+                if (isSimilar(content, item) && !(content.getAmount() >= content.getMaxStackSize())) {
 
                     int remaining = content.getMaxStackSize() - content.getAmount();
                     emptySlots += remaining;
@@ -449,7 +452,7 @@ public class Utils {
             if (content == null || content.getType() == Material.AIR) {
                 emptySlots += item.getMaxStackSize();
             } else {
-                if (content.isSimilar(item) && !(content.getAmount() >= content.getMaxStackSize())) {
+                if (isSimilar(content, item) && !(content.getAmount() >= content.getMaxStackSize())) {
 
                     int remaining = content.getMaxStackSize() - content.getAmount();
                     emptySlots += remaining;
@@ -471,7 +474,7 @@ public class Utils {
             if (content == null || content.getType() == Material.AIR) {
                 emptySlots += item.getMaxStackSize();
             } else {
-                if (content.isSimilar(item) && !(content.getAmount() >= content.getMaxStackSize())) {
+                if (isSimilar(content, item) && !(content.getAmount() >= content.getMaxStackSize())) {
 
                     int remaining = content.getMaxStackSize() - content.getAmount();
                     emptySlots += remaining;
@@ -493,7 +496,7 @@ public class Utils {
             if (item == null || item.getType() == Material.AIR) {
                 continue;
             }
-            if (item.isSimilar(mainItem)) {
+            if (isSimilar(item, mainItem)) {
                 amount += item.getAmount();
             }
 
@@ -508,7 +511,7 @@ public class Utils {
             if (content == null || content.getType() == Material.AIR) {
                 emptySlots += item.getMaxStackSize();
             } else {
-                if (content.isSimilar(item) && !(content.getAmount() >= content.getMaxStackSize())) {
+                if (isSimilar(content, item) && !(content.getAmount() >= content.getMaxStackSize())) {
 
                     int remaining = content.getMaxStackSize() - content.getAmount();
                     emptySlots += remaining;
@@ -609,6 +612,146 @@ public class Utils {
         }
 
         return String.valueOf(result);
+    }
+
+    public static boolean containsAtLeast(Inventory inventory, ItemStack item, int amount) {
+        if (item.getType() == Material.FIREWORK_ROCKET) {
+            int count = 0;
+            for (ItemStack content : inventory.getStorageContents()) {
+                if (content == null || content.getType() == Material.AIR) {
+                    continue;
+                }
+                if (isSimilar(content, item)) {
+                    count += content.getAmount();
+                }
+            }
+            return count >= amount;
+        } else {
+            return inventory.containsAtLeast(item, amount);
+        }
+    }
+
+    /*
+    Removes the given ItemStacks from the inventory.
+
+    It will try to remove 'as much as possible' from the types and amounts you give as arguments.
+
+    The returned HashMap contains what it couldn't remove, where the key is the index of the parameter, and the value is the ItemStack at that index of the varargs parameter. If all the given ItemStacks are removed, it will return an empty HashMap.
+
+    It is known that in some implementations this method will also set the inputted argument amount to the number of that item not removed from slots.
+     */
+    public static HashMap<Integer, ItemStack> removeItem(@NotNull Inventory inventory, @NotNull ItemStack... stacks) {
+        HashMap<Integer, ItemStack> leftover = new HashMap<>();
+        for (int i = 0; i < stacks.length; i++) {
+            ItemStack stack = stacks[i];
+            if (stack == null || stack.getType() == Material.AIR) {
+                continue;
+            }
+            if (stack.getType() == Material.FIREWORK_ROCKET) {
+                int amount = stack.getAmount();
+                for (int slot = 0; slot < inventory.getSize(); slot++) {
+                    ItemStack item = inventory.getItem(slot);
+                    if (item == null || item.getType() == Material.AIR) {
+                        continue;
+                    }
+                    if (isSimilar(item, stack)) {
+                        int newAmount = item.getAmount() - amount;
+                        if (newAmount > 0) {
+                            item.setAmount(newAmount);
+                            amount = 0;
+                        } else {
+                            amount = -newAmount;
+                            inventory.setItem(slot, null);
+                        }
+                    }
+                    if (amount <= 0) {
+                        break;
+                    }
+                }
+                if (amount > 0) {
+                    stack.setAmount(amount);
+                    leftover.put(i, stack);
+                }
+            } else {
+                inventory.removeItem(stack);
+            }
+        }
+        return leftover;
+    }
+
+    public static boolean isSimilar(@Nullable ItemStack stack1, @Nullable ItemStack stack2) {
+        if (stack1 == null || stack2 == null) {
+            return false;
+        } else if (stack1 == stack2) {
+            return true;
+        } else {
+            if (stack1.getType() == Material.FIREWORK_ROCKET && stack2.getType() == Material.FIREWORK_ROCKET) {
+                FireworkMeta meta1 = (FireworkMeta) stack1.getItemMeta();
+                FireworkMeta meta2 = (FireworkMeta) stack2.getItemMeta();
+                if (meta1 != null && meta2 != null) {
+                    if (meta1.getEffects().size() != meta2.getEffects().size()) {
+                        return false;
+                    }
+                    if (meta1.getPower() != meta2.getPower()) {
+                        return false;
+                    }
+                    for (int i = 0; i < meta1.getEffects().size(); i++) {
+                        if (!meta1.getEffects().get(i).equals(meta2.getEffects().get(i))) {
+                            return false;
+                        }
+                    }
+                    if (meta1.hasDisplayName() != meta2.hasDisplayName()) {
+                        return false;
+                    } else if (meta1.hasDisplayName()) {
+                        if (!meta1.getDisplayName().equals(meta2.getDisplayName())) {
+                            return false;
+                        }
+                    }
+
+                    if (meta1.hasLore() != meta2.hasLore()) {
+                        return false;
+                    } else if (meta1.hasLore()) {
+                        if (!meta1.getLore().equals(meta2.getLore())) {
+                            return false;
+                        }
+                    }
+
+                    if (meta1.hasCustomModelData() != meta2.hasCustomModelData()) {
+                        return false;
+                    } else if (meta1.hasCustomModelData()) {
+                        if (meta1.getCustomModelData() != meta2.getCustomModelData()) {
+                            return false;
+                        }
+                    }
+
+                    if (meta1.hasEnchants() != meta2.hasEnchants()) {
+                        return false;
+                    } else if (meta1.hasEnchants()) {
+                        if (!meta1.getEnchants().equals(meta2.getEnchants())) {
+                            return false;
+                        }
+                    }
+
+                    if (!meta1.getItemFlags().equals(meta2.getItemFlags())) {
+                        return false;
+                    }
+                    if (meta1.getAttributeModifiers() != null) {
+                        if (!meta1.getAttributeModifiers().equals(meta2.getAttributeModifiers())) {
+                            return false;
+                        }
+                    } else if (meta2.getAttributeModifiers() != null) {
+                        return false;
+                    }
+
+                    if (meta1.isUnbreakable() != meta2.isUnbreakable()) {
+                        return false;
+                    }
+                }
+            } else if (!stack1.isSimilar(stack2)) {
+                return false;
+            }
+            return true;
+        }
     }
 
     public static boolean isInteger(String str) {
@@ -890,7 +1033,7 @@ public class Utils {
                     //then we check if the shop inventory has at least 1 item required for the shop
                     ItemStack shopItem = shop.getShopItem().clone();
                     Inventory inventory = Utils.getBlockInventory(shop.getLocation().getBlock());
-                    if (inventory.containsAtLeast(shopItem, 1)) {
+                    if (containsAtLeast(inventory, shopItem, 1)) {
                         continue;
                     }
 

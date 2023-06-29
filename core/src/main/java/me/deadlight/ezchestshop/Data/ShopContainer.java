@@ -235,7 +235,7 @@ public class ShopContainer {
 
         LanguageManager lm = new LanguageManager();
         //check for money
-        if (Utils.getBlockInventory(containerBlock).containsAtLeast(thatItem , count)) {
+        if (Utils.containsAtLeast(Utils.getBlockInventory(containerBlock), thatItem , count)) {
 
             if (ifHasMoney(Bukkit.getOfflinePlayer(player.getUniqueId()), price)) {
 
@@ -253,7 +253,7 @@ public class ShopContainer {
                     }
                     //For the transaction event
                     thatItem.setAmount(count);
-                    Utils.getBlockInventory(containerBlock).removeItem(thatItem);
+                    Utils.removeItem(Utils.getBlockInventory(containerBlock), thatItem);
                     getandgive(Bukkit.getOfflinePlayer(player.getUniqueId()), price, owner);
                     sharedIncomeCheck(data, price);
                     transactionMessage(data, owner, player, price, true, tthatItem, count, containerBlock.getLocation().getBlock());
@@ -286,7 +286,7 @@ public class ShopContainer {
 
         ItemStack thatItem = tthatItem.clone();
 
-        if (player.getInventory().containsAtLeast(thatItem, count)) {
+        if (Utils.containsAtLeast(player.getInventory(), thatItem, count)) {
 
             if (ifHasMoney(owner, price)) {
 
@@ -303,7 +303,7 @@ public class ShopContainer {
                     }
                     //For the transaction event
                     thatItem.setAmount(count);
-                    player.getInventory().removeItem(thatItem);
+                    Utils.removeItem(player.getInventory(), thatItem);
                     getandgive(owner, price, Bukkit.getOfflinePlayer(player.getUniqueId()));
                     transactionMessage(data, owner, Bukkit.getOfflinePlayer(player.getUniqueId()), price, false, tthatItem, count, containerBlock.getLocation().getBlock());
                     player.sendMessage(lm.messageSuccSell(price));
@@ -382,14 +382,14 @@ public class ShopContainer {
 
         ItemStack thatItem = tthatItem.clone();
 
-        if (player.getInventory().containsAtLeast(thatItem, count)) {
+        if (Utils.containsAtLeast(player.getInventory(), thatItem, count)) {
 
             thatItem.setAmount(count);
             deposit(price, Bukkit.getOfflinePlayer(player.getUniqueId()));
             transactionMessage(data, Bukkit.getOfflinePlayer(UUID.fromString(
                     data.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING))),
                     Bukkit.getOfflinePlayer(player.getUniqueId()), price, false, tthatItem, count, containerBlock);
-            player.getInventory().removeItem(thatItem);
+            Utils.removeItem(player.getInventory(), thatItem);
             player.sendMessage(lm.messageSuccSell(price));
             player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 0.5f, 0.5f);
             Config.shopCommandManager.executeCommands(player, containerBlock.getLocation(),

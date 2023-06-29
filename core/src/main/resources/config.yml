@@ -94,20 +94,20 @@ shops:
     enabled: false
     shop:
       buy:
-        *:
+        "*":
           - /tell %player_name% You bought an Item!
           - /tell %player_name% Thanks for shopping!
       sell:
-        *:
+        "*":
           - /tell %player_name% You sold an Item!
       open:
         - /tell %player_name% Opening shop!
     adminshop:
       buy:
-        *:
+        "*":
           - /tell %player_name% You bought an admin Item!
       sell:
-        *:
+        "*":
           - /tell %player_name% You sold an admin Item!
       open:
         - /tell %player_name% Opening adminshop!
