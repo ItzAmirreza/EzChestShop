@@ -8,6 +8,7 @@ import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.GUIs.SettingsGUI;
 import me.deadlight.ezchestshop.Listeners.PlayerCloseToChestListener;
 import me.deadlight.ezchestshop.Utils.BlockOutline;
+import me.deadlight.ezchestshop.Utils.Holograms.ShopHologram;
 import me.deadlight.ezchestshop.Utils.Objects.EzShop;
 import me.deadlight.ezchestshop.Utils.Objects.ShopSettings;
 import me.deadlight.ezchestshop.Utils.Utils;
@@ -439,7 +440,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
             }
 
             ShopContainer.deleteShop(blockState.getLocation());
-            PlayerCloseToChestListener.hideHologram(blockState.getLocation(), true);
+            ShopHologram.hideForAll(blockState.getLocation());
 
 
             blockState.update();
@@ -558,7 +559,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                             // Change the price
                             ShopContainer.changePrice(blockState, price, isBuy);
                             player.sendMessage(isBuy ? lm.shopBuyPriceUpdated() : lm.shopSellPriceUpdated());
-                            PlayerCloseToChestListener.hideHologram(blockState.getLocation(), true);
+                            ShopHologram.hideForAll(blockState.getLocation());
                         }
                     } catch (NumberFormatException e) {
                         player.sendMessage(lm.wrongInput());
@@ -664,7 +665,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                     settings.isShareincome() ? 1 : 0);
             container.set(new NamespacedKey(EzChestShop.getPlugin(), "rotation"), PersistentDataType.STRING,
                     settings.getRotation());
-            PlayerCloseToChestListener.hideHologram(blockState.getLocation(), true);
+            ShopHologram.hideForAll(blockState.getLocation());
             ShopSettings newSettings = ShopContainer.getShopSettings(blockState.getLocation());
             newSettings.setMsgtoggle(settings.isMsgtoggle());
             newSettings.setDbuy(settings.isDbuy());
@@ -736,7 +737,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                                 "rotation", "shopdata", settings.getRotation());
                         container.set(new NamespacedKey(EzChestShop.getPlugin(), "rotation"), PersistentDataType.STRING,
                                 settings.getRotation());
-                        PlayerCloseToChestListener.hideHologram(blockState.getLocation(), true);
+                        ShopHologram.hideForAll(blockState.getLocation());
                         newSettings.setRotation(settings.getRotation());
                         break;
                     }
@@ -875,7 +876,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                     container.set(new NamespacedKey(EzChestShop.getPlugin(), "rotation"), PersistentDataType.STRING,
                             settings.getRotation());
                     player.sendMessage(lm.rotateHologramInChat(settings.getRotation()));
-                    PlayerCloseToChestListener.hideHologram(blockState.getLocation(), true);
+                    ShopHologram.hideForAll(blockState.getLocation());
                     break;
             }
 

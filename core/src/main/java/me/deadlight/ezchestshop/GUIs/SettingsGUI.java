@@ -13,6 +13,7 @@ import me.deadlight.ezchestshop.Enums.LogType;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.Listeners.ChatListener;
 import me.deadlight.ezchestshop.Listeners.PlayerCloseToChestListener;
+import me.deadlight.ezchestshop.Utils.Holograms.ShopHologram;
 import me.deadlight.ezchestshop.Utils.Objects.ChatWaitObject;
 import me.deadlight.ezchestshop.Utils.Objects.EzShop;
 import me.deadlight.ezchestshop.Utils.Objects.ShopSettings;
@@ -129,7 +130,7 @@ public class SettingsGUI {
                     player.sendMessage(lm.disableBuyingOffInChat());
                     showGUI(player, containerBlock, isAdmin);
                     ShopContainer.getShopSettings(containerBlock.getLocation()).setDbuy(false);
-                    PlayerCloseToChestListener.hideHologram(containerBlock.getState().getLocation(), true);
+                    ShopHologram.hideForAll(containerBlock.getState().getLocation());
                 } else {
                     TileState state = ((TileState)containerBlock.getState());
                     state.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "dbuy"), PersistentDataType.INTEGER, 1);
@@ -137,7 +138,7 @@ public class SettingsGUI {
                     player.sendMessage(lm.disableBuyingOnInChat());
                     showGUI(player, containerBlock, isAdmin);
                     ShopContainer.getShopSettings(containerBlock.getLocation()).setDbuy(true);
-                    PlayerCloseToChestListener.hideHologram(containerBlock.getState().getLocation(), true);
+                    ShopHologram.hideForAll(containerBlock.getState().getLocation());
                 }
 
             });
@@ -158,7 +159,7 @@ public class SettingsGUI {
                     player.sendMessage(lm.disableSellingOffInChat());
                     showGUI(player, containerBlock, isAdmin);
                     ShopContainer.getShopSettings(containerBlock.getLocation()).setDsell(false);
-                    PlayerCloseToChestListener.hideHologram(containerBlock.getState().getLocation(), true);
+                    ShopHologram.hideForAll(containerBlock.getState().getLocation());
                 } else {
                     TileState state = ((TileState)containerBlock.getState());
                     state.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "dsell"), PersistentDataType.INTEGER, 1);
@@ -166,7 +167,7 @@ public class SettingsGUI {
                     player.sendMessage(lm.disableSellingOnInChat());
                     showGUI(player, containerBlock, isAdmin);
                     ShopContainer.getShopSettings(containerBlock.getLocation()).setDsell(true);
-                    PlayerCloseToChestListener.hideHologram(containerBlock.getState().getLocation(), true);
+                    ShopHologram.hideForAll(containerBlock.getState().getLocation());
                 }
             });
             Utils.addItemIfEnoughSlots(gui, sellDisabledItem.getSlot(), sellDisabled);
@@ -301,7 +302,7 @@ public class SettingsGUI {
                 showGUI(player, containerBlock, isAdmin);
                 ShopContainer.getShopSettings(containerBlock.getLocation()).setRotation(next_rotation);
                 if (Config.holodistancing) {
-                    PlayerCloseToChestListener.hideHologram(containerBlock.getLocation(), true);
+                    ShopHologram.hideForAll(containerBlock.getLocation());
                 }
             });
 
@@ -338,7 +339,7 @@ public class SettingsGUI {
                                                     // If these checks complete successfully continue.
                                                     if (changePrice(containerBlock.getState(), false, amount, player, containerBlock)) {
                                                         ShopContainer.changePrice(containerBlock.getState(), amount, false);
-                                                        PlayerCloseToChestListener.hideHologram(containerBlock.getState().getLocation(), true);
+                                                        ShopHologram.hideForAll(containerBlock.getState().getLocation());
                                                         player.sendMessage(lm.shopSellPriceUpdated());
                                                     }
                                                 });
@@ -373,7 +374,7 @@ public class SettingsGUI {
                                                     // If these checks complete successfully continue.
                                                     if (changePrice(containerBlock.getState(), true, amount, player, containerBlock)) {
                                                         ShopContainer.changePrice(containerBlock.getState(), amount, true);
-                                                        PlayerCloseToChestListener.hideHologram(containerBlock.getState().getLocation(), true);
+                                                        ShopHologram.hideForAll(containerBlock.getState().getLocation());
                                                         player.sendMessage(lm.shopBuyPriceUpdated());
                                                     }
                                                 });
@@ -603,7 +604,7 @@ public class SettingsGUI {
                                      // Save data!
                                      ShopContainer.getShopSettings(location)
                                              .setCustomMessages(messages);
-                                     PlayerCloseToChestListener.hideHologram(location, true);
+                                     ShopHologram.hideForAll(location);
 
                                  });
 

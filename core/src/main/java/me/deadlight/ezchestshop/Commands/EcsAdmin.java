@@ -9,6 +9,7 @@ import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.GUIs.GuiEditorGUI;
 import me.deadlight.ezchestshop.Listeners.PlayerCloseToChestListener;
 import me.deadlight.ezchestshop.Listeners.UpdateChecker;
+import me.deadlight.ezchestshop.Utils.Holograms.ShopHologram;
 import me.deadlight.ezchestshop.Utils.Objects.EzShop;
 import me.deadlight.ezchestshop.Utils.Utils;
 import me.deadlight.ezchestshop.Utils.WorldGuard.FlagRegistry;
@@ -377,7 +378,7 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
                                 }
 
                                 ShopContainer.deleteShop(blockState.getLocation());
-                                PlayerCloseToChestListener.hideHologram(blockState.getLocation(), true);
+                            ShopHologram.hideForAll(blockState.getLocation());
                                 state.update();
 
                                 player.sendMessage(lm.chestShopRemoved());

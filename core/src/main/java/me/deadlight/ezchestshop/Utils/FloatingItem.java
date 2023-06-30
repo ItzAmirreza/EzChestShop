@@ -11,6 +11,7 @@ public class FloatingItem {
 
     private int entityID;
     private Player player;
+    private Location location;
 
     static VersionUtils versionUtils;
 
@@ -28,6 +29,7 @@ public class FloatingItem {
 
         this.player = player;
         this.entityID = (int) (Math.random() * Integer.MAX_VALUE);
+        this.location = location;
         versionUtils.spawnFloatingItem(player, location, itemStack, entityID);
 
     }
@@ -36,6 +38,8 @@ public class FloatingItem {
         versionUtils.destroyEntity(player, entityID);
     }
 
-
+    public Location getLocation() {
+        return location;
+    }
 
 }
