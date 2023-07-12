@@ -266,11 +266,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
 
 
     private void sendHelp(Player player) {
-        ComponentBuilder help = new ComponentBuilder("").append(lm.cmdHelp());
-        if (player.hasPermission("admin")) {
-            help.append("\n").append(lm.cmdadminviewHelp());
-        }
-        player.spigot().sendMessage(help.create());
+        player.spigot().sendMessage(lm.cmdHelp(player.hasPermission("admin")));
     }
 
 

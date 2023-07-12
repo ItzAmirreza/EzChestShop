@@ -19,6 +19,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Debug;
 
 import java.io.File;
 import java.io.IOException;
@@ -719,12 +720,12 @@ public class LanguageManager {
     public String consoleNotAllowed() {
         return Utils.colorify(getString("command-messages.consolenotallowed"));
     }
-    public BaseComponent[] cmdHelp() {
-        return MineDown.parse(new ArrayList<>(getList("command-messages.help")).stream()
-                .map(s -> Utils.colorify(s)).collect(Collectors.joining("\n")));
-    }
-    public BaseComponent[] cmdadminviewHelp() {
-        return MineDown.parse(new ArrayList<>(getList("command-messages.help-admin-view-addition")).stream()
+    public BaseComponent[] cmdHelp(boolean isAdmin) {
+        List<String> helpText = new ArrayList<>(getList("command-messages.help"));
+        if (isAdmin) {
+            helpText.addAll(getList("command-messages.help-admin-view-addition"));
+        }
+        return MineDown.parse(helpText.stream()
                 .map(s -> Utils.colorify(s)).collect(Collectors.joining("\n")));
     }
     public BaseComponent[] cmdadminHelp() {
@@ -796,7 +797,7 @@ public class LanguageManager {
                 EzChestShop.getEconomy().getBalance(player));
 
 
-        return MineDown.parse( getList("checkprofits.landing-menu").stream().collect(Collectors.joining("\n"))
+        return MineDown.parse( getList("checkprofits.landing-menu").stream().map(s -> Utils.colorify(s)).collect(Collectors.joining("\n"))
                 .replace("%currency%", Config.currency)
                 .replace("%balance%", Utils.formatNumber(balance, Utils.FormatType.CHAT))
                 .replace("%income%","" + buyCost)
@@ -808,7 +809,7 @@ public class LanguageManager {
     public BaseComponent[] checkProfitsDetailpage(Player player, List<CheckProfitEntry> checkProfitEntries, int page, int pages) {
         ComponentBuilder compb = new ComponentBuilder("");
         //Header
-        compb.append(MineDown.parse(getList("checkprofits.details-menu.header").stream()
+        compb.append(MineDown.parse(getList("checkprofits.details-menu.header").stream().map(s -> Utils.colorify(s))
                 .collect(Collectors.joining("\n")))).append("\n");
         //Content
         for (int i = 0; i < Config.command_checkprofit_lines_pp; i++) {
@@ -817,7 +818,7 @@ public class LanguageManager {
                 break;
             CheckProfitEntry checkProfitEntry = checkProfitEntries.get(i + ((page - 1) * Config.command_checkprofit_lines_pp));
             //EzChestShop.logDebug(Utils.getFinalItemName(checkProfitEntry.getItem()) + ": " + Utils.encodeItem(checkProfitEntry.getItem()));
-            String[] details = getList("checkprofits.details-menu.content").stream()
+            String[] details = getList("checkprofits.details-menu.content").stream().map(s -> Utils.colorify(s))
                     .collect(Collectors.joining("\n")).split("%item%");
             for (int j = 0; j < details.length; j++) {
                 compb.append(MineDown.parse(details[j].replace("%currency%", Config.currency)
@@ -838,6 +839,7 @@ public class LanguageManager {
         }
         //Footer
         compb.append(MineDown.parse(getList("checkprofits.details-menu.footer").stream().map(s -> {
+            s = Utils.colorify(s);
             s = s.replace("%page%","" + page).replace("%pages%", "" + pages);
             if (page > 1) {
                 s = s.replace("%button_previous%", "[← ](" + getButtonPrevious() +
@@ -862,13 +864,13 @@ public class LanguageManager {
         return Utils.colorify(getString("checkprofits.details-menu.hover-extra.button-previous"));
     }
     public BaseComponent[] confirmProfitClear() {
-        return MineDown.parse( getList("checkprofits.confirm-clear").stream().collect(Collectors.joining("\n")));
+        return MineDown.parse( getList("checkprofits.confirm-clear").stream().map(s -> Utils.colorify(s)).collect(Collectors.joining("\n")));
     }
     public String confirmProfitClearSuccess() {
         return Utils.colorify(getString("checkprofits.confirm-clear-success"));
     }
     public BaseComponent[] joinProfitNotification() {
-        return MineDown.parse( getList("checkprofits.join-notification").stream().collect(Collectors.joining("\n")));
+        return MineDown.parse( getList("checkprofits.join-notification").stream().map(s -> Utils.colorify(s)).collect(Collectors.joining("\n")));
     }
 
 
