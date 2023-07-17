@@ -10,6 +10,7 @@ softdepend:
   - Multiverse-Core #preventing null worlds
   - CMI
   - PlaceholderAPI
+  - Towny
 authors: [Dead_Light, ElitoGame]
 description: ${project.description}
 commands:

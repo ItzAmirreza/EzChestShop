@@ -32,6 +32,7 @@ public final class EzChestShop extends JavaPlugin {
     public static boolean economyPluginFound = true;
 
     public static boolean slimefun = false;
+    public static boolean towny = false;
     public static boolean worldguard = false;
 
     @Override
@@ -251,6 +252,11 @@ public final class EzChestShop extends JavaPlugin {
         if (getServer().getPluginManager().getPlugin("Slimefun") != null) {
             slimefun = true;
             logConsole("&c[&eEzChestShop&c] &eSlimefun integration initialized.");
+        }
+
+        if (getServer().getPluginManager().getPlugin("Towny") != null) {
+            towny = true;
+            logConsole("&c[&eEzChestShop&c] &eTowny integration initialized.");
         }
 
         ShopContainer.queryShopsToMemory();

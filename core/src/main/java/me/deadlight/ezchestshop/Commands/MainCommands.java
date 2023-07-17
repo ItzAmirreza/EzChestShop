@@ -1,5 +1,7 @@
 package me.deadlight.ezchestshop.Commands;
 
+import com.palmergames.bukkit.towny.Towny;
+import com.palmergames.bukkit.towny.utils.ShopPlotUtil;
 import me.deadlight.ezchestshop.Data.Config;
 import me.deadlight.ezchestshop.Data.DatabaseManager;
 import me.deadlight.ezchestshop.Data.LanguageManager;
@@ -296,7 +298,17 @@ public class MainCommands implements CommandExecutor, TabCompleter {
 
                     if (checkIfLocation(target.getLocation(), player)) {
 
-
+                    if (EzChestShop.towny) {
+                        if (!ShopPlotUtil.isShopPlot(target.getLocation())) {
+                            player.sendMessage(lm.notAllowedToCreateOrRemove());
+                            return;
+                        }
+                        if (!(ShopPlotUtil.doesPlayerOwnShopPlot(player, target.getLocation()) ||
+                                ShopPlotUtil.doesPlayerHaveAbilityToEditShopPlot(player, target.getLocation()))) {
+                            player.sendMessage(lm.notAllowedToCreateOrRemove());
+                            return;
+                        }
+                    }
                     TileState state = (TileState) blockState;
 
                     PersistentDataContainer container = state.getPersistentDataContainer();
