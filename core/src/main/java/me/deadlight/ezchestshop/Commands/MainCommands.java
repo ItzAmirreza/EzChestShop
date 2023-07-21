@@ -16,7 +16,6 @@ import me.deadlight.ezchestshop.Utils.Utils;
 import me.deadlight.ezchestshop.Utils.WorldGuard.FlagRegistry;
 import me.deadlight.ezchestshop.Utils.WorldGuard.WorldGuardUtils;
 import me.mrCookieSlime.Slimefun.api.BlockStorage;
-import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.*;
 import org.bukkit.block.*;
 import org.bukkit.command.Command;
@@ -1057,7 +1056,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                 }
             }
             Utils.enabledOutlines.remove(player.getUniqueId());
-            player.sendMessage(Utils.colorify("&cToggled OFF, &bNearby &eshops that you own & empty are no longer highlighted for you."));
+            player.sendMessage(lm.emptyShopHighlightedDisabled());
 
         } else {
             Utils.enabledOutlines.add(player.getUniqueId());
@@ -1073,7 +1072,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
             tones.add(Note.Tone.G);
 
             List<Block> blocks = Utils.getNearbyEmptyShopForAdmins(player);
-            player.sendMessage(Utils.colorify("&aToggled ON, &bNearby &eshops that you own & empty are now highlighted for you. \n &eTotal empty shops near you: &b" + blocks.size()));
+            player.sendMessage(lm.emptyShopHighlightedEnabled(blocks.size()));
             AtomicInteger actionBarCounter = new AtomicInteger();
             EzChestShop.getPlugin().getServer().getScheduler().runTaskLaterAsynchronously(EzChestShop.getPlugin(), () -> {
 
@@ -1089,7 +1088,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                         actionBarCounter.getAndIncrement();
                         Utils.sendActionBar(
                                 player,
-                                "&b&l" + actionBarCounter.get() + " &c&lempty shops near you!"
+                                lm.emptyShopActionBar(actionBarCounter.get())
                         );
                         player.playNote(player.getLocation(), Instrument.BIT, Note.flat(1, tones.get(noteIndex.get())));
                         noteIndex.getAndIncrement();

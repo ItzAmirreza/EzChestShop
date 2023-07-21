@@ -11,7 +11,6 @@ import me.deadlight.ezchestshop.Utils.Objects.ShopSettings;
 import me.deadlight.ezchestshop.Utils.Utils;
 import me.deadlight.ezchestshop.Utils.XPEconomy;
 import net.md_5.bungee.api.chat.*;
-import net.milkbowl.vault.economy.Economy;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -19,7 +18,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.Debug;
 
 import java.io.File;
 import java.io.IOException;
@@ -708,6 +706,9 @@ public class LanguageManager {
     public String chestShopProblem() {
         return Utils.colorify(getString("shop-messages.openingShopProblem"));
     }
+    public String emptyShopActionBar(int shopCount) {
+        return Utils.colorify(getString("shop-messages.emptyShopActionBar").replace("%emptyCount%", "" + shopCount));
+    }
 
 
     //command-messages.
@@ -784,6 +785,12 @@ public class LanguageManager {
     }
     public String shopSellPriceUpdated() {
         return Utils.colorify(getString("command-messages.sellPriceUpdated"));
+    }
+    public String emptyShopHighlightedDisabled() {
+        return Utils.colorify(getString("command-messages.emptyShopHighlighted.enabled"));
+    }
+    public String emptyShopHighlightedEnabled(int shopCount) {
+        return Utils.colorify(getString("command-messages.emptyShopHighlighted.disabled").replace("%emptyCount%", "" + shopCount));
     }
 
 

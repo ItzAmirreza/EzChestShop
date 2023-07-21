@@ -261,6 +261,7 @@ shop-messages:
   chestisFull: 'Skrzynia jest pełna.'
   selftransaction: '&cNie możesz kupować i sprzedawać u siebie!'
   openingShopProblem: '&cWystąpił problem z otworzeniem tego sklepu, skontaktuj się z administratorem.'
+  joinEmptyShopActionBar: "&b&l%emptyCount% &c&lempty shops near you!"
 command-messages:
   negativeprice: '&cMusisz użyć wartości na plusie...'
   notenoughargs: "&cNie wprowadziłeś odopowiednich argumentów! \n &cPoprawne użycie: /ecs\
@@ -301,6 +302,9 @@ command-messages:
   shopTransferred: "&aYou have successfully transferred this shop to %player%!"
   buyPriceUpdated: "&aBuy &7price has been updated!"
   sellPriceUpdated: "&cSell &7price has been updated!"
+  emptyShopHightLighted:
+    enabled: "&aToggled ON, &bNearby &eshops that you own & empty are now highlighted for you. \n&eTotal empty shops near you: &b%emptyCount%"
+    disabled: "&cToggled OFF, &bNearby &eshops that you own & empty are no longer highlighted for you."
 checkprofits:
   landing-menu:
     - '&e========================================'

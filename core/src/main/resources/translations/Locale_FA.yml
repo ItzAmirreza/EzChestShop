@@ -260,6 +260,7 @@ shop-messages:
   chestisFull: "Inventory shop full mibashad."
   selftransaction: "&cShoma nemitonid az khodeton kharid ya forosh konid."
   openingShopProblem: "&cMoteasefane moshkeli dar baz kardan in shop vojod darad. Be admin ha etela dahid."
+  joinEmptyShopActionBar: "&b&l%emptyCount% &c&lempty shops near you!"
 command-messages:
   negativeprice: "&cMeghdare manfi? vali shoma bayad yek adad balaye 0 entekhab konid."
   notenoughargs: "&cCommand be dorosti ersal nashode \n &cRavesh dorost: /ecs create (Gheymate kharid az shoma) (Gheymat forosh be shoma)"
@@ -298,6 +299,9 @@ command-messages:
   shopTransferred: "&aShoma Ba Movafaghiat Ownership Shop Ro Be %player% Transfer Kardid!"
   buyPriceUpdated: "&7Gheymat &aKharid &7Beroz Shod."
   sellPriceUpdated: "&7Gheymat &aForoosh &7Beroz Shod."
+  emptyShopHightLighted:
+    enabled: "&aToggled ON, &bNearby &eshops that you own & empty are now highlighted for you. \n&eTotal empty shops near you: &b%emptyCount%"
+    disabled: "&cToggled OFF, &bNearby &eshops that you own & empty are no longer highlighted for you."
 checkprofits:
   landing-menu:
     - '&e========================================'
