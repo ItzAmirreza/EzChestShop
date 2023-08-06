@@ -837,7 +837,7 @@ public class LanguageManager {
                         .replace("%unit_cost%", "" + checkProfitEntry.getSellUnitPrice())
                 ), ComponentBuilder.FormatRetention.NONE);
                 if (details.length - 1 != j) {
-                    compb.append(Utils.getFinalItemName(checkProfitEntry.getItem())).event(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new BaseComponent[] {
+                    compb.append(TextComponent.fromLegacyText(Utils.getFinalItemName(checkProfitEntry.getItem()))).event(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new BaseComponent[] {
                             new TextComponent(Utils.ItemToTextCompoundString(checkProfitEntry.getItem())) }));
                 } else {
                     compb.append("\n");
