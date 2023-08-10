@@ -707,7 +707,7 @@ public class LanguageManager {
         return Utils.colorify(getString("shop-messages.openingShopProblem"));
     }
     public String emptyShopActionBar(int shopCount) {
-        return Utils.colorify(getString("shop-messages.emptyShopActionBar").replace("%emptyCount%", "" + shopCount));
+        return Utils.colorify(getString("shop-messages.joinEmptyShopActionBar").replace("%emptyCount%", "" + shopCount));
     }
 
 
