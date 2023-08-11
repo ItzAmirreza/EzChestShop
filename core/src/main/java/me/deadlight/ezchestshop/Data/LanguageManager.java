@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 public class LanguageManager {
 
     private static FileConfiguration languageConfig;
-    private static List<String> supported_locales = Arrays.asList("Locale_EN", "Locale_DE", "Locale_ES", "Locale_CN", "Locale_FA", "Locale_PL", "Locale_TR", "Locale_UA");
+    private static List<String> supported_locales = Arrays.asList("Locale_EN", "Locale_DE", "Locale_ES", "Locale_CN", "Locale_FA", "Locale_PL", "Locale_TR", "Locale_UA", "Locale_VI");
     private static List<String> found_locales = new ArrayList<>();
 
     public static List<String> getSupportedLanguages() {

@@ -1,0 +1,375 @@
+# plugin uses this file in order to display messages in plugin
+# For hologram messages, you have to check config.yml
+# NOTE: DO NOT USE TAB in yml file as it can cause serious performance problems and it sometimes can break the plugin
+# Don't forget to rate if you liked EzChestShop
+shop-gui:
+  initialbuyprice: "&aGiá mua ban đầu: &e%buyprice% %currency%"
+  initialsellprice: "&cGiá bán ban đầu: &e%sellprice% %currency%"
+  admin-title: "&cCửa hàng của %shopowner% &4(Admin view)"
+  nonowner-title: "&cCửa hàng %shopowner%"
+  owner-title: "&cCửa hàng của %shopowner%"
+  adminshop-title: "&cCửa hàng admin"
+  buttons:
+    sellX-title: "&cBán %amount%x"
+    sellX-lore:
+      - "&7Bán với giá &e%price% %currency%"
+    buyX-title: "&aMua %amount%x"
+    buyX-lore:
+      - "&7Mua với giá &e%price% %currency%"
+    adminview: "&cTrang xem của admin"
+    storage: "&eKho Chứa"
+    settings: "&bCài đặt"
+    disabled-title: "&cĐã tắt"
+    disabled-lore:
+      - "&7Lựa chọn này đã bị tắt"
+      - " &7bởi chủ shop."
+transactions:
+  transactionButtonTitle: "&aNhật kí giao dịch"
+  backToSettingsButton: "&eQuay trở lại cài đặt"
+  PaperTitleBuy: "&aMua | %player%"
+  PaperTitleSell: "&cBán | %player%"
+  PaperLoreBuy:
+    - "&7Tổng giá: %price% "
+    - " &7Số lượng: %count% "
+    - " &7Loại giao dịch: &aMua từ bạn "
+    - " &e%time%"
+  PaperLoreSell:
+    - "&7Tổng giá: %price% "
+    - " &7Số lượng: %count% "
+    - " &7Loại giao dịch: &aBán cho bạn "
+    - " &e%time%"
+  lessthanminute: "&eVài giây trước"
+  minutesago: "&e%minutes% phút trước"
+  hoursago: "&e%hours% giờ trước"
+  daysago: "&e%days% ngày trước"
+  player-inform-buy: "&7[&aECS&7] &b%player% &7đã mua &e%amount%x &7vật phẩm
+    &d%item%&7 với giá &a%price%%currency%"
+  player-inform-sell: "&7[&aECS&7] &b%player% &7đã bán &e%amount%x &fvật phẩm
+    &d%item%&7 với giá &a%price%%currency%"
+settings:
+  GuiTitle: "&bCài đặt"
+  statusOn: "&aBật"
+  statusOff: "&cTắt"
+  buttons:
+    toggleTransactions:
+      Title: "&eBật/Tắt nhật kí giao dịch"
+      Lore:
+        - "&7Trạng thái hiện tại: %status% "
+        - " &7Nếu bạn giữ cài đặt này bật, "
+        - " &7bạn sẽ nhận được thông báo mua/bán "
+        - " &7ở kênh chat khi ai đó mua/bán "
+        - " &7từ cửa hàng này"
+    disableBuying:
+      Title: "&eTắt Mua"
+      Lore:
+        - "&7Trạng thái hiện tại: %status% "
+        - " &7Nếu bạn giữ cài đặt này bật, "
+        - " &7shop của bạn sẽ không cho ai mua "
+        - " &7bất kì gì từ shop của bạn."
+    disableSelling:
+      Title: "&eTắt Bán"
+      Lore:
+        - "&7Trạng thái hiện tại: %status% "
+        - " &7Nếu bạn giữ cài đặt này bật, "
+        - " &7shop của bạn sẽ không cho ai bán "
+        - " &7bất kì gì từ shop của bạn."
+    shopAdmins:
+      Title: "&eQuản lí của shop"
+      nobodyStatusAdmins: "&aKhông có ai"
+      Lore:
+        - "&7Bạn có thể thêm/bớt quản lí "
+        - " &7cửa hàng của bạn. Quản lí có quyền "
+        - " &7truy cập kho chứa & truy cập cài đặt "
+        - " &7của cửa hàng (mọi thứ trừ việc chia "
+        - " &7thu nhập và loại bỏ/thêm quản lí khác). "
+        - " &aChuột trái &7để thêm quản lí "
+        - " &cChuột phải &7để xóa quản lí "
+        - " &7Các quản lí hiện tại: %admins%"
+    sharedIncome:
+      Title: "&eChia sẻ thu nhập"
+      Lore:
+        - "&7Trạng thái hiện tại: %status% "
+        - " &7Nếu bạn giữ cài đặt này bật, "
+        - " &7Thu nhập từ việc bán vật phẩm "
+        - " &7sẽ được chia sẽ cho các quản lí."
+    hologramRotation:
+      Title: "&eHướng của hologram"
+      Lore:
+        - "&7Hướng: "
+        - "%rotations%"
+        - " &aChuột Trái&7/&cPhải&7 để quay"
+        - " &7hướng khác!"
+    changePrices:
+      Title: "&eGiá Mua/Bán"
+      Lore:
+        - "&7Chỉnh sửa giá bán/mua "
+        - " &d "
+        - " &cChuột trái để   &aChuột phải để  "
+        - "   &r&csửa giá bán       &r &asửa giá mua"
+      SignPlaceholderBuy:
+        - ""
+        - "&a^^ &7Enter &a^^ "
+        - " &7Nhập giá "
+        - " &amua &7mới!"
+      SignPlaceholderSell:
+        - ""
+        - "&c^^ &7Enter &c^^ "
+        - " &7Nhập giá "
+        - " &abán &7mới!"
+    hologramMessage:
+      Title: "&eCustomize hologram của bạn"
+      Lore:
+        - "&cChuột trái để thêm custom hologram"
+        - "&aChuột phải để quản lí hologram hiện tại"
+        - " &d "
+        - "&8Bạn có thể dùng %lineNumbers% dòng!"
+        - <ifhasmax>&8Bạn có thể dụng còn lại %messagesleft% dòng!</ifhasmax>
+      LoreMaxReached:
+        - "&cBạn chỉ có thể dùng"
+        - "&c%maxLines% dòng!"
+        - "&7Nhấn vào đây để quản lí"
+        - "&7hologram của bạn!"
+      LoreEdit:
+        - "&cChuột trái để chỉnh sửa hologram hiện tại"
+        - "&aChuột phải để quản lí hologram hiện tại"
+        - " &d "
+        - "&8Bạn có thể dùng %lineNumbers% dòng!"
+        - <ifhasmax>&8Bạn có thể dụng còn lại %messagesleft% dòng!</ifhasmax>
+      SignPlaceholderTexts: "###############"
+    other:
+      backToShopGuiButton: "&eTrở lại shop"
+      latestTransactionsTitle: "&aGiao dịch mới nhất"
+  chat:
+    toggleTransactions:
+      MessageOn: "&7Thông báo giao dịch: &aBẬT"
+      MessageOff: "&7Thông báo giao dịch: &cTẮT"
+    disableBuying:
+      MessageOn: "&7Tắt Mua: &aBẬT"
+      MessageOff: "&7Tắt Mua: &cTẮT"
+    disableSelling:
+      MessageOn: "&7Tắt Bán: &aBẬT"
+      MessageOff: "&7Tắt Bán: &cTẮT"
+    shopAdmins:
+      addingAdminWaiting: "&eVui lòng nhập tên người bạn muốn thêm vào danh sách quản trị viên."
+      removingAdminWaiting: "&eVui lòng nhập tên người bạn muốn xóa khỏi danh sách quản trị viên."
+      selfAdmin: "&cBạn không thể thêm hoặc xóa chính mình trong danh sách quản trị viên!"
+      sucAdminAdded: "&e%player% &ađã thêm thành công vào danh sách quản trị viên."
+      alreadyAdmin: "&cNgười chơi này đã có trong danh sách quản trị viên!"
+      noPlayer: "&cNgười chơi này không tồn tại hoặc chưa từng chơi ở đây trước đây."
+      sucAdminRemoved: "&e%player% &axóa thành công khỏi danh sách quản trị viên."
+      notInAdminList: "&cNgười chơi này không có trong danh sách quản trị viên!"
+      clearedAdmins: "&cĐã xóa tất cả quản trị viên khỏi cửa hàng này."
+    sharedIncome:
+      MessageOn: "&7Chia sẻ thu nhập: &aBẬT"
+      MessageOff: "&7Chia sẻ thu nhập: &cTẮT"
+    copy-paste:
+      copiedShopSettings: "[&6Đã sao chép &7cài đặt của shop!](%settings%)"
+      pastedShopSettings: "&eĐã dán &7cài đặt của shop!"
+    hologramRotation:
+      rotateHologramInChat: "&7Hướng của hologram: %rotation%"
+      rotation:
+        Up: "&aLên trên"
+        North: "&aPhía bắc"
+        East: "&aPhía đông"
+        South: "&aPhía nam"
+        West: "&ahướng Tây"
+        Down: "&aXuống dưới"
+    protection:
+      cannotDestroyShop: "&cBạn không thể phá hủy cửa hàng này!"
+customMessageManager:
+  GuiTitle: "&bTrình quản lý hologram"
+  ConfirmDeleteGuiTitle: "&cXác nhận xóa"
+  buttons:
+    previousPage:
+      Title: "&eTrước"
+      Lore: null
+    nextPage:
+      Title: "&eSau"
+      Lore: null
+    shopEntry:
+      Title: "&7Shop %shopitem%"
+      UnkownTitle: "&cShop bất định"
+      Lore:
+        - "&7Vị trí &eX:%x%, Y:%y%, Z:%z%"
+        - ""
+        - "&eHologram:"
+        - "&7%hologram-messages%"
+        - ""
+        - "&cChuột trái để xóa"
+        - "&chologram!"
+        - "&aChuột phải để sửa"
+        - "&ahologram!"
+    confirmDelete:
+      Title: "&cBạn có chắc?"
+      Lore:
+        - "&7Bạn sắp xóa hologram này"
+        - "&7Hành động này không thể hoàn tác!"
+        - "&cNhấp để xác nhận!"
+    backToCustomMessageManager:
+      Title: "&eQuay lại Trình quản lý hologram tùy chỉnh"
+      Lore:
+        - "&7Bạn sắp xóa hologram này"
+        - "&7Hành động này không thể hoàn tác!"
+        - "&cNhấp để xác nhận!"
+    modifyCurrentHologram:
+      Title: "&esửa đổi hologram hiện tại"
+      Lore:
+        - "&cChuột trái để xóa"
+        - "&chologram!"
+        - "&aChuột phải để sửa"
+        - "&ahologram!"
+customBuySell:
+  gui-customAmountSign-title: "&eCustom mua/bán"
+  gui-customAmountSign-lore:
+    - "&7Mua hoặc Bán với số lượng tùy chỉnh "
+    - " &d "
+    - " &cChuột trái để   &aChuột phải để  "
+    - "  &r&cbán giá tùy chỉnh     &r &amua giá tùy chỉnh"
+    - " &d "
+    - "         &7Bạn có thể hoàn toàn"
+    - "          &r&cmua &e%sellcount% &7| &abán &e%buycount% "
+    - "           &r&7vật phẩm này!"
+  signEditorGui:
+    buy:
+      - "&a^^ Tối Đa: %max% ^^ "
+      - " &bNhập của bạn"
+      - " &bsố tiền mong muốn"
+    sell:
+      - "&c^^ Tối Đa: %max% ^^ "
+      - " &bNhập của bạn"
+      - " &bsố tiền mong muốn"
+  errors:
+    buyingIsDisabled: "&cShop này không thể mua."
+    sellingIsDisabled: "&cShop này không thể bán."
+    wrongInput: "&cNhập sai (Hoặc có thể là một số rất lớn), vui lòng nhập một số!"
+    enterTheAmount: "&eVui lòng viết số tiền mong muốn của bạn trong dấu hiệu"
+    unsupportedInteger: "&cNày!, số tiền rõ ràng không thể bằng 0 hoặc âm."
+shop-messages:
+  successful-buy: "&aBạn đã mua thành công mặt hàng này với giá &e%price% %currency%"
+  fullinv: "&cBạn không có đủ dung lượng cho số lượng mặt hàng này"
+  cannotafford: "&cBạn không thể đủ khả năng này nhiều..."
+  outofstock: "&cCửa hàng đã hết hàng!"
+  successful-sell: "&aBạn đã bán thành công (các) mặt hàng của mình với giá
+    &e%price% %currency%"
+  shopcannotafford: "&cCửa hàng không thể đủ khả năng nữa."
+  notenoughitemtosell: "&cBạn không có đủ mặt hàng này để bán!"
+  chestisFull: Rương đã đầy
+  selftransaction: "&cBạn không thể mua hoặc bán từ chính mình!"
+  openingShopProblem: "&cĐã xảy ra sự cố khi mở cửa hàng bán rương này. Vui lòng
+    liên hệ với quản trị viên và kiểm tra bảng điều khiển."
+  joinEmptyShopActionBar: "&b%emptyCount% &ccửa hàng trống gần bạn!"
+command-messages:
+  negativeprice: "&cGiá âm??? nhưng bạn phải sử dụng giá dương..."
+  notenoughargs: |-
+    &cBạn chưa cung cấp đủ đối số liệu! 
+     &cCú pháp chính xác: /ecs create (giá mua) (giá bán)
+  consolenotallowed: "&cBạn không được phép thực hiện bất kỳ lệnh nào từ bàn điều khiển."
+  help:
+    - "&bEz&cChestShop &7Plugin By Dead_Light & ElitoGame©"
+    - "&7- &c/ecs create (giá mua) (giá bán) &7| Tạo một cửa hàng bán rương bằng
+      cách nhìn vào rương và cầm trên tay món đồ bạn muốn bán. "
+    - "&7- &c/ecs remove &7| Xóa cửa hàng rương mà bạn đang xem "
+    - "&7- &c/ecs settings (setting) &7| Sao chép/Dán/Chuyển đổi cài đặt liên
+      quan đến cửa hàng rương "
+    - "&eSettings: &7[copy, paste, admins, toggle-buying, toggle-selling,
+      toggle-message, toggle-shared-income, change-rotation] "
+    - "&7- &c/ecs emptyshops &7| Hiển thị cho bạn các cửa hàng trống gần đó mà
+      BẠN sở hữu."
+    - "&7 Dễ mà đúng không? :)"
+  help-admin-view-addition:
+    - "&cAdmin Help: "
+    - "&7- &c/ecsadmin"
+  adminhelp:
+    - "&cAdmin help: "
+    - "&7- &c/&eecsadmin remove &7| xóa cửa hàng mà bạn đang xem (mặc dù bạn có
+      thể xóa nó bằng cách phá vỡ nó) "
+    - "&7- &c/&eecsadmin reload &7| tải lại các cấu hình plugin"
+    - "&7- &c/&eecsadmin create (giá mua) (giá bán) &7| tạo một cửa hàng quản
+      trị"
+    - "&7- &c/&eecsadmin transfer-ownership (player) &7| chuyển quyền sở hữu của
+      bất kỳ cửa hàng nào cho người chơi khác."
+    - "&7 Để được trợ giúp thêm, hãy tham gia [&bDiscord](%discord_link% Nhấp để
+      tham gia hỗ trợ Discord!)&7!"
+  alreadyashop: "&cVật này đã là một cửa hàng!"
+  shopcreated: "&aBạn đã tạo thành công một cửa hàng rương!"
+  holdsomething: "&cHãy giữ một cái gì đó trong tay chính của bạn!"
+  notallowdtocreate: "&cBạn không được phép tạo/xóa cửa hàng rương ở vị trí này."
+  notchest: "&cKhối mà bạn đang xem không phải là loại rương được hỗ trợ/không
+    phải là rương."
+  lookatchest: "&cXin hãy nhìn vào một cái rương."
+  csremoved: "&eCửa hàng rương này đã được gỡ bỏ thành công."
+  notowner: "&aBạn không phải là chủ cửa hàng rương này!"
+  notachestorcs: "&cKhối mà bạn đang xem không phải là rương/hoặc đây không phải
+    là cửa hàng bán rương."
+  maxShopLimitReached: "&cĐã đạt đến giới hạn cửa hàng tối đa: %shoplimit%!"
+  slimeFunBlockNotSupported: "&cXin lỗi :(, nhưng bạn không thể thực thi lệnh này
+    với khối slimefun / vui lòng sử dụng khối bình thường làm vật chứa"
+  buypriceGreaterThanSellRequired: "&cGiá Mua phải lớn hơn Giá Bán!"
+  invalidShopItem: "&cMặt hàng bạn đang cố tạo cửa hàng không hợp lệ ở đây."
+  shopTransferConfirm: "&eBạn có chắc chắn muốn chuyển vĩnh viễn quyền sở hữu cửa
+    hàng này cho %player%? [&2[✔]](Nhấn để xác nhận chuyển chủ! run_command=/ecs
+    settings transfer-ownership %player% -confirm)"
+  shopTransferred: "&aBạn đã chuyển thành công cửa hàng này đến %player%!"
+  buyPriceUpdated: "&7Giá&a mua&7 đã được cập nhật!"
+  sellPriceUpdated: "&7Giá&c bán&7 đã được cập nhật"
+  emptyShopHightLighted:
+    enabled: >-
+      &aĐã BẬT, &bCác cửa hàng &eshop lân cận mà bạn sở hữu và trống hiện
+      được đánh dấu cho bạn. 
+
+      &eTổng số cửa hàng trống gần bạn: &b%emptyCount%
+    disabled: "&cĐã TẮT, &bCác cửa hàng &eshop lân cận mà bạn sở hữu và trống không
+      còn được đánh dấu cho bạn nữa."
+checkprofits:
+  landing-menu:
+    - "&e========================================"
+    - "&7Tổng doanh thu bán hàng: &6%currency%%income% &7từ &6%sales% &7sale(s)."
+    - "&7Tổng chi phí mua: &6%currency%%cost% &7từ &6%purchases% &7purchase(s)."
+    - "&7Tổng cộng: &6%currency%%total%"
+    - "&7Số tiền: &6%currency%%balance%"
+    - "&7Nhấn vào [&bĐÂY](Bấm vào để xem chi tiết! run_command=/checkprofits p
+      1)"
+    - "&7Bấm để xóa báo cáo [&c[X]](Bấm vào để xóa! run_command=/checkprofits
+      clear)"
+  details-menu:
+    header:
+      - "&e----- &6Báo cáo lợi nhuận cửa hàng &e-----"
+    content:
+      - " &e- &6%item%"
+      - "    &7Bán: [&e%sales%x %currency%%income%](đơn giá: %unit_income%)
+        &7Mua: [&e%purchases%x %currency%%cost%](đơn giá: %unit_cost%)"
+    footer:
+      - '&6%button_previous%&7Trang %page%/%pages%&6%button_next%&7 | Để xem một
+        trang, gõ "[&6/cp p <page>](Nhấp để dán vào cuộc trò chuyện
+        suggest_command=/cp p )&7"'
+    hover-extra:
+      button-next: Sau
+      button-previous: Trước
+  confirm-clear:
+    - "&eBạn có thực sự muốn xóa tất cả dữ liệu lợi nhuận? [&2[✔]](Nhấn để xác
+      nhận rõ ràng! run_command=/checkprofits clear -confirm)"
+  confirm-clear-success: "&cBạn đã xóa tất cả dữ liệu lợi nhuận!"
+  join-notification:
+    - "&eKiểm tra lợi nhuận Cửa hàng của bạn [&bỞ ĐÂY](Nhấp để hiển thị
+      run_command=/checkprofits)"
+shulkershop-dropped-lore:
+  - "&eCửa hàng Shulkerbox:"
+  - " &7Chủ: &6%owner%"
+  - " &7Vật Phẩm: &6%item%"
+  - " &7Mua: &6%currency%%buy_price%"
+  - " &7Bán: &6%currency%%sell_price%"
+hologram:
+  shop-empty: "&cShop này trống!"
+  shulkerbox-item: "&7%item% x&e%amount%"
+  shulkerbox-item-more: "&7và hơn &e%amount% &7vật phẩm khác!"
+  item-enchantment: "&b%enchantment% &e%level-roman%"
+  item-enchantment-more: "&7và hơn &e%amount% &7thứ khác!"
+other:
+  update-notifications: "&c[&eEzChestShop&c] &eĐã phát hiện phiên bản mới:
+    &b%new_version%&e! Bạn vẫn đang sử dụng bản &c%current_version%&e!"
+  overflowing-gui-items-notification: "&c[&eEzChestShop&c] &eBạn có quá nhiều vật
+    phẩm trong GUI tùy chỉnh của mình! Đảm bảo các vật phẩm này nằm trong GUI đủ
+    lớn: &c%overflow%"
+  overlapping-gui-items-notification: "&c[&eEzChestShop&c] &eBạn có các vật phẩm
+    chồng chéo trong GUI tùy chỉnh của mình! Dưới đây là danh sách các vật phẩm
+    chồng chéo bất thường: &c%overlap%"
