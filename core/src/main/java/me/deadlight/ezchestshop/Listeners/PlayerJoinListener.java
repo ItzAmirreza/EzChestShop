@@ -2,11 +2,11 @@ package me.deadlight.ezchestshop.Listeners;
 
 import me.deadlight.ezchestshop.Data.Config;
 import me.deadlight.ezchestshop.Data.DatabaseManager;
+import me.deadlight.ezchestshop.Data.LanguageManager;
 import me.deadlight.ezchestshop.Data.SQLite.SQLite;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.Utils.BlockOutline;
 import me.deadlight.ezchestshop.Utils.Utils;
-import me.deadlight.ezchestshop.Utils.WebhookSender;
 import org.bukkit.Instrument;
 import org.bukkit.Note;
 import org.bukkit.block.Block;
@@ -21,6 +21,8 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class PlayerJoinListener implements Listener {
+
+    LanguageManager lm = new LanguageManager();
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) throws NoSuchFieldException, IllegalAccessException {
@@ -73,7 +75,7 @@ public class PlayerJoinListener implements Listener {
                         actionBarCounter.getAndIncrement();
                         Utils.sendActionBar(
                                 player,
-                                "&b&l" + actionBarCounter.get() + " &c&lempty shops near you!"
+                                lm.emptyShopActionBar(actionBarCounter.get())
                         );
 
                         player.playNote(b.getLocation(), Instrument.BIT, Note.flat(1, tones.get(noteIndex.get())));

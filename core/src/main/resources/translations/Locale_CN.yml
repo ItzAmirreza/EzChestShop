@@ -251,6 +251,7 @@ shop-messages:
   chestisFull: "箱子已滿."
   selftransaction: "&c您無法與自己交易!"
   openingShopProblem: "&cThere is a problem in opening this chest shop, Please contact administrator and check the console."
+  joinEmptyShopActionBar: "&b&l%emptyCount% &c&lempty shops near you!"
 command-messages:
   negativeprice: "&c負數? 避免你破產最好別那麼做..."
   notenoughargs: "&c請輸入足夠的參數! \n &c正確用法: /ecs create (購買價格) (販售價格)"
@@ -290,6 +291,9 @@ command-messages:
   shopTransferred: "&aYou have successfully transferred this shop to %player%!"
   buyPriceUpdated: "&aBuy &7price has been updated!"
   sellPriceUpdated: "&cSell &7price has been updated!"
+  emptyShopHightLighted:
+    enabled: "&aToggled ON, &bNearby &eshops that you own & empty are now highlighted for you. \n&eTotal empty shops near you: &b%emptyCount%"
+    disabled: "&cToggled OFF, &bNearby &eshops that you own & empty are no longer highlighted for you."
 checkprofits:
   landing-menu:
     - '&e========================================'

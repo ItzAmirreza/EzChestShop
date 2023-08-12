@@ -40,8 +40,6 @@ public class PlayerTransactionListener implements Listener {
             getters.add(owner.getUniqueId());
 
             if (event.isBuy()) {
-                event.getItem().getItemMeta().getDisplayName();
-
                 for (UUID adminUUID : getters) {
                     Player admin = Bukkit.getPlayer(adminUUID);
                     if (admin != null) {

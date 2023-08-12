@@ -258,6 +258,7 @@ shop-messages:
   chestisFull: "Скриня переповнена!"
   selftransaction: "&cВи не можете купувати чи продавати самі!"
   openingShopProblem: "&cВиникла проблема з відкриттям цього магазину скринь. Звˈяжіться з адміністратором і перевірте консоль."
+  joinEmptyShopActionBar: "&b&l%emptyCount% &c&lempty shops near you!"
 command-messages:
   negativeprice: "&cВід'ємна ціна? Ви повинні використовувати ціну більше нуля..."
   notenoughargs: "&cНедостатньо аргументів! \n &cПравильне використання: /ecs create (Ціна покупки) (Ціна продажу)"
@@ -297,6 +298,9 @@ command-messages:
   shopTransferred: "&aВи успішно передали цей магазин %player%у!"
   buyPriceUpdated: "&7Ціна &aкупівлі &7була оновлена!"
   sellPriceUpdated: "&7Ціна &cпродажу &7була оновлена!"
+  emptyShopHightLighted:
+    enabled: "&aToggled ON, &bNearby &eshops that you own & empty are now highlighted for you. \n&eTotal empty shops near you: &b%emptyCount%"
+    disabled: "&cToggled OFF, &bNearby &eshops that you own & empty are no longer highlighted for you."
 checkprofits:
   landing-menu:
     - '&e========================================'

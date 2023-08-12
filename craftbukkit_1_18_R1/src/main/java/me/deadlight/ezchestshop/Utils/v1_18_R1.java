@@ -20,6 +20,7 @@ import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_18_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_18_R1.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_18_R1.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_18_R1.util.CraftChatMessage;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -75,7 +76,7 @@ public class v1_18_R1 extends VersionUtils {
         EntityArmorStand armorstand = new EntityArmorStand(world, location.getX(), location.getY(), location.getZ());
         armorstand.j(true); //invisible
         armorstand.t(true); //Marker
-        armorstand.a(IChatBaseComponent.a(line)); //set custom name
+        armorstand.a(CraftChatMessage.fromStringOrNull(line)); //set custom name
         armorstand.n(true); //make custom name visible
         armorstand.e(true); //no gravity
         armorstand.e(ID); //set entity id

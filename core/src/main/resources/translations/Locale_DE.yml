@@ -265,6 +265,7 @@ shop-messages:
   chestisFull: "Die Kiste ist voll."
   selftransaction: "&cDu kannst nicht an dich selbst verkaufen oder von dir kaufen!"
   openingShopProblem: "&cBeim öffnen dieses Shops ist ein Problem aufgetreten. Bitte kontaktiere einen Administrator um in der Konsole nachzusehen."
+  joinEmptyShopActionBar: "&b&l%emptyCount% &c&lleere Shops in deiner Nähe!"
 command-messages:
   negativeprice: "&cNegativer Preis? Aber er muss positiv sein..."
   notenoughargs: "&cDu hast nicht genügend Argumente verwendet! \n &cRichtige Verwendung: /ecs create (Kaufpreis) (Verkaufspreis)"
@@ -304,6 +305,9 @@ command-messages:
   shopTransferred: "&aDu hast die Besitzrechte dieses Shops erfolgreich auf %player% übertragen!"
   buyPriceUpdated: "&aLKaufpreis &7wurde bearbeitet!"
   sellPriceUpdated: "&cVerkaufspreis &7wurde bearbeitet!"
+  emptyShopHightLighted:
+    enabled: "&aUmgestellt auf EIN, &bNahe &eShops die dir gehören & leer sind werden jetzt für dich hervorgehoben. \n&eTotal leere Shops in deiner Nähe: &b%emptyCount%"
+    disabled: "&cUmgestellt auf AUS, &bNahe &eShops die dir gehören & leer sind werden jetzt nicht mehr für dich hervorgehoben."
 checkprofits:
   landing-menu:
     - '&e========================================'

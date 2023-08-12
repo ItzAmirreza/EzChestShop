@@ -271,6 +271,7 @@ shop-messages:
   chestisFull: " &cMarket dolmuş daha fazla satış yapamazsınız!"
   selftransaction: " &cKendinizden satın alamaz veya satamazsınız!"
   openingShopProblem: " &cBu marketi açarken bir sorun oluştu, lütfen ASENAL ile iletişime geçin!"
+  joinEmptyShopActionBar: "&b&l%emptyCount% &c&lempty shops near you!"
 command-messages:
   negativeprice: " &cOlumsuz fiyat? olumlu fiyat kullanmalısın..."
   notenoughargs: " &cYanlış komut kullandınız. \n &cDoğru kullanım: &f/ecs create &f(Satış fiyatı) (Alış fiyatı)"
@@ -310,6 +311,9 @@ command-messages:
   shopTransferred: "&aYou have successfully transferred this shop to %player%!"
   buyPriceUpdated: "&7Satış  &7fiyatı güncellendi!"
   sellPriceUpdated: "&7Alış &7fiyatı güncellendi!"
+  emptyShopHightLighted:
+    enabled: "&aToggled ON, &bNearby &eshops that you own & empty are now highlighted for you. \n&eTotal empty shops near you: &b%emptyCount%"
+    disabled: "&cToggled OFF, &bNearby &eshops that you own & empty are no longer highlighted for you."
 checkprofits:
   landing-menu:
     - ''

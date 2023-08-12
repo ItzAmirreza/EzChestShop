@@ -11,7 +11,6 @@ import me.deadlight.ezchestshop.Utils.Objects.ShopSettings;
 import me.deadlight.ezchestshop.Utils.Utils;
 import me.deadlight.ezchestshop.Utils.XPEconomy;
 import net.md_5.bungee.api.chat.*;
-import net.milkbowl.vault.economy.Economy;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -32,7 +31,7 @@ import java.util.stream.Collectors;
 public class LanguageManager {
 
     private static FileConfiguration languageConfig;
-    private static List<String> supported_locales = Arrays.asList("Locale_EN", "Locale_DE", "Locale_ES", "Locale_CN", "Locale_FA", "Locale_PL", "Locale_TR", "Locale_UA");
+    private static List<String> supported_locales = Arrays.asList("Locale_EN", "Locale_DE", "Locale_ES", "Locale_CN", "Locale_FA", "Locale_PL", "Locale_TR", "Locale_UA", "Locale_VI");
     private static List<String> found_locales = new ArrayList<>();
 
     public static List<String> getSupportedLanguages() {
@@ -707,6 +706,9 @@ public class LanguageManager {
     public String chestShopProblem() {
         return Utils.colorify(getString("shop-messages.openingShopProblem"));
     }
+    public String emptyShopActionBar(int shopCount) {
+        return Utils.colorify(getString("shop-messages.joinEmptyShopActionBar").replace("%emptyCount%", "" + shopCount));
+    }
 
 
     //command-messages.
@@ -719,12 +721,12 @@ public class LanguageManager {
     public String consoleNotAllowed() {
         return Utils.colorify(getString("command-messages.consolenotallowed"));
     }
-    public BaseComponent[] cmdHelp() {
-        return MineDown.parse(new ArrayList<>(getList("command-messages.help")).stream()
-                .map(s -> Utils.colorify(s)).collect(Collectors.joining("\n")));
-    }
-    public BaseComponent[] cmdadminviewHelp() {
-        return MineDown.parse(new ArrayList<>(getList("command-messages.help-admin-view-addition")).stream()
+    public BaseComponent[] cmdHelp(boolean isAdmin) {
+        List<String> helpText = new ArrayList<>(getList("command-messages.help"));
+        if (isAdmin) {
+            helpText.addAll(getList("command-messages.help-admin-view-addition"));
+        }
+        return MineDown.parse(helpText.stream()
                 .map(s -> Utils.colorify(s)).collect(Collectors.joining("\n")));
     }
     public BaseComponent[] cmdadminHelp() {
@@ -784,6 +786,12 @@ public class LanguageManager {
     public String shopSellPriceUpdated() {
         return Utils.colorify(getString("command-messages.sellPriceUpdated"));
     }
+    public String emptyShopHighlightedDisabled() {
+        return Utils.colorify(getString("command-messages.emptyShopHighlighted.enabled"));
+    }
+    public String emptyShopHighlightedEnabled(int shopCount) {
+        return Utils.colorify(getString("command-messages.emptyShopHighlighted.disabled").replace("%emptyCount%", "" + shopCount));
+    }
 
 
     //checkprofits.
@@ -796,7 +804,7 @@ public class LanguageManager {
                 EzChestShop.getEconomy().getBalance(player));
 
 
-        return MineDown.parse( getList("checkprofits.landing-menu").stream().collect(Collectors.joining("\n"))
+        return MineDown.parse( getList("checkprofits.landing-menu").stream().map(s -> Utils.colorify(s)).collect(Collectors.joining("\n"))
                 .replace("%currency%", Config.currency)
                 .replace("%balance%", Utils.formatNumber(balance, Utils.FormatType.CHAT))
                 .replace("%income%","" + buyCost)
@@ -808,7 +816,7 @@ public class LanguageManager {
     public BaseComponent[] checkProfitsDetailpage(Player player, List<CheckProfitEntry> checkProfitEntries, int page, int pages) {
         ComponentBuilder compb = new ComponentBuilder("");
         //Header
-        compb.append(MineDown.parse(getList("checkprofits.details-menu.header").stream()
+        compb.append(MineDown.parse(getList("checkprofits.details-menu.header").stream().map(s -> Utils.colorify(s))
                 .collect(Collectors.joining("\n")))).append("\n");
         //Content
         for (int i = 0; i < Config.command_checkprofit_lines_pp; i++) {
@@ -817,7 +825,7 @@ public class LanguageManager {
                 break;
             CheckProfitEntry checkProfitEntry = checkProfitEntries.get(i + ((page - 1) * Config.command_checkprofit_lines_pp));
             //EzChestShop.logDebug(Utils.getFinalItemName(checkProfitEntry.getItem()) + ": " + Utils.encodeItem(checkProfitEntry.getItem()));
-            String[] details = getList("checkprofits.details-menu.content").stream()
+            String[] details = getList("checkprofits.details-menu.content").stream().map(s -> Utils.colorify(s))
                     .collect(Collectors.joining("\n")).split("%item%");
             for (int j = 0; j < details.length; j++) {
                 compb.append(MineDown.parse(details[j].replace("%currency%", Config.currency)
@@ -829,7 +837,7 @@ public class LanguageManager {
                         .replace("%unit_cost%", "" + checkProfitEntry.getSellUnitPrice())
                 ), ComponentBuilder.FormatRetention.NONE);
                 if (details.length - 1 != j) {
-                    compb.append(Utils.getFinalItemName(checkProfitEntry.getItem())).event(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new BaseComponent[] {
+                    compb.append(TextComponent.fromLegacyText(Utils.getFinalItemName(checkProfitEntry.getItem()))).event(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new BaseComponent[] {
                             new TextComponent(Utils.ItemToTextCompoundString(checkProfitEntry.getItem())) }));
                 } else {
                     compb.append("\n");
@@ -838,6 +846,7 @@ public class LanguageManager {
         }
         //Footer
         compb.append(MineDown.parse(getList("checkprofits.details-menu.footer").stream().map(s -> {
+            s = Utils.colorify(s);
             s = s.replace("%page%","" + page).replace("%pages%", "" + pages);
             if (page > 1) {
                 s = s.replace("%button_previous%", "[← ](" + getButtonPrevious() +
@@ -862,13 +871,13 @@ public class LanguageManager {
         return Utils.colorify(getString("checkprofits.details-menu.hover-extra.button-previous"));
     }
     public BaseComponent[] confirmProfitClear() {
-        return MineDown.parse( getList("checkprofits.confirm-clear").stream().collect(Collectors.joining("\n")));
+        return MineDown.parse( getList("checkprofits.confirm-clear").stream().map(s -> Utils.colorify(s)).collect(Collectors.joining("\n")));
     }
     public String confirmProfitClearSuccess() {
         return Utils.colorify(getString("checkprofits.confirm-clear-success"));
     }
     public BaseComponent[] joinProfitNotification() {
-        return MineDown.parse( getList("checkprofits.join-notification").stream().collect(Collectors.joining("\n")));
+        return MineDown.parse( getList("checkprofits.join-notification").stream().map(s -> Utils.colorify(s)).collect(Collectors.joining("\n")));
     }
 
 
