@@ -787,10 +787,10 @@ public class LanguageManager {
         return Utils.colorify(getString("command-messages.sellPriceUpdated"));
     }
     public String emptyShopHighlightedDisabled() {
-        return Utils.colorify(getString("command-messages.emptyShopHighlighted.enabled"));
+        return Utils.colorify(getString("command-messages.emptyShopHightLighted.enabled"));
     }
     public String emptyShopHighlightedEnabled(int shopCount) {
-        return Utils.colorify(getString("command-messages.emptyShopHighlighted.disabled").replace("%emptyCount%", "" + shopCount));
+        return Utils.colorify(getString("command-messages.emptyShopHightLighted.disabled").replace("%emptyCount%", "" + shopCount));
     }
 
 
