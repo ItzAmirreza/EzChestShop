@@ -426,7 +426,8 @@ public class ShopContainer {
         if (Config.useXP) {
             return XPEconomy.has(player, price);
         } else  {
-            return econ.has(player, price);
+            double balance = econ.getBalance(player);
+            return !(balance < price);
         }
     }
 
