@@ -179,8 +179,9 @@ public class BlockBoundHologram {
 
 
     public Location getHoloLoc(Block containerBlock) {
-        Location holoLoc;
+        Location holoLoc = containerBlock.getLocation();
         Inventory inventory = Utils.getBlockInventory(containerBlock);
+
         PersistentDataContainer container = ((TileState) containerBlock.getState()).getPersistentDataContainer();
         String rotation = container.get(new NamespacedKey(EzChestShop.getPlugin(), "rotation"),
                 PersistentDataType.STRING);
@@ -207,6 +208,8 @@ public class BlockBoundHologram {
                 holoLoc = getCentralLocation(containerBlock, inventory, new Vector(0, 1, 0));
                 break;
         }
+
+
         return holoLoc;
     }
 

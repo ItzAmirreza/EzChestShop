@@ -4,23 +4,11 @@ import me.deadlight.ezchestshop.Data.Config;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.Utils.ASHologram;
 import me.deadlight.ezchestshop.Utils.FloatingItem;
-import me.deadlight.ezchestshop.Utils.Pair;
 import me.deadlight.ezchestshop.Utils.Utils;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.NamespacedKey;
-import org.bukkit.block.Block;
-import org.bukkit.block.Chest;
-import org.bukkit.block.DoubleChest;
-import org.bukkit.block.TileState;
-import org.bukkit.entity.EntityType;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.DoubleChestInventory;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.persistence.PersistentDataContainer;
-import org.bukkit.persistence.PersistentDataType;
-import org.bukkit.util.Vector;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -103,6 +91,13 @@ public class PlayerBlockBoundHologram extends BlockBoundHologram {
      */
     public void show() {
 
+        if (getLocation().getBlock().getType() == Material.AIR) {
+            EzChestShop.logDebug("Shop block is in air, hiding it: " + getLocation());
+            hideForAll();
+            return;
+        }
+
+        EzChestShop.logDebug("Showing hologram for " + player.getName() + " at " + getLocation());
         // If the hologram is already spawned, do nothing
         if (!holograms.isEmpty() && !items.isEmpty()) {
             return;
@@ -119,6 +114,7 @@ public class PlayerBlockBoundHologram extends BlockBoundHologram {
             }
             holograms.clear();
         }
+        EzChestShop.logDebug("Showing hologram for " + player.getName() + " at " + getLocation() + " (2)");
 
         /*
          Process the contents of the hologram
@@ -186,7 +182,7 @@ public class PlayerBlockBoundHologram extends BlockBoundHologram {
                     if (line.contains(key)) {
                         FloatingItem floatingItem = new FloatingItem(player, thatItem, lineLocation);
                         Utils.onlinePackets.add(floatingItem);
-//                        EzChestShop.logDebug("Spawned item " + thatItem.getType().name() + " at " + lineLocation);
+                        EzChestShop.logDebug("Spawned item " + thatItem.getType().name() + " at " + lineLocation);
                         // if multiple items are on the same line,
                         // this will break, but that is not supported anyway rn
                         items.put(i, floatingItem);
@@ -198,7 +194,7 @@ public class PlayerBlockBoundHologram extends BlockBoundHologram {
                 // add any line that is not defined as empty
                 ASHologram hologram = new ASHologram(player, line, lineLocation);
                 Utils.onlinePackets.add(hologram);
-//                EzChestShop.logDebug("Spawned hologram " + line + " at " + lineLocation);
+                EzChestShop.logDebug("Spawned hologram " + line + " at " + lineLocation);
                 holograms.put(i, hologram);
                 lineLocation.add(0, 0.3 * Config.holo_linespacing, 0);
             } else {
@@ -217,12 +213,12 @@ public class PlayerBlockBoundHologram extends BlockBoundHologram {
      */
     public void hide() {
         for (ASHologram hologram : holograms.values()) {
-            Utils.onlinePackets.remove(hologram);
             hologram.destroy();
+            Utils.onlinePackets.remove(hologram);
         }
         for (FloatingItem item : items.values()) {
-            Utils.onlinePackets.remove(item);
             item.destroy();
+            Utils.onlinePackets.remove(item);
         }
         holograms.clear();
         items.clear();
@@ -236,8 +232,8 @@ public class PlayerBlockBoundHologram extends BlockBoundHologram {
         hide();
         show();
         for (ASHologram hologram : holograms.values()) {
-            Utils.onlinePackets.remove(hologram);
             hologram.destroy();
+            Utils.onlinePackets.remove(hologram);
         }
         holograms.clear();
         blockBoundHologram.removeInspector(player);

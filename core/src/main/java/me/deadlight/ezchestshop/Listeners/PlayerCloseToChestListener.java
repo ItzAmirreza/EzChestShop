@@ -87,7 +87,9 @@ public class PlayerCloseToChestListener implements Listener {
                 // if the player is not looking at a shop, then remove the old one if he was inspecting one
                 if (ShopHologram.isPlayerInspectingShop(player) && !isLookingAtSameShop) {
                     ShopHologram shopHolo = ShopHologram.getInspectedShopHologram(player);
-                    shopHolo.showOnlyItem();
+                    if (ShopContainer.isShop(shopHolo.getLocation())) {
+                        shopHolo.showOnlyItem();
+                    }
                     shopHolo.removeInspectedShop();
                 }
             }
@@ -106,14 +108,14 @@ public class PlayerCloseToChestListener implements Listener {
                 if (EzChestShop.slimefun) {
                     if (BlockStorage.hasBlockInfo(ezShop.getLocation())) {
                         ShopContainer.deleteShop(ezShop.getLocation());
-                        return;
+                        continue;
                     }
                 }
                 double dist = loc.distance(ezShop.getLocation());
                 // Show the Hologram if Player close enough
                 if (dist < Config.holodistancing_distance) {
                     if (ShopHologram.hasHologram(ezShop.getLocation(), player))
-                        return; // forEach -> acts as continue;
+                        continue;
 
                     Block target = ezShop.getLocation().getWorld().getBlockAt(ezShop.getLocation());
                     if (target != null) {

@@ -1013,6 +1013,10 @@ public class Utils {
             if (shop.getOwnerID().equals(player.getUniqueId()) || getAdminsForShop(shop).contains(player.getUniqueId())) {
                 //then we check if the shop is empty
 
+                if (shop.getLocation() == null || shop.getLocation().getWorld() == null) {
+                    continue;
+                }
+
                 if (!Utils.isApplicableContainer(shop.getLocation().getBlock())) {
                     continue;
                 }

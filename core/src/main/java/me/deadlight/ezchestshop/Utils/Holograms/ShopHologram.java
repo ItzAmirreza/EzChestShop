@@ -40,10 +40,10 @@ public class ShopHologram {
     // That way new mechanics should be easier to implement and the code will be more readable.
 
     private static LanguageManager lm = new LanguageManager();
-    private static HashMap<Player, HashMap<Location, ShopHologram>> playerShopHolograms = new HashMap<>();
+    private static HashMap<UUID, HashMap<Location, ShopHologram>> playerShopHolograms = new HashMap<>();
     private static HashMap<Location, BlockBoundHologram> shopHolograms = new HashMap<>();
 
-    private static HashMap<Player, ShopHologram> hologramInspections = new HashMap<>();
+    private static HashMap<UUID, ShopHologram> hologramInspections = new HashMap<>();
 
     private Location location;
     private Player player;
@@ -131,39 +131,40 @@ public class ShopHologram {
             BlockBoundHologram shopHologram = new BlockBoundHologram(location,
                     BlockBoundHologram.HologramRotation.valueOf(shop.getSettings().getRotation().toUpperCase()),
                     structure, textReplacements, itemReplacements, conditionalTags);
+            EzChestShop.logDebug("Created new BlockBoundHologram");
             // Add the hologram to the map
             shopHolograms.put(location, shopHologram);
         }
+        // else the hologram already exists, so just get it
+        this.hologram = shopHolograms.get(location);
 
         // Save the just created hologram to the player's hologram map
-        if (playerShopHolograms.containsKey(player)) {
-            playerShopHolograms.get(player).put(location, this);
+        if (playerShopHolograms.containsKey(player.getUniqueId())) {
+            playerShopHolograms.get(player.getUniqueId()).put(location, this);
         } else {
             HashMap<Location, ShopHologram> holograms = new HashMap<>();
             holograms.put(location, this);
-            playerShopHolograms.put(player, holograms);
+            playerShopHolograms.put(player.getUniqueId(), holograms);
         }
-
-        this.hologram = shopHolograms.get(location);
     }
 
     /**
-     * Get the hologram of a shop
+     * Get the hologram of a shop, if it does not exist, create it.
      * @param location The location of the shop
      * @param player The player that is viewing the hologram
      * @return The hologram
      */
     public static ShopHologram getHologram(Location location, Player player) {
-        if (!playerShopHolograms.containsKey(player) || !playerShopHolograms.get(player).containsKey(location)) {
+        if (!playerShopHolograms.containsKey(player.getUniqueId()) || !playerShopHolograms.get(player.getUniqueId()).containsKey(location)) {
             EzChestShop.logDebug("Creating new hologram for " + location.toString() + " for player " + player.getName());
             new ShopHologram(location, player);
         }
-        return playerShopHolograms.get(player).get(location);
+        return playerShopHolograms.get(player.getUniqueId()).get(location);
     }
 
     public static boolean hasHologram(Location location, Player player) {
-        return playerShopHolograms.containsKey(player) &&
-                playerShopHolograms.get(player).containsKey(location);
+        return playerShopHolograms.containsKey(player.getUniqueId()) &&
+                playerShopHolograms.get(player.getUniqueId()).containsKey(location);
     }
 
     public static List<EzShop> getShopsInRadius(Location location, int radius) {
@@ -176,8 +177,10 @@ public class ShopHologram {
     }
 
     public static void hideAll(Player player) {
-        if (playerShopHolograms.containsKey(player)) {
-            playerShopHolograms.get(player).values().forEach(ShopHologram::hide);
+        if (playerShopHolograms.containsKey(player.getUniqueId())) {
+//            playerShopHolograms.get(player).values().forEach(ShopHologram::hide);
+            playerShopHolograms.get(player.getUniqueId()).values().forEach(hologram -> hologram.hologram.getPlayerHologram(player).hide());
+            playerShopHolograms.remove(player.getUniqueId());
         }
     }
 
@@ -187,6 +190,12 @@ public class ShopHologram {
                 holograms.get(location).hide();
             }
         });
+        hologramInspections.values().removeIf(hologramInspection -> hologramInspection.getLocation().equals(location));
+    }
+
+    public void hide() {
+        hologram.getPlayerHologram(player).hide();
+        playerShopHolograms.get(player.getUniqueId()).remove(location);
     }
 
     public boolean hasInspector() {
@@ -201,10 +210,6 @@ public class ShopHologram {
         hologram.getPlayerHologram(player).show();
     }
 
-    public void hide() {
-        hologram.getPlayerHologram(player).hide();
-        playerShopHolograms.get(player).remove(location);
-    }
 
     public void setCustomHologramMessage(List<String> messages) {
         PlayerBlockBoundHologram playerHolo = hologram.getPlayerHologram(player);
@@ -325,23 +330,23 @@ public class ShopHologram {
     }
 
     public void setAsInspectedShop() {
-        if (!hologramInspections.containsKey(player)) {
-            hologramInspections.put(player, this);
+        if (!hologramInspections.containsKey(player.getUniqueId())) {
+            hologramInspections.put(player.getUniqueId(), this);
         }
     }
 
     public void removeInspectedShop() {
-        if (hologramInspections.containsKey(player)) {
-            hologramInspections.remove(player);
+        if (hologramInspections.containsKey(player.getUniqueId())) {
+            hologramInspections.remove(player.getUniqueId());
         }
     }
 
     public static boolean isPlayerInspectingShop(Player player) {
-        return hologramInspections.containsKey(player);
+        return hologramInspections.containsKey(player.getUniqueId());
     }
 
     public static ShopHologram getInspectedShopHologram(Player player) {
-        return hologramInspections.get(player);
+        return hologramInspections.get(player.getUniqueId());
     }
 
 

@@ -60,7 +60,7 @@ public class ShopContainer {
 
         for (Player p : Bukkit.getOnlinePlayers()) {
             if (ShopHologram.hasHologram(loc, p))
-                ShopHologram.getHologram(loc, p).hide();
+                ShopHologram.hideForAll(loc);
         }
     }
 
