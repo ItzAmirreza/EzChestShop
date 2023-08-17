@@ -69,12 +69,16 @@ public class PlayerCloseToChestListener implements Listener {
                                     // if the player is looking at a different shop, then remove the old one
                                     // and only show the item
                                     ShopHologram inspectedShopHolo = ShopHologram.getInspectedShopHologram(player);
+                                    EzChestShop.logDebug("----------------------");
+                                    EzChestShop.logDebug("Player is now looking at a different shop");
                                     inspectedShopHolo.showOnlyItem();
                                     inspectedShopHolo.removeInspectedShop();
                                 }
                             }
                             // if the player is looking at a shop and he is not inspecting it yet, then start inspecting it!
                             if (ShopHologram.hasHologram(loc, player) && !shopHolo.hasInspector()) {
+                                EzChestShop.logDebug("----------------------");
+                                EzChestShop.logDebug("Player is looking at shop");
                                 shopHolo.hide();
                                 shopHolo.show();
                                 shopHolo.setAsInspectedShop();
@@ -88,6 +92,8 @@ public class PlayerCloseToChestListener implements Listener {
                 if (ShopHologram.isPlayerInspectingShop(player) && !isLookingAtSameShop) {
                     ShopHologram shopHolo = ShopHologram.getInspectedShopHologram(player);
                     if (ShopContainer.isShop(shopHolo.getLocation())) {
+                        EzChestShop.logDebug("----------------------");
+                        EzChestShop.logDebug("Player is no longer inspecting shop");
                         shopHolo.showOnlyItem();
                     }
                     shopHolo.removeInspectedShop();
@@ -122,8 +128,12 @@ public class PlayerCloseToChestListener implements Listener {
                         if (Utils.isApplicableContainer(target)) {
 
                             if (Config.holodistancing_show_item_first) {
+                                EzChestShop.logDebug("----------------------");
+                                EzChestShop.logDebug("Player: " + player.getName() + " is close to a shop");
                                 ShopHologram.getHologram(ezShop.getLocation(), player).showOnlyItem();
                             } else {
+                                EzChestShop.logDebug("----------------------");
+                                EzChestShop.logDebug("Player: " + player.getName() + " is close to a shop and item first is off.");
                                 ShopHologram.getHologram(ezShop.getLocation(), player).show();
                             }
 
@@ -136,6 +146,8 @@ public class PlayerCloseToChestListener implements Listener {
                         && dist < Config.holodistancing_distance + 3) {
                     // Hide the Hologram
                     if (ShopHologram.hasHologram(ezShop.getLocation(), player)) {
+                        EzChestShop.logDebug("----------------------");
+                        EzChestShop.logDebug("Player: " + player.getName() + " is out of reach of shop");
                         ShopHologram.getHologram(ezShop.getLocation(), player).hide();
                     }
                 }
@@ -146,12 +158,16 @@ public class PlayerCloseToChestListener implements Listener {
     @EventHandler
     public void onPlayerLogout(PlayerQuitEvent event) {
         Player player = event.getPlayer();
+        EzChestShop.logDebug("----------------------");
+        EzChestShop.logDebug("Player: " + player.getName() + " logged out");
         ShopHologram.hideAll(player);
     }
 
     @EventHandler
     public void onPlayerTeleport(PlayerTeleportEvent event) {
         Player player = event.getPlayer();
+        EzChestShop.logDebug("----------------------");
+        EzChestShop.logDebug("Player: " + player.getName() + " teleported");
         ShopHologram.hideAll(player);
     }
 

@@ -13,7 +13,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class PlayerBlockBoundHologram extends BlockBoundHologram {
+public class PlayerBlockBoundHologram {
 
     private Player player;
     private BlockBoundHologram blockBoundHologram;
@@ -49,7 +49,6 @@ public class PlayerBlockBoundHologram extends BlockBoundHologram {
     public PlayerBlockBoundHologram(Player player, BlockBoundHologram blockBoundHologram,
                                     HashMap<String, String> textReplacements, HashMap<String, ItemStack> itemReplacements,
                                     HashMap<String,  Boolean> conditionalTags) {
-        super(blockBoundHologram.getLocation(), blockBoundHologram.getRotation(), blockBoundHologram.getContents(), textReplacements, itemReplacements, conditionalTags);
         this.player = player;
         this.blockBoundHologram = blockBoundHologram;
         this.textReplacements = textReplacements;
@@ -91,37 +90,39 @@ public class PlayerBlockBoundHologram extends BlockBoundHologram {
      */
     public void show() {
 
-        if (getLocation().getBlock().getType() == Material.AIR) {
-            EzChestShop.logDebug("Shop block is in air, hiding it: " + getLocation());
-            hideForAll();
+        if (blockBoundHologram.getLocation().getBlock().getType() == Material.AIR) {
+            EzChestShop.logDebug("Shop block is in air, hiding it: " + blockBoundHologram.getLocation());
+            blockBoundHologram.hideForAll();
             return;
         }
 
-        EzChestShop.logDebug("Showing hologram for " + player.getName() + " at " + getLocation());
+        EzChestShop.logDebug("Showing hologram for " + player.getName() + " at " + blockBoundHologram.getLocation());
         // If the hologram is already spawned, do nothing
         if (!holograms.isEmpty() && !items.isEmpty()) {
             return;
         // If the texts are empty, but the items are not, remove the items.
         } else if (holograms.isEmpty() && !items.isEmpty()) {
             for (FloatingItem item : items.values()) {
+                EzChestShop.logDebug("Already spawned: Removing item: " + item);
                 Utils.onlinePackets.remove(item);
             }
             items.clear();
         // If the items are empty, but the texts are not, remove the texts.
         } else if (!holograms.isEmpty() && items.isEmpty()) {
             for (ASHologram hologram : holograms.values()) {
+                EzChestShop.logDebug("Already spawned: Removing hologram: " + hologram);
                 Utils.onlinePackets.remove(hologram);
             }
             holograms.clear();
         }
-        EzChestShop.logDebug("Showing hologram for " + player.getName() + " at " + getLocation() + " (2)");
+        EzChestShop.logDebug("Showing hologram for " + player.getName() + " at " + blockBoundHologram.getLocation() + " (2)");
 
         /*
          Process the contents of the hologram
          */
-        List<String> processedContents = new ArrayList<>(getContents());
+        List<String> processedContents = new ArrayList<>(blockBoundHologram.getContents());
         // Reverse the contents if the hologram is upside down
-        if (getRotation() == HologramRotation.DOWN) {
+        if (blockBoundHologram.getRotation() == BlockBoundHologram.HologramRotation.DOWN) {
             Collections.reverse(processedContents);
         }
         // Process the text replacements
@@ -159,7 +160,7 @@ public class PlayerBlockBoundHologram extends BlockBoundHologram {
 
         // Calculate the location of the hologram lines
 
-        Location spawnLocation = getHoloLoc(getLocation().getBlock());
+        Location spawnLocation = blockBoundHologram.getHoloLoc(blockBoundHologram.getLocation().getBlock());
 
         Location lineLocation = spawnLocation.clone().subtract(0, 0.1, 0);
         for (int i = 0; i < processedContents.size(); i++) {
@@ -212,6 +213,7 @@ public class PlayerBlockBoundHologram extends BlockBoundHologram {
      * This will remove the hologram from the player's view.
      */
     public void hide() {
+        EzChestShop.logDebug("Hiding hologram for " + player.getName() + " at " + blockBoundHologram.getLocation() + " Items: " + items.size() + " Holograms: " + holograms.size());
         for (ASHologram hologram : holograms.values()) {
             hologram.destroy();
             Utils.onlinePackets.remove(hologram);
@@ -222,14 +224,23 @@ public class PlayerBlockBoundHologram extends BlockBoundHologram {
         }
         holograms.clear();
         items.clear();
-        removeViewer(player);
+        blockBoundHologram.removeViewer(player);
     }
 
     //TODO make this more efficient and less hacky
     // also it doesn't move the items in the right spot,
     // it just removes the texts.
     public void showOnlyItem() {
-        hide();
+        for (ASHologram hologram : holograms.values()) {
+            hologram.destroy();
+            Utils.onlinePackets.remove(hologram);
+        }
+        for (FloatingItem item : items.values()) {
+            item.destroy();
+            Utils.onlinePackets.remove(item);
+        }
+        holograms.clear();
+        items.clear();
         show();
         for (ASHologram hologram : holograms.values()) {
             hologram.destroy();
@@ -480,8 +491,8 @@ public class PlayerBlockBoundHologram extends BlockBoundHologram {
     private void queryReplacementLinesIndividual(Set<String> keys, HashMap<String, List<Integer>> replacementLines, String replacement) {
         for (String key : keys) {
             List<Integer> lines = new ArrayList<>();
-            for (int i = 0; i < getContents().size(); i++) {
-                if (getContents().get(i).contains(key)) {
+            for (int i = 0; i < blockBoundHologram.getContents().size(); i++) {
+                if (blockBoundHologram.getContents().get(i).contains(key)) {
                     lines.add(i);
                 }
             }

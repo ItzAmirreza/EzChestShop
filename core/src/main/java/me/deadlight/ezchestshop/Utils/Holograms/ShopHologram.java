@@ -214,7 +214,7 @@ public class ShopHologram {
     public void setCustomHologramMessage(List<String> messages) {
         PlayerBlockBoundHologram playerHolo = hologram.getPlayerHologram(player);
         if (playerHolo != null) {
-            int lines = playerHolo.getContents().stream()
+            int lines = playerHolo.getBlockHologram().getContents().stream()
                     .filter(s -> s.startsWith("<custom"))
                     .collect(Collectors.toList()).size();
             // Update at most x lines
@@ -230,7 +230,7 @@ public class ShopHologram {
 
     public void setItemDataVisible(boolean visible) {
         PlayerBlockBoundHologram playerHolo = hologram.getPlayerHologram(player);
-        int lines = playerHolo.getContents().stream()
+        int lines = playerHolo.getBlockHologram().getContents().stream()
                 .filter(s -> s.startsWith("<itemdata") && !s.startsWith("<itemdataRest"))
                 .collect(Collectors.toList()).size();
         shop = ShopContainer.getShop(location);
