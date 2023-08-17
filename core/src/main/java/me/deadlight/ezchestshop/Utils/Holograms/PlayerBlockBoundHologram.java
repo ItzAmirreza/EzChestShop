@@ -135,10 +135,10 @@ public class PlayerBlockBoundHologram {
         }
         // Process the conditional tags
         for (String key : conditionalTags.keySet()) {
-            boolean value = conditionalTags.get(key);
             if (!conditionalTagLines.containsKey(key)) {
                 continue;
             }
+            boolean value = conditionalTags.get(key);
             for (int line : conditionalTagLines.get(key)) {
                 // if the value is true, remove the tag, but keep the inner contents
                 // otherwise, remove the entire tag and its contents
@@ -153,7 +153,6 @@ public class PlayerBlockBoundHologram {
         }
 
         // Remove all empty lines
-        processedContents.removeIf((line) -> line.trim().isEmpty());
         // Apply color codes
         processedContents = processedContents.stream()
                 .map((line) -> Utils.colorify(line)).collect(Collectors.toList());
@@ -165,6 +164,9 @@ public class PlayerBlockBoundHologram {
         Location lineLocation = spawnLocation.clone().subtract(0, 0.1, 0);
         for (int i = 0; i < processedContents.size(); i++) {
             String line = processedContents.get(i);
+            if (line == null || line.isEmpty()) {
+                continue;
+            }
             boolean containsItem = false;
             // Check for item replacements
             for (String key : itemReplacements.keySet()) {
@@ -266,39 +268,34 @@ public class PlayerBlockBoundHologram {
         textReplacements.put(key, replacement);
         queryReplacementLines();
 
-        // If this code does not work, consider using the old brute force
-        // hide and show method instead. Easier, but might flicker more.
-
         // Update the text replacements for all lines that contain the placeholder
-        /*for (int line : textReplacementLines.get(key)) {
+        for (int line : textReplacementLines.get(key)) {
             ASHologram hologram = holograms.get(line);
-            // Get the location of the hologram line
-            Location holoLoc = hologram.getLocation();
-            // Remove the old hologram
-            Utils.onlinePackets.remove(hologram);
-            hologram.destroy();
-*//* This should already be done in the show() method, so it is not needed here
-            // Reverse the line if the hologram is upside down
-            if (getRotation() == HologramRotation.DOWN) {
-                line = getContents().size() - line - 1;
-            }
-*//*
             // Get the new line
-            String newLine = getContents().get(line);
+            String newLine = blockBoundHologram.getContents().get(line);
             // Replace the placeholder with all the replacements
             for (String k : textReplacements.keySet()) {
                 newLine = newLine.replace(k, textReplacements.get(k));
             }
-            // Apply color codes
-            Utils.colorify(newLine);
 
-            // Spawn the new hologram
-            ASHologram newHologram = new ASHologram(player, newLine, holoLoc);
-            Utils.onlinePackets.add(newHologram);
-            holograms.put(line, newHologram);
-        }*/
-        hide();
-        show();
+            // Make sure the conditional tags are applied
+            for (String condition : conditionalTags.keySet()) {
+                if (!conditionalTagLines.containsKey(condition)) {
+                    continue;
+                }
+                boolean value = conditionalTags.get(condition);
+                if (value) {
+                    newLine = newLine.replaceAll("<\\/?" + condition + ">", "");
+                } else {
+                    newLine = newLine.replaceAll("<" + condition + ">.*?<\\/" + condition + ">", "");
+                }
+            }
+
+            // Apply color codes
+            newLine = Utils.colorify(newLine);
+
+            hologram.rename(newLine);
+        }
     }
 
     /**
@@ -317,7 +314,8 @@ public class PlayerBlockBoundHologram {
     }
 
     /**
-     * Update the item replacement for a placeholder.
+     * Update the item replacement for a placeholder. NOT LIKElY TO BE USED AND POTENTIALLY BROKEN
+     * (check if hide removes marks this hologram as to be removed)
      * <br>
      * This will update the item replacement for a placeholder and update the
      * hologram accordingly.

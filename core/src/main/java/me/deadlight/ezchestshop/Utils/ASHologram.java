@@ -35,4 +35,14 @@ public class ASHologram {
     public Location getLocation() {
         return location;
     }
+
+    public void teleport(Location location) {
+        this.location = location;
+        Utils.versionUtils.teleportEntity(handler, entityID, location);
+    }
+
+    public void rename(String name) {
+        this.name = name;
+        Utils.versionUtils.renameEntity(handler, entityID, name);
+    }
 }

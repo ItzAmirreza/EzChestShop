@@ -4,11 +4,13 @@ import me.deadlight.ezchestshop.EzChestShop;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.chat.IChatBaseComponent;
 import net.minecraft.network.protocol.game.PacketPlayOutEntityMetadata;
+import net.minecraft.network.protocol.game.PacketPlayOutEntityTeleport;
 import net.minecraft.network.protocol.game.PacketPlayOutEntityVelocity;
 import net.minecraft.network.protocol.game.PacketPlayOutSpawnEntity;
 import net.minecraft.server.level.EntityPlayer;
 import net.minecraft.server.level.WorldServer;
 import net.minecraft.server.network.PlayerConnection;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.decoration.EntityArmorStand;
 import net.minecraft.world.entity.item.EntityItem;
@@ -30,6 +32,7 @@ import java.util.Map;
 public class v1_17_R1 extends VersionUtils {
 
     private static final Map<SignMenuFactory, UpdateSignListener> listeners = new HashMap<>();
+    private static Map<Integer, Entity> entities = new HashMap<>();
 
     /**
      * Convert a Item to a Text Compount. Used in Text Component Builders to show
@@ -62,6 +65,7 @@ public class v1_17_R1 extends VersionUtils {
     @Override
     void destroyEntity(Player player, int entityID) {
         ((org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer) player).getHandle().b.sendPacket(new net.minecraft.network.protocol.game.PacketPlayOutEntityDestroy(entityID));
+        entities.remove(entityID);
     }
 
     @Override
@@ -88,7 +92,7 @@ public class v1_17_R1 extends VersionUtils {
         // sending meta packet
         PacketPlayOutEntityMetadata metaPacket = new PacketPlayOutEntityMetadata(ID, armorstand.getDataWatcher(), true);
         playerConnection.sendPacket(metaPacket);
-
+        entities.put(ID, armorstand);
     }
 
     @Override
@@ -117,7 +121,23 @@ public class v1_17_R1 extends VersionUtils {
         floatingItem.setMot(0, 0, 0);
         PacketPlayOutEntityVelocity velocityPacket = new PacketPlayOutEntityVelocity(floatingItem);
         playerConnection.sendPacket(velocityPacket);
+        entities.put(ID, floatingItem);
+    }
 
+    void renameEntity(Player player, int entityID, String newName) {
+        Entity e = entities.get(entityID);
+        e.setCustomName(CraftChatMessage.fromStringOrNull(newName));
+        PacketPlayOutEntityMetadata packet = new PacketPlayOutEntityMetadata(entityID, e.getDataWatcher(), true);
+        ((CraftPlayer) player).getHandle().b.sendPacket(packet);
+    }
+
+    void teleportEntity(Player player, int entityID, Location location) {
+        EntityPlayer entityPlayer = ((CraftPlayer) player).getHandle();
+        Entity e = entities.get(entityID);
+        e.teleportAndSync(location.getX(), location.getY(), location.getZ());
+        // not sure if it's needed
+        PacketPlayOutEntityTeleport packet = new PacketPlayOutEntityTeleport(e);
+        entityPlayer.b.sendPacket(packet);
     }
 
     @Override

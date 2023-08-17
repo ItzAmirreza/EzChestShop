@@ -566,7 +566,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                             // Change the price
                             ShopContainer.changePrice(blockState, price, isBuy);
                             player.sendMessage(isBuy ? lm.shopBuyPriceUpdated() : lm.shopSellPriceUpdated());
-                            ShopHologram.hideForAll(blockState.getLocation());
+                            ShopHologram.getHologram(blockState.getLocation(), player).updateBuyPrice();
                         }
                     } catch (NumberFormatException e) {
                         player.sendMessage(lm.wrongInput());

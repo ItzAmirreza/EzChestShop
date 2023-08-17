@@ -787,6 +787,8 @@ public class Utils {
      * @return
      */
     public static String colorify(String str) {
+        if (str == null)
+            return null;
         return translateHexColorCodes("#", "", ChatColor.translateAlternateColorCodes('&', str));
     }
 

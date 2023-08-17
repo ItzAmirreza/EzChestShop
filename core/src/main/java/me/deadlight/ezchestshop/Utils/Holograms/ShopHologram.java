@@ -267,6 +267,7 @@ public class ShopHologram {
     }
 
     public void updateBuyPrice() {
+        //TODO this is an action that should run for every player.
         PlayerBlockBoundHologram playerHolo = hologram.getPlayerHologram(player);
         if (playerHolo != null) {
             shop = ShopContainer.getShop(location);
