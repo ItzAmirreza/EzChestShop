@@ -79,8 +79,7 @@ public class PlayerCloseToChestListener implements Listener {
                             if (ShopHologram.hasHologram(loc, player) && !shopHolo.hasInspector()) {
                                 EzChestShop.logDebug("----------------------");
                                 EzChestShop.logDebug("Player is looking at shop");
-                                shopHolo.hide();
-                                shopHolo.show();
+                                shopHolo.showTextAfterItem();
                                 shopHolo.setAsInspectedShop();
                                 alreadyRenderedHologram = true;
                                 isLookingAtSameShop = true;

@@ -31,6 +31,7 @@ public class PlayerBlockBoundHologram {
     // Entities
     private HashMap<Integer, ASHologram> holograms = new HashMap<>();
     private HashMap<Integer, FloatingItem> items = new HashMap<>();
+    private List<Integer> emptyLines = new ArrayList<>();
 
 
 
@@ -120,91 +121,10 @@ public class PlayerBlockBoundHologram {
         /*
          Process the contents of the hologram
          */
-        List<String> processedContents = new ArrayList<>(blockBoundHologram.getContents());
-        // Reverse the contents if the hologram is upside down
-        if (blockBoundHologram.getRotation() == BlockBoundHologram.HologramRotation.DOWN) {
-            Collections.reverse(processedContents);
-        }
-        // Process the text replacements
-        for (String key : textReplacements.keySet()) {
-            String replacement = textReplacements.get(key);
-            for (int line : textReplacementLines.get(key)) {
-                // replace the placeholder with the replacement text
-                processedContents.set(line, processedContents.get(line).replace(key, replacement));
-            }
-        }
-        // Process the conditional tags
-        for (String key : conditionalTags.keySet()) {
-            if (!conditionalTagLines.containsKey(key)) {
-                continue;
-            }
-            boolean value = conditionalTags.get(key);
-            for (int line : conditionalTagLines.get(key)) {
-                // if the value is true, remove the tag, but keep the inner contents
-                // otherwise, remove the entire tag and its contents
-                if (value) {
-                    processedContents.set(line, processedContents.get(line)
-                            .replaceAll("<\\/?" + key + ">", ""));
-                } else {
-                    processedContents.set(line, processedContents.get(line)
-                            .replaceAll("<" + key + ">.*?<\\/" + key + ">", ""));
-                }
-            }
-        }
+        spawnHolograms();
+        spawnItems();
+        rearrangeHolograms();
 
-        // Remove all empty lines
-        // Apply color codes
-        processedContents = processedContents.stream()
-                .map((line) -> Utils.colorify(line)).collect(Collectors.toList());
-
-        // Calculate the location of the hologram lines
-
-        Location spawnLocation = blockBoundHologram.getHoloLoc(blockBoundHologram.getLocation().getBlock());
-
-        Location lineLocation = spawnLocation.clone().subtract(0, 0.1, 0);
-        for (int i = 0; i < processedContents.size(); i++) {
-            String line = processedContents.get(i);
-            if (line == null || line.isEmpty()) {
-                continue;
-            }
-            boolean containsItem = false;
-            // Check for item replacements
-            for (String key : itemReplacements.keySet()) {
-                if (line.contains(key)) {
-                    containsItem = true;
-                    break;
-                }
-            }
-            // Calculate the location of the line
-            if (containsItem) {
-                lineLocation.add(0, 0.15 * Config.holo_linespacing, 0);
-                // spawn an item - currently only supports one item per line,
-                // everything else in the line will be ignored
-                for (String key : itemReplacements.keySet()) {
-                    ItemStack thatItem = itemReplacements.get(key);
-                    if (line.contains(key)) {
-                        FloatingItem floatingItem = new FloatingItem(player, thatItem, lineLocation);
-                        Utils.onlinePackets.add(floatingItem);
-                        EzChestShop.logDebug("Spawned item " + thatItem.getType().name() + " at " + lineLocation);
-                        // if multiple items are on the same line,
-                        // this will break, but that is not supported anyway rn
-                        items.put(i, floatingItem);
-                        break;
-                    }
-                }
-                lineLocation.add(0, 0.35 * Config.holo_linespacing, 0);
-            } else if (!line.equals("<empty/>")) {
-                // add any line that is not defined as empty
-                ASHologram hologram = new ASHologram(player, line, lineLocation);
-                Utils.onlinePackets.add(hologram);
-                EzChestShop.logDebug("Spawned hologram " + line + " at " + lineLocation);
-                holograms.put(i, hologram);
-                lineLocation.add(0, 0.3 * Config.holo_linespacing, 0);
-            } else {
-                // add an empty line
-                lineLocation.add(0, 0.3 * Config.holo_linespacing, 0);
-            }
-        }
         // Add the player to the hologram's inspector list
         blockBoundHologram.addInspector(player, this);
     }
@@ -229,27 +149,38 @@ public class PlayerBlockBoundHologram {
         blockBoundHologram.removeViewer(player);
     }
 
-    //TODO make this more efficient and less hacky
-    // also it doesn't move the items in the right spot,
-    // it just removes the texts.
+    /**
+     * Show only the item of the hologram.
+     * <br>
+     * This will remove the text of the hologram and only show the item.
+     * <br>
+     * If the hologram is already showing only the item, nothing will happen.
+     */
     public void showOnlyItem() {
-        for (ASHologram hologram : holograms.values()) {
-            hologram.destroy();
-            Utils.onlinePackets.remove(hologram);
+        if (!holograms.isEmpty()) {
+            for (ASHologram hologram : holograms.values()) {
+                hologram.destroy();
+                Utils.onlinePackets.remove(hologram);
+            }
+            holograms.clear();
+            emptyLines.clear();
         }
-        for (FloatingItem item : items.values()) {
-            item.destroy();
-            Utils.onlinePackets.remove(item);
+        if (items.isEmpty()) {
+            spawnItems();
         }
-        holograms.clear();
-        items.clear();
-        show();
-        for (ASHologram hologram : holograms.values()) {
-            hologram.destroy();
-            Utils.onlinePackets.remove(hologram);
-        }
-        holograms.clear();
+        rearrangeHolograms();
         blockBoundHologram.removeInspector(player);
+    }
+
+    /**
+     * Show the hologram texts. Items are not handled at all.
+     * <br>
+     * Use showOnlyItem() to show only the item. Or show() to show both.
+     */
+    public void showTextAfterItem() {
+        spawnHolograms();
+        rearrangeHolograms();
+        blockBoundHologram.addInspector(player, this);
     }
 
     /**
@@ -270,32 +201,27 @@ public class PlayerBlockBoundHologram {
 
         // Update the text replacements for all lines that contain the placeholder
         for (int line : textReplacementLines.get(key)) {
-            ASHologram hologram = holograms.get(line);
-            // Get the new line
-            String newLine = blockBoundHologram.getContents().get(line);
-            // Replace the placeholder with all the replacements
-            for (String k : textReplacements.keySet()) {
-                newLine = newLine.replace(k, textReplacements.get(k));
-            }
-
-            // Make sure the conditional tags are applied
-            for (String condition : conditionalTags.keySet()) {
-                if (!conditionalTagLines.containsKey(condition)) {
+            String content = calculateLineContent(line);
+            boolean emptyContent = content == null || content.trim().isEmpty() || content.equals("<empty/>");
+            if (!holograms.containsKey(line)) {
+                if (emptyContent) {
                     continue;
                 }
-                boolean value = conditionalTags.get(condition);
-                if (value) {
-                    newLine = newLine.replaceAll("<\\/?" + condition + ">", "");
-                } else {
-                    newLine = newLine.replaceAll("<" + condition + ">.*?<\\/" + condition + ">", "");
-                }
+                // spawn a new hologram
+                spawnTextLine(line);
+            } else if (emptyContent) {
+                // remove the existing hologram
+                ASHologram hologram = holograms.get(line);
+                hologram.destroy();
+                Utils.onlinePackets.remove(hologram);
+                holograms.remove(line);
+            } else {
+                // update the existing hologram
+                ASHologram hologram = holograms.get(line);
+                hologram.rename(content);
             }
-
-            // Apply color codes
-            newLine = Utils.colorify(newLine);
-
-            hologram.rename(newLine);
         }
+        rearrangeHolograms();
     }
 
     /**
@@ -496,6 +422,234 @@ public class PlayerBlockBoundHologram {
             }
             replacementLines.put(key.replaceAll(replacement, ""), lines);
         }
+    }
+
+    /**
+     * Spawn a line of the hologram. This is useful for update operations, but
+     * does not cover destruction of holograms.
+     * <br>
+     * The content is calculated based on the line number.
+     * @param line The line number
+     */
+    private void spawnTextLine(int line) {
+        String content = calculateLineContent(line);
+
+        ASHologram hologram = new ASHologram(player, content, blockBoundHologram.getHoloLoc(blockBoundHologram.getLocation().getBlock()));
+        Utils.onlinePackets.add(hologram);
+        holograms.put(line, hologram);
+    }
+
+    /**
+     * Calculate the content of a hologram line.
+     * @param line
+     * @return
+     */
+    private String calculateLineContent(int line) {
+        // Get the new line
+        String newLine = blockBoundHologram.getContents().get(line);
+        // Replace the placeholder with all the replacements
+        for (String k : textReplacements.keySet()) {
+            newLine = newLine.replace(k, textReplacements.get(k));
+        }
+
+        // Make sure the conditional tags are applied
+        for (String condition : conditionalTags.keySet()) {
+            if (!conditionalTagLines.containsKey(condition)) {
+                continue;
+            }
+            boolean value = conditionalTags.get(condition);
+            if (value) {
+                newLine = newLine.replaceAll("<\\/?" + condition + ">", "");
+            } else {
+                newLine = newLine.replaceAll("<" + condition + ">.*?<\\/" + condition + ">", "");
+            }
+        }
+
+        // Apply color codes
+        return Utils.colorify(newLine);
+    }
+
+    /**
+     * Rearrange the holograms and items.
+     * <br>
+     * This will rearrange the holograms and items to make sure they are in the
+     * correct order.
+     * <br>
+     * This is done by calculating the location of each line and teleporting the
+     * holograms and items to the correct location.
+     * <br>
+     * Call it after adding or removing holograms or items.
+     */
+    private void rearrangeHolograms() {
+        List<Integer> lines = new ArrayList<>(holograms.keySet());
+        lines.addAll(items.keySet());
+        lines.addAll(emptyLines);
+        lines.sort(Comparator.naturalOrder());
+
+
+        Location spawnLocation = blockBoundHologram.getHoloLoc(blockBoundHologram.getLocation().getBlock());
+        Location lineLocation = spawnLocation.clone().subtract(0, 0.1, 0);
+
+        for (int i = 0; i < lines.size(); i++) {
+            int line = lines.get(i);
+            //TODO this doesn't retain <empty/> lines
+            if (holograms.containsKey(line)) {
+                ASHologram hologram = holograms.get(line);
+                hologram.teleport(lineLocation);
+                lineLocation.add(0, 0.3 * Config.holo_linespacing, 0);
+            } else if (items.containsKey(line)) {
+                lineLocation.add(0, 0.15 * Config.holo_linespacing, 0);
+                FloatingItem item = items.get(line);
+                item.teleport(lineLocation);
+                lineLocation.add(0, 0.35 * Config.holo_linespacing, 0);
+            } else if (emptyLines.contains(line)) {
+                lineLocation.add(0, 0.5 * Config.holo_linespacing, 0);
+            }
+        }
+    }
+
+    /**
+     * Spawn the items of the hologram.
+     * <br>
+     * This will spawn the items of the hologram.
+     * <br>
+     * This is done by iterating through the contents and checking if the line
+     * contains an item placeholder.
+     * <br>
+     * If it does, the item is spawned at the correct location.
+     */
+    private void spawnItems() {
+        List<String> processedContents = calculateProcessedContent();
+
+        // Calculate the location of the hologram lines
+
+        Location spawnLocation = blockBoundHologram.getHoloLoc(blockBoundHologram.getLocation().getBlock());
+
+        for (int i = 0; i < processedContents.size(); i++) {
+            String line = processedContents.get(i);
+            if (line == null || line.isEmpty()) {
+                continue;
+            }
+            boolean containsItem = false;
+            // Check for item replacements
+            for (String key : itemReplacements.keySet()) {
+                if (line.contains(key)) {
+                    containsItem = true;
+                    break;
+                }
+            }
+            // Calculate the location of the line
+            if (containsItem) {
+                // spawn an item - currently only supports one item per line,
+                // everything else in the line will be ignored
+                for (String key : itemReplacements.keySet()) {
+                    ItemStack thatItem = itemReplacements.get(key);
+                    if (line.contains(key)) {
+                        FloatingItem floatingItem = new FloatingItem(player, thatItem, spawnLocation);
+                        Utils.onlinePackets.add(floatingItem);
+                        EzChestShop.logDebug("Spawned item " + thatItem.getType().name() + " at " + spawnLocation);
+                        // if multiple items are on the same line,
+                        // this will break, but that is not supported anyway rn
+                        items.put(i, floatingItem);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Spawn the text holograms of the hologram.
+     * <br>
+     * This will spawn the holograms of the hologram.
+     * <br>
+     * This is done by iterating through the contents and checking if the line
+     * does not contain an item placeholder.
+     * <br>
+     * If it does not, the hologram is spawned at the correct location.
+     */
+    private void spawnHolograms() {
+        List<String> processedContents = calculateProcessedContent();
+
+        // Calculate the location of the hologram lines
+
+        Location spawnLocation = blockBoundHologram.getHoloLoc(blockBoundHologram.getLocation().getBlock());
+
+        for (int i = 0; i < processedContents.size(); i++) {
+            String line = processedContents.get(i);
+            if (line == null || line.isEmpty()) {
+                continue;
+            }
+            boolean containsItem = false;
+            // Check for item replacements
+            for (String key : itemReplacements.keySet()) {
+                if (line.contains(key)) {
+                    containsItem = true;
+                    break;
+                }
+            }
+            // Calculate the location of the line
+            //TODO try and remove containsItem to see if we can make item & text holograms work together
+            if (!containsItem) {
+                if (!line.equals("<empty/>")) {
+                    // add any line that is not defined as empty
+                    ASHologram hologram = new ASHologram(player, line, spawnLocation);
+                    Utils.onlinePackets.add(hologram);
+                    EzChestShop.logDebug("Spawned hologram " + line + " at " + spawnLocation);
+                    holograms.put(i, hologram);
+                } else {
+                    // add an empty line
+                    emptyLines.add(i);
+                }
+            }
+        }
+    }
+
+    /**
+     * Calculate the processed contents of the hologram.
+     * <br>
+     * The processed contents are the contents of the hologram with all
+     * replacements, colorifications, reversals and conditional tags applied.
+     *
+     * @return The processed contents
+     */
+    private List<String> calculateProcessedContent() {
+        List<String> processedContents = new ArrayList<>(blockBoundHologram.getContents());
+        // Reverse the contents if the hologram is upside down
+        if (blockBoundHologram.getRotation() == BlockBoundHologram.HologramRotation.DOWN) {
+            Collections.reverse(processedContents);
+        }
+        // Process the text replacements
+        for (String key : textReplacements.keySet()) {
+            String replacement = textReplacements.get(key);
+            for (int line : textReplacementLines.get(key)) {
+                // replace the placeholder with the replacement text
+                processedContents.set(line, processedContents.get(line).replace(key, replacement));
+            }
+        }
+        // Process the conditional tags
+        for (String key : conditionalTags.keySet()) {
+            if (!conditionalTagLines.containsKey(key)) {
+                continue;
+            }
+            boolean value = conditionalTags.get(key);
+            for (int line : conditionalTagLines.get(key)) {
+                // if the value is true, remove the tag, but keep the inner contents
+                // otherwise, remove the entire tag and its contents
+                if (value) {
+                    processedContents.set(line, processedContents.get(line)
+                            .replaceAll("<\\/?" + key + ">", ""));
+                } else {
+                    processedContents.set(line, processedContents.get(line)
+                            .replaceAll("<" + key + ">.*?<\\/" + key + ">", ""));
+                }
+            }
+        }
+
+        // Remove all empty lines
+        // Apply color codes
+        return processedContents.stream()
+                .map((line) -> Utils.colorify(line)).collect(Collectors.toList());
     }
 
 }

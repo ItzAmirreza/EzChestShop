@@ -38,6 +38,10 @@ public class FloatingItem {
         versionUtils.destroyEntity(player, entityID);
     }
 
+    public void teleport(Location location) {
+        versionUtils.teleportEntity(player, entityID, location);
+    }
+
     public Location getLocation() {
         return location;
     }

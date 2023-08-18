@@ -206,6 +206,9 @@ public class ShopHologram {
         hologram.getPlayerHologram(player).showOnlyItem();
     }
 
+    public void showTextAfterItem() {
+        hologram.getPlayerHologram(player).showTextAfterItem();
+    }
     public void show() {
         hologram.getPlayerHologram(player).show();
     }
