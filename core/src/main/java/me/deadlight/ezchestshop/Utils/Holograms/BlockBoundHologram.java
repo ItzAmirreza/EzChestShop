@@ -109,17 +109,14 @@ public class BlockBoundHologram {
      */
     public void updateLocation(Location location) {
         this.location = location;
-        hideAndShow();
     }
 
     public void updateContents(List<String> contents) {
         this.contents = contents;
-        hideAndShow();
     }
 
     public void updateRotation(HologramRotation rotation) {
         this.rotation = rotation;
-        hideAndShow();
     }
 
     public PlayerBlockBoundHologram getPlayerHologram(Player player) {

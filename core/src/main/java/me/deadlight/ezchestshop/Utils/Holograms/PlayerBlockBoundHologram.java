@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
+import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 
 public class PlayerBlockBoundHologram {
@@ -173,11 +174,12 @@ public class PlayerBlockBoundHologram {
     }
 
     /**
-     * Show the hologram texts. Items are not handled at all.
-     * <br>
-     * Use showOnlyItem() to show only the item. Or show() to show both.
+     * Show the hologram texts. Items are spawned in if they don't already exist.
      */
     public void showTextAfterItem() {
+        if (items.isEmpty()) {
+            spawnItems();
+        }
         spawnHolograms();
         rearrangeHolograms();
         blockBoundHologram.addInspector(player, this);
@@ -481,6 +483,8 @@ public class PlayerBlockBoundHologram {
      * Call it after adding or removing holograms or items.
      */
     private void rearrangeHolograms() {
+        EzChestShop.logDebug("Holograms: " + holograms.keySet().size() + " Items: " + items.keySet().size()
+                + " Empty: " + emptyLines.size());
         List<Integer> lines = new ArrayList<>(holograms.keySet());
         lines.addAll(items.keySet());
         lines.addAll(emptyLines);
@@ -490,21 +494,41 @@ public class PlayerBlockBoundHologram {
         Location spawnLocation = blockBoundHologram.getHoloLoc(blockBoundHologram.getLocation().getBlock());
         Location lineLocation = spawnLocation.clone().subtract(0, 0.1, 0);
 
+        List<Integer> arrangedLines = new ArrayList<>();
         for (int i = 0; i < lines.size(); i++) {
+            EzChestShop.logDebug("Rearranging line " + lines.get(i) + " at " + lineLocation + " (i=" + i + ")");
             int line = lines.get(i);
-            //TODO this doesn't retain <empty/> lines
+            boolean appliedSpacing = false;
+            boolean alreadyAppliedSpace = arrangedLines.contains(line);
             if (holograms.containsKey(line)) {
                 ASHologram hologram = holograms.get(line);
-                hologram.teleport(lineLocation);
-                lineLocation.add(0, 0.3 * Config.holo_linespacing, 0);
-            } else if (items.containsKey(line)) {
-                lineLocation.add(0, 0.15 * Config.holo_linespacing, 0);
-                FloatingItem item = items.get(line);
-                item.teleport(lineLocation);
-                lineLocation.add(0, 0.35 * Config.holo_linespacing, 0);
-            } else if (emptyLines.contains(line)) {
-                lineLocation.add(0, 0.5 * Config.holo_linespacing, 0);
+                // when the hologram is on the same line as an item, do not apply spacing
+                if (!alreadyAppliedSpace) {
+                    hologram.teleport(lineLocation);
+                    if (!items.containsKey(line)) {
+                        lineLocation.add(0, 0.3 * Config.holo_linespacing, 0);
+                        appliedSpacing = true;
+                    }
+                }
             }
+            // always apply spacing for items as they are the largest
+            if (items.containsKey(line)) {
+                if (!alreadyAppliedSpace) {
+                    lineLocation.add(0, 0.15 * Config.holo_linespacing, 0);
+                }
+                FloatingItem item = items.get(line);
+                if (!alreadyAppliedSpace) {
+                    item.teleport(lineLocation);
+                    lineLocation.add(0, 0.35 * Config.holo_linespacing, 0);
+                }
+                appliedSpacing = true;
+            }
+            // only apply empty lines if no spacing was applied yet
+            if (emptyLines.contains(line) && !appliedSpacing && !alreadyAppliedSpace) {
+                lineLocation.add(0, 0.3 * Config.holo_linespacing, 0);
+            }
+            // When 2 elements are on the same line, only apply spacing once
+            arrangedLines.add(line);
         }
     }
 
@@ -580,27 +604,26 @@ public class PlayerBlockBoundHologram {
             if (line == null || line.isEmpty()) {
                 continue;
             }
-            boolean containsItem = false;
             // Check for item replacements
             for (String key : itemReplacements.keySet()) {
                 if (line.contains(key)) {
-                    containsItem = true;
+                    line = line.replace(key, "");
                     break;
                 }
             }
+            if (line == null || line.trim().isEmpty()) {
+                continue;
+            }
             // Calculate the location of the line
-            //TODO try and remove containsItem to see if we can make item & text holograms work together
-            if (!containsItem) {
-                if (!line.equals("<empty/>")) {
-                    // add any line that is not defined as empty
-                    ASHologram hologram = new ASHologram(player, line, spawnLocation);
-                    Utils.onlinePackets.add(hologram);
-                    EzChestShop.logDebug("Spawned hologram " + line + " at " + spawnLocation);
-                    holograms.put(i, hologram);
-                } else {
-                    // add an empty line
-                    emptyLines.add(i);
-                }
+            if (!line.equals("<empty/>")) {
+                // add any line that is not defined as empty
+                ASHologram hologram = new ASHologram(player, line, spawnLocation);
+                Utils.onlinePackets.add(hologram);
+                EzChestShop.logDebug("Spawned hologram " + line + " at " + spawnLocation);
+                holograms.put(i, hologram);
+            } else {
+                // add an empty line
+                emptyLines.add(i);
             }
         }
     }

@@ -9,6 +9,7 @@ import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.GUIs.GuiEditorGUI;
 import me.deadlight.ezchestshop.Listeners.PlayerCloseToChestListener;
 import me.deadlight.ezchestshop.Listeners.UpdateChecker;
+import me.deadlight.ezchestshop.Utils.Holograms.BlockBoundHologram;
 import me.deadlight.ezchestshop.Utils.Holograms.ShopHologram;
 import me.deadlight.ezchestshop.Utils.Objects.EzShop;
 import me.deadlight.ezchestshop.Utils.Utils;
@@ -237,6 +238,7 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
 
     private void reload() {
         Config.loadConfig();
+        ShopHologram.reloadAll();
         LanguageManager.reloadLanguages();
         GuiData.loadGuiData();
     }

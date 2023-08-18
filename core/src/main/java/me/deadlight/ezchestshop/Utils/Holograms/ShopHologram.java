@@ -176,10 +176,23 @@ public class ShopHologram {
                 .collect(Collectors.toList());
     }
 
+
+    public static void reloadAll() {
+        List<Location> locations = new ArrayList<>(shopHolograms.keySet());
+        playerShopHolograms.values().forEach(holograms -> holograms.values().forEach(shopHologram -> {
+            locations.add(shopHologram.getLocation());
+            shopHologram.hologram.updateContents(Config.holostructure);
+        }));
+        locations.forEach(location -> {
+            hideForAll(location);
+        });
+    }
+
     public static void hideAll(Player player) {
         if (playerShopHolograms.containsKey(player.getUniqueId())) {
 //            playerShopHolograms.get(player).values().forEach(ShopHologram::hide);
-            playerShopHolograms.get(player.getUniqueId()).values().forEach(hologram -> hologram.hologram.getPlayerHologram(player).hide());
+            playerShopHolograms.get(player.getUniqueId()).values()
+                    .forEach(hologram -> hologram.hologram.getPlayerHologram(player).hide());
             playerShopHolograms.remove(player.getUniqueId());
         }
     }
@@ -190,7 +203,15 @@ public class ShopHologram {
                 holograms.get(location).hide();
             }
         });
-        hologramInspections.values().removeIf(hologramInspection -> hologramInspection.getLocation().equals(location));
+        List<UUID> toRemove = new ArrayList<>();
+        hologramInspections.forEach((uuid, shopHologram) -> {
+            if (shopHologram.getLocation().equals(location)) {
+                toRemove.add(uuid);
+            }
+        });
+        toRemove.forEach(
+                uuid -> hologramInspections.remove(uuid)
+        );
     }
 
     public void hide() {

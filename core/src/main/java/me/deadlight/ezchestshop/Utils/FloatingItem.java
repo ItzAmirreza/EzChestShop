@@ -39,6 +39,7 @@ public class FloatingItem {
     }
 
     public void teleport(Location location) {
+        this.location = location;
         versionUtils.teleportEntity(player, entityID, location);
     }
 
