@@ -194,6 +194,7 @@ public class ShopHologram {
 
             shopHolograms.forEach(hologram -> hologram.hide());
             playerShopHolograms.remove(player.getUniqueId());
+            ShopHologram.getInspectedShopHologram(player).removeInspectedShop();
         }
     }
 
@@ -204,12 +205,13 @@ public class ShopHologram {
                 holograms.get(location).hide();
             }
         });
+        ShopHologram.hologramInspections.values().stream().filter(holo -> holo.getLocation().equals(location)).collect(Collectors.toSet())
+                .forEach(holo -> holo.removeInspectedShop());
     }
 
     public void hide() {
         hologram.getPlayerHologram(player).hide();
         playerShopHolograms.get(player.getUniqueId()).remove(location);
-        removeInspectedShop();
     }
 
     public boolean hasInspector() {
