@@ -98,7 +98,7 @@ public class PlayerBlockBoundHologram {
             return;
         }
 
-        EzChestShop.logDebug("Showing hologram for " + player.getName() + " at " + blockBoundHologram.getLocation());
+//        EzChestShop.logDebug("Showing hologram for " + player.getName() + " at " + blockBoundHologram.getLocation());
         // If the hologram is already spawned, do nothing
         if (!holograms.isEmpty() && !items.isEmpty()) {
             return;
@@ -117,7 +117,7 @@ public class PlayerBlockBoundHologram {
             }
             holograms.clear();
         }
-        EzChestShop.logDebug("Showing hologram for " + player.getName() + " at " + blockBoundHologram.getLocation() + " (2)");
+//        EzChestShop.logDebug("Showing hologram for " + player.getName() + " at " + blockBoundHologram.getLocation() + " (2)");
 
         /*
          Process the contents of the hologram
@@ -136,7 +136,7 @@ public class PlayerBlockBoundHologram {
      * This will remove the hologram from the player's view.
      */
     public void hide() {
-        EzChestShop.logDebug("Hiding hologram for " + player.getName() + " at " + blockBoundHologram.getLocation() + " Items: " + items.size() + " Holograms: " + holograms.size());
+//        EzChestShop.logDebug("Hiding hologram for " + player.getName() + " at " + blockBoundHologram.getLocation() + " Items: " + items.size() + " Holograms: " + holograms.size());
         for (ASHologram hologram : holograms.values()) {
             hologram.destroy();
             Utils.onlinePackets.remove(hologram);
@@ -483,8 +483,8 @@ public class PlayerBlockBoundHologram {
      * Call it after adding or removing holograms or items.
      */
     private void rearrangeHolograms() {
-        EzChestShop.logDebug("Holograms: " + holograms.keySet().size() + " Items: " + items.keySet().size()
-                + " Empty: " + emptyLines.size());
+//        EzChestShop.logDebug("Holograms: " + holograms.keySet().size() + " Items: " + items.keySet().size()
+//                + " Empty: " + emptyLines.size());
         List<Integer> lines = new ArrayList<>(holograms.keySet());
         lines.addAll(items.keySet());
         lines.addAll(emptyLines);
@@ -496,7 +496,7 @@ public class PlayerBlockBoundHologram {
 
         List<Integer> arrangedLines = new ArrayList<>();
         for (int i = 0; i < lines.size(); i++) {
-            EzChestShop.logDebug("Rearranging line " + lines.get(i) + " at " + lineLocation + " (i=" + i + ")");
+//            EzChestShop.logDebug("Rearranging line " + lines.get(i) + " at " + lineLocation + " (i=" + i + ")");
             int line = lines.get(i);
             boolean appliedSpacing = false;
             boolean alreadyAppliedSpace = arrangedLines.contains(line);
@@ -571,7 +571,7 @@ public class PlayerBlockBoundHologram {
                     if (line.contains(key)) {
                         FloatingItem floatingItem = new FloatingItem(player, thatItem, spawnLocation);
                         Utils.onlinePackets.add(floatingItem);
-                        EzChestShop.logDebug("Spawned item " + thatItem.getType().name() + " at " + spawnLocation);
+//                        EzChestShop.logDebug("Spawned item " + thatItem.getType().name() + " at " + spawnLocation);
                         // if multiple items are on the same line,
                         // this will break, but that is not supported anyway rn
                         items.put(i, floatingItem);
@@ -619,7 +619,7 @@ public class PlayerBlockBoundHologram {
                 // add any line that is not defined as empty
                 ASHologram hologram = new ASHologram(player, line, spawnLocation);
                 Utils.onlinePackets.add(hologram);
-                EzChestShop.logDebug("Spawned hologram " + line + " at " + spawnLocation);
+//                EzChestShop.logDebug("Spawned hologram " + line + " at " + spawnLocation);
                 holograms.put(i, hologram);
             } else {
                 // add an empty line

@@ -178,21 +178,21 @@ public class ShopHologram {
 
 
     public static void reloadAll() {
-        List<Location> locations = new ArrayList<>(shopHolograms.keySet());
-        playerShopHolograms.values().forEach(holograms -> holograms.values().forEach(shopHologram -> {
-            locations.add(shopHologram.getLocation());
-            shopHologram.hologram.updateContents(Config.holostructure);
-        }));
-        locations.forEach(location -> {
-            hideForAll(location);
+        List<ShopHologram> shopHolograms = playerShopHolograms.values().stream().map(holo -> holo.values())
+                .flatMap(Collection::stream).collect(Collectors.toList());
+        shopHolograms.forEach(hologram -> {
+            hologram.hologram.updateContents(Config.holostructure);
+            hideForAll(hologram.getLocation());
         });
     }
 
     public static void hideAll(Player player) {
         if (playerShopHolograms.containsKey(player.getUniqueId())) {
 //            playerShopHolograms.get(player).values().forEach(ShopHologram::hide);
-            playerShopHolograms.get(player.getUniqueId()).values()
-                    .forEach(hologram -> hologram.hologram.getPlayerHologram(player).hide());
+            List<ShopHologram> shopHolograms = playerShopHolograms.get(player.getUniqueId()).values()
+                    .stream().collect(Collectors.toList());
+
+            shopHolograms.forEach(hologram -> hologram.hide());
             playerShopHolograms.remove(player.getUniqueId());
         }
     }
@@ -200,23 +200,16 @@ public class ShopHologram {
     public static void hideForAll(Location location) {
         playerShopHolograms.values().forEach(holograms -> {
             if (holograms.containsKey(location)) {
+//                holograms.get(location).removeInspectedShop();
                 holograms.get(location).hide();
             }
         });
-        List<UUID> toRemove = new ArrayList<>();
-        hologramInspections.forEach((uuid, shopHologram) -> {
-            if (shopHologram.getLocation().equals(location)) {
-                toRemove.add(uuid);
-            }
-        });
-        toRemove.forEach(
-                uuid -> hologramInspections.remove(uuid)
-        );
     }
 
     public void hide() {
         hologram.getPlayerHologram(player).hide();
         playerShopHolograms.get(player.getUniqueId()).remove(location);
+        removeInspectedShop();
     }
 
     public boolean hasInspector() {
@@ -363,6 +356,7 @@ public class ShopHologram {
     public void removeInspectedShop() {
         if (hologramInspections.containsKey(player.getUniqueId())) {
             hologramInspections.remove(player.getUniqueId());
+            hologram.removeInspector(player);
         }
     }
 
