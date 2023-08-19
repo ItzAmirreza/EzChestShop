@@ -196,34 +196,44 @@ public class PlayerBlockBoundHologram {
      * @param key         The placeholder to update
      * @param replacement The new replacement text
      */
-    public void updateTextReplacement(String key, String replacement) {
-        // Update the text replacement and query the lines that contain the placeholder
-        textReplacements.put(key, replacement);
-        queryReplacementLines();
-
-        // Update the text replacements for all lines that contain the placeholder
-        for (int line : textReplacementLines.get(key)) {
-            String content = calculateLineContent(line);
-            boolean emptyContent = content == null || content.trim().isEmpty() || content.equals("<empty/>");
-            if (!holograms.containsKey(line)) {
-                if (emptyContent) {
-                    continue;
-                }
-                // spawn a new hologram
-                spawnTextLine(line);
-            } else if (emptyContent) {
-                // remove the existing hologram
-                ASHologram hologram = holograms.get(line);
-                hologram.destroy();
-                Utils.onlinePackets.remove(hologram);
-                holograms.remove(line);
-            } else {
-                // update the existing hologram
-                ASHologram hologram = holograms.get(line);
-                hologram.rename(content);
-            }
+    public void updateTextReplacement(String key, String replacement, boolean updateForAllPlayers) {
+        List<PlayerBlockBoundHologram> hologramList = new ArrayList<>();
+        if (updateForAllPlayers) {
+            hologramList = blockBoundHologram.getViewerHolograms();
+        } else {
+            hologramList.add(this);
         }
-        rearrangeHolograms();
+
+        for (PlayerBlockBoundHologram hologram : hologramList) {
+            // Update the text replacement and query the lines that contain the placeholder
+            hologram.textReplacements.put(key, replacement);
+            hologram.queryReplacementLines();
+
+            // Update the text replacements for all lines that contain the placeholder
+            for (int line : hologram.textReplacementLines.get(key)) {
+                String content = hologram.calculateLineContent(line);
+                boolean emptyContent = content == null || content.trim().isEmpty() || content.equals("<empty/>");
+                if (!hologram.holograms.containsKey(line)) {
+                    if (emptyContent) {
+                        continue;
+                    }
+                    // spawn a new hologram
+                    hologram.spawnTextLine(line);
+                } else if (emptyContent) {
+                    // remove the existing hologram
+                    ASHologram hologram_text = hologram.holograms.get(line);
+                    hologram_text.destroy();
+                    Utils.onlinePackets.remove(hologram_text);
+                    hologram.holograms.remove(line);
+                } else {
+                    // update the existing hologram
+                    ASHologram hologram_text = hologram.holograms.get(line);
+                    hologram_text.rename(content);
+                }
+            }
+            hologram.rearrangeHolograms();
+        }
+
     }
 
     /**

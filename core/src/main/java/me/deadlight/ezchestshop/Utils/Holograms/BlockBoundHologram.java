@@ -153,6 +153,10 @@ public class BlockBoundHologram {
         inspectorHolograms.put(player.getUniqueId(), hologram);
     }
 
+    public List<PlayerBlockBoundHologram> getViewerHolograms() {
+        return new ArrayList<>(viewerHolograms.values());
+    }
+
     /*
  █████   █████          ████
 ░░███   ░░███          ░░███
