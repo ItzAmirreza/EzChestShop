@@ -126,11 +126,18 @@ public class ShopHologram {
             // true if both are visible aka false -> buy & sell is enabled
             conditionalTags.put("separator", !shop.getSettings().isDbuy() && !shop.getSettings().isDsell());
 
+            HashMap<String, String> conditionalTextReplacements = new HashMap<>();
+            EzShop shop = ShopContainer.getShop(location);
+            if (shop != null && shop.getSettings() != null && shop.getSettings().isDbuy() && shop.getSettings().isDsell()) {
+                conditionalTextReplacements.put("separator", lm.disabledButtonTitle());
+                conditionalTags.put("separator", true);
+            }
+
 
             // Create the hologram
             BlockBoundHologram shopHologram = new BlockBoundHologram(location,
                     BlockBoundHologram.HologramRotation.valueOf(shop.getSettings().getRotation().toUpperCase()),
-                    structure, textReplacements, itemReplacements, conditionalTags);
+                    structure, textReplacements, itemReplacements, conditionalTags, conditionalTextReplacements);
             EzChestShop.logDebug("Created new BlockBoundHologram");
             // Add the hologram to the map
             shopHolograms.put(location, shopHologram);
@@ -305,13 +312,14 @@ public class ShopHologram {
         PlayerBlockBoundHologram playerHolo = hologram.getPlayerHologram(player);
         if (playerHolo != null) {
             shop = ShopContainer.getShop(location);
-            playerHolo.updateConditionalTag("dbuy", shop.getSettings().isDbuy());
-
-            if (!shop.getSettings().isDbuy() && !shop.getSettings().isDsell()) {
-                playerHolo.updateConditionalTag("separator", true);
+            if (shop.getSettings().isDbuy() && shop.getSettings().isDsell()) {
+                updateBuySellSeparator(playerHolo);
+                playerHolo.updateConditionalTag("buy", !shop.getSettings().isDbuy(), true);
             } else {
-                playerHolo.updateConditionalTag("separator", false);
+                playerHolo.updateConditionalTag("buy", !shop.getSettings().isDbuy(), true);
+                updateBuySellSeparator(playerHolo);
             }
+
         }
     }
 
@@ -319,12 +327,12 @@ public class ShopHologram {
         PlayerBlockBoundHologram playerHolo = hologram.getPlayerHologram(player);
         if (playerHolo != null) {
             shop = ShopContainer.getShop(location);
-            playerHolo.updateConditionalTag("dsell", shop.getSettings().isDsell());
-
-            if (!shop.getSettings().isDbuy() && !shop.getSettings().isDsell()) {
-                playerHolo.updateConditionalTag("separator", true);
+            if (shop.getSettings().isDbuy() && shop.getSettings().isDsell()) {
+                updateBuySellSeparator(playerHolo);
+                playerHolo.updateConditionalTag("sell", !shop.getSettings().isDsell(), true);
             } else {
-                playerHolo.updateConditionalTag("separator", false);
+                playerHolo.updateConditionalTag("sell", !shop.getSettings().isDsell(), true);
+                updateBuySellSeparator(playerHolo);
             }
         }
     }
@@ -346,6 +354,13 @@ public class ShopHologram {
             playerHolo.updateTextReplacement("%stock%", Utils.howManyOfItemExists(shopInventory.getStorageContents(),
                     shop.getShopItem()) + "", true);
             playerHolo.updateTextReplacement("%capacity%", availableSlots * shop.getShopItem().getMaxStackSize() + "", true);
+        }
+    }
+
+    public void updatePosition() {
+        PlayerBlockBoundHologram playerHolo = hologram.getPlayerHologram(player);
+        if (playerHolo != null) {
+            playerHolo.updatePosition();
         }
     }
 
@@ -457,5 +472,18 @@ public class ShopHologram {
             }
         }
         return itemData;
+    }
+
+    private void updateBuySellSeparator(PlayerBlockBoundHologram playerHolo) {
+        if (!shop.getSettings().isDbuy() && !shop.getSettings().isDsell()) {
+            playerHolo.getBlockHologram().removeConditionalText("separator");
+            playerHolo.updateConditionalTag("separator", true, true);
+        } else if (shop.getSettings().isDbuy() && shop.getSettings().isDsell())  {
+            playerHolo.getBlockHologram().setConditionalText("separator", lm.disabledButtonTitle());
+            playerHolo.updateConditionalTag("separator", true, true);
+        } else {
+            playerHolo.getBlockHologram().removeConditionalText("separator");
+            playerHolo.updateConditionalTag("separator", false, true);
+        }
     }
 }

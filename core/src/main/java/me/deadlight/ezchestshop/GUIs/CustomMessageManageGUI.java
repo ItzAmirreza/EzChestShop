@@ -152,7 +152,7 @@ public class CustomMessageManageGUI {
             event.setCancelled(true);
             ShopContainer.getShopSettings(loc).setCustomMessages(new ArrayList<>());
             gui.close(player);
-            ShopHologram.hideForAll(loc);
+            ShopHologram.getHologram(loc, player).setCustomHologramMessage(new ArrayList<>());
         });
         gui.setItem(2, 5, confirmItem);
 

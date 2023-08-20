@@ -1,6 +1,7 @@
 package me.deadlight.ezchestshop.Utils.Holograms;
 
 import me.deadlight.ezchestshop.Data.Config;
+import me.deadlight.ezchestshop.Data.ShopContainer;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.Utils.Utils;
 import org.bukkit.Location;
@@ -45,6 +46,7 @@ public class BlockBoundHologram {
     protected HashMap<String, String> textDefaultReplacements;
     protected HashMap<String, ItemStack> itemDefaultReplacements;
     protected HashMap<String,  Boolean> conditionalDefaultTags;
+    protected HashMap<String,  String> conditionalTextReplacements;
 
 
 
@@ -61,13 +63,14 @@ public class BlockBoundHologram {
 
     public BlockBoundHologram(Location location, HologramRotation rotation, List<String> contents,
                               HashMap<String, String> textReplacements, HashMap<String, ItemStack> itemReplacements,
-                              HashMap<String,  Boolean> conditionalTags) {
+                              HashMap<String,  Boolean> conditionalTags, HashMap<String,  String> conditionalTextReplacements) {
         this.location = location;
         this.rotation = rotation;
         this.contents = contents;
         this.textDefaultReplacements = textReplacements;
         this.itemDefaultReplacements = itemReplacements;
         this.conditionalDefaultTags = conditionalTags;
+        this.conditionalTextReplacements = conditionalTextReplacements;
     }
 
 
@@ -115,10 +118,6 @@ public class BlockBoundHologram {
         this.contents = contents;
     }
 
-    public void updateRotation(HologramRotation rotation) {
-        this.rotation = rotation;
-    }
-
     public PlayerBlockBoundHologram getPlayerHologram(Player player) {
         if (!viewerHolograms.containsKey(player.getUniqueId())) {
             PlayerBlockBoundHologram hologram =
@@ -157,6 +156,24 @@ public class BlockBoundHologram {
         return new ArrayList<>(viewerHolograms.values());
     }
 
+    public String getConditionalText(String tag) {
+        if (conditionalTextReplacements.containsKey(tag)) {
+            return conditionalTextReplacements.get(tag);
+        } else {
+            return null;
+        }
+    }
+
+    public void setConditionalText(String tag, String text) {
+        conditionalTextReplacements.put(tag, text);
+    }
+
+    public void removeConditionalText(String tag) {
+        conditionalTextReplacements.remove(tag);
+    }
+
+
+
     /*
  █████   █████          ████
 ░░███   ░░███          ░░███
@@ -180,14 +197,13 @@ public class BlockBoundHologram {
 
 
     public Location getHoloLoc(Block containerBlock) {
-        Location holoLoc = containerBlock.getLocation();
+        Location holoLoc;
         Inventory inventory = Utils.getBlockInventory(containerBlock);
 
-        PersistentDataContainer container = ((TileState) containerBlock.getState()).getPersistentDataContainer();
-        String rotation = container.get(new NamespacedKey(EzChestShop.getPlugin(), "rotation"),
-                PersistentDataType.STRING);
-        rotation = rotation == null ? Config.settings_defaults_rotation : rotation;
+        // get the rotation via memory as it updates faster
+        String rotation = ShopContainer.getShop(containerBlock.getLocation()).getSettings().getRotation();
         rotation = Config.holo_rotation ? rotation : Config.settings_defaults_rotation;
+
         // Add rotation checks
         switch (rotation) {
             case "north":

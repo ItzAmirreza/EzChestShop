@@ -121,6 +121,7 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
                                 BlockState blockState = getLookedAtBlockState(player, true, false, target);
                                 if (blockState != null) {
                                     ShopContainer.transferOwner(blockState, op);
+                                    ShopHologram.getHologram(blockState.getLocation(), player).updateOwner();
                                     player.sendMessage(lm.shopTransferred(args[1]));
                                 }
 

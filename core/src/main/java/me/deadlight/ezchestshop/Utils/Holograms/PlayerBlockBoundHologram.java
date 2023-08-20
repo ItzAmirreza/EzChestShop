@@ -18,6 +18,8 @@ public class PlayerBlockBoundHologram {
 
     private Player player;
     private BlockBoundHologram blockBoundHologram;
+    private Location hologramLocation;
+    private boolean isHologramReverse = false;
 
     // Replacements
     private HashMap<String, String> textReplacements;
@@ -33,6 +35,7 @@ public class PlayerBlockBoundHologram {
     private HashMap<Integer, ASHologram> holograms = new HashMap<>();
     private HashMap<Integer, FloatingItem> items = new HashMap<>();
     private List<Integer> emptyLines = new ArrayList<>();
+
 
 
 
@@ -311,45 +314,45 @@ public class PlayerBlockBoundHologram {
      * @param key   The conditional tag to update
      * @param value true if the tag should be shown, false if it should be hidden
      */
-    public void updateConditionalTag(String key, boolean value) {
-        conditionalTags.put(key, value);
-        queryReplacementLines();
+    public void updateConditionalTag(String key, boolean value, boolean updateForAllPlayers) {
 
+        List<PlayerBlockBoundHologram> hologramList = new ArrayList<>();
+        if (updateForAllPlayers) {
+            hologramList = blockBoundHologram.getViewerHolograms();
+        } else {
+            hologramList.add(this);
+        }
 
-        // Update the text replacements for all lines that contain the placeholder
-        /*for (int line : textReplacementLines.get(key)) {
-            ASHologram hologram = holograms.get(line);
-            // Get the location of the hologram line
-            Location holoLoc = hologram.getLocation();
-            // Remove the old hologram
-            Utils.onlinePackets.remove(hologram);
-            hologram.destroy();
-            // Get the new line
-            String newLine = getContents().get(line);
-            // Replace the placeholder with all the replacements
-            for (String k : textReplacements.keySet()) {
-                newLine = newLine.replace(k, textReplacements.get(k));
-            }
-            for (String k : conditionalTags.keySet()) {
-                boolean v = conditionalTags.get(k);
-                // if the value is true, remove the tag, but keep the inner contents
-                // otherwise, remove the entire tag and its contents
-                if (v) {
-                    newLine.replaceAll("<\\/?" + key + ">", "");
+        for (PlayerBlockBoundHologram hologram : hologramList) {
+            // Update the text replacement and query the lines that contain the placeholder
+            conditionalTags.put(key, value);
+            queryReplacementLines();
+
+            // Update the text replacements for all lines that contain the placeholder
+            for (int line : hologram.conditionalTagLines.get(key)) {
+                String content = hologram.calculateLineContent(line);
+                boolean emptyContent = content == null || content.trim().isEmpty() || content.equals("<empty/>");
+                if (!hologram.holograms.containsKey(line)) {
+                    if (emptyContent) {
+                        continue;
+                    }
+                    // spawn a new hologram
+                    hologram.spawnTextLine(line);
+                } else if (emptyContent) {
+                    // remove the existing hologram
+                    ASHologram hologram_text = hologram.holograms.get(line);
+                    hologram_text.destroy();
+                    Utils.onlinePackets.remove(hologram_text);
+                    hologram.holograms.remove(line);
                 } else {
-                    newLine.replaceAll("<" + key + ">.*?<\\/" + key + ">", "");
+                    EzChestShop.logDebug("Rename: " + content + " Line: " + line);
+                    // update the existing hologram
+                    ASHologram hologram_text = hologram.holograms.get(line);
+                    hologram_text.rename(content);
                 }
             }
-            // Apply color codes
-            Utils.colorify(newLine);
-
-            // Spawn the new hologram
-            ASHologram newHologram = new ASHologram(player, newLine, holoLoc);
-            Utils.onlinePackets.add(newHologram);
-            holograms.put(line, newHologram);
-        }*/
-        hide();
-        show();
+            hologram.rearrangeHolograms();
+        }
     }
 
     /**
@@ -365,6 +368,12 @@ public class PlayerBlockBoundHologram {
 
         hide();
         show();
+    }
+
+    public void updatePosition() {;
+        for (PlayerBlockBoundHologram hologram : blockBoundHologram.getViewerHolograms()) {
+            hologram.rearrangeHolograms();
+        }
     }
 
     /**
@@ -471,8 +480,16 @@ public class PlayerBlockBoundHologram {
             }
             boolean value = conditionalTags.get(condition);
             if (value) {
-                newLine = newLine.replaceAll("<\\/?" + condition + ">", "");
+                // If the value is true, the text should be shown
+                if (blockBoundHologram.getConditionalText(condition) != null) {
+                    // If the text has a replacement, apply it
+                    newLine = newLine.replaceAll("<" + condition + ">.*?<\\/" + condition + ">", blockBoundHologram.getConditionalText(condition));
+                } else {
+                    // Otherwise, just remove the start & ending tags
+                    newLine = newLine.replaceAll("<\\/?" + condition + ">", "");
+                }
             } else {
+                // If the value is false, remove the text
                 newLine = newLine.replaceAll("<" + condition + ">.*?<\\/" + condition + ">", "");
             }
         }
@@ -500,9 +517,14 @@ public class PlayerBlockBoundHologram {
         lines.addAll(emptyLines);
         lines.sort(Comparator.naturalOrder());
 
+        if (blockBoundHologram.getRotation() == BlockBoundHologram.HologramRotation.DOWN) {
+            Collections.reverse(lines);
+            isHologramReverse = true;
+        }
 
         Location spawnLocation = blockBoundHologram.getHoloLoc(blockBoundHologram.getLocation().getBlock());
         Location lineLocation = spawnLocation.clone().subtract(0, 0.1, 0);
+        hologramLocation = lineLocation.clone();
 
         List<Integer> arrangedLines = new ArrayList<>();
         for (int i = 0; i < lines.size(); i++) {
@@ -670,9 +692,18 @@ public class PlayerBlockBoundHologram {
                 // if the value is true, remove the tag, but keep the inner contents
                 // otherwise, remove the entire tag and its contents
                 if (value) {
-                    processedContents.set(line, processedContents.get(line)
-                            .replaceAll("<\\/?" + key + ">", ""));
+                    // If the value is true, the text should be shown
+                    if (blockBoundHologram.getConditionalText(key) != null) {
+                        // If the text has a replacement, apply it
+                        processedContents.set(line, processedContents.get(line)
+                                .replaceAll("<" + key + ">.*?<\\/" + key + ">", blockBoundHologram.getConditionalText(key)));
+                    } else {
+                        // Otherwise, just remove the start & ending tags
+                        processedContents.set(line, processedContents.get(line)
+                                .replaceAll("<\\/?" + key + ">", ""));
+                    }
                 } else {
+                    // If the value is false, remove the text
                     processedContents.set(line, processedContents.get(line)
                             .replaceAll("<" + key + ">.*?<\\/" + key + ">", ""));
                 }
