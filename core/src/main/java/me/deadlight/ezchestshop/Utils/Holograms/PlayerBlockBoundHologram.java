@@ -60,6 +60,8 @@ public class PlayerBlockBoundHologram {
         this.itemReplacements = itemReplacements;
         this.conditionalTags = conditionalTags;
 
+        isHologramReverse = blockBoundHologram.getRotation() == BlockBoundHologram.HologramRotation.DOWN;
+
         queryReplacementLines();
     }
 
@@ -510,17 +512,13 @@ public class PlayerBlockBoundHologram {
      * Call it after adding or removing holograms or items.
      */
     private void rearrangeHolograms() {
-//        EzChestShop.logDebug("Holograms: " + holograms.keySet().size() + " Items: " + items.keySet().size()
-//                + " Empty: " + emptyLines.size());
         List<Integer> lines = new ArrayList<>(holograms.keySet());
         lines.addAll(items.keySet());
         lines.addAll(emptyLines);
         lines.sort(Comparator.naturalOrder());
 
-        if (blockBoundHologram.getRotation() == BlockBoundHologram.HologramRotation.DOWN) {
-            Collections.reverse(lines);
-            isHologramReverse = true;
-        }
+        // keep this variable updated...
+        isHologramReverse = blockBoundHologram.getRotation() == BlockBoundHologram.HologramRotation.DOWN;
 
         Location spawnLocation = blockBoundHologram.getHoloLoc(blockBoundHologram.getLocation().getBlock());
         Location lineLocation = spawnLocation.clone().subtract(0, 0.1, 0);
@@ -528,7 +526,6 @@ public class PlayerBlockBoundHologram {
 
         List<Integer> arrangedLines = new ArrayList<>();
         for (int i = 0; i < lines.size(); i++) {
-//            EzChestShop.logDebug("Rearranging line " + lines.get(i) + " at " + lineLocation + " (i=" + i + ")");
             int line = lines.get(i);
             boolean appliedSpacing = false;
             boolean alreadyAppliedSpace = arrangedLines.contains(line);
@@ -538,7 +535,7 @@ public class PlayerBlockBoundHologram {
                 if (!alreadyAppliedSpace) {
                     hologram.teleport(lineLocation);
                     if (!items.containsKey(line)) {
-                        lineLocation.add(0, 0.3 * Config.holo_linespacing, 0);
+                        addOrSubtractLocationIfReverse(lineLocation, 0.3);
                         appliedSpacing = true;
                     }
                 }
@@ -546,18 +543,18 @@ public class PlayerBlockBoundHologram {
             // always apply spacing for items as they are the largest
             if (items.containsKey(line)) {
                 if (!alreadyAppliedSpace) {
-                    lineLocation.add(0, 0.15 * Config.holo_linespacing, 0);
+                    addOrSubtractLocationIfReverse(lineLocation, 0.15);
                 }
                 FloatingItem item = items.get(line);
                 if (!alreadyAppliedSpace) {
                     item.teleport(lineLocation);
-                    lineLocation.add(0, 0.35 * Config.holo_linespacing, 0);
+                    addOrSubtractLocationIfReverse(lineLocation, 0.35);
                 }
                 appliedSpacing = true;
             }
             // only apply empty lines if no spacing was applied yet
             if (emptyLines.contains(line) && !appliedSpacing && !alreadyAppliedSpace) {
-                lineLocation.add(0, 0.3 * Config.holo_linespacing, 0);
+                addOrSubtractLocationIfReverse(lineLocation, 0.3);
             }
             // When 2 elements are on the same line, only apply spacing once
             arrangedLines.add(line);
@@ -670,10 +667,6 @@ public class PlayerBlockBoundHologram {
      */
     private List<String> calculateProcessedContent() {
         List<String> processedContents = new ArrayList<>(blockBoundHologram.getContents());
-        // Reverse the contents if the hologram is upside down
-        if (blockBoundHologram.getRotation() == BlockBoundHologram.HologramRotation.DOWN) {
-            Collections.reverse(processedContents);
-        }
         // Process the text replacements
         for (String key : textReplacements.keySet()) {
             String replacement = textReplacements.get(key);
@@ -714,6 +707,21 @@ public class PlayerBlockBoundHologram {
         // Apply color codes
         return processedContents.stream()
                 .map((line) -> Utils.colorify(line)).collect(Collectors.toList());
+    }
+
+    /**
+     * Add amount to the y coordinate of the location if the hologram.
+     * <br>
+     * If the hologram is reversed, the amount will be subtracted instead.
+     * @param location The location to modify - the original location will be modified
+     * @param amount The amount to add or subtract - Config.holo_linespacing * amount applies.
+     */
+    private void addOrSubtractLocationIfReverse(Location location, double amount) {
+        if (isHologramReverse) {
+            location.subtract(0, amount * Config.holo_linespacing, 0);
+        } else {
+            location.add(0, amount * Config.holo_linespacing, 0);
+        }
     }
 
 }

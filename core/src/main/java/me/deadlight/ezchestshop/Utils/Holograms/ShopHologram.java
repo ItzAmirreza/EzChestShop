@@ -24,20 +24,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class ShopHologram {
-    //TODO: This class will access the BlockBoundHologram class and will manage the holograms of the shops.
-    // it shell provide more direct methods, further away from the BlockBoundHologram class abstractions,
-    // which aims to be more general purpose to make expansions easier.
-    // This class will be more specific to the plugin and will provide methods like:
-    // - showCustomHologramMessage
-    // - setBuyDisabled
-    // - setSellDisabled
-    // - showShopEmptyMessage
-    // - showItemData
-    // - showText
-    // - showItem
-    // These methods will include all placeholders needed, so the PlayerCloseToChestListener
-    // class will only need to call these methods and pass the needed arguments.
-    // That way new mechanics should be easier to implement and the code will be more readable.
 
     private static LanguageManager lm = new LanguageManager();
     private static HashMap<UUID, HashMap<Location, ShopHologram>> playerShopHolograms = new HashMap<>();
@@ -126,6 +112,7 @@ public class ShopHologram {
             // true if both are visible aka false -> buy & sell is enabled
             conditionalTags.put("separator", !shop.getSettings().isDbuy() && !shop.getSettings().isDsell());
 
+            // Also set the separator replacement text if both are disabled
             HashMap<String, String> conditionalTextReplacements = new HashMap<>();
             EzShop shop = ShopContainer.getShop(location);
             if (shop != null && shop.getSettings() != null && shop.getSettings().isDbuy() && shop.getSettings().isDsell()) {

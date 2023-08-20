@@ -80,7 +80,20 @@ public class BlockBoundHologram {
     }
 
     public HologramRotation getRotation() {
-        return rotation;
+
+        String rotation = ShopContainer.getShop(location).getSettings().getRotation();
+        rotation = Config.holo_rotation ? rotation : Config.settings_defaults_rotation;
+
+        // Make sure we're not getting a null value or something that isn't a valid rotation
+        HologramRotation hologramRotation;
+        try {
+            hologramRotation = HologramRotation.valueOf(rotation.toUpperCase());
+        } catch (Exception e) {
+            hologramRotation = HologramRotation.UP;
+        }
+        this.rotation = hologramRotation;
+
+        return hologramRotation;
     }
 
     public List<String> getContents() {
@@ -219,7 +232,7 @@ public class BlockBoundHologram {
                 holoLoc = getCentralLocation(containerBlock, inventory, new Vector(-0.8, 0, 0));
                 break;
             case "down":
-                holoLoc = getCentralLocation(containerBlock, inventory, new Vector(0, -1.5, 0));
+                holoLoc = getCentralLocation(containerBlock, inventory, new Vector(0, -0.75, 0));
                 break;
             default:
                 holoLoc = getCentralLocation(containerBlock, inventory, new Vector(0, 1, 0));
