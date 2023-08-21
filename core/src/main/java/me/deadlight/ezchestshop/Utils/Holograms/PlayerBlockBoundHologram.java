@@ -35,6 +35,7 @@ public class PlayerBlockBoundHologram {
     private HashMap<Integer, ASHologram> holograms = new HashMap<>();
     private HashMap<Integer, FloatingItem> items = new HashMap<>();
     private List<Integer> emptyLines = new ArrayList<>();
+    private List<Integer> alwaysVisibleLines = new ArrayList<>();
 
 
 
@@ -127,7 +128,7 @@ public class PlayerBlockBoundHologram {
         /*
          Process the contents of the hologram
          */
-        spawnHolograms();
+        spawnHolograms(false);
         spawnItems();
         rearrangeHolograms();
 
@@ -164,11 +165,16 @@ public class PlayerBlockBoundHologram {
      */
     public void showOnlyItem() {
         if (!holograms.isEmpty()) {
-            for (ASHologram hologram : holograms.values()) {
-                hologram.destroy();
-                Utils.onlinePackets.remove(hologram);
-            }
-            holograms.clear();
+            // only remove texts if they are not always visible
+            List<Integer> toRemove = new ArrayList<>();
+            holograms.forEach((key, value) -> {
+                if (alwaysVisibleLines.contains(key))
+                    return;
+                value.destroy();
+                Utils.onlinePackets.remove(value);
+                toRemove.add(key);
+            });
+            toRemove.forEach(holograms::remove);
             emptyLines.clear();
         }
         if (items.isEmpty()) {
@@ -185,9 +191,22 @@ public class PlayerBlockBoundHologram {
         if (items.isEmpty()) {
             spawnItems();
         }
-        spawnHolograms();
+        spawnHolograms(false);
         rearrangeHolograms();
         blockBoundHologram.addInspector(player, this);
+    }
+
+    /**
+     * Show the hologram texts that should always be visible (e.g. Empty Shop Info or Hologram Messages).
+     * <br>
+     * Items are spawned in if they don't already exist.
+     */
+    public void showAlwaysVisibleText() {
+        if (items.isEmpty()) {
+            spawnItems();
+        }
+        spawnHolograms(true);
+        rearrangeHolograms();
     }
 
     /**
@@ -572,7 +591,7 @@ public class PlayerBlockBoundHologram {
      * If it does, the item is spawned at the correct location.
      */
     private void spawnItems() {
-        List<String> processedContents = calculateProcessedContent();
+        List<String> processedContents = calculateProcessedContent(false);
 
         // Calculate the location of the hologram lines
 
@@ -621,8 +640,8 @@ public class PlayerBlockBoundHologram {
      * <br>
      * If it does not, the hologram is spawned at the correct location.
      */
-    private void spawnHolograms() {
-        List<String> processedContents = calculateProcessedContent();
+    private void spawnHolograms(boolean onlyAlwaysVisibleTexts) {
+        List<String> processedContents = calculateProcessedContent(onlyAlwaysVisibleTexts);
 
         // Calculate the location of the hologram lines
 
@@ -645,10 +664,13 @@ public class PlayerBlockBoundHologram {
             }
             // Calculate the location of the line
             if (!line.equals("<empty/>")) {
+                // if the line already exists (e.g. from a always visible line), do not add it again.
+                // or if the hologram is visible through other means.
+                if ((!onlyAlwaysVisibleTexts && alwaysVisibleLines.contains(i)) || holograms.containsKey(i))
+                    continue;
                 // add any line that is not defined as empty
                 ASHologram hologram = new ASHologram(player, line, spawnLocation);
                 Utils.onlinePackets.add(hologram);
-//                EzChestShop.logDebug("Spawned hologram " + line + " at " + spawnLocation);
                 holograms.put(i, hologram);
             } else {
                 // add an empty line
@@ -665,8 +687,24 @@ public class PlayerBlockBoundHologram {
      *
      * @return The processed contents
      */
-    private List<String> calculateProcessedContent() {
+    private List<String> calculateProcessedContent(boolean onlyAlwaysVisibleTexts) {
         List<String> processedContents = new ArrayList<>(blockBoundHologram.getContents());
+
+        //filter out all lines that are not always visible if onlyAlwaysVisibleTexts is true
+        // getting the lines needs to happen before the replacements, or they will not be found
+        if (onlyAlwaysVisibleTexts) {
+            for (int i = 0; i < processedContents.size(); i++) {
+                int finalI = i;
+                // if there is any match in this line, it is always visible
+                if (blockBoundHologram.alwaysVisibleTextReplacements.stream()
+                        .anyMatch(visibleReplacement -> processedContents.get(finalI).contains(visibleReplacement))) {
+                    alwaysVisibleLines.add(i);
+                } else {
+                    processedContents.set(i, "");
+                }
+            }
+        }
+
         // Process the text replacements
         for (String key : textReplacements.keySet()) {
             String replacement = textReplacements.get(key);
@@ -703,7 +741,6 @@ public class PlayerBlockBoundHologram {
             }
         }
 
-        // Remove all empty lines
         // Apply color codes
         return processedContents.stream()
                 .map((line) -> Utils.colorify(line)).collect(Collectors.toList());

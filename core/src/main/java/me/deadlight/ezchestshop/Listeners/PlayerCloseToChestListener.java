@@ -6,6 +6,7 @@ import me.deadlight.ezchestshop.Data.ShopContainer;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.Utils.ASHologram;
 import me.deadlight.ezchestshop.Utils.FloatingItem;
+import me.deadlight.ezchestshop.Utils.Holograms.BlockBoundHologram;
 import me.deadlight.ezchestshop.Utils.Holograms.ShopHologram;
 import me.deadlight.ezchestshop.Utils.Objects.EzShop;
 import me.deadlight.ezchestshop.Utils.Pair;
@@ -54,7 +55,7 @@ public class PlayerCloseToChestListener implements Listener {
             if (result != null) {
                 Block target = result.getHitBlock();
                 if (Utils.isApplicableContainer(target)) {
-                    Location loc = getShopChestLocation(target);
+                    Location loc = BlockBoundHologram.getShopChestLocation(target);
                     if (ShopContainer.isShop(loc)) {
                         // Create a shop Hologram, so it can be used later
                         // required to be called here, cause the inspection needs it already.
@@ -74,6 +75,7 @@ public class PlayerCloseToChestListener implements Listener {
                                 EzChestShop.logDebug("----------------------");
                                 EzChestShop.logDebug("Player is now looking at a different shop");
                                 inspectedShopHolo.showOnlyItem();
+                                inspectedShopHolo.showAlwaysVisibleText();
                                 inspectedShopHolo.removeInspectedShop();
                             }
                         }
@@ -97,6 +99,7 @@ public class PlayerCloseToChestListener implements Listener {
                     EzChestShop.logDebug("----------------------");
                     EzChestShop.logDebug("Player is no longer inspecting shop");
                     shopHolo.showOnlyItem();
+                    shopHolo.showAlwaysVisibleText();
                 }
                 shopHolo.removeInspectedShop();
             }
@@ -132,7 +135,9 @@ public class PlayerCloseToChestListener implements Listener {
                 if (Config.holodistancing_show_item_first) {
                     EzChestShop.logDebug("----------------------");
                     EzChestShop.logDebug("Player: " + player.getName() + " is close to a shop");
-                    ShopHologram.getHologram(ezShop.getLocation(), player).showOnlyItem();
+                    ShopHologram shopHologram = ShopHologram.getHologram(ezShop.getLocation(), player);
+                    shopHologram.showOnlyItem();
+                    shopHologram.showAlwaysVisibleText();
                 } else {
                     EzChestShop.logDebug("----------------------");
                     EzChestShop.logDebug("Player: " + player.getName() + " is close to a shop and item first is off.");
@@ -197,23 +202,5 @@ public class PlayerCloseToChestListener implements Listener {
         return false;
     }
 
-    private Location getShopChestLocation(Block target ) {
-        Location loc = target.getLocation();
-        Inventory inventory = ((Container) target.getState()).getInventory();
-        if (inventory instanceof DoubleChestInventory) {
-            DoubleChest doubleChest = (DoubleChest) inventory.getHolder();
-            Chest leftchest = (Chest) doubleChest.getLeftSide();
-            Chest rightchest = (Chest) doubleChest.getRightSide();
-
-            if (leftchest.getPersistentDataContainer().has(
-                    new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING)) {
-                loc = leftchest.getLocation();
-            } else if (rightchest.getPersistentDataContainer().has(
-                    new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING)) {
-                loc = rightchest.getLocation();
-            }
-        }
-        return loc;
-    }
 
 }

@@ -6,10 +6,7 @@ import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.Utils.Utils;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
-import org.bukkit.block.Block;
-import org.bukkit.block.Chest;
-import org.bukkit.block.DoubleChest;
-import org.bukkit.block.TileState;
+import org.bukkit.block.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.DoubleChestInventory;
 import org.bukkit.inventory.Inventory;
@@ -47,6 +44,7 @@ public class BlockBoundHologram {
     protected HashMap<String, ItemStack> itemDefaultReplacements;
     protected HashMap<String,  Boolean> conditionalDefaultTags;
     protected HashMap<String,  String> conditionalTextReplacements;
+    protected List<String> alwaysVisibleTextReplacements;
 
 
 
@@ -63,7 +61,8 @@ public class BlockBoundHologram {
 
     public BlockBoundHologram(Location location, HologramRotation rotation, List<String> contents,
                               HashMap<String, String> textReplacements, HashMap<String, ItemStack> itemReplacements,
-                              HashMap<String,  Boolean> conditionalTags, HashMap<String,  String> conditionalTextReplacements) {
+                              HashMap<String,  Boolean> conditionalTags, HashMap<String, String> conditionalTextReplacements,
+                              List<String> alwaysVisibleTextReplacements) {
         this.location = location;
         this.rotation = rotation;
         this.contents = contents;
@@ -71,6 +70,7 @@ public class BlockBoundHologram {
         this.itemDefaultReplacements = itemReplacements;
         this.conditionalDefaultTags = conditionalTags;
         this.conditionalTextReplacements = conditionalTextReplacements;
+        this.alwaysVisibleTextReplacements = alwaysVisibleTextReplacements;
     }
 
 
@@ -272,6 +272,25 @@ public class BlockBoundHologram {
             holoLoc = containerBlock.getLocation().clone().add(0.5D, 0, 0.5D).add(direction);
         }
         return holoLoc;
+    }
+
+    public static Location getShopChestLocation(Block target ) {
+        Location loc = target.getLocation();
+        Inventory inventory = ((Container) target.getState()).getInventory();
+        if (inventory instanceof DoubleChestInventory) {
+            DoubleChest doubleChest = (DoubleChest) inventory.getHolder();
+            Chest leftchest = (Chest) doubleChest.getLeftSide();
+            Chest rightchest = (Chest) doubleChest.getRightSide();
+
+            if (leftchest.getPersistentDataContainer().has(
+                    new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING)) {
+                loc = leftchest.getLocation();
+            } else if (rightchest.getPersistentDataContainer().has(
+                    new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING)) {
+                loc = rightchest.getLocation();
+            }
+        }
+        return loc;
     }
 
 }
