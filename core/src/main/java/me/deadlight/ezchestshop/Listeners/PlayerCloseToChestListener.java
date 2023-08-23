@@ -3,6 +3,7 @@ package me.deadlight.ezchestshop.Listeners;
 import me.deadlight.ezchestshop.Data.Config;
 import me.deadlight.ezchestshop.Data.LanguageManager;
 import me.deadlight.ezchestshop.Data.ShopContainer;
+import me.deadlight.ezchestshop.Events.PlayerTransactEvent;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.Utils.ASHologram;
 import me.deadlight.ezchestshop.Utils.FloatingItem;
@@ -16,16 +17,21 @@ import org.bukkit.*;
 import org.bukkit.block.*;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityBreedEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
-import org.bukkit.event.player.PlayerToggleSneakEvent;
+import org.bukkit.event.entity.EntityPickupItemEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.event.inventory.InventoryMoveItemEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.inventory.DoubleChestInventory;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
@@ -189,6 +195,75 @@ public class PlayerCloseToChestListener implements Listener {
         }
     }
 
+    @EventHandler
+    public void onShopContentsChangeByBlock(InventoryMoveItemEvent event) {
+        if (!event.isCancelled() && ShopContainer.isShop(event.getDestination().getLocation())) {
+            EzChestShop.logDebug("Hopper Destination: " + event.getDestination().getLocation());
+            Bukkit.getScheduler().runTaskLater(EzChestShop.getPlugin(), () -> ShopHologram.updateInventoryReplacements(event.getDestination().getLocation()), 1);
+        }
+    }
+
+    @EventHandler
+    public void onInventoryChangeByPlayerItemClick(InventoryClickEvent event) {
+        inventoryModifyEventHandler(event.isCancelled(), event.getWhoClicked());
+    }
+
+    @EventHandler
+    public void onInventoryChangeByPlayerItemDrag(InventoryDragEvent event) {
+        inventoryModifyEventHandler(event.isCancelled(), event.getWhoClicked());
+    }
+
+    @EventHandler
+    public void onInventoryChangeByPlayerItemDrop(PlayerDropItemEvent event) {
+        inventoryModifyEventHandler(event.isCancelled(), event.getPlayer());
+    }
+
+    @EventHandler
+    public void onInventoryChangeByPlayerItemPickup(EntityPickupItemEvent event) {
+        if (!event.isCancelled() && event.getEntity().getType() == EntityType.PLAYER) {
+            ShopHologram.getViewedHolograms((Player) event.getEntity()).forEach(shopHolo -> {
+                Bukkit.getScheduler().runTaskLater(EzChestShop.getPlugin(), () -> ShopHologram.updateInventoryReplacements(shopHolo.getLocation()), 1);
+            });
+        }
+    }
+
+    @EventHandler
+    public void onShopCapacityChangeByBlockPlace(BlockPlaceEvent event) {
+        if (!event.isCancelled() && (event.getBlockPlaced().getType() == Material.CHEST || event.getBlockPlaced().getType() == Material.TRAPPED_CHEST)) {
+            Bukkit.getScheduler().runTaskLater(EzChestShop.getPlugin(), () -> {
+                Location location = BlockBoundHologram.getShopChestLocation(event.getBlockPlaced());
+                if (ShopContainer.isShop(location)) {
+                    ShopHologram.updateInventoryReplacements(location);
+                }
+            }, 1);
+        }
+    }
+
+    //TODO, breaking blocks doesn't update the hologram, in fact the hologram gets hidden and the shop needs to be reopened to show the hologram again at all.
+    // this is because the shop gets removed in BlockBreakListener.
+//    @EventHandler
+//    public void onShopCapacityChange(BlockBreakEvent event) {
+//        if (!event.isCancelled() && (event.getBlock().getType() == Material.CHEST || event.getBlock().getType() == Material.TRAPPED_CHEST)) {
+//            Location location = BlockBoundHologram.getShopChestLocation(event.getBlock());
+//            EzChestShop.logDebug("ShopChestLocation (break): " + location);
+//            if (ShopContainer.isShop(location)) {
+//                Bukkit.getScheduler().runTaskLater(EzChestShop.getPlugin(), () -> ShopHologram.updateInventoryReplacements(location), 1);
+//            }
+//        }
+//    }
+
+    @EventHandler
+    public void onShopTransactionCapacityChange(PlayerTransactEvent event) {
+        Bukkit.getScheduler().runTaskLater(EzChestShop.getPlugin(), () -> ShopHologram.updateInventoryReplacements(event.getContainerBlock().getLocation()), 1);
+    }
+
+    private void inventoryModifyEventHandler(boolean cancelled, HumanEntity whoClicked) {
+        if (!cancelled) {
+            ShopHologram.getViewedHolograms((Player) whoClicked).forEach(shopHolo -> {
+                Bukkit.getScheduler().runTaskLater(EzChestShop.getPlugin(), () -> ShopHologram.updateInventoryReplacements(shopHolo.getLocation()), 1);
+            });
+        }
+    }
 
     private boolean hasMovedXYZ(PlayerMoveEvent event) {
         Location from = event.getFrom();

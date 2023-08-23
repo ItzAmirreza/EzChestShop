@@ -220,7 +220,7 @@ public class PlayerBlockBoundHologram {
      * @param key         The placeholder to update
      * @param replacement The new replacement text
      */
-    public void updateTextReplacement(String key, String replacement, boolean updateForAllPlayers) {
+    public void updateTextReplacement(String key, String replacement, boolean updateForAllPlayers, boolean spawnIfNotExists) {
         List<PlayerBlockBoundHologram> hologramList = new ArrayList<>();
         if (updateForAllPlayers) {
             hologramList = blockBoundHologram.getViewerHolograms();
@@ -238,7 +238,7 @@ public class PlayerBlockBoundHologram {
                 String content = hologram.calculateLineContent(line);
                 boolean emptyContent = content == null || content.trim().isEmpty() || content.equals("<empty/>");
                 if (!hologram.holograms.containsKey(line)) {
-                    if (emptyContent) {
+                    if (emptyContent || !spawnIfNotExists) {
                         continue;
                     }
                     // spawn a new hologram
@@ -403,6 +403,10 @@ public class PlayerBlockBoundHologram {
      */
     public BlockBoundHologram getBlockHologram() {
         return blockBoundHologram;
+    }
+
+    public Player getPlayer() {
+        return player;
     }
 
     /*

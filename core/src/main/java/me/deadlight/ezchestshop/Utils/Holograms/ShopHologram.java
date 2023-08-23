@@ -147,6 +147,9 @@ public class ShopHologram {
             holograms.put(location, this);
             playerShopHolograms.put(player.getUniqueId(), holograms);
         }
+
+        // Make sure inventory replacements are up to date for all players.
+        ShopHologram.updateInventoryReplacements(location);
     }
 
     /**
@@ -166,6 +169,13 @@ public class ShopHologram {
     public static boolean hasHologram(Location location, Player player) {
         return playerShopHolograms.containsKey(player.getUniqueId()) &&
                 playerShopHolograms.get(player.getUniqueId()).containsKey(location);
+    }
+
+    public static List<ShopHologram> getViewedHolograms(Player player) {
+        if (playerShopHolograms.containsKey(player.getUniqueId())) {
+            return new ArrayList<>(playerShopHolograms.get(player.getUniqueId()).values());
+        }
+        return new ArrayList<>();
     }
 
     public static List<EzShop> getShopsInRadius(Location location, int radius) {
@@ -247,9 +257,9 @@ public class ShopHologram {
             // Update at most x lines
             for (int i = 0; i < lines; i++) {
                 if (i >= messages.size()) {
-                    playerHolo.updateTextReplacement("<custom" + (i + 1) + "/>", "", true);
+                    playerHolo.updateTextReplacement("<custom" + (i + 1) + "/>", "", true, true);
                 } else {
-                    playerHolo.updateTextReplacement("<custom" + (i + 1) + "/>", messages.get(i), true);
+                    playerHolo.updateTextReplacement("<custom" + (i + 1) + "/>", messages.get(i), true, true);
                 }
             }
         }
@@ -269,10 +279,10 @@ public class ShopHologram {
                                 && ((EnchantmentStorageMeta) item.getItemMeta()).getStoredEnchants().size() > 1)) {
                     if (i == -1) {
                         playerHolo.updateTextReplacement("<itemdataRest/>", visible ?
-                                getHologramItemData(i, item, lines) : "", false);
+                                getHologramItemData(i, item, lines) : "", false, true);
                     } else {
                         playerHolo.updateTextReplacement("<itemdata" + (i + 1) + "/>", visible ?
-                                getHologramItemData(i, item, lines) : "", false);
+                                getHologramItemData(i, item, lines) : "", false, true);
                     }
                 }
             }
@@ -288,7 +298,7 @@ public class ShopHologram {
                 // visible if the shop does not contain at least 1 item.
                 boolean visible = !Utils.containsAtLeast(shopInventory, shop.getShopItem(), 1);
                 playerHolo.updateTextReplacement("<emptyShopInfo/>", visible ?
-                        lm.emptyShopHologramInfo() : "", false);
+                        lm.emptyShopHologramInfo() : "", false, true);
             }
         }
     }
@@ -297,7 +307,7 @@ public class ShopHologram {
         PlayerBlockBoundHologram playerHolo = hologram.getPlayerHologram(player);
         if (playerHolo != null) {
             shop = ShopContainer.getShop(location);
-            playerHolo.updateTextReplacement("%buy%", shop.getBuyPrice() + "", true);
+            playerHolo.updateTextReplacement("%buy%", shop.getBuyPrice() + "", true, true);
         }
     }
 
@@ -305,7 +315,7 @@ public class ShopHologram {
         PlayerBlockBoundHologram playerHolo = hologram.getPlayerHologram(player);
         if (playerHolo != null) {
             shop = ShopContainer.getShop(location);
-            playerHolo.updateTextReplacement("%sell%", shop.getSellPrice() + "", true);
+            playerHolo.updateTextReplacement("%sell%", shop.getSellPrice() + "", true, true);
         }
     }
 
@@ -342,7 +352,7 @@ public class ShopHologram {
         PlayerBlockBoundHologram playerHolo = hologram.getPlayerHologram(player);
         if (playerHolo != null) {
             shop = ShopContainer.getShop(location);
-            playerHolo.updateTextReplacement("%owner%", Bukkit.getOfflinePlayer(shop.getOwnerID()).getName(), true);
+            playerHolo.updateTextReplacement("%owner%", Bukkit.getOfflinePlayer(shop.getOwnerID()).getName(), true, true);
         }
     }
 
@@ -353,9 +363,33 @@ public class ShopHologram {
             Inventory shopInventory = Utils.getBlockInventory(location.getBlock());
             int availableSlots = shopInventory.getSize();
             playerHolo.updateTextReplacement("%stock%", Utils.howManyOfItemExists(shopInventory.getStorageContents(),
-                    shop.getShopItem()) + "", true);
-            playerHolo.updateTextReplacement("%capacity%", availableSlots * shop.getShopItem().getMaxStackSize() + "", true);
+                    shop.getShopItem()) + "", true, false);
+            playerHolo.updateTextReplacement("%capacity%", availableSlots * shop.getShopItem().getMaxStackSize() + "",
+                    true, false);
         }
+    }
+
+    public void updateMaxBuyAndSell() {
+        PlayerBlockBoundHologram playerHolo = hologram.getPlayerHologram(player);
+        if (playerHolo != null) {
+            shop = ShopContainer.getShop(location);
+            List<String> possibleCounts = Utils.calculatePossibleAmount(Bukkit.getOfflinePlayer(player.getUniqueId()),
+                    Bukkit.getOfflinePlayer(UUID.fromString(((TileState) shop.getLocation().getBlock().getState()).getPersistentDataContainer()
+                            .get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING))), player.getInventory().getStorageContents(),
+                    Utils.getBlockInventory(shop.getLocation().getBlock()).getStorageContents(),
+                    shop.getBuyPrice(), shop.getSellPrice(), shop.getShopItem());
+            playerHolo.updateTextReplacement("%maxbuy%", possibleCounts.get(0) + "", false, false);
+            playerHolo.updateTextReplacement("%maxsell%", possibleCounts.get(1) + "", false, false);
+        }
+    }
+
+    public static void updateInventoryReplacements(Location location) {
+        shopHolograms.get(location).getViewerHolograms().forEach(playerBlockBoundHologram -> {
+            ShopHologram shopHolo = ShopHologram.getHologram(location, playerBlockBoundHologram.getPlayer());
+            shopHolo.updateStockAndCapacity();
+            shopHolo.updateEmptyShopInfo();
+            shopHolo.updateMaxBuyAndSell();
+        });
     }
 
     public void updatePosition() {
