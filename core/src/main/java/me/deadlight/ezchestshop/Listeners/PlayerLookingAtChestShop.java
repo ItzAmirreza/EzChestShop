@@ -6,6 +6,7 @@ import me.deadlight.ezchestshop.Data.ShopContainer;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.Utils.ASHologram;
 import me.deadlight.ezchestshop.Utils.FloatingItem;
+import me.deadlight.ezchestshop.Utils.Holograms.BlockBoundHologram;
 import me.deadlight.ezchestshop.Utils.Holograms.ShopHologram;
 import me.deadlight.ezchestshop.Utils.Objects.EzShop;
 import me.deadlight.ezchestshop.Utils.Pair;
@@ -201,9 +202,9 @@ public class PlayerLookingAtChestShop implements Listener {
                         if (item.getType().name().contains("SHULKER_BOX") || item.getEnchantments().size() > 0) {
                             try {
                                 int lineNum = Integer.parseInt(line.replaceAll("\\D", ""));
-                                line = ShopHologram.getHologramItemData(lineNum, item, lines);
+                                line = BlockBoundHologram.getHologramItemData(lineNum, item, lines);
                             } catch (NumberFormatException e) {
-                                line = ShopHologram.getHologramItemData(-1, item, lines);
+                                line = BlockBoundHologram.getHologramItemData(-1, item, lines);
                             }
                         } else {
                             continue;

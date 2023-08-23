@@ -1,7 +1,6 @@
 package me.deadlight.ezchestshop.Utils.Holograms;
 
 import me.deadlight.ezchestshop.Data.Config;
-import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.Utils.ASHologram;
 import me.deadlight.ezchestshop.Utils.FloatingItem;
 import me.deadlight.ezchestshop.Utils.Utils;
@@ -11,14 +10,20 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
-import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 
+/**
+ * This class is used to manage the hologram for a player for a specific shop. It is used to
+ * show and hide the hologram, as well as update the contents of the hologram. 
+ * <br>
+ * While the primary task is to manage this single Hologram, some settings like the hologram position 
+ * are shared with all other players that are viewing the hologram, so the BlockBoundHologram class 
+ * is called to update all viewer holograms.
+ */
 public class PlayerBlockBoundHologram {
 
     private Player player;
-    private BlockBoundHologram blockBoundHologram;
-    private Location hologramLocation;
+    private BlockBoundHologram blockHolo;
     private boolean isHologramReverse = false;
 
     // Replacements
@@ -31,9 +36,10 @@ public class PlayerBlockBoundHologram {
     private HashMap<String,  List<Integer>> itemReplacementLines = new HashMap<>();
     private HashMap<String,  List<Integer>> conditionalTagLines = new HashMap<>();
 
-    // Entities
-    private HashMap<Integer, ASHologram> holograms = new HashMap<>();
-    private HashMap<Integer, FloatingItem> items = new HashMap<>();
+    // Entities mapped to lines
+    private HashMap<Integer, ASHologram> lineTextHoloMap = new HashMap<>();
+    private HashMap<Integer, FloatingItem> lineItemHoloMap = new HashMap<>();
+    // Other special lines
     private List<Integer> emptyLines = new ArrayList<>();
     private List<Integer> alwaysVisibleLines = new ArrayList<>();
 
@@ -52,16 +58,16 @@ public class PlayerBlockBoundHologram {
 ░░░░░          ░░░░░░░░ ░░░░░░░░  ░░░░░ ░░░░░  ░░░░░░     ░░░░░░░░░░    ░░░░░░░░    ░░░░░   ░░░░░░░░
       */
 
-    public PlayerBlockBoundHologram(Player player, BlockBoundHologram blockBoundHologram,
+    public PlayerBlockBoundHologram(Player player, BlockBoundHologram blockHolo,
                                     HashMap<String, String> textReplacements, HashMap<String, ItemStack> itemReplacements,
                                     HashMap<String,  Boolean> conditionalTags) {
         this.player = player;
-        this.blockBoundHologram = blockBoundHologram;
+        this.blockHolo = blockHolo;
         this.textReplacements = textReplacements;
         this.itemReplacements = itemReplacements;
         this.conditionalTags = conditionalTags;
 
-        isHologramReverse = blockBoundHologram.getRotation() == BlockBoundHologram.HologramRotation.DOWN;
+        isHologramReverse = blockHolo.getRotation() == BlockBoundHologram.HologramRotation.DOWN;
 
         queryReplacementLines();
     }
@@ -98,37 +104,37 @@ public class PlayerBlockBoundHologram {
      */
     public void show() {
 
-        if (blockBoundHologram.getLocation().getBlock().getType() == Material.AIR) {
-            blockBoundHologram.hideForAll();
+        if (blockHolo.getLocation().getBlock().getType() == Material.AIR) {
+            blockHolo.hideForAll();
             return;
         }
 
         // If the hologram is already spawned, do nothing
-        if (!holograms.isEmpty() && !items.isEmpty()) {
+        if (!lineTextHoloMap.isEmpty() && !lineItemHoloMap.isEmpty()) {
             return;
         // If the texts are empty, but the items are not, remove the items.
-        } else if (holograms.isEmpty() && !items.isEmpty()) {
-            for (FloatingItem item : items.values()) {
-                Utils.onlinePackets.remove(item);
+        } else if (lineTextHoloMap.isEmpty() && !lineItemHoloMap.isEmpty()) {
+            for (FloatingItem itemHologram : lineItemHoloMap.values()) {
+                Utils.onlinePackets.remove(itemHologram);
             }
-            items.clear();
+            lineItemHoloMap.clear();
         // If the items are empty, but the texts are not, remove the texts.
-        } else if (!holograms.isEmpty() && items.isEmpty()) {
-            for (ASHologram hologram : holograms.values()) {
-                Utils.onlinePackets.remove(hologram);
+        } else if (!lineTextHoloMap.isEmpty() && lineItemHoloMap.isEmpty()) {
+            for (ASHologram textHologram : lineTextHoloMap.values()) {
+                Utils.onlinePackets.remove(textHologram);
             }
-            holograms.clear();
+            lineTextHoloMap.clear();
         }
 
         /*
          Process the contents of the hologram
          */
-        spawnHolograms(false);
-        spawnItems();
+        spawnTextHolograms(false);
+        spawnItemHolograms();
         rearrangeHolograms();
 
         // Add the player to the hologram's inspector list
-        blockBoundHologram.addInspector(player, this);
+        blockHolo.addInspector(player, this);
     }
 
     /**
@@ -137,57 +143,57 @@ public class PlayerBlockBoundHologram {
      * This will remove the hologram from the player's view.
      */
     public void hide() {
-        for (ASHologram hologram : holograms.values()) {
-            hologram.destroy();
-            Utils.onlinePackets.remove(hologram);
+        for (ASHologram textHologram : lineTextHoloMap.values()) {
+            textHologram.destroy();
+            Utils.onlinePackets.remove(textHologram);
         }
-        for (FloatingItem item : items.values()) {
-            item.destroy();
-            Utils.onlinePackets.remove(item);
+        for (FloatingItem itemHologram : lineItemHoloMap.values()) {
+            itemHologram.destroy();
+            Utils.onlinePackets.remove(itemHologram);
         }
-        holograms.clear();
-        items.clear();
-        blockBoundHologram.removeViewer(player);
+        lineTextHoloMap.clear();
+        lineItemHoloMap.clear();
+        blockHolo.removeViewer(player);
     }
 
     /**
      * Show only the item of the hologram.
      * <br>
-     * This will remove the text of the hologram and only show the item.
+     * This will remove the text (that is not always visible) of the hologram and only show the item.
      * <br>
      * If the hologram is already showing only the item, nothing will happen.
      */
     public void showOnlyItem() {
-        if (!holograms.isEmpty()) {
+        if (!lineTextHoloMap.isEmpty()) {
             // only remove texts if they are not always visible
             List<Integer> toRemove = new ArrayList<>();
-            holograms.forEach((key, value) -> {
+            lineTextHoloMap.forEach((key, value) -> {
                 if (alwaysVisibleLines.contains(key))
                     return;
                 value.destroy();
                 Utils.onlinePackets.remove(value);
                 toRemove.add(key);
             });
-            toRemove.forEach(holograms::remove);
+            toRemove.forEach(lineTextHoloMap::remove);
             emptyLines.clear();
         }
-        if (items.isEmpty()) {
-            spawnItems();
+        if (lineItemHoloMap.isEmpty()) {
+            spawnItemHolograms();
         }
         rearrangeHolograms();
-        blockBoundHologram.removeInspector(player);
+        blockHolo.removeInspector(player);
     }
 
     /**
      * Show the hologram texts. Items are spawned in if they don't already exist.
      */
     public void showTextAfterItem() {
-        if (items.isEmpty()) {
-            spawnItems();
+        if (lineItemHoloMap.isEmpty()) {
+            spawnItemHolograms();
         }
-        spawnHolograms(false);
+        spawnTextHolograms(false);
         rearrangeHolograms();
-        blockBoundHologram.addInspector(player, this);
+        blockHolo.addInspector(player, this);
     }
 
     /**
@@ -196,10 +202,10 @@ public class PlayerBlockBoundHologram {
      * Items are spawned in if they don't already exist.
      */
     public void showAlwaysVisibleText() {
-        if (items.isEmpty()) {
-            spawnItems();
+        if (lineItemHoloMap.isEmpty()) {
+            spawnItemHolograms();
         }
-        spawnHolograms(true);
+        spawnTextHolograms(true);
         rearrangeHolograms();
     }
 
@@ -215,107 +221,43 @@ public class PlayerBlockBoundHologram {
      * @param replacement The new replacement text
      */
     public void updateTextReplacement(String key, String replacement, boolean updateForAllPlayers, boolean spawnIfNotExists) {
-        List<PlayerBlockBoundHologram> hologramList = new ArrayList<>();
+        List<PlayerBlockBoundHologram> playerHoloList = new ArrayList<>();
         if (updateForAllPlayers) {
-            hologramList = blockBoundHologram.getViewerHolograms();
+            playerHoloList = blockHolo.getViewerHolograms();
         } else {
-            hologramList.add(this);
+            playerHoloList.add(this);
         }
 
-        for (PlayerBlockBoundHologram hologram : hologramList) {
+        for (PlayerBlockBoundHologram playerHolo : playerHoloList) {
             // Update the text replacement and query the lines that contain the placeholder
-            hologram.textReplacements.put(key, replacement);
-            hologram.queryReplacementLines();
+            playerHolo.textReplacements.put(key, replacement);
+            playerHolo.queryReplacementLines();
 
             // Update the text replacements for all lines that contain the placeholder
-            for (int line : hologram.textReplacementLines.get(key)) {
-                String content = hologram.calculateLineContent(line);
+            for (int line : playerHolo.textReplacementLines.get(key)) {
+                String content = playerHolo.calculateLineContent(line);
                 boolean emptyContent = content == null || content.trim().isEmpty() || content.equals("<empty/>");
-                if (!hologram.holograms.containsKey(line)) {
+                if (!playerHolo.lineTextHoloMap.containsKey(line)) {
                     if (emptyContent || !spawnIfNotExists) {
                         continue;
                     }
                     // spawn a new hologram
-                    hologram.spawnTextLine(line);
+                    playerHolo.spawnTextLine(line);
                 } else if (emptyContent) {
                     // remove the existing hologram
-                    ASHologram hologram_text = hologram.holograms.get(line);
-                    hologram_text.destroy();
-                    Utils.onlinePackets.remove(hologram_text);
-                    hologram.holograms.remove(line);
+                    ASHologram textHologram = playerHolo.lineTextHoloMap.get(line);
+                    textHologram.destroy();
+                    Utils.onlinePackets.remove(textHologram);
+                    playerHolo.lineTextHoloMap.remove(line);
                 } else {
                     // update the existing hologram
-                    ASHologram hologram_text = hologram.holograms.get(line);
-                    hologram_text.rename(content);
+                    ASHologram textHologram = playerHolo.lineTextHoloMap.get(line);
+                    textHologram.rename(content);
                 }
             }
-            hologram.rearrangeHolograms();
+            playerHolo.rearrangeHolograms();
         }
 
-    }
-
-    /**
-     * Update the text replacements for all placeholders.
-     * <br>
-     * This will update all text replacements and update the hologram accordingly.
-     *
-     * @param replacements The new replacements
-     */
-    public void updateTextReplacements(HashMap<String, String> replacements) {
-        textReplacements = replacements;
-        queryReplacementLines();
-
-        hide();
-        show();
-    }
-
-    /**
-     * Update the item replacement for a placeholder. NOT LIKElY TO BE USED AND POTENTIALLY BROKEN
-     * (check if hide removes marks this hologram as to be removed)
-     * <br>
-     * This will update the item replacement for a placeholder and update the
-     * hologram accordingly.
-     * <br>
-     * The update will only change affected lines to reduce flickering.
-     *
-     * @param key         The placeholder to update
-     * @param replacement The new replacement item
-     */
-    public void updateItemReplacement(String key, ItemStack replacement) {
-        itemReplacements.put(key, replacement);
-        queryReplacementLines();
-
-        // Update the item replacements for all lines that contain the placeholder
-        /*for (int line : itemReplacementLines.get(key)) {
-            FloatingItem item = items.get(line);
-            // Get the location of the hologram line
-            Location itemLocation = item.getLocation();
-            // Remove the old hologram
-            Utils.onlinePackets.remove(item);
-            item.destroy();
-
-            // Spawn the new hologram - currently only supports one item per line
-            FloatingItem newItem = new FloatingItem(player, replacement, itemLocation);
-            Utils.onlinePackets.add(newItem);
-            items.put(line, newItem);
-        }*/
-        hide();
-        show();
-    }
-
-    /**
-     * Update the item replacements for all placeholders.
-     * <br>
-     * This will update all item replacements and update the hologram accordingly.
-     *
-     * @param replacements The new replacements
-     */
-    public void updateItemReplacements(HashMap<String, ItemStack> replacements) {
-        itemReplacements = replacements;
-        queryReplacementLines();
-
-        hide();
-        show();
     }
 
     /**
@@ -331,62 +273,50 @@ public class PlayerBlockBoundHologram {
      */
     public void updateConditionalTag(String key, boolean value, boolean updateForAllPlayers) {
 
-        List<PlayerBlockBoundHologram> hologramList = new ArrayList<>();
+        List<PlayerBlockBoundHologram> playerHoloList = new ArrayList<>();
         if (updateForAllPlayers) {
-            hologramList = blockBoundHologram.getViewerHolograms();
+            playerHoloList = blockHolo.getViewerHolograms();
         } else {
-            hologramList.add(this);
+            playerHoloList.add(this);
         }
 
-        for (PlayerBlockBoundHologram hologram : hologramList) {
+        for (PlayerBlockBoundHologram playerHolo : playerHoloList) {
             // Update the text replacement and query the lines that contain the placeholder
             conditionalTags.put(key, value);
             queryReplacementLines();
 
             // Update the text replacements for all lines that contain the placeholder
-            for (int line : hologram.conditionalTagLines.get(key)) {
-                String content = hologram.calculateLineContent(line);
+            for (int line : playerHolo.conditionalTagLines.get(key)) {
+                String content = playerHolo.calculateLineContent(line);
                 boolean emptyContent = content == null || content.trim().isEmpty() || content.equals("<empty/>");
-                if (!hologram.holograms.containsKey(line)) {
+                if (!playerHolo.lineTextHoloMap.containsKey(line)) {
                     if (emptyContent) {
                         continue;
                     }
                     // spawn a new hologram
-                    hologram.spawnTextLine(line);
+                    playerHolo.spawnTextLine(line);
                 } else if (emptyContent) {
                     // remove the existing hologram
-                    ASHologram hologram_text = hologram.holograms.get(line);
-                    hologram_text.destroy();
-                    Utils.onlinePackets.remove(hologram_text);
-                    hologram.holograms.remove(line);
+                    ASHologram textHologram = playerHolo.lineTextHoloMap.get(line);
+                    textHologram.destroy();
+                    Utils.onlinePackets.remove(textHologram);
+                    playerHolo.lineTextHoloMap.remove(line);
                 } else {
                     // update the existing hologram
-                    ASHologram hologram_text = hologram.holograms.get(line);
-                    hologram_text.rename(content);
+                    ASHologram textHologram = playerHolo.lineTextHoloMap.get(line);
+                    textHologram.rename(content);
                 }
             }
-            hologram.rearrangeHolograms();
+            playerHolo.rearrangeHolograms();
         }
     }
 
     /**
-     * Update the conditional tags for all placeholders.
-     * <br>
-     * This will update all conditional tags and update the hologram accordingly.
-     *
-     * @param tags The new tags
+     * Update the position of the hologram. This simply calls the rearrangeHolograms method for all viewers.
      */
-    public void updateConditionalTags(HashMap<String, Boolean> tags) {
-        conditionalTags = tags;
-        queryReplacementLines();
-
-        hide();
-        show();
-    }
-
     public void updatePosition() {;
-        for (PlayerBlockBoundHologram hologram : blockBoundHologram.getViewerHolograms()) {
-            hologram.rearrangeHolograms();
+        for (PlayerBlockBoundHologram playerHolo : blockHolo.getViewerHolograms()) {
+            playerHolo.rearrangeHolograms();
         }
     }
 
@@ -395,7 +325,7 @@ public class PlayerBlockBoundHologram {
      * @return The block bound hologram
      */
     public BlockBoundHologram getBlockHologram() {
-        return blockBoundHologram;
+        return blockHolo;
     }
 
     public Player getPlayer() {
@@ -447,6 +377,8 @@ public class PlayerBlockBoundHologram {
      * This method is only called by queryReplacementLines and is only used to reduce code duplication
      *
      * @param keys The set of keys that need to be queried
+     * @param replacementLines The HashMap that will contain the results
+     * @param replacement The replacement that needs to be removed from the key
      * <br>
      * <br>
      * @see #queryReplacementLines()
@@ -454,8 +386,8 @@ public class PlayerBlockBoundHologram {
     private void queryReplacementLinesIndividual(Set<String> keys, HashMap<String, List<Integer>> replacementLines, String replacement) {
         for (String key : keys) {
             List<Integer> lines = new ArrayList<>();
-            for (int i = 0; i < blockBoundHologram.getContents().size(); i++) {
-                if (blockBoundHologram.getContents().get(i).contains(key)) {
+            for (int i = 0; i < blockHolo.getContents().size(); i++) {
+                if (blockHolo.getContents().get(i).contains(key)) {
                     lines.add(i);
                 }
             }
@@ -473,47 +405,47 @@ public class PlayerBlockBoundHologram {
     private void spawnTextLine(int line) {
         String content = calculateLineContent(line);
 
-        ASHologram hologram = new ASHologram(player, content, blockBoundHologram.getHoloLoc(blockBoundHologram.getLocation().getBlock()));
-        Utils.onlinePackets.add(hologram);
-        holograms.put(line, hologram);
+        ASHologram textHologram = new ASHologram(player, content, blockHolo.getHoloLoc(blockHolo.getLocation().getBlock()));
+        Utils.onlinePackets.add(textHologram);
+        lineTextHoloMap.put(line, textHologram);
     }
 
     /**
      * Calculate the content of a hologram line.
-     * @param line
-     * @return
+     * @param line The line number
+     * @return The calculated content of the line
      */
     private String calculateLineContent(int line) {
         // Get the new line
-        String newLine = blockBoundHologram.getContents().get(line);
+        String lineContent = blockHolo.getContents().get(line);
         // Replace the placeholder with all the replacements
-        for (String k : textReplacements.keySet()) {
-            newLine = newLine.replace(k, textReplacements.get(k));
+        for (String replacementKey : textReplacements.keySet()) {
+            lineContent = lineContent.replace(replacementKey, textReplacements.get(replacementKey));
         }
 
         // Make sure the conditional tags are applied
-        for (String condition : conditionalTags.keySet()) {
-            if (!conditionalTagLines.containsKey(condition)) {
+        for (String conditionKey : conditionalTags.keySet()) {
+            if (!conditionalTagLines.containsKey(conditionKey)) {
                 continue;
             }
-            boolean value = conditionalTags.get(condition);
-            if (value) {
+            boolean conditionalValue = conditionalTags.get(conditionKey);
+            if (conditionalValue) {
                 // If the value is true, the text should be shown
-                if (blockBoundHologram.getConditionalText(condition) != null) {
+                if (blockHolo.getConditionalText(conditionKey) != null) {
                     // If the text has a replacement, apply it
-                    newLine = newLine.replaceAll("<" + condition + ">.*?<\\/" + condition + ">", blockBoundHologram.getConditionalText(condition));
+                    lineContent = lineContent.replaceAll("<" + conditionKey + ">.*?<\\/" + conditionKey + ">", blockHolo.getConditionalText(conditionKey));
                 } else {
                     // Otherwise, just remove the start & ending tags
-                    newLine = newLine.replaceAll("<\\/?" + condition + ">", "");
+                    lineContent = lineContent.replaceAll("<\\/?" + conditionKey + ">", "");
                 }
             } else {
                 // If the value is false, remove the text
-                newLine = newLine.replaceAll("<" + condition + ">.*?<\\/" + condition + ">", "");
+                lineContent = lineContent.replaceAll("<" + conditionKey + ">.*?<\\/" + conditionKey + ">", "");
             }
         }
 
         // Apply color codes
-        return Utils.colorify(newLine);
+        return Utils.colorify(lineContent);
     }
 
     /**
@@ -528,42 +460,41 @@ public class PlayerBlockBoundHologram {
      * Call it after adding or removing holograms or items.
      */
     private void rearrangeHolograms() {
-        List<Integer> lines = new ArrayList<>(holograms.keySet());
-        lines.addAll(items.keySet());
+        List<Integer> lines = new ArrayList<>(lineTextHoloMap.keySet());
+        lines.addAll(lineItemHoloMap.keySet());
         lines.addAll(emptyLines);
         lines.sort(Comparator.naturalOrder());
 
         // keep this variable updated...
-        isHologramReverse = blockBoundHologram.getRotation() == BlockBoundHologram.HologramRotation.DOWN;
+        isHologramReverse = blockHolo.getRotation() == BlockBoundHologram.HologramRotation.DOWN;
 
-        Location spawnLocation = blockBoundHologram.getHoloLoc(blockBoundHologram.getLocation().getBlock());
+        Location spawnLocation = blockHolo.getHoloLoc(blockHolo.getLocation().getBlock());
         Location lineLocation = spawnLocation.clone().subtract(0, 0.1, 0);
-        hologramLocation = lineLocation.clone();
 
         List<Integer> arrangedLines = new ArrayList<>();
         for (int i = 0; i < lines.size(); i++) {
             int line = lines.get(i);
             boolean appliedSpacing = false;
             boolean alreadyAppliedSpace = arrangedLines.contains(line);
-            if (holograms.containsKey(line)) {
-                ASHologram hologram = holograms.get(line);
+            if (lineTextHoloMap.containsKey(line)) {
+                ASHologram textHologram = lineTextHoloMap.get(line);
                 // when the hologram is on the same line as an item, do not apply spacing
                 if (!alreadyAppliedSpace) {
-                    hologram.teleport(lineLocation);
-                    if (!items.containsKey(line)) {
+                    textHologram.teleport(lineLocation);
+                    if (!lineItemHoloMap.containsKey(line)) {
                         addOrSubtractLocationIfReverse(lineLocation, 0.3);
                         appliedSpacing = true;
                     }
                 }
             }
             // always apply spacing for items as they are the largest
-            if (items.containsKey(line)) {
+            if (lineItemHoloMap.containsKey(line)) {
                 if (!alreadyAppliedSpace) {
                     addOrSubtractLocationIfReverse(lineLocation, 0.15);
                 }
-                FloatingItem item = items.get(line);
+                FloatingItem itemHologram = lineItemHoloMap.get(line);
                 if (!alreadyAppliedSpace) {
-                    item.teleport(lineLocation);
+                    itemHologram.teleport(lineLocation);
                     addOrSubtractLocationIfReverse(lineLocation, 0.35);
                 }
                 appliedSpacing = true;
@@ -587,22 +518,22 @@ public class PlayerBlockBoundHologram {
      * <br>
      * If it does, the item is spawned at the correct location.
      */
-    private void spawnItems() {
+    private void spawnItemHolograms() {
         List<String> processedContents = calculateProcessedContent(false);
 
         // Calculate the location of the hologram lines
 
-        Location spawnLocation = blockBoundHologram.getHoloLoc(blockBoundHologram.getLocation().getBlock());
+        Location spawnLocation = blockHolo.getHoloLoc(blockHolo.getLocation().getBlock());
 
         for (int i = 0; i < processedContents.size(); i++) {
-            String line = processedContents.get(i);
-            if (line == null || line.isEmpty()) {
+            String lineContent = processedContents.get(i);
+            if (lineContent == null || lineContent.isEmpty()) {
                 continue;
             }
             boolean containsItem = false;
             // Check for item replacements
             for (String key : itemReplacements.keySet()) {
-                if (line.contains(key)) {
+                if (lineContent.contains(key)) {
                     containsItem = true;
                     break;
                 }
@@ -612,13 +543,13 @@ public class PlayerBlockBoundHologram {
                 // spawn an item - currently only supports one item per line,
                 // everything else in the line will be ignored
                 for (String key : itemReplacements.keySet()) {
-                    ItemStack thatItem = itemReplacements.get(key);
-                    if (line.contains(key)) {
-                        FloatingItem floatingItem = new FloatingItem(player, thatItem, spawnLocation);
-                        Utils.onlinePackets.add(floatingItem);
+                    ItemStack item = itemReplacements.get(key);
+                    if (lineContent.contains(key)) {
+                        FloatingItem itemHologram = new FloatingItem(player, item, spawnLocation);
+                        Utils.onlinePackets.add(itemHologram);
                         // if multiple items are on the same line,
                         // this will break, but that is not supported anyway rn
-                        items.put(i, floatingItem);
+                        lineItemHoloMap.put(i, itemHologram);
                         break;
                     }
                 }
@@ -636,38 +567,38 @@ public class PlayerBlockBoundHologram {
      * <br>
      * If it does not, the hologram is spawned at the correct location.
      */
-    private void spawnHolograms(boolean onlyAlwaysVisibleTexts) {
+    private void spawnTextHolograms(boolean onlyAlwaysVisibleTexts) {
         List<String> processedContents = calculateProcessedContent(onlyAlwaysVisibleTexts);
 
         // Calculate the location of the hologram lines
 
-        Location spawnLocation = blockBoundHologram.getHoloLoc(blockBoundHologram.getLocation().getBlock());
+        Location spawnLocation = blockHolo.getHoloLoc(blockHolo.getLocation().getBlock());
 
         for (int i = 0; i < processedContents.size(); i++) {
-            String line = processedContents.get(i);
-            if (line == null || line.isEmpty()) {
+            String lineContent = processedContents.get(i);
+            if (lineContent == null || lineContent.isEmpty()) {
                 continue;
             }
             // Check for item replacements
             for (String key : itemReplacements.keySet()) {
-                if (line.contains(key)) {
-                    line = line.replace(key, "");
+                if (lineContent.contains(key)) {
+                    lineContent = lineContent.replace(key, "");
                     break;
                 }
             }
-            if (line == null || line.trim().isEmpty()) {
+            if (lineContent == null || lineContent.trim().isEmpty()) {
                 continue;
             }
             // Calculate the location of the line
-            if (!line.equals("<empty/>")) {
+            if (!lineContent.equals("<empty/>")) {
                 // if the line already exists (e.g. from a always visible line), do not add it again.
                 // or if the hologram is visible through other means.
-                if ((!onlyAlwaysVisibleTexts && alwaysVisibleLines.contains(i)) || holograms.containsKey(i))
+                if ((!onlyAlwaysVisibleTexts && alwaysVisibleLines.contains(i)) || lineTextHoloMap.containsKey(i))
                     continue;
                 // add any line that is not defined as empty
-                ASHologram hologram = new ASHologram(player, line, spawnLocation);
-                Utils.onlinePackets.add(hologram);
-                holograms.put(i, hologram);
+                ASHologram textHologram = new ASHologram(player, lineContent, spawnLocation);
+                Utils.onlinePackets.add(textHologram);
+                lineTextHoloMap.put(i, textHologram);
             } else {
                 // add an empty line
                 emptyLines.add(i);
@@ -684,7 +615,7 @@ public class PlayerBlockBoundHologram {
      * @return The processed contents
      */
     private List<String> calculateProcessedContent(boolean onlyAlwaysVisibleTexts) {
-        List<String> processedContents = new ArrayList<>(blockBoundHologram.getContents());
+        List<String> processedContents = new ArrayList<>(blockHolo.getContents());
 
         //filter out all lines that are not always visible if onlyAlwaysVisibleTexts is true
         // getting the lines needs to happen before the replacements, or they will not be found
@@ -692,7 +623,7 @@ public class PlayerBlockBoundHologram {
             for (int i = 0; i < processedContents.size(); i++) {
                 int finalI = i;
                 // if there is any match in this line, it is always visible
-                if (blockBoundHologram.alwaysVisibleTextReplacements.stream()
+                if (blockHolo.alwaysVisibleTextReplacements.stream()
                         .anyMatch(visibleReplacement -> processedContents.get(finalI).contains(visibleReplacement))) {
                     alwaysVisibleLines.add(i);
                 } else {
@@ -720,10 +651,10 @@ public class PlayerBlockBoundHologram {
                 // otherwise, remove the entire tag and its contents
                 if (value) {
                     // If the value is true, the text should be shown
-                    if (blockBoundHologram.getConditionalText(key) != null) {
+                    if (blockHolo.getConditionalText(key) != null) {
                         // If the text has a replacement, apply it
                         processedContents.set(line, processedContents.get(line)
-                                .replaceAll("<" + key + ">.*?<\\/" + key + ">", blockBoundHologram.getConditionalText(key)));
+                                .replaceAll("<" + key + ">.*?<\\/" + key + ">", blockHolo.getConditionalText(key)));
                     } else {
                         // Otherwise, just remove the start & ending tags
                         processedContents.set(line, processedContents.get(line)

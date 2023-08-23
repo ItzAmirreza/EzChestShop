@@ -1,0 +1,343 @@
+# plugin uses this file in order to display messages in plugin
+# For hologram messages, you have to check config.yml
+# NOTE: DO NOT USE TAB in yml file as it can cause serious performance problems and it sometimes can break the plugin
+# Don't forget to rate if you liked EzChestShop
+shop-gui:
+  initialbuyprice: "&aPočiatočná nákupná cena: &e%buyprice% %currency%"
+  initialsellprice: "&cPočiatočná predajná cena: &e%sellprice% %currency%"
+  admin-title: "&c%shopowner%ov obchod &4(správcovské zobrazenie)"
+  nonowner-title: "&c%shopowner%ov obchod"
+  owner-title: "&c%shopowner%ov obchod"
+  adminshop-title: "&Obchod správcu"
+  buttons:
+    sellX-title: "&cPredaj %amount%x"
+    sellX-lore:
+      - "&7Predaj za &e%price% %currency%"
+    buyX-title: "&aKúp %amount%x"
+    buyX-lore:
+      - "&7Kúp za &e%price% %currency%"
+    adminview: "&c&lZobrazenie správcu"
+    storage: "&e&lSklad"
+    settings: "&b&lNastavenia"
+    disabled-title: "&cZakázané"
+    disabled-lore:
+      - "&7Táto funkcia je zakázaná"
+      - " &7najiteľom obchodu."
+transactions:
+  transactionButtonTitle: "&aZáznam o transakciách"
+  backToSettingsButton: "&eNaspäť na nastavenia"
+  PaperTitleBuy: "&aKúp | %player%"
+  PaperTitleSell: "&cPredaj | %player%"
+  PaperLoreBuy:
+    - "&7Cena spolu: %price% "
+    - " &7Množstvo: %count% "
+    - " &7Typ transakcie: &aKúpené od teba "
+    - " &e%time%"
+  PaperLoreSell:
+    - "&7Cena spolu: %price% "
+    - " &7Množstvo: %count% "
+    - " &7Typ transakcie: &cPredané tebe "
+    - " &e%time%"
+  lessthanminute: "&epred menej ako jednou minútou"
+  minutesago: "&epred %minutes% minútami (-tou)"
+  hoursago: "&epred %hours% hodinami (-nou)"
+  daysago: "&epred %days% dňami"
+  player-inform-buy: "&7[&aECS&7] &b%player% &7kúpil &e%amount%x &7kusov tovaru: &d%item%&7 za cenu &a%price%%currency%"
+  player-inform-sell: "&7[&aECS&7] &b%player% &7predal &e%amount%x &7kusov tovaru: &d%item%&7 za cenu &a%price%%currency%"
+#settings gui section
+settings:
+  GuiTitle: "&b&lNastavenia"
+  statusOn: "&aZapnuté"
+  statusOff: "&cVypnuté"
+  buttons:
+    toggleTransactions:
+      Title: "&ePrepni zobrazenie správy o transakcií"
+      Lore:
+        - "&7Aktuálny stav: %status% "
+        - " &7Ak ponecháš túto možnosť zapnutú, "
+        - " &7tak ti príde správa o transakcií "
+        - " &7do chat okna vždy, keď niekto niečo "
+        - " &7kúpi, alebo predá v tvojom obchode"
+    disableBuying:
+      Title: "&eZakáž nakupovanie"
+      Lore:
+        - "&7Aktuálny stav: %status% "
+        - " &7Ak ponecháš túto možnosť zapnutú, "
+        - " &7obchod nikomu nedovolí čokoľvek "
+        - " &7v tvojom obchode nakupovať."
+    disableSelling:
+      Title: "&eZakáž predaj"
+      Lore:
+        - "&7Aktuálny stav: %status% "
+        - " &7Ak ponecháš túto možnosť zapnutú, "
+        - " &7obchod nikomu nedovolí čokoľvek "
+        - " &7v tvojom obchode predať."
+    shopAdmins:
+      Title: "&eSprávcovia obchodu"
+      nobodyStatusAdmins: "&aNikto"
+      Lore:
+        - "&7Môžeš pridať, alebo odstrániť správcov "
+        - " &7tvojho obchodu. Správcovia majú "
+        - " &7prístup do skladu obchodu a k rôznym"
+        - " &7nastaveniam (všetkým, okrem podielu z príjmov "
+        - " &7a pridávaniu/odstraňovaniu správcov). "
+        - " &aKlikni ľavým tlačidlom myši &7pre pridanie správcu "
+        - " &cKlikni pravým tlačidlom myši &7pre odstránenie správcu "
+        - " &7Aktuálny správcovia: %admins%"
+    sharedIncome:
+      Title: "&ePodiel z príjmov"
+      Lore:
+        - "&7Aktuálny stav: %status% "
+        - " &7Ak ponecháš túto možnosť zapnutú, "
+        - " &7zisk z LEN predajov, bude "
+        - " &7zdieľaný aj so správcami."
+    hologramRotation:
+      Title: "&eNatočenie hologramu"
+      Lore:
+        - "&7Otočenie smerom: "
+        - "%rotations%"
+        - " &aĽavým&7/&cPravým&7-kliknutím prepínaj"
+        - " &7medzi jednotlivými smermi natočenia!"
+    changePrices:
+      Title: "&eCena nákupu/predaja v obchode"
+      Lore:
+        - "&7Zmenň cenu nákupu, alebo predaja "
+        - " &d "
+        - " &cĽavým kliknutím &aPravým kliknutím"
+        - ' &l  &r&czmeň predaj  &l &r &azmeň nákup'
+      SignPlaceholderBuy:
+        - ""
+        - "&a^^ &7Zadaj &a^^ "
+        - " &7novú "
+        - " &7cenu pre &anákup!"
+      SignPlaceholderSell:
+        - ""
+        - "&c^^ &7Zadaj &c^^ "
+        - " &7novú "
+        - " &7cenu pre &cpredaj!"
+    hologramMessage:
+      Title: "&ePrispôsob si svoj Hologram"
+      Lore:
+        - "&cĽavým kliknutím pridaj vlastnú"
+        - "&csprávu do hologramu!"
+        - "&aPravým kliknutím uprav svoje"
+        - "&aaktuálne správy na holograme!"
+        - " &d "
+        - "&8Môžeš použiť riadok %lineNumbers%!"
+        - "<ifhasmax>&8Počet správ, ktoré ešte môžeš zadať: %messagesleft% </ifhasmax>"
+      LoreMaxReached:
+        - "&cMôžeš zadať najviac"
+        - "&c%maxLines% riadky!"
+        - "&7Klikni sem ak chceš upraviť"
+        - "&7svoje správy na holograme!"
+      LoreEdit:
+        - "&cĽavým kliknutím uprav vlastnú"
+        - "&csprávu pre hologram!"
+        - "&aPravým kliknutím uprav svoje"
+        - "&aaktuálne správy na holograme!"
+        - " &d "
+        - "&8Môžeš použiť riadok %lineNumbers%!"
+        - "<ifhasmax>&8Počet správ, ktoré ešte môžeš zadať: %messagesleft% </ifhasmax>"
+      SignPlaceholderTexts: "###############"
+    other:
+      backToShopGuiButton: "&eNaspäť do obchodu"
+      latestTransactionsTitle: "&aPosledné transakcie"
+  chat:
+    toggleTransactions:
+      MessageOn: "&7Prepni zobrazenie správy o transakcií: &aZapnuté"
+      MessageOff: "&7Prepni zobrazenie správy o transakcií: &cVypnuté"
+    disableBuying:
+      MessageOn: "&7Zakáž nakupovanie: &aZapnuté"
+      MessageOff: "&7Zakáž nakupovanie: &cVypnuté"
+    disableSelling:
+      MessageOn: "&7Zakáž predaj: &aZapnuté"
+      MessageOff: "&7Zakáž predaj: &cVypnuté"
+    shopAdmins:
+      addingAdminWaiting: "&eZadaj prosím meno osoby, ktorú chceš pridať do zoznamu správcov."
+      removingAdminWaiting: "&eZadaj prosím meno osoby, ktorú chceš odstrániť zo zoznamu správcov."
+      selfAdmin: "&cSeba do zoznamu správcov nemôžeš pridať ani sa odstrániť!"
+      sucAdminAdded: "&e%player% bol &úspešne pridaný do zoznamu správcov."
+      alreadyAdmin: "&cTento hráč už je v zozname správcov!"
+      noPlayer: "&cTento hráč neexistuje, alebo tu ešte nehral."
+      sucAdminRemoved: "&e%player% bol &aúspešne odstránený zo zoznamu správcov."
+      notInAdminList: "&cTento hráč nie je v zozname správcov!"
+      clearedAdmins: "&cVšetci správcovia boli odstránený z tohto obchodu."
+    sharedIncome:
+      MessageOn: "&7Podiel z príjmov: &aZapnutý"
+      MessageOff: "&7Podiel z príjmov: &cVypnutý"
+    copy-paste:
+      copiedShopSettings: "[Nastavenia &7obchodu boli &6skopírované!](%settings%)"
+      pastedShopSettings: "Nastavenia &7obchodu boli &evložené!"
+    hologramRotation:
+      rotateHologramInChat: "&7Natočenie hologramu: %rotation%"
+      rotation:
+        Up: "&aHore"
+        North: "&aSeverne"
+        East: "&aVýchodne"
+        South: "&aJužne"
+        West: "&aZápadne"
+        Down: "&aDole"
+    protection:
+      cannotDestroyShop: "&cTento obchod nemôžeš zničiť!"
+# Custom Messages Manager GUI section
+customMessageManager:
+  GuiTitle: "&b&lSprávca správ hologramu"
+  ConfirmDeleteGuiTitle: "&c&lPotvrď zmazanie textu"
+  buttons:
+    previousPage:
+      Title: "&ePredchádzajúca"
+    nextPage:
+      Title: "&eĎalšia"
+    shopEntry:
+      Title: "&7Obchod &7%shopitem%"
+      UnkownTitle: "&cNeznámy obchod"
+      Lore:
+        - "&7Pozícia &eX:%x%, Y:%y%, Z:%z%"
+        - ""
+        - "&eSprávy na hologramu:"
+        - "&7%hologram-messages%"
+        - ""
+        - "&cĽavým kliknutím zmaž túto"
+        - "&csprávu z hologramu!"
+        - "&aPravým kliknutím uprav túto"
+        - "&asprávu na holograme!"
+    confirmDelete:
+      Title: "&cSi si istý?"
+      Lore:
+        - "&7Chystáš sa zmazať"
+        - "&7túto správu z hologramu!"
+        - "&7Táto akcia sa už nedá vrátiť späť!"
+        - "&cKlikni pre potvrdenie!"
+    backToCustomMessageManager:
+      Title: "&eNaspäť k správcovi vlastných správ"
+      Lore:
+    modifyCurrentHologram:
+      Title: "&eUprav aktuálny hologram"
+      Lore:
+        - "&cĽavým kliknutím zmaž aktuálnu"
+        - "&csprávu z hologramu!"
+        - "&aPravým kliknutím uprav aktuálnu"
+        - "&asprávu na holograme!"
+customBuySell:
+  gui-customAmountSign-title: "&eVoliteľný Predaj/Kúpa"
+  gui-customAmountSign-lore:
+    - "&7Nakúp, alebo predaj vlastné množstvo"
+    - " &d "
+    - " &cĽavým klikom zadaj    &aPravým klikom zadaj"
+    - " &l&r&ckoľko chceš predať  &l &r &akoľko chceš kúpiť"
+    - " &d "
+    - "                 &7Celkovo môžeš"
+    - "              &l &r&cpredať &e%sellcount% &7| &akúpiť &e%buycount% "
+    - "               &l &r&7kusov tejto veci."
+  #15 characters per line (without color codes) and "\n" for next line (starting from second line)
+  signEditorGui:
+    buy:
+      - "&a^^ Max: %max% ^^ "
+      - " &bZadaj"
+      - " &bsvoju hodnotu"
+    sell:
+      - "&c^^ Max: %max% ^^ "
+      - " &bZadaj"
+      - " &bsvoju hodnotu"
+  errors:
+    buyingIsDisabled: "&cNakupovanie je v tomto obchode zakázané."
+    sellingIsDisabled: "&cPredávanie je v tomto obchode zakázané"
+    wrongInput: "&cNesprávny vstup (alebo pravdepodobne príliš veľké číslo), prosím zadaj číslo!"
+    enterTheAmount: "&eNapíš prosím požadovanú hodnotu na tabuľku"
+    unsupportedInteger: "&cHej!, hodnota nemôže byť očividne nula, alebo záporné číslo."
+shop-messages:
+  successful-buy: "&aÚspešne si si kúpil(-a) túto vec za &e%price% %currency%"
+  fullinv: "&cNemáš dosť miesta na takéto množstvo vecí"
+  cannotafford: "&cToľkoto si nemôžeš dovoliť..."
+  outofstock: "&cTovar nie je na skladom!"
+  successful-sell: "&aÚspešne si predal(-a) túto vec za &e%price% %currency%"
+  shopcannotafford: "&cObchod si už viac nemôže dovoliť."
+  notenoughitemtosell: "&cNemáš dosť týchto vecí na predaj!"
+  chestisFull: "Truhlica je plná."
+  selftransaction: "&cNemôžeš nakupovať a predávať sám sebe!"
+  openingShopProblem: "&cVyskytol sa problém s otvorením tohto obchodu, kontaktuj prosím správcu a skontroluj konzolu."
+  joinEmptyShopActionBar: "&c&lPrázdné obchody blízko teba: &b&l%emptyCount%"
+command-messages:
+  negativeprice: "&cZáporná cena? máš predsa použiť kladnú hodnotu ceny..."
+  notenoughargs: "&cNezadal si dostatočné množstvo parametrov! \n &cSprávne použitiee: /ecs create (cena pre nákup) (cena pri predaji)"
+  consolenotallowed: "&cNemáš povolené spustiť akýkoľvek príkaz na konzole."
+  help:
+    - "&bEz&cChestShop &7Plugin od Dead_Light & ElitoGame©"
+    - "&7- &c/ecs create (cena pre nákup) (cena pri predaji) &7| Vytvorí obchod pohľadom na truhlicu s vecou, ktorú chceš predávať vo svojej ruke. "
+    - "&7- &c/ecs remove &7| Zruší obchod na ktorý sa pozeráš "
+    - "&7- &c/ecs settings (Nastavenia) &7| Skopíruj / vlož / prepni nastavenia obchodu "
+    - "&eNastavenia: &7[copy, paste, admins, toggle-buying, toggle-selling, toggle-message, toggle-shared-income, change-rotation] "
+    - "&7- &c/ecs emptyshops &7| Zobrazí tvoje prázdne obchody vo tvojej blízkosti."
+    - "&7 Jednoduché, však? :)"
+  help-admin-view-addition:
+    - "&cPomoc pre správcov: "
+    - "&7- &c/ecsadmin"
+  adminhelp:
+    - "&cPomoc pre správcov: "
+    - "&7- &c/&eecsadmin remove &7| Zruší obchod na ktorý sa pozeráš (aj keď zrušiť ho môžeš aj rozbitím) "
+    - "&7- &c/&eecsadmin reload &7| Znova nahraj konfiguráciu pluginu"
+    - "&7- &c/&eecsadmin create (nákup) (predaj) &7| Vytvor správcovský obchod"
+    - "&7- &c/&eecsadmin transfer-ownership (player) &7| Prenes vlastníctvo ktoréhokoľvek obchodu na iného hráča."
+    - "&7 Ak chceš ďalšiu pomoc, pridaj sa na náš [&bDiscord](%discord_link% Klikni a pridaj sa na Discord pre získanie podpory!)&7!"
+  alreadyashop: "&cTento kontajner už je obchod!"
+  shopcreated: "&aÚspešne si vytvoril(-a) obchod!"
+  holdsomething: "&cNiečo prosím drž vo svojej hlavnej ruke!"
+  notallowdtocreate: "&cNa tomto mieste nemôžeš vytvoriť, ani zrušiť žiaden obchod."
+  notchest: "&cBlok na ktorý sa pozeráš nie je podporovaným typom truhlice / nie je to truhlica."
+  lookatchest: "&cPozeraj sa prosím na truhlicu."
+  csremoved: "&eTento obchod bol úspešne odstránený."
+  notowner: "&aNie si vlastníkom tohto obchodu!"
+  notachestorcs: "&cBlok na ktorý sa pozeráš nie je truhlica / alebo toto nie je obchod."
+  maxShopLimitReached: "&cBol dosiahnutý maximálny počet obchodov: %shoplimit%!"
+  slimeFunBlockNotSupported: "&cPrepáč :(, ale tento príkaz nemôžeš vykonať na slimefun bloku / prosím použi normálny blok ako kontainer"
+  buypriceGreaterThanSellRequired: "&cCena pre nákup musí byť väčšia, alebo rovná ako cena pri predaji!"
+  invalidShopItem: "&cNie je možné vytvoriť obchod s tou vecou s ktorou sa o to snažíš."
+  shopTransferConfirm: "&eSi si istý(-á), že chceš navždy previesť vlastníctvo tohto obchodu na hráča %player%? [&2&l[✔]](Klikni pre potvrdenie prevodu vlastníctva! run_command=/ecs settings transfer-ownership %player% -confirm)"
+  shopTransferred: "&aÚspešne si odovzdal tento obchod hráčovi %player%!"
+  buyPriceUpdated: "&7Cena pre &anákup bola aktualizovaná!"
+  sellPriceUpdated: "&7Cena pre &cpredaj bola aktualizovaná!"
+  emptyShopHightLighted:
+    enabled: "&aZapnuté, tvoje &bblízke &eobchody, ktoré sú prázdne sú zvýraznené. \n&eCelkový počet prázdnych obchodov blízko teba: &b%emptyCount%"
+    disabled: "&cVypnuté, tvoje &bblízke &eobchody, ktoré sú prázdne už nie sú zvýraznené."
+checkprofits:
+  landing-menu:
+    - '&e========================================'
+    - '&7Celkový príjem z predaja: &6%currency%%income% &7za &6%sales% &7sale(s).'
+    - '&7Celkové náklady na nákup: &6%currency%%cost% &7za &6%purchases% &7purchase(s).'
+    - '&7Celkovo: &6%currency%%total%'
+    - '&7Zostatok: &6%currency%%balance%'
+    - '&7Klikni [&b&lSEM](Klikni aby si zistil detaily! run_command=/checkprofits p 1) &7pre detailnú správu!'
+    - '&7Klikni pre vymazanie správy [&c&l[X]](Klikni pre vymazanie! run_command=/checkprofits clear)'
+  details-menu:
+    header:
+      - "&e----- &6Správa o ziskoch obchodu &e-----"
+    content:
+      - " &e- &6%item%"
+      - "    &7Predaje: [&e%sales%x %currency%%income%](Cena za jednotku: %unit_income%) &7Nákupy: [&e%purchases%x %currency%%cost%](Cena za jednotku: %unit_cost%)"
+    footer:
+      - "&6%button_previous%&7Strana %page%/%pages%&6%button_next%&7 | Pre zobrazenie strany, napíš \"[&6/cp p <strana>](Klikni pre vloženie do chatu suggest_command=/cp p )&7\""
+    hover-extra:
+      button-next: "Ďalšia"
+      button-previous: "Predchádzajúca"
+  confirm-clear:
+    - "&eNaozaj chceš vymazať všetky informácie o ziskoch? [&2&l[✔]](Klikni pre potvrdenie zmazania! run_command=/checkprofits clear -confirm)"
+  confirm-clear-success: "&cVymazal(-a) si všetky informácie o ziskoch!"
+  join-notification:
+    - "&eSkontroluj zisky svojho obchodu [&b&lTU](Klikni pre zobrazenie run_command=/checkprofits)"
+shulkershop-dropped-lore:
+  - "&eShulkerbox obchod:"
+  - " &7Vlastník: &6%owner%"
+  - " &7Vec: &6%item%"
+  - " &7Kúp: &6%currency%%buy_price%"
+  - " &7Predaj: &6%currency%%sell_price%"
+hologram:
+  shop-empty: "&cTento obchod je prázdny!"
+  shulkerbox-item: "&7%item% x&e%amount%"
+  shulkerbox-item-more: "&7a ešte &e%amount% &7naviac!"
+  item-enchantment: "&b%enchantment% &e%level-roman%"
+  item-enchantment-more: "&7a ešte &e%amount% &7naviac!"
+other:
+  update-notifications: "&c[&eEzChestShop&c] &eBola zistená nová verzia: &b%new_version%&e! Ešte stále používaš verziu: &c%current_version%&e!"
+  overflowing-gui-items-notification: "&c[&eEzChestShop&c] &eMáš presahujúce veci vo svojom prispôsobenom GUI! Uisti sa, že tieto veci sú v dostatočne veľkom GUI: &c%overflow%"
+  overlapping-gui-items-notification: "&c[&eEzChestShop&c] &eMáš prekrývajúce sa veci vo svojom prispôsobenom GUI! Tu je zoznam neobvykle sa prekrývajúcich vecí: &c%overlap%"
+  hologram-shop-empty: "&cTento obchod je prázdny!"

@@ -1,47 +1,33 @@
 package me.deadlight.ezchestshop.Listeners;
 
 import me.deadlight.ezchestshop.Data.Config;
-import me.deadlight.ezchestshop.Data.LanguageManager;
 import me.deadlight.ezchestshop.Data.ShopContainer;
 import me.deadlight.ezchestshop.Events.PlayerTransactEvent;
 import me.deadlight.ezchestshop.EzChestShop;
-import me.deadlight.ezchestshop.Utils.ASHologram;
-import me.deadlight.ezchestshop.Utils.FloatingItem;
 import me.deadlight.ezchestshop.Utils.Holograms.BlockBoundHologram;
 import me.deadlight.ezchestshop.Utils.Holograms.ShopHologram;
 import me.deadlight.ezchestshop.Utils.Objects.EzShop;
-import me.deadlight.ezchestshop.Utils.Pair;
 import me.deadlight.ezchestshop.Utils.Utils;
 import me.mrCookieSlime.Slimefun.api.BlockStorage;
-import org.bukkit.*;
-import org.bukkit.block.*;
-import org.bukkit.enchantments.Enchantment;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.entity.EntityBreedEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.player.*;
-import org.bukkit.inventory.DoubleChestInventory;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryView;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.BlockStateMeta;
-import org.bukkit.inventory.meta.EnchantmentStorageMeta;
-import org.bukkit.persistence.PersistentDataContainer;
-import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.RayTraceResult;
-import org.bukkit.util.Vector;
-import org.jetbrains.annotations.Debug;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class PlayerCloseToChestListener implements Listener {
@@ -135,9 +121,9 @@ public class PlayerCloseToChestListener implements Listener {
                     return;
                 }
                 if (Config.holodistancing_show_item_first) {
-                    ShopHologram shopHologram = ShopHologram.getHologram(ezShop.getLocation(), player);
-                    shopHologram.showOnlyItem();
-                    shopHologram.showAlwaysVisibleText();
+                    ShopHologram shopHolo = ShopHologram.getHologram(ezShop.getLocation(), player);
+                    shopHolo.showOnlyItem();
+                    shopHolo.showAlwaysVisibleText();
                 } else {
                     ShopHologram shopHolo = ShopHologram.getHologram(ezShop.getLocation(), player);
                     shopHolo.show();
