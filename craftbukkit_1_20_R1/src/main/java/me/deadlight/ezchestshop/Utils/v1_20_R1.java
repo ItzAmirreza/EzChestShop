@@ -71,7 +71,6 @@ public class v1_20_R1 extends VersionUtils {
     @Override
     void destroyEntity(Player player, int entityID) {
         ((org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer) player).getHandle().c.a(new net.minecraft.network.protocol.game.PacketPlayOutEntityDestroy(entityID));
-//        EzChestShop.logDebug("Destroyed Entity with ID " + entityID);
         entities.remove(entityID);
     }
 
@@ -100,7 +99,6 @@ public class v1_20_R1 extends VersionUtils {
 
         PacketPlayOutEntityMetadata metaPacket = new PacketPlayOutEntityMetadata(ID, armorstand.aj().c());
         playerConnection.a(metaPacket);
-//        EzChestShop.logDebug("Spawned Hologram with ID " + ID + " at " + location.toString());
         entities.put(ID, armorstand);
     }
 
@@ -130,7 +128,6 @@ public class v1_20_R1 extends VersionUtils {
         floatingItem.o(0, 0, 0);
         PacketPlayOutEntityVelocity velocityPacket = new PacketPlayOutEntityVelocity(floatingItem);
         playerConnection.a(velocityPacket);
-//        EzChestShop.logDebug("Spawned Item with ID " + ID + " at " + location.toString());
         entities.put(ID, floatingItem);
     }
 

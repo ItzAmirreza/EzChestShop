@@ -99,31 +99,26 @@ public class PlayerBlockBoundHologram {
     public void show() {
 
         if (blockBoundHologram.getLocation().getBlock().getType() == Material.AIR) {
-            EzChestShop.logDebug("Shop block is in air, hiding it: " + blockBoundHologram.getLocation());
             blockBoundHologram.hideForAll();
             return;
         }
 
-//        EzChestShop.logDebug("Showing hologram for " + player.getName() + " at " + blockBoundHologram.getLocation());
         // If the hologram is already spawned, do nothing
         if (!holograms.isEmpty() && !items.isEmpty()) {
             return;
         // If the texts are empty, but the items are not, remove the items.
         } else if (holograms.isEmpty() && !items.isEmpty()) {
             for (FloatingItem item : items.values()) {
-                EzChestShop.logDebug("Already spawned: Removing item: " + item);
                 Utils.onlinePackets.remove(item);
             }
             items.clear();
         // If the items are empty, but the texts are not, remove the texts.
         } else if (!holograms.isEmpty() && items.isEmpty()) {
             for (ASHologram hologram : holograms.values()) {
-                EzChestShop.logDebug("Already spawned: Removing hologram: " + hologram);
                 Utils.onlinePackets.remove(hologram);
             }
             holograms.clear();
         }
-//        EzChestShop.logDebug("Showing hologram for " + player.getName() + " at " + blockBoundHologram.getLocation() + " (2)");
 
         /*
          Process the contents of the hologram
@@ -142,7 +137,6 @@ public class PlayerBlockBoundHologram {
      * This will remove the hologram from the player's view.
      */
     public void hide() {
-//        EzChestShop.logDebug("Hiding hologram for " + player.getName() + " at " + blockBoundHologram.getLocation() + " Items: " + items.size() + " Holograms: " + holograms.size());
         for (ASHologram hologram : holograms.values()) {
             hologram.destroy();
             Utils.onlinePackets.remove(hologram);
@@ -366,7 +360,6 @@ public class PlayerBlockBoundHologram {
                     Utils.onlinePackets.remove(hologram_text);
                     hologram.holograms.remove(line);
                 } else {
-                    EzChestShop.logDebug("Rename: " + content + " Line: " + line);
                     // update the existing hologram
                     ASHologram hologram_text = hologram.holograms.get(line);
                     hologram_text.rename(content);
@@ -623,7 +616,6 @@ public class PlayerBlockBoundHologram {
                     if (line.contains(key)) {
                         FloatingItem floatingItem = new FloatingItem(player, thatItem, spawnLocation);
                         Utils.onlinePackets.add(floatingItem);
-//                        EzChestShop.logDebug("Spawned item " + thatItem.getType().name() + " at " + spawnLocation);
                         // if multiple items are on the same line,
                         // this will break, but that is not supported anyway rn
                         items.put(i, floatingItem);

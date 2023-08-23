@@ -824,7 +824,6 @@ public class LanguageManager {
             if (index == checkProfitEntries.size())
                 break;
             CheckProfitEntry checkProfitEntry = checkProfitEntries.get(i + ((page - 1) * Config.command_checkprofit_lines_pp));
-            //EzChestShop.logDebug(Utils.getFinalItemName(checkProfitEntry.getItem()) + ": " + Utils.encodeItem(checkProfitEntry.getItem()));
             String[] details = getList("checkprofits.details-menu.content").stream().map(s -> Utils.colorify(s))
                     .collect(Collectors.joining("\n")).split("%item%");
             for (int j = 0; j < details.length; j++) {

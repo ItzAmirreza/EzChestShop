@@ -66,7 +66,6 @@ public class PlayerContainer {
         if (checkProfits == null) {
             checkProfits = getProfits();
         }
-        //EzChestShop.logDebug("Map-before: " + checkProfits.size());
         if (!checkProfits.containsKey(id)) {
             checkProfits.put(id, new CheckProfitEntry(id, item, buyAmount, buyPrice, buyUnitPrice, sellAmount, sellPrice, sellUnitPrice));
         } else {
@@ -80,7 +79,6 @@ public class PlayerContainer {
         DatabaseManager db = EzChestShop.getPlugin().getDatabase();
         String profit_string = checkProfits.entrySet().stream().map(x -> x.getValue().toString())
                 .collect(Collectors.joining(CheckProfitEntry.itemSpacer));
-        //EzChestShop.logDebug("Profit: " + (profit_string == null ? "NULL" : profit_string) + "\n Map: " + checkProfits.size());
         if (profit_string == null)
             db.setString("uuid", suuid, "checkprofits", "playerdata", "NULL");
         else

@@ -95,7 +95,6 @@ public class ShopHologram {
             for (int i = 0; i < customLines; i++) {
                 if (shop.getSettings().getCustomMessages().size() > i) {
                     textReplacements.put("<custom" + (i + 1) + "/>", shop.getSettings().getCustomMessages().get(i));
-                    EzChestShop.logDebug("Added custom message to hologram: " + shop.getSettings().getCustomMessages().get(i));
                 } else {
                     textReplacements.put("<custom" + (i + 1) + "/>", "");
                 }
@@ -132,7 +131,6 @@ public class ShopHologram {
                     BlockBoundHologram.HologramRotation.valueOf(shop.getSettings().getRotation().toUpperCase()),
                     structure, textReplacements, itemReplacements, conditionalTags, conditionalTextReplacements,
                     alwaysVisibleTextReplacements);
-            EzChestShop.logDebug("Created new BlockBoundHologram");
             // Add the hologram to the map
             shopHolograms.put(location, shopHologram);
         }
@@ -160,7 +158,6 @@ public class ShopHologram {
      */
     public static ShopHologram getHologram(Location location, Player player) {
         if (!playerShopHolograms.containsKey(player.getUniqueId()) || !playerShopHolograms.get(player.getUniqueId()).containsKey(location)) {
-            EzChestShop.logDebug("Creating new hologram for " + location.toString() + " for player " + player.getName());
             new ShopHologram(location, player);
         }
         return playerShopHolograms.get(player.getUniqueId()).get(location);
