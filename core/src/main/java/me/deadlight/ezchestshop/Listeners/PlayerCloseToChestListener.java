@@ -127,7 +127,6 @@ public class PlayerCloseToChestListener implements Listener {
                 } else {
                     ShopHologram shopHolo = ShopHologram.getHologram(ezShop.getLocation(), player);
                     shopHolo.show();
-                    shopHolo.setItemDataVisible(player.isSneaking());
                 }
 
             }
@@ -167,7 +166,7 @@ public class PlayerCloseToChestListener implements Listener {
         } else if (!Config.holodistancing_show_item_first) {
             // When holodistancing_show_item_first is off, the shop needs to be queried separately.
             // It's less reactive but it works.
-            if (!event.isSneaking()) {
+            if (!event.isSneaking() && inspectedShops.containsKey(player)) {
                 inspectedShops.get(player).setItemDataVisible(false);
             }
             RayTraceResult result = player.rayTraceBlocks(5);
