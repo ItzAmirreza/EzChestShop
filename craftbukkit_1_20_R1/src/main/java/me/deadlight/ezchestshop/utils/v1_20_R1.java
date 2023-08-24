@@ -1,6 +1,5 @@
 package me.deadlight.ezchestshop.utils;
 import io.netty.channel.Channel;
-import me.deadlight.ezchestshop.Data.Config;
 import me.deadlight.ezchestshop.EzChestShop;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
@@ -8,8 +7,6 @@ import net.minecraft.network.protocol.game.PacketPlayOutEntityMetadata;
 import net.minecraft.network.protocol.game.PacketPlayOutEntityTeleport;
 import net.minecraft.network.protocol.game.PacketPlayOutEntityVelocity;
 import net.minecraft.network.protocol.game.PacketPlayOutSpawnEntity;
-import net.minecraft.network.syncher.DataWatcher;
-import net.minecraft.network.syncher.DataWatcherSerializer;
 import net.minecraft.server.level.EntityPlayer;
 import net.minecraft.server.level.WorldServer;
 import net.minecraft.server.network.PlayerConnection;
