@@ -1,5 +1,8 @@
 package me.deadlight.ezchestshop.Commands;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.zachsthings.libcomponents.config.ConfigurationFile;
 import me.deadlight.ezchestshop.Data.Config;
 import me.deadlight.ezchestshop.Data.GUI.GuiData;
 import me.deadlight.ezchestshop.Data.LanguageManager;
@@ -20,6 +23,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.DoubleChestInventory;
@@ -27,9 +31,13 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.util.StringUtil;
 
-import java.io.IOException;
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -208,6 +216,180 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
                                 }
                             }
                         }
+                    } else if (firstarg.equalsIgnoreCase("uploadlogs")) {
+                        //we gonna get some info about plugin, server, and logs and send it to the API server
+                        EzChestShop ecsInstance = EzChestShop.getPlugin();
+
+                        //MC Version
+                        String mcVersion = Bukkit.getVersion();
+                        //Plugin Version
+                        String pluginVersion = ecsInstance.getDescription().getVersion();
+                        //Server Version
+                        String serverVersion = Bukkit.getServer().getVersion();
+                        //Server Software (Spigot, Paper, etc)
+                        String serverSoftware = Bukkit.getServer().getName();
+                        //whether if the server is in offline mode or not
+                        boolean offlineMode = Bukkit.getServer().getOnlineMode();
+                        //whether if it got vault or not
+                        boolean vault = Bukkit.getServer().getPluginManager().getPlugin("Vault") != null;
+                        //whether if it got slimefun or not
+                        boolean slimefun = EzChestShop.slimefun;
+                        //whether if it got worldguard or not
+                        boolean worldguard = EzChestShop.worldguard;
+                        //if it got an economy plugin or not
+                        boolean economy = EzChestShop.economyPluginFound;
+                        //get list of plugins
+                        List<String> plugins = new ArrayList<>();
+                        for (Plugin plugin : Bukkit.getServer().getPluginManager().getPlugins()) {
+                            plugins.add(plugin.getName() + " " + plugin.getDescription().getVersion());
+                        }
+
+                        //get list of worlds
+                        List<String> worlds = new ArrayList<>();
+                        for (World world : Bukkit.getServer().getWorlds()) {
+                            worlds.add(world.getName());
+                        }
+                        //online players
+                        int onlinePlayers = Bukkit.getServer().getOnlinePlayers().size();
+
+                        //number of shops
+                        int numberOfShops = ShopContainer.getShops().size();
+
+                        //put them all in a JSON object and send it to the API server
+
+                        JsonObject jsonObject = new JsonObject();
+                        jsonObject.addProperty("mcVersion", mcVersion);
+                        jsonObject.addProperty("pluginVersion", pluginVersion);
+                        jsonObject.addProperty("serverVersion", serverVersion);
+                        jsonObject.addProperty("serverSoftware", serverSoftware);
+                        jsonObject.addProperty("offlineMode", offlineMode);
+                        jsonObject.addProperty("vault", vault);
+                        jsonObject.addProperty("slimefun", slimefun);
+                        jsonObject.addProperty("worldguard", worldguard);
+                        jsonObject.addProperty("economy", economy);
+                        jsonObject.addProperty("plugins", plugins.toString());
+                        jsonObject.addProperty("worlds", worlds.toString());
+                        jsonObject.addProperty("onlinePlayers", onlinePlayers);
+                        jsonObject.addProperty("numberOfShops", numberOfShops);
+
+                        JsonObject ourConfig = new JsonObject();
+                        FileConfiguration config = EzChestShop.getPlugin().getConfig();
+
+                        for (String key : config.getKeys(true)) {
+                            if (config.isConfigurationSection(key)) {
+                                continue; // Skip keys that are sections themselves, only consider leaf keys
+                            }
+
+                            String[] keyParts = key.split("\\.");
+                            JsonObject currentObject = ourConfig;
+
+                            for (int i = 0; i < keyParts.length - 1; i++) {
+                                String part = keyParts[i];
+                                if (!currentObject.has(part)) {
+                                    currentObject.add(part, new JsonObject());
+                                }
+                                currentObject = currentObject.getAsJsonObject(part);
+                            }
+
+                            String lastPart = keyParts[keyParts.length - 1];
+                            if (config.isList(key)) {
+                                JsonArray jsonArray = new JsonArray();
+                                List<?> list = config.getList(key);
+                                for (Object item : list) {
+                                    jsonArray.add(item.toString());
+                                }
+                                currentObject.add(lastPart, jsonArray);
+                            } else {
+                                currentObject.addProperty(lastPart, config.get(key).toString());
+                            }
+                        }
+
+// Now we gonna censor specific values
+                        String[] censoredKeys = {
+                                "database.mysql.ip", "database.mysql.port", "database.mysql.tables-prefix",
+                                "database.mysql.database", "database.mysql.username", "database.mysql.password",
+                                "database.mysql.max-pool", "database.mysql.ssl", "notification.discord.webhook-url"
+                        };
+
+                        for (String censoredKey : censoredKeys) {
+                            String[] keyParts = censoredKey.split("\\.");
+                            JsonObject currentObject = ourConfig;
+
+                            for (int i = 0; i < keyParts.length - 1; i++) {
+                                currentObject = currentObject.getAsJsonObject(keyParts[i]);
+                            }
+
+                            currentObject.addProperty(keyParts[keyParts.length - 1], "censored");
+                        }
+
+                        jsonObject.add("config", ourConfig);
+
+                        //now we gotta put any bukkit generated errors in the latest.log file into the logs field, anything that is related to EzChestShop
+                        //we gonna use the grep command to do that
+                        File latestLog = new File(Bukkit.getServer().getWorldContainer().getAbsolutePath() + "/logs/latest.log");
+                        if (latestLog.exists()) {
+                            try {
+                                BufferedReader reader = new BufferedReader(new FileReader(latestLog));
+                                String line;
+                                StringBuilder sb = new StringBuilder();
+                                while ((line = reader.readLine()) != null) {
+                                    // Check if the line contains any of the specified keywords
+                                    if (line.contains("EzChestShop") || line.contains("ECS") || line.contains("DeadLight")) {
+                                        sb.append(line);
+                                        sb.append("\n"); // Add a line break for each line
+                                    }
+                                }
+                                reader.close();
+                                jsonObject.addProperty("logs", sb.toString());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+// Create a new JsonObject and put the existing jsonObject inside the "data" field
+                        JsonObject payload = new JsonObject();
+                        payload.add("data", jsonObject);
+
+
+                        try {
+                            URL url = new URL("https://debug.exl.ink/log");
+                            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                            conn.setRequestMethod("POST");
+                            conn.setRequestProperty("Content-Type", "application/json");
+                            conn.setDoOutput(true);
+
+                            // Write the JSON data to the request body
+                            try (OutputStream os = conn.getOutputStream()) {
+                                byte[] input = payload.toString().getBytes("utf-8"); // use payload instead of jsonObject
+                                os.write(input, 0, input.length);
+                            }
+
+                            // Read the response
+                            try (BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream(), "utf-8"))) {
+                                StringBuilder response = new StringBuilder();
+                                String responseLine = null;
+                                while ((responseLine = br.readLine()) != null) {
+                                    response.append(responseLine.trim());
+                                }
+
+                                // Check if the field "status" is "ok" in the response, if so, then it's successful
+                                if (response.toString().contains("\"status\":\"ok\"")) {
+                                    // We get the "uuid" field from the response, and send it to the player
+                                    String uuid = response.toString().split("\"uuid\":\"")[1].split("\"")[0];
+                                    player.sendMessage(ChatColor.GREEN + "Logs uploaded successfully!");
+                                    player.sendMessage(ChatColor.GREEN + "This is the link to the logs: " + ChatColor.AQUA + "https://debug.exl.ink/log/" + uuid);
+                                } else {
+                                    player.sendMessage(ChatColor.RED + "Something went wrong while uploading the logs!");
+                                }
+                            }
+
+                        } catch (MalformedURLException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+
                     } else {
                         sendHelp(player);
                     }
@@ -666,4 +848,10 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
         }
         return target;
     }
+
+
+    private String generateAndUploadLogs() {
+        return null;
+    }
+
 }
