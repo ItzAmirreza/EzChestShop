@@ -3,6 +3,7 @@ import me.deadlight.ezchestshop.enums.Changes;
 import me.deadlight.ezchestshop.events.PlayerTransactEvent;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.listeners.PlayerCloseToChestListener;
+import me.deadlight.ezchestshop.utils.holograms.ShopHologram;
 import me.deadlight.ezchestshop.utils.objects.EzShop;
 import me.deadlight.ezchestshop.utils.objects.ShopSettings;
 import me.deadlight.ezchestshop.utils.objects.SqlQueue;
@@ -57,7 +58,8 @@ public class ShopContainer {
         shopMap.remove(loc);
 
         for (Player p : Bukkit.getOnlinePlayers()) {
-            PlayerCloseToChestListener.hideHologram(p, loc, true);
+            if (ShopHologram.hasHologram(loc, p))
+                ShopHologram.hideForAll(loc);
         }
     }
 

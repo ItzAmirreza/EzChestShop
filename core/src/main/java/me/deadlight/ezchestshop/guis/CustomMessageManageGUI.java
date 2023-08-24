@@ -8,6 +8,7 @@ import me.deadlight.ezchestshop.data.gui.GuiData;
 import me.deadlight.ezchestshop.data.LanguageManager;
 import me.deadlight.ezchestshop.data.ShopContainer;
 import me.deadlight.ezchestshop.listeners.PlayerCloseToChestListener;
+import me.deadlight.ezchestshop.utils.holograms.ShopHologram;
 import me.deadlight.ezchestshop.utils.objects.EzShop;
 import me.deadlight.ezchestshop.utils.objects.ShopSettings;
 import me.deadlight.ezchestshop.utils.Utils;
@@ -147,7 +148,7 @@ public class CustomMessageManageGUI {
             event.setCancelled(true);
             ShopContainer.getShopSettings(loc).setCustomMessages(new ArrayList<>());
             gui.close(player);
-            PlayerCloseToChestListener.hideHologram(loc, true);
+            ShopHologram.getHologram(loc, player).setCustomHologramMessage(new ArrayList<>());
         });
         gui.setItem(2, 5, confirmItem);
 

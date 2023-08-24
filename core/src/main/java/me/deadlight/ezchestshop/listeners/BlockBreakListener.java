@@ -4,6 +4,7 @@ import me.deadlight.ezchestshop.data.Config;
 import me.deadlight.ezchestshop.data.LanguageManager;
 import me.deadlight.ezchestshop.data.ShopContainer;
 import me.deadlight.ezchestshop.EzChestShop;
+import me.deadlight.ezchestshop.utils.holograms.ShopHologram;
 import me.deadlight.ezchestshop.utils.objects.EzShop;
 import me.deadlight.ezchestshop.utils.Utils;
 import me.deadlight.ezchestshop.utils.worldguard.FlagRegistry;
@@ -85,7 +86,7 @@ public class BlockBreakListener implements Listener {
                             shulker.setItemMeta(meta);
                             loc.getWorld().dropItemNaturally(loc, shulker);
                             if (Config.holodistancing) {
-                                PlayerCloseToChestListener.hideHologram(event.getBlock().getLocation(), true);
+                                ShopHologram.hideForAll(event.getBlock().getLocation());
                             }
                         }
                     }
