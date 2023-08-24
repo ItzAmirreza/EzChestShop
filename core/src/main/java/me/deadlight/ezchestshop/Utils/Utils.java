@@ -225,6 +225,7 @@ public class Utils {
 
         String adminsString = data.get(new NamespacedKey(EzChestShop.getPlugin(), "admins"), PersistentDataType.STRING);
         // UUID@UUID@UUID
+        assert adminsString != null;
         if (adminsString.equalsIgnoreCase("none")) {
             return new ArrayList<>();
         } else {
@@ -971,7 +972,10 @@ public class Utils {
         List<UUID> admins = new ArrayList<>();
         admins.add(shop.getOwnerID());
         String adminsString = shop.getSettings().getAdmins();
-        List<String> adminList = Arrays.asList(adminsString.split("@"));
+        if (adminsString == null) {
+            return admins;
+        }
+        String[] adminList = adminsString.split("@");
         for (String admin : adminList) {
             if (!admin.equalsIgnoreCase("") && !admin.equalsIgnoreCase(" ") && !admin.equalsIgnoreCase("null") && !admin.equalsIgnoreCase("NULL")) {
                 //check if its a valid uuid
