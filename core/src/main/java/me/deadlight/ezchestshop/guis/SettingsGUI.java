@@ -1,5 +1,4 @@
 package me.deadlight.ezchestshop.guis;
-
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
 import me.deadlight.ezchestshop.data.Config;
@@ -124,7 +123,6 @@ public class SettingsGUI {
                     player.sendMessage(lm.disableBuyingOffInChat());
                     showGUI(player, containerBlock, isAdmin);
                     ShopContainer.getShopSettings(containerBlock.getLocation()).setDbuy(false);
-                    PlayerCloseToChestListener.hideHologram(containerBlock.getState().getLocation(), true);
                 } else {
                     TileState state = ((TileState)containerBlock.getState());
                     state.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "dbuy"), PersistentDataType.INTEGER, 1);
@@ -132,8 +130,8 @@ public class SettingsGUI {
                     player.sendMessage(lm.disableBuyingOnInChat());
                     showGUI(player, containerBlock, isAdmin);
                     ShopContainer.getShopSettings(containerBlock.getLocation()).setDbuy(true);
-                    PlayerCloseToChestListener.hideHologram(containerBlock.getState().getLocation(), true);
                 }
+                ShopHologram.getHologram(containerBlock.getState().getLocation(), player).updateDbuy();
 
             });
             Utils.addItemIfEnoughSlots(gui, buyDisabledItem.getSlot(), buyDisabled);
@@ -153,7 +151,6 @@ public class SettingsGUI {
                     player.sendMessage(lm.disableSellingOffInChat());
                     showGUI(player, containerBlock, isAdmin);
                     ShopContainer.getShopSettings(containerBlock.getLocation()).setDsell(false);
-                    PlayerCloseToChestListener.hideHologram(containerBlock.getState().getLocation(), true);
                 } else {
                     TileState state = ((TileState)containerBlock.getState());
                     state.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "dsell"), PersistentDataType.INTEGER, 1);
@@ -161,8 +158,8 @@ public class SettingsGUI {
                     player.sendMessage(lm.disableSellingOnInChat());
                     showGUI(player, containerBlock, isAdmin);
                     ShopContainer.getShopSettings(containerBlock.getLocation()).setDsell(true);
-                    PlayerCloseToChestListener.hideHologram(containerBlock.getState().getLocation(), true);
                 }
+                ShopHologram.getHologram(containerBlock.getState().getLocation(), player).updateDsell();
             });
             Utils.addItemIfEnoughSlots(gui, sellDisabledItem.getSlot(), sellDisabled);
         }
@@ -296,7 +293,7 @@ public class SettingsGUI {
                 showGUI(player, containerBlock, isAdmin);
                 ShopContainer.getShopSettings(containerBlock.getLocation()).setRotation(next_rotation);
                 if (Config.holodistancing) {
-                    PlayerCloseToChestListener.hideHologram(containerBlock.getLocation(), true);
+                    ShopHologram.getHologram(containerBlock.getLocation(), player).updatePosition();
                 }
             });
 
@@ -333,7 +330,7 @@ public class SettingsGUI {
                                                     // If these checks complete successfully continue.
                                                     if (changePrice(containerBlock.getState(), false, amount, player, containerBlock)) {
                                                         ShopContainer.changePrice(containerBlock.getState(), amount, false);
-                                                        PlayerCloseToChestListener.hideHologram(containerBlock.getState().getLocation(), true);
+                                                        ShopHologram.getHologram(containerBlock.getLocation(), player).updateSellPrice();
                                                         player.sendMessage(lm.shopSellPriceUpdated());
                                                     }
                                                 });
@@ -368,7 +365,7 @@ public class SettingsGUI {
                                                     // If these checks complete successfully continue.
                                                     if (changePrice(containerBlock.getState(), true, amount, player, containerBlock)) {
                                                         ShopContainer.changePrice(containerBlock.getState(), amount, true);
-                                                        PlayerCloseToChestListener.hideHologram(containerBlock.getState().getLocation(), true);
+                                                        ShopHologram.getHologram(containerBlock.getLocation(), player).updateBuyPrice();
                                                         player.sendMessage(lm.shopBuyPriceUpdated());
                                                     }
                                                 });
@@ -382,8 +379,6 @@ public class SettingsGUI {
                                 return true;
                             });
                     menu.open(player);
-                } else {
-                    return;
                 }
             });
             Utils.addItemIfEnoughSlots(gui, priceItemStack.getSlot(), priceItem);
@@ -549,6 +544,7 @@ public class SettingsGUI {
              state.update();
              player.sendMessage(lm.disableBuyingOffInChat());
              ShopContainer.getShopSettings(containerBlock.getLocation()).setDbuy(false);
+             ShopHologram.getHologram(containerBlock.getState().getLocation(), player).updateDbuy();
          }
          if (Config.settings_zero_equals_disabled && !isBuy && shop.getSellPrice() == 0 && price != 0) {
              TileState state = ((TileState)containerBlock.getState());
@@ -556,6 +552,7 @@ public class SettingsGUI {
              state.update();
              player.sendMessage(lm.disableSellingOffInChat());
              ShopContainer.getShopSettings(containerBlock.getLocation()).setDsell(false);
+             ShopHologram.getHologram(containerBlock.getState().getLocation(), player).updateDsell();
          }
          // Disable buy/sell
          if (price == 0 && Config.settings_zero_equals_disabled) {
@@ -565,6 +562,7 @@ public class SettingsGUI {
                  state.update();
                  player.sendMessage(lm.disableBuyingOffInChat());
                  ShopContainer.getShopSettings(containerBlock.getLocation()).setDbuy(true);
+                 ShopHologram.getHologram(containerBlock.getState().getLocation(), player).updateBuyPrice();
              }
              if (!isBuy && shop.getSellPrice() != 0) {
                  TileState state = ((TileState)containerBlock.getState());
@@ -572,6 +570,7 @@ public class SettingsGUI {
                  state.update();
                  player.sendMessage(lm.disableSellingOffInChat());
                  ShopContainer.getShopSettings(containerBlock.getLocation()).setDsell(true);
+                 ShopHologram.getHologram(containerBlock.getState().getLocation(), player).updateSellPrice();
              }
          }
          return true;
@@ -598,7 +597,7 @@ public class SettingsGUI {
                                      // Save data!
                                      ShopContainer.getShopSettings(location)
                                              .setCustomMessages(messages);
-                                     PlayerCloseToChestListener.hideHologram(location, true);
+                                     ShopHologram.getHologram(location, player).setCustomHologramMessage(messages);
 
                                  });
 

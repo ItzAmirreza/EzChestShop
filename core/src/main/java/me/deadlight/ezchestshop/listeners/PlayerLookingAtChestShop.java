@@ -197,9 +197,9 @@ public class PlayerLookingAtChestShop implements Listener {
                         if (item.getType().name().contains("SHULKER_BOX") || item.getEnchantments().size() > 0) {
                             try {
                                 int lineNum = Integer.parseInt(line.replaceAll("\\D", ""));
-                                line = PlayerCloseToChestListener.getHologramItemData(lineNum, item, lines);
+                                line = BlockBoundHologram.getHologramItemData(lineNum, item, lines);
                             } catch (NumberFormatException e) {
-                                line = PlayerCloseToChestListener.getHologramItemData(-1, item, lines);
+                                line = BlockBoundHologram.getHologramItemData(-1, item, lines);
                             }
                         } else {
                             continue;
@@ -226,7 +226,7 @@ public class PlayerLookingAtChestShop implements Listener {
                 if (line.trim().equals(""))
                     continue;
                 if (!line.equals("<empty/>")) {
-                    ASHologram hologram = new ASHologram(player, line, EntityType.ARMOR_STAND, lineLocation, false);
+                    ASHologram hologram = new ASHologram(player, line, lineLocation);
                     Utils.onlinePackets.add(hologram);
                     holoTextList.add(hologram);
                 }

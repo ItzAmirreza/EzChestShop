@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 public class LanguageManager {
 
     private static FileConfiguration languageConfig;
-    private static List<String> supported_locales = Arrays.asList("Locale_EN", "Locale_DE", "Locale_ES", "Locale_CN", "Locale_FA", "Locale_PL", "Locale_TR", "Locale_UA", "Locale_VI");
+    private static List<String> supported_locales = Arrays.asList("Locale_EN", "Locale_DE", "Locale_ES", "Locale_CN", "Locale_FA", "Locale_PL", "Locale_TR", "Locale_UA", "Locale_VI", "Locale_SK");
     private static List<String> found_locales = new ArrayList<>();
 
     public static List<String> getSupportedLanguages() {
@@ -184,10 +184,12 @@ public class LanguageManager {
     private List<String> getList(String string) {
         List result = languageConfig.getList(string);
         if (result == null || result.isEmpty()) {
-            result = YamlConfiguration.loadConfiguration(
-                    new InputStreamReader(EzChestShop.getPlugin().
-                            getResource("translations/" + Config.language + ".yml")))
-                    .getStringList(string);
+            if (EzChestShop.getPlugin().getResource("translations/" + Config.language + ".yml") != null) {
+                result = YamlConfiguration.loadConfiguration(
+                                new InputStreamReader(EzChestShop.getPlugin().
+                                        getResource("translations/" + Config.language + ".yml")))
+                        .getStringList(string);
+            }
             if (result == null || result.isEmpty()) {
                 result = YamlConfiguration.loadConfiguration(
                         new File(EzChestShop.getPlugin().getDataFolder(),
@@ -824,7 +826,6 @@ public class LanguageManager {
             if (index == checkProfitEntries.size())
                 break;
             CheckProfitEntry checkProfitEntry = checkProfitEntries.get(i + ((page - 1) * Config.command_checkprofit_lines_pp));
-            //EzChestShop.logDebug(Utils.getFinalItemName(checkProfitEntry.getItem()) + ": " + Utils.encodeItem(checkProfitEntry.getItem()));
             String[] details = getList("checkprofits.details-menu.content").stream().map(s -> Utils.colorify(s))
                     .collect(Collectors.joining("\n")).split("%item%");
             for (int j = 0; j < details.length; j++) {

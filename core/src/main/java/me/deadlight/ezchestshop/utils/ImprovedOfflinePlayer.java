@@ -18,7 +18,6 @@ public abstract class ImprovedOfflinePlayer {
         try {
             String packageName = Utils.class.getPackage().getName();
             String internalsName = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
-            EzChestShop.logDebug(packageName + ".ImprovedOfflinePlayer_" + internalsName); //me.deadlight.ezchestshop.Utils.ImprovedOfflinePlayer_v1_19_R3
             improvedOfflinePlayer = (ImprovedOfflinePlayer) Class.forName(packageName + ".ImprovedOfflinePlayer_" + internalsName).newInstance();
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException
                  | ClassCastException exception) {

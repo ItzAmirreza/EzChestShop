@@ -445,7 +445,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
             }
 
             ShopContainer.deleteShop(blockState.getLocation());
-            PlayerCloseToChestListener.hideHologram(blockState.getLocation(), true);
+            ShopHologram.hideForAll(blockState.getLocation());
 
 
             blockState.update();
@@ -563,8 +563,14 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                             blockState = getLookedAtBlockStateIfOwner(player, true, false, target);
                             // Change the price
                             ShopContainer.changePrice(blockState, price, isBuy);
+                            // Update the hologram
+                            ShopHologram hologram = ShopHologram.getHologram(blockState.getLocation(), player);
+                            if (isBuy) {
+                                hologram.updateBuyPrice();
+                            } else {
+                                hologram.updateSellPrice();
+                            }
                             player.sendMessage(isBuy ? lm.shopBuyPriceUpdated() : lm.shopSellPriceUpdated());
-                            PlayerCloseToChestListener.hideHologram(blockState.getLocation(), true);
                         }
                     } catch (NumberFormatException e) {
                         player.sendMessage(lm.wrongInput());
@@ -670,7 +676,10 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                     settings.isShareincome() ? 1 : 0);
             container.set(new NamespacedKey(EzChestShop.getPlugin(), "rotation"), PersistentDataType.STRING,
                     settings.getRotation());
-            PlayerCloseToChestListener.hideHologram(blockState.getLocation(), true);
+            ShopHologram shopHologram = ShopHologram.getHologram(blockState.getLocation(), player);
+            shopHologram.updatePosition();
+            shopHologram.updateDsell();
+            shopHologram.updateDbuy();
             ShopSettings newSettings = ShopContainer.getShopSettings(blockState.getLocation());
             newSettings.setMsgtoggle(settings.isMsgtoggle());
             newSettings.setDbuy(settings.isDbuy());
@@ -710,6 +719,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                         container.set(new NamespacedKey(EzChestShop.getPlugin(), "dbuy"), PersistentDataType.INTEGER,
                                 settings.isDbuy() ? 1 : 0);
                         newSettings.setDbuy(settings.isDbuy());
+                        ShopHologram.getHologram(blockState.getLocation(), player).updateDbuy();
                         break;
                     }
                     case "toggle-selling": {
@@ -718,6 +728,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                         container.set(new NamespacedKey(EzChestShop.getPlugin(), "dsell"), PersistentDataType.INTEGER,
                                 settings.isDsell() ? 1 : 0);
                         newSettings.setDsell(settings.isDsell());
+                        ShopHologram.getHologram(blockState.getLocation(), player).updateDsell();
                         break;
                     }
                     case "admins": {
@@ -742,7 +753,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                                 "rotation", "shopdata", settings.getRotation());
                         container.set(new NamespacedKey(EzChestShop.getPlugin(), "rotation"), PersistentDataType.STRING,
                                 settings.getRotation());
-                        PlayerCloseToChestListener.hideHologram(blockState.getLocation(), true);
+                        ShopHologram.getHologram(blockState.getLocation(), player).updatePosition();
                         newSettings.setRotation(settings.getRotation());
                         break;
                     }
@@ -761,6 +772,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
             DatabaseManager db = EzChestShop.getPlugin().getDatabase();
             String sloc = Utils.LocationtoString(blockState.getLocation());
             PersistentDataContainer container = ((TileState) blockState).getPersistentDataContainer();
+            ShopHologram shopHologram = ShopHologram.getHologram(blockState.getLocation(), player);
             switch (type) {
                 case DBUY:
                     settings.setDbuy(data.equals("") ? !settings.isDbuy() : data.equals("true"));
@@ -773,6 +785,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                     } else {
                         player.sendMessage(lm.disableBuyingOffInChat());
                     }
+                    shopHologram.updateDbuy();
                     break;
                 case DSELL:
                     settings.setDsell(data.equals("") ? !settings.isDsell() : data.equals("true"));
@@ -785,6 +798,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                     } else {
                         player.sendMessage(lm.disableSellingOffInChat());
                     }
+                    shopHologram.updateDsell();
                     break;
                 case ADMINS:
                     if (data.equalsIgnoreCase("clear")) {
@@ -881,7 +895,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                     container.set(new NamespacedKey(EzChestShop.getPlugin(), "rotation"), PersistentDataType.STRING,
                             settings.getRotation());
                     player.sendMessage(lm.rotateHologramInChat(settings.getRotation()));
-                    PlayerCloseToChestListener.hideHologram(blockState.getLocation(), true);
+                    ShopHologram.getHologram(blockState.getLocation(), player).updatePosition();
                     break;
             }
 

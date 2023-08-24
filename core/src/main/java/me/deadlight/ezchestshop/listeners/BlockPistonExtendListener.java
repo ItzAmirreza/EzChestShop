@@ -76,7 +76,7 @@ public class BlockPistonExtendListener implements Listener {
 
                         ShopContainer.deleteShop(shulkerLoc);
                         if (Config.holodistancing) {
-                            PlayerCloseToChestListener.hideHologram(shulkerLoc, true);
+                            ShopHologram.hideForAll(event.getBlock().getLocation());
                         }
                         Bukkit.getScheduler().scheduleSyncDelayedTask(EzChestShop.getPlugin(), () -> {
 

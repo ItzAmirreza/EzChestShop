@@ -1,16 +1,17 @@
-package me.deadlight.ezchestshop.data;
+package me.deadlight.ezchestshop.Data;
 
-import me.deadlight.ezchestshop.enums.Changes;
-import me.deadlight.ezchestshop.events.PlayerTransactEvent;
+import me.deadlight.ezchestshop.Enums.Changes;
+import me.deadlight.ezchestshop.Events.PlayerTransactEvent;
 import me.deadlight.ezchestshop.EzChestShop;
-import me.deadlight.ezchestshop.listeners.PlayerCloseToChestListener;
-import me.deadlight.ezchestshop.utils.objects.EzShop;
-import me.deadlight.ezchestshop.utils.objects.ShopSettings;
-import me.deadlight.ezchestshop.utils.objects.SqlQueue;
-import me.deadlight.ezchestshop.utils.Utils;
-import me.deadlight.ezchestshop.utils.WebhookSender;
-import me.deadlight.ezchestshop.utils.XPEconomy;
+import me.deadlight.ezchestshop.Listeners.PlayerCloseToChestListener;
+import me.deadlight.ezchestshop.Utils.Objects.EzShop;
+import me.deadlight.ezchestshop.Utils.Objects.ShopSettings;
+import me.deadlight.ezchestshop.Utils.Objects.SqlQueue;
+import me.deadlight.ezchestshop.Utils.Utils;
+import me.deadlight.ezchestshop.Utils.WebhookSender;
+import me.deadlight.ezchestshop.Utils.XPEconomy;
 import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.*;
 import org.bukkit.block.*;
 import org.bukkit.entity.Player;

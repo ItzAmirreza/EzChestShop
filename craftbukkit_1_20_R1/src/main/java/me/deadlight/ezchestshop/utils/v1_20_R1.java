@@ -1,15 +1,21 @@
 package me.deadlight.ezchestshop.utils;
 import io.netty.channel.Channel;
+import me.deadlight.ezchestshop.Data.Config;
 import me.deadlight.ezchestshop.EzChestShop;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.protocol.game.PacketPlayOutEntityMetadata;
+import net.minecraft.network.protocol.game.PacketPlayOutEntityTeleport;
 import net.minecraft.network.protocol.game.PacketPlayOutEntityVelocity;
 import net.minecraft.network.protocol.game.PacketPlayOutSpawnEntity;
+import net.minecraft.network.syncher.DataWatcher;
+import net.minecraft.network.syncher.DataWatcherSerializer;
 import net.minecraft.server.level.EntityPlayer;
 import net.minecraft.server.level.WorldServer;
 import net.minecraft.server.network.PlayerConnection;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.RelativeMovement;
 import net.minecraft.world.entity.decoration.EntityArmorStand;
 import net.minecraft.world.entity.item.EntityItem;
 import net.minecraft.world.entity.monster.EntityShulker;
@@ -23,13 +29,15 @@ import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_20_R1.util.CraftChatMessage;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.BoundingBox;
+
 import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class v1_20_R1 extends VersionUtils {
 
     private static final Map<SignMenuFactory, UpdateSignListener> listeners = new HashMap<>();
+    private static Map<Integer, Entity> entities = new HashMap<>();
 
     /**
      * Convert a Item to a Text Compount. Used in Text Component Builders to show
@@ -63,6 +71,7 @@ public class v1_20_R1 extends VersionUtils {
     @Override
     void destroyEntity(Player player, int entityID) {
         ((org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer) player).getHandle().c.a(new net.minecraft.network.protocol.game.PacketPlayOutEntityDestroy(entityID));
+        entities.remove(entityID);
     }
 
     @Override
@@ -90,7 +99,7 @@ public class v1_20_R1 extends VersionUtils {
 
         PacketPlayOutEntityMetadata metaPacket = new PacketPlayOutEntityMetadata(ID, armorstand.aj().c());
         playerConnection.a(metaPacket);
-
+        entities.put(ID, armorstand);
     }
 
     @Override
@@ -119,7 +128,25 @@ public class v1_20_R1 extends VersionUtils {
         floatingItem.o(0, 0, 0);
         PacketPlayOutEntityVelocity velocityPacket = new PacketPlayOutEntityVelocity(floatingItem);
         playerConnection.a(velocityPacket);
+        entities.put(ID, floatingItem);
+    }
 
+    void renameEntity(Player player, int entityID, String newName) {
+        // the entity only exists on the client, how can I get it?
+        Entity e = entities.get(entityID);
+        e.b(CraftChatMessage.fromStringOrNull(newName));
+        PacketPlayOutEntityMetadata packet = new PacketPlayOutEntityMetadata(entityID, e.aj().c());
+        ((CraftPlayer) player).getHandle().c.a(packet);
+    }
+
+    void teleportEntity(Player player, int entityID, Location location) {
+        EntityPlayer entityPlayer = ((CraftPlayer) player).getHandle();
+        Entity e = entities.get(entityID);
+        Set<RelativeMovement> set = new HashSet<>();
+        e.a(entityPlayer.x(), location.getX(), location.getY(), location.getZ(), set, 0, 0);
+        // not sure if it's needed
+        PacketPlayOutEntityTeleport packet = new PacketPlayOutEntityTeleport(e);
+        entityPlayer.c.a(packet);
     }
 
     @Override

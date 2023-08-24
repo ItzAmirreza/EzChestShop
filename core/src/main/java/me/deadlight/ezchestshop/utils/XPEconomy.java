@@ -58,7 +58,6 @@ public class XPEconomy {
     }
 
     private static double getPlayerXpPoints(ImprovedOfflinePlayer player) {
-//        EzChestShop.logDebug("level: " + player.getLevel() + ", " + Math.round(player.getExp() * player.getExpToLevel()));
         return getPointsFromLevel(player.getLevel()) + Math.round(player.getExp() * player.getExpToLevel());
     }
 

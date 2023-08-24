@@ -1,5 +1,6 @@
 package me.deadlight.ezchestshop.utils;
 
+import net.minecraft.world.entity.decoration.EntityArmorStand;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -12,13 +13,14 @@ public class ASHologram {
     private String name;
     private Player handler;
 
-    public ASHologram(Player p, String name, EntityType type,Location loc,boolean isGlowing) {
-        UUID uuid = UUID.randomUUID();
+    private Location location;
 
+    public ASHologram(Player p, String name,Location location) {
         this.name = name;
         this.entityID = (int) (Math.random() * Integer.MAX_VALUE);
         this.handler = p;
-        Utils.versionUtils.spawnHologram(p, loc, name, entityID);
+        this.location = location;
+        Utils.versionUtils.spawnHologram(p, location, name, entityID);
     }
 
 
@@ -26,10 +28,21 @@ public class ASHologram {
         Utils.versionUtils.destroyEntity(handler, entityID);
     }
 
-    public void setHandler(Player p) {
-        this.handler = p;
-    }
     public String getName() {
         return name;
+    }
+
+    public Location getLocation() {
+        return location;
+    }
+
+    public void teleport(Location location) {
+        this.location = location;
+        Utils.versionUtils.teleportEntity(handler, entityID, location);
+    }
+
+    public void rename(String name) {
+        this.name = name;
+        Utils.versionUtils.renameEntity(handler, entityID, name);
     }
 }

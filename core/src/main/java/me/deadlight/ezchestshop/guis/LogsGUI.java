@@ -77,7 +77,6 @@ public class LogsGUI {
                     }
                     //set kardane etelaat
                     TransactionLogObject thelog = transLogs.get(count - 1);
-                    EzChestShop.logDebug((count - 1) + ". Transaction log: Time " + thelog.time + " Name " + thelog.pname + " Type " + thelog.type + " Price " + thelog.price + " Count " + thelog.count);
                     if (thelog.type.equalsIgnoreCase("buy")) {
                         transactionItem.setName(lm.transactionPaperTitleBuy(thelog.pname));
                         transactionItem.setLore(generateLore(thelog, lm));

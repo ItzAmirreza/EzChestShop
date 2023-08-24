@@ -19,6 +19,10 @@ public abstract class VersionUtils {
 
     abstract void spawnFloatingItem(Player player, Location location, ItemStack itemStack, int ID);
 
+    abstract void renameEntity(Player player, int entityID, String name);
+
+    abstract void teleportEntity(Player player, int entityID, Location location);
+
     abstract void signFactoryListen(SignMenuFactory signMenuFactory);
 
     abstract void removeSignMenuFactoryListen(SignMenuFactory signMenuFactory);

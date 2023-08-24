@@ -6,7 +6,7 @@
 
     <groupId>me.deadlight</groupId>
     <artifactId>EzChestShop-parent</artifactId>
-    <version>1.6.2</version>
+    <version>1.6.3.1</version>
     <packaging>pom</packaging>
 
     <name>EzChestShop-parent</name>
