@@ -2,7 +2,7 @@ package me.deadlight.ezchestshop.data;
 
 import me.clip.placeholderapi.PlaceholderAPI;
 import me.deadlight.ezchestshop.EzChestShop;
-import me.deadlight.ezchestshop.utils.Objects.EzShop;
+import me.deadlight.ezchestshop.utils.objects.EzShop;
 import me.deadlight.ezchestshop.utils.Utils;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;

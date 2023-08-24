@@ -2,7 +2,7 @@ package me.deadlight.ezchestshop.data;
 
 
 import me.deadlight.ezchestshop.EzChestShop;
-import me.deadlight.ezchestshop.utils.Objects.CheckProfitEntry;
+import me.deadlight.ezchestshop.utils.objects.CheckProfitEntry;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
 
