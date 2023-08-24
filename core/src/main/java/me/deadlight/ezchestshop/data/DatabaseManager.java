@@ -1,5 +1,5 @@
 package me.deadlight.ezchestshop.data;
-import me.deadlight.ezchestshop.utils.Objects.EzShop;
+import me.deadlight.ezchestshop.utils.objects.EzShop;
 import org.bukkit.Location;
 
 import java.util.HashMap;

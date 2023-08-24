@@ -1,4 +1,4 @@
-package me.deadlight.ezchestshop.data.SQLite;
+package me.deadlight.ezchestshop.data.sqlite;
 
 import me.deadlight.ezchestshop.EzChestShop;
 

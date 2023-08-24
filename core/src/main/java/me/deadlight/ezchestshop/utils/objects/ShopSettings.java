@@ -1,4 +1,4 @@
-package me.deadlight.ezchestshop.utils.Objects;
+package me.deadlight.ezchestshop.utils.objects;
 
 import me.deadlight.ezchestshop.data.Config;
 import me.deadlight.ezchestshop.data.ShopContainer;

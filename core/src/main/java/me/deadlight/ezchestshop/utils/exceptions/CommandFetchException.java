@@ -1,4 +1,4 @@
-package me.deadlight.ezchestshop.utils.Exceptions;
+package me.deadlight.ezchestshop.utils.exceptions;
 
 public class CommandFetchException extends Exception {
 

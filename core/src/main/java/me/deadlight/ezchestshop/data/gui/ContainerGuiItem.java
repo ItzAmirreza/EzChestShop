@@ -1,4 +1,4 @@
-package me.deadlight.ezchestshop.data.GUI;
+package me.deadlight.ezchestshop.data.gui;
 
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;

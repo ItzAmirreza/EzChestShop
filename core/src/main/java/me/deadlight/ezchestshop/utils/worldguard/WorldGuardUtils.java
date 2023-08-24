@@ -1,4 +1,4 @@
-package me.deadlight.ezchestshop.utils.WorldGuard;
+package me.deadlight.ezchestshop.utils.worldguard;
 
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.util.Location;

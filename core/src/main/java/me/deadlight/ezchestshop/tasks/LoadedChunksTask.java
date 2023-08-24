@@ -2,7 +2,7 @@ package me.deadlight.ezchestshop.tasks;
 
 import me.deadlight.ezchestshop.data.ShopContainer;
 import me.deadlight.ezchestshop.EzChestShop;
-import me.deadlight.ezchestshop.utils.Objects.EzShop;
+import me.deadlight.ezchestshop.utils.objects.EzShop;
 import me.deadlight.ezchestshop.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.World;

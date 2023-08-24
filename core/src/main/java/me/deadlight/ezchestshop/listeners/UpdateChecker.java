@@ -1,9 +1,9 @@
 package me.deadlight.ezchestshop.listeners;
 
 import me.deadlight.ezchestshop.data.Config;
-import me.deadlight.ezchestshop.data.GUI.ContainerGui;
-import me.deadlight.ezchestshop.data.GUI.ContainerGuiItem;
-import me.deadlight.ezchestshop.data.GUI.GuiData;
+import me.deadlight.ezchestshop.data.gui.ContainerGui;
+import me.deadlight.ezchestshop.data.gui.ContainerGuiItem;
+import me.deadlight.ezchestshop.data.gui.GuiData;
 import me.deadlight.ezchestshop.data.LanguageManager;
 import me.deadlight.ezchestshop.EzChestShop;
 import org.bukkit.Bukkit;

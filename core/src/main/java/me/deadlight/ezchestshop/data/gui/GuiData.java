@@ -1,4 +1,4 @@
-package me.deadlight.ezchestshop.data.GUI;
+package me.deadlight.ezchestshop.data.gui;
 
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.listeners.UpdateChecker;

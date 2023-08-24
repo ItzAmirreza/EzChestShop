@@ -1,4 +1,4 @@
-package me.deadlight.ezchestshop.data.SQLite;
+package me.deadlight.ezchestshop.data.sqlite;
 
 public class Errors {
     public static String sqlConnectionExecute(){

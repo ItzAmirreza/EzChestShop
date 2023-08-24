@@ -3,7 +3,7 @@ package me.deadlight.ezchestshop.listeners;
 import me.deadlight.ezchestshop.data.Config;
 import me.deadlight.ezchestshop.data.DatabaseManager;
 import me.deadlight.ezchestshop.data.LanguageManager;
-import me.deadlight.ezchestshop.data.SQLite.SQLite;
+import me.deadlight.ezchestshop.data.sqlite.SQLite;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.utils.BlockOutline;
 import me.deadlight.ezchestshop.utils.Utils;

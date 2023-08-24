@@ -6,7 +6,7 @@ import me.deadlight.ezchestshop.data.ShopContainer;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.utils.ASHologram;
 import me.deadlight.ezchestshop.utils.FloatingItem;
-import me.deadlight.ezchestshop.utils.Objects.EzShop;
+import me.deadlight.ezchestshop.utils.objects.EzShop;
 import me.deadlight.ezchestshop.utils.Pair;
 import me.deadlight.ezchestshop.utils.Utils;
 import me.mrCookieSlime.Slimefun.api.BlockStorage;

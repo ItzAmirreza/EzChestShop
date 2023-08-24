@@ -1,4 +1,4 @@
-package me.deadlight.ezchestshop.utils.WorldGuard;
+package me.deadlight.ezchestshop.utils.worldguard;
 
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.protection.flags.BooleanFlag;

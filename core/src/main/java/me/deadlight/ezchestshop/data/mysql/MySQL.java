@@ -1,10 +1,10 @@
-package me.deadlight.ezchestshop.data.MySQL;
+package me.deadlight.ezchestshop.data.mysql;
 
 import me.deadlight.ezchestshop.data.Config;
 import me.deadlight.ezchestshop.data.DatabaseManager;
 import me.deadlight.ezchestshop.EzChestShop;
-import me.deadlight.ezchestshop.utils.Objects.EzShop;
-import me.deadlight.ezchestshop.utils.Objects.ShopSettings;
+import me.deadlight.ezchestshop.utils.objects.EzShop;
+import me.deadlight.ezchestshop.utils.objects.ShopSettings;
 import me.deadlight.ezchestshop.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;

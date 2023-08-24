@@ -1,4 +1,4 @@
-package me.deadlight.ezchestshop.utils.Objects;
+package me.deadlight.ezchestshop.utils.objects;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;

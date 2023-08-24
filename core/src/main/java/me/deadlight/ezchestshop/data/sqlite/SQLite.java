@@ -1,10 +1,10 @@
-package me.deadlight.ezchestshop.data.SQLite;
+package me.deadlight.ezchestshop.data.sqlite;
 import me.deadlight.ezchestshop.data.DatabaseManager;
-import me.deadlight.ezchestshop.data.SQLite.Structure.SQLColumn;
-import me.deadlight.ezchestshop.data.SQLite.Structure.SQLTable;
+import me.deadlight.ezchestshop.data.sqlite.Structure.SQLColumn;
+import me.deadlight.ezchestshop.data.sqlite.Structure.SQLTable;
 import me.deadlight.ezchestshop.EzChestShop;
-import me.deadlight.ezchestshop.utils.Objects.EzShop;
-import me.deadlight.ezchestshop.utils.Objects.ShopSettings;
+import me.deadlight.ezchestshop.utils.objects.EzShop;
+import me.deadlight.ezchestshop.utils.objects.ShopSettings;
 import me.deadlight.ezchestshop.utils.Utils;
 import org.bukkit.Location;
 

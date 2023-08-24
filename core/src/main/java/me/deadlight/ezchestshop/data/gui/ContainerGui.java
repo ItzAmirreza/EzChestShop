@@ -1,4 +1,4 @@
-package me.deadlight.ezchestshop.data.GUI;
+package me.deadlight.ezchestshop.data.gui;
 
 import dev.triumphteam.gui.guis.GuiItem;
 import me.deadlight.ezchestshop.utils.Utils;

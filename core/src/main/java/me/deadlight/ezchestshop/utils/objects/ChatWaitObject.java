@@ -1,4 +1,4 @@
-package me.deadlight.ezchestshop.utils.Objects;
+package me.deadlight.ezchestshop.utils.objects;
 import me.deadlight.ezchestshop.utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.block.*;

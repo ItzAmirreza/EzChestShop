@@ -5,7 +5,7 @@ import me.deadlight.ezchestshop.data.Config;
 import me.deadlight.ezchestshop.data.LanguageManager;
 import me.deadlight.ezchestshop.data.PlayerContainer;
 import me.deadlight.ezchestshop.EzChestShop;
-import me.deadlight.ezchestshop.utils.Objects.CheckProfitEntry;
+import me.deadlight.ezchestshop.utils.objects.CheckProfitEntry;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;

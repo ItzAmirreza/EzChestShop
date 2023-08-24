@@ -1,7 +1,7 @@
 package me.deadlight.ezchestshop.utils;
 
 import me.deadlight.ezchestshop.EzChestShop;
-import me.deadlight.ezchestshop.utils.Exceptions.CommandFetchException;
+import me.deadlight.ezchestshop.utils.exceptions.CommandFetchException;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandMap;
