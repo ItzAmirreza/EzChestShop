@@ -181,6 +181,10 @@ public class ChatListener implements Listener {
                 finalString = new StringBuilder(uuid.toString());
             }
         }
+        //if there is no admins, then set the string to none
+        if (finalString.toString().equalsIgnoreCase("")) {
+            finalString = new StringBuilder("none");
+        }
         return finalString.toString();
     }
 
