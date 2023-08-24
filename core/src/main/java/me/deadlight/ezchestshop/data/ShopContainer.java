@@ -2,7 +2,6 @@ package me.deadlight.ezchestshop.data;
 import me.deadlight.ezchestshop.enums.Changes;
 import me.deadlight.ezchestshop.events.PlayerTransactEvent;
 import me.deadlight.ezchestshop.EzChestShop;
-import me.deadlight.ezchestshop.listeners.PlayerCloseToChestListener;
 import me.deadlight.ezchestshop.utils.holograms.ShopHologram;
 import me.deadlight.ezchestshop.utils.objects.EzShop;
 import me.deadlight.ezchestshop.utils.objects.ShopSettings;
