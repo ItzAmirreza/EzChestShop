@@ -171,6 +171,9 @@ public class ChatListener implements Listener {
     public String convertListUUIDtoString(List<UUID> uuidList) {
         StringBuilder finalString = new StringBuilder();
         boolean first = false;
+        if (uuidList.size() == 0) {
+            return "none";
+        }
         for (UUID uuid : uuidList) {
             if (first) {
 
