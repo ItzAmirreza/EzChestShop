@@ -1,9 +1,9 @@
-package me.deadlight.ezchestshop.Utils.Holograms;
+package me.deadlight.ezchestshop.utils.holograms;
 
-import me.deadlight.ezchestshop.Data.Config;
-import me.deadlight.ezchestshop.Utils.ASHologram;
-import me.deadlight.ezchestshop.Utils.FloatingItem;
-import me.deadlight.ezchestshop.Utils.Utils;
+import me.deadlight.ezchestshop.data.Config;
+import me.deadlight.ezchestshop.utils.ASHologram;
+import me.deadlight.ezchestshop.utils.FloatingItem;
+import me.deadlight.ezchestshop.utils.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;

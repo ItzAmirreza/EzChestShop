@@ -1,28 +1,18 @@
 package me.deadlight.ezchestshop.commands;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import me.deadlight.ezchestshop.data.Config;
+import me.deadlight.ezchestshop.data.ShopContainer;
 import me.deadlight.ezchestshop.data.gui.GuiData;
 import me.deadlight.ezchestshop.data.LanguageManager;
 import me.deadlight.ezchestshop.data.ShopCommandManager;
-import me.deadlight.ezchestshop.data.ShopContainer;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.guis.GuiEditorGUI;
-import me.deadlight.ezchestshop.listeners.PlayerCloseToChestListener;
 import me.deadlight.ezchestshop.utils.objects.EzShop;
 import me.deadlight.ezchestshop.utils.Utils;
 import me.deadlight.ezchestshop.utils.worldguard.FlagRegistry;
 import me.deadlight.ezchestshop.utils.worldguard.WorldGuardUtils;
-import me.deadlight.ezchestshop.GUIs.GuiEditorGUI;
-import me.deadlight.ezchestshop.Listeners.PlayerCloseToChestListener;
-import me.deadlight.ezchestshop.Listeners.UpdateChecker;
-import me.deadlight.ezchestshop.Utils.Holograms.BlockBoundHologram;
-import me.deadlight.ezchestshop.Utils.Holograms.ShopHologram;
-import me.deadlight.ezchestshop.Utils.Objects.EzShop;
-import me.deadlight.ezchestshop.Utils.Utils;
-import me.deadlight.ezchestshop.Utils.WorldGuard.FlagRegistry;
-import me.deadlight.ezchestshop.Utils.WorldGuard.WorldGuardUtils;
+import me.deadlight.ezchestshop.utils.holograms.ShopHologram;
 import me.mrCookieSlime.Slimefun.api.BlockStorage;
 import org.bukkit.*;
 import org.bukkit.block.*;
@@ -40,7 +30,6 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.StringUtil;
-
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;

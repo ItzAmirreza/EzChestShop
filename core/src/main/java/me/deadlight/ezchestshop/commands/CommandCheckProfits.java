@@ -1,5 +1,4 @@
 package me.deadlight.ezchestshop.commands;
-
 import com.google.common.collect.Lists;
 import me.deadlight.ezchestshop.data.Config;
 import me.deadlight.ezchestshop.data.LanguageManager;

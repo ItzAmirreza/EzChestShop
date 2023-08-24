@@ -1,7 +1,7 @@
 package me.deadlight.ezchestshop.data.sqlite;
 import me.deadlight.ezchestshop.data.DatabaseManager;
-import me.deadlight.ezchestshop.data.sqlite.Structure.SQLColumn;
-import me.deadlight.ezchestshop.data.sqlite.Structure.SQLTable;
+import me.deadlight.ezchestshop.data.sqlite.structure.SQLColumn;
+import me.deadlight.ezchestshop.data.sqlite.structure.SQLTable;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.utils.objects.EzShop;
 import me.deadlight.ezchestshop.utils.objects.ShopSettings;

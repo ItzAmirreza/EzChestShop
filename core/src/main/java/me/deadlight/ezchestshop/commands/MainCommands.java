@@ -1,5 +1,4 @@
 package me.deadlight.ezchestshop.commands;
-
 import com.palmergames.bukkit.towny.utils.ShopPlotUtil;
 import me.deadlight.ezchestshop.data.Config;
 import me.deadlight.ezchestshop.data.DatabaseManager;
@@ -7,8 +6,8 @@ import me.deadlight.ezchestshop.data.LanguageManager;
 import me.deadlight.ezchestshop.data.ShopContainer;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.guis.SettingsGUI;
-import me.deadlight.ezchestshop.listeners.PlayerCloseToChestListener;
 import me.deadlight.ezchestshop.utils.BlockOutline;
+import me.deadlight.ezchestshop.utils.holograms.ShopHologram;
 import me.deadlight.ezchestshop.utils.objects.EzShop;
 import me.deadlight.ezchestshop.utils.objects.ShopSettings;
 import me.deadlight.ezchestshop.utils.Utils;

@@ -1,5 +1,4 @@
 package me.deadlight.ezchestshop.guis;
-
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
 import dev.triumphteam.gui.guis.PaginatedGui;

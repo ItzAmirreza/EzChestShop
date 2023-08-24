@@ -1,4 +1,4 @@
-package me.deadlight.ezchestshop.data.sqlite.Structure;
+package me.deadlight.ezchestshop.data.sqlite.structure;
 
 public class SQLColumn {
     private String type;

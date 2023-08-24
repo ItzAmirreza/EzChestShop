@@ -1,11 +1,10 @@
-package me.deadlight.ezchestshop.Utils.Holograms;
+package me.deadlight.ezchestshop.utils.holograms;
 
-import me.deadlight.ezchestshop.Data.Config;
-import me.deadlight.ezchestshop.Data.LanguageManager;
-import me.deadlight.ezchestshop.Data.ShopContainer;
+import me.deadlight.ezchestshop.data.Config;
+import me.deadlight.ezchestshop.data.LanguageManager;
+import me.deadlight.ezchestshop.data.ShopContainer;
 import me.deadlight.ezchestshop.EzChestShop;
-import me.deadlight.ezchestshop.Utils.Utils;
-
+import me.deadlight.ezchestshop.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;

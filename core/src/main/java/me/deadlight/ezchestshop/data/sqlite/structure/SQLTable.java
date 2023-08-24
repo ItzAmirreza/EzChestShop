@@ -1,4 +1,4 @@
-package me.deadlight.ezchestshop.data.sqlite.Structure;
+package me.deadlight.ezchestshop.data.sqlite.structure;
 
 import java.util.LinkedHashMap;
 
