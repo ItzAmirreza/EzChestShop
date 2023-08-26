@@ -157,9 +157,10 @@ public class ShopContainer {
     public static List<EzShop> getShopFromOwner(UUID uuid){
         List<EzShop> ezShops = new ArrayList<>();
 
-        for (EzShop value : shopMap.values()) {
-            if(value.getOwnerID().equals(uuid)){
-                ezShops.add(value);
+        for (EzShop shop : shopMap.values()) {
+            // no admin shop and shop owned by this player.
+            if(!shop.getSettings().isAdminshop() && shop.getOwnerID().equals(uuid)){
+                ezShops.add(shop);
             }
         }
 
