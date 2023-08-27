@@ -35,7 +35,7 @@ public class MenuOpener_v1_18_R1 {
         }
 
         Location location = player.getLocation();
-        Location newLocation = location.clone().add(0, (255 - location.getBlockY()), 0);
+        Location newLocation = location.clone().add(0, 4, 0);
 
         menu.setLocation(newLocation);
 

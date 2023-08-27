@@ -71,7 +71,7 @@ public final class SignMenuFactory {
          * functionality. false by default.
          *
          * @param player the player
-         * @param force decides whether or not it will reopen if reopen is enabled
+         * @param force decides whether it will reopen if reopen is enabled
          */
         public void close(Player player, boolean force) {
             this.forceClose = force;

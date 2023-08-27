@@ -37,7 +37,7 @@ public class v1_20_R1 extends VersionUtils {
     private static Map<Integer, Entity> entities = new HashMap<>();
 
     /**
-     * Convert a Item to a Text Compount. Used in Text Component Builders to show
+     * Convert an Item to a Text Compount. Used in Text Component Builders to show
      * items in chat.
      *
      * @category ItemUtils
