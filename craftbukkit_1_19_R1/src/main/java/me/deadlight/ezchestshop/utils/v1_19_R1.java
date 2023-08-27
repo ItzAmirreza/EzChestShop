@@ -161,9 +161,7 @@ public class v1_19_R1 extends VersionUtils {
                     Bukkit.getScheduler().runTaskLater(EzChestShop.getPlugin(), () -> menu.open(player), 2L);
                 }
 
-                if (success) {
-                    removeSignMenuFactoryListen(signMenuFactory);
-                }
+                removeSignMenuFactoryListen(signMenuFactory);
 
                 Bukkit.getScheduler().runTaskLater(EzChestShop.getPlugin(), () -> {
                     if (player.isOnline()) {
