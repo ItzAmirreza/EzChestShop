@@ -8,6 +8,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.Normalizer;
 import java.util.*;
 
 public class Config {
@@ -169,7 +170,9 @@ public class Config {
         notify_overlapping_gui_items = config.getBoolean("other.notify-op-of-overlapping-gui-items");
         notify_overflowing_gui_items = config.getBoolean("other.notify-op-of-overflowing-gui-items");
         worldguard_integration = config.getBoolean("integration.worldguard");
-        database_type = Database.valueOf(config.getString("database.type").toUpperCase());
+        database_type = Database.valueOf(
+                Normalizer.normalize(config.getString("database.type"), Normalizer.Form.NFD)
+                        .replaceAll("\\p{M}", "").toUpperCase());
         databasemysql_ip = config.getString("database.mysql.ip");
         databasemysql_port = config.getInt("database.mysql.port");
         databasemysql_maxpool = config.getInt("database.mysql.max-pool");
