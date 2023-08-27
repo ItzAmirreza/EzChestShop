@@ -73,6 +73,7 @@ public class ChannelHandler_v1_20_R1 extends ChannelInboundHandlerAdapter {
                 }
 
                 if (listener.isCancelled()) {
+                    ctx.fireChannelRead(msg);
                     return;
                 }
             }
