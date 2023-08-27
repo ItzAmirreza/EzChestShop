@@ -2,7 +2,6 @@ package me.deadlight.ezchestshop.data;
 import me.deadlight.ezchestshop.enums.Changes;
 import me.deadlight.ezchestshop.events.PlayerTransactEvent;
 import me.deadlight.ezchestshop.EzChestShop;
-import me.deadlight.ezchestshop.listeners.PlayerCloseToChestListener;
 import me.deadlight.ezchestshop.utils.holograms.ShopHologram;
 import me.deadlight.ezchestshop.utils.objects.EzShop;
 import me.deadlight.ezchestshop.utils.objects.ShopSettings;
@@ -158,9 +157,10 @@ public class ShopContainer {
     public static List<EzShop> getShopFromOwner(UUID uuid){
         List<EzShop> ezShops = new ArrayList<>();
 
-        for (EzShop value : shopMap.values()) {
-            if(value.getOwnerID().equals(uuid)){
-                ezShops.add(value);
+        for (EzShop shop : shopMap.values()) {
+            // no admin shop and shop owned by this player.
+            if(!shop.getSettings().isAdminshop() && shop.getOwnerID().equals(uuid)){
+                ezShops.add(shop);
             }
         }
 
