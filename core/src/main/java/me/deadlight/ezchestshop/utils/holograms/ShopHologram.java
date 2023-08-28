@@ -68,13 +68,21 @@ public class ShopHologram {
                     availableSlots--;
                 }
             }
-            List<String> possibleCounts = Utils.calculatePossibleAmount(Bukkit.getOfflinePlayer(player.getUniqueId()),
-                    Bukkit.getOfflinePlayer(
-                            UUID.fromString(((TileState) location.getBlock().getState()).getPersistentDataContainer()
-                                    .get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING))),
-                    player.getInventory().getStorageContents(),
-                    Utils.getBlockInventory(location.getBlock()).getStorageContents(),
-                    shop.getBuyPrice(), shop.getSellPrice(), shop.getShopItem());
+            List<String> possibleCounts = new ArrayList<>();
+            try {
+                possibleCounts = Utils.calculatePossibleAmount(Bukkit.getOfflinePlayer(player.getUniqueId()),
+                        Bukkit.getOfflinePlayer(
+                                UUID.fromString(((TileState) location.getBlock().getState()).getPersistentDataContainer()
+                                        .get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING))),
+                        player.getInventory().getStorageContents(),
+                        Utils.getBlockInventory(location.getBlock()).getStorageContents(),
+                        shop.getBuyPrice(), shop.getSellPrice(), shop.getShopItem());
+            } catch (Exception e) {
+                // If the block is not found or some other error occurs, just set the possible counts to 0
+                possibleCounts.add("0");
+                possibleCounts.add("0");
+            }
+
 
             /*
              * Text default placeholders:
