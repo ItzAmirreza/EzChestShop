@@ -71,7 +71,7 @@ public class MySQL extends DatabaseManager {
         shopdata = database.addTable(prefix + "shopdata",
                 EzqlColumn.get(DataType.VARCHAR, "location", 64, true),
                 EzqlColumn.get(DataType.VARCHAR, "owner", 38),
-                EzqlColumn.get(DataType.VARCHAR, "item", 2000),
+                EzqlColumn.get(DataType.BLOB, "item"),
                 EzqlColumn.get(DataType.DOUBLE, "buyPrice"),
                 EzqlColumn.get(DataType.DOUBLE, "sellPrice"),
                 EzqlColumn.get(DataType.TINYINT, "msgToggle"),
@@ -86,7 +86,7 @@ public class MySQL extends DatabaseManager {
 
         playerdata = database.addTable(prefix + "playerdata",
                 EzqlColumn.get(DataType.VARCHAR, "uuid", 36, true),
-                EzqlColumn.get(DataType.VARCHAR, "checkprofits", 10000)
+                EzqlColumn.get(DataType.TEXT, "checkprofits")
         );
     }
 
