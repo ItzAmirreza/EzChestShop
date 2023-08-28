@@ -280,6 +280,7 @@ command-messages:
     - "&7- &c/&eecsadmin reload &7| перезавантажте конфігурації плагіна"
     - "&7- &c/&eecsadmin create (buy) (sell) &7| створити адмін-магазин"
     - "&7- &c/&eecsadmin transfer-ownership (гравець) &7| передати право власності на будь-який магазин іншому гравцеві."
+    - "&7- &c/&eecsadmin uploadlogs &7| upload ECS related infos to ECS's debug website. For faster help, include this in your bug report on ECS's discord!"
     - "&7 Щоб отримати додаткову допомогу, приєднуйтеся до нашого [&bДіскорд](%discord_link% Натисніть, щоб приєднатися до підтримки Discord!)&7!"
   alreadyashop: "&cЦя скриня вже є магазином!"
   shopcreated: "&aВи успішно створили магазин!"

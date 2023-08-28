@@ -280,6 +280,7 @@ command-messages:
     - "&7- &c/&eecsadmin reload &7| reload the plugin configurations"
     - "&7- &c/&eecsadmin create (buy) (sell) &7| create an admin shop"
     - "&7- &c/&eecsadmin transfer-ownership (player) &7| transfer the ownership of any shop to another player."
+    - "&7- &c/&eecsadmin uploadlogs &7| upload ECS related infos to ECS's debug website. For faster help, include this in your bug report on ECS's discord!"
     - "&7 For further help, join our [&bDiscord](%discord_link% Click to join the support Discord!)&7!"
   alreadyashop: "&cEste cofre ya es una tienda!"
   shopcreated: "&aYou have successfully created a chest shop!"

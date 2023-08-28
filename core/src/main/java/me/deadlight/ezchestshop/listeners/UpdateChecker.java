@@ -87,6 +87,10 @@ public class UpdateChecker implements Listener{
         }
     }
 
+    /**
+     * Checks if there is an update available on spigot
+     * @return true if there is an update available, false if not
+     */
     private boolean checkUpdate() {
         try {
             String localVersion = EzChestShop.getPlugin().getDescription().getVersion();
@@ -101,31 +105,63 @@ public class UpdateChecker implements Listener{
                 remoteVersion = raw;
             }
             newVersion = remoteVersion;
-            try {
-                // No version update required if the local version is newer. Doesn't work if you have a version like 1.2.3.4 or 1.2.
-                if (Integer.parseInt(localVersion.split("\\.")[0]) > Integer.parseInt(remoteVersion.split("\\.")[0])) {
-                    return false;
-                }
-                if (Integer.parseInt(localVersion.split("\\.")[0]) == Integer.parseInt(remoteVersion.split("\\.")[0]) &&
-                        Integer.parseInt(localVersion.split("\\.")[1]) > Integer.parseInt(remoteVersion.split("\\.")[1])) {
-                    return false;
-                }
-                if (Integer.parseInt(localVersion.split("\\.")[0]) == Integer.parseInt(remoteVersion.split("\\.")[0]) &&
-                        Integer.parseInt(localVersion.split("\\.")[1]) == Integer.parseInt(remoteVersion.split("\\.")[1]) &&
-                        Integer.parseInt(localVersion.split("\\.")[2]) > Integer.parseInt(remoteVersion.split("\\.")[2])) {
-                    return false;
-                }
-            }
-            catch (NumberFormatException e) {}
-            catch (IndexOutOfBoundsException e) {}
-
-            if(!localVersion.equalsIgnoreCase(remoteVersion))
+            if (versionCompare(localVersion, remoteVersion) < 0)
+                // localVersion is smaller (older) than remoteVersion
                 return true;
+            else
+                // localVersion is greater (newer) than or equal to the remoteVersion
+                return false;
 
         } catch (IOException e) {
             return false;
         }
-        return false;
+    }
+
+    /**
+     * Compares two version strings
+     * Source: https://www.geeksforgeeks.org/compare-two-version-numbers/
+     * @param v1 version 1
+     * @param v2 version 2
+     * @return 1 if v1 is greater than v2, -1 if v1 is smaller than v2, 0 if v1 is equal to v2
+     */
+    static int versionCompare(String v1, String v2)
+    {
+        // vnum stores each numeric part of version
+        int vnum1 = 0, vnum2 = 0;
+
+        // loop until both String are processed
+        for (int i = 0, j = 0; (i < v1.length()
+                || j < v2.length());) {
+            // Storing numeric part of
+            // version 1 in vnum1
+            while (i < v1.length()
+                    && v1.charAt(i) != '.') {
+                vnum1 = vnum1 * 10
+                        + (v1.charAt(i) - '0');
+                i++;
+            }
+
+            // storing numeric part
+            // of version 2 in vnum2
+            while (j < v2.length()
+                    && v2.charAt(j) != '.') {
+                vnum2 = vnum2 * 10
+                        + (v2.charAt(j) - '0');
+                j++;
+            }
+
+            if (vnum1 > vnum2)
+                return 1;
+            if (vnum2 > vnum1)
+                return -1;
+
+            // if equal, reset variables and
+            // go for next numeric part
+            vnum1 = vnum2 = 0;
+            i++;
+            j++;
+        }
+        return 0;
     }
 
     private void checkGuiUpdate() {

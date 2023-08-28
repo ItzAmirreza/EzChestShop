@@ -265,6 +265,7 @@ public class ShopHologram {
         });
         ShopHologram.hologramInspections.values().stream().filter(shopHolo -> shopHolo.getLocation().equals(location)).collect(Collectors.toSet())
                 .forEach(shopHolo -> shopHolo.removeInspectedShop());
+        locationBlockHoloMap.remove(location);
     }
 
     /**

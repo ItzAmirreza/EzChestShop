@@ -285,6 +285,7 @@ command-messages:
     - '&7- &c/&eecsadmin reload &7| przeładowuje plugin'
     - '&7- &c/&eecsadmin create (buy) (sell) &7| tworzy sklep serwerowy'
     - "&7- &c/&eecsadmin transfer-ownership (player) &7| transfer the ownership of any shop to another player."
+    - "&7- &c/&eecsadmin uploadlogs &7| upload ECS related infos to ECS's debug website. For faster help, include this in your bug report on ECS's discord!"
   alreadyashop: '&cTa skrzynka jest już sklepem!'
   shopcreated: '&aPomyslnie stworzyłeś nowy sklep!'
   holdsomething: '&cTrzymaj proszę jakiś przedmiot w głównej dłoni!'

@@ -53,7 +53,7 @@ shops:
       # Defines the range at which shops will render holograms (default: 20.0)
       range: 20.0
       # Set if items should be rendered first and holograms only when looking at the shop directly.
-      show-items-first: false
+      show-items-first: true
   # Define which containers are applicable for chest shops:
   container:
     chests: true

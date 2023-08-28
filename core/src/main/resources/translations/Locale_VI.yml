@@ -288,6 +288,7 @@ command-messages:
       trị"
     - "&7- &c/&eecsadmin transfer-ownership (player) &7| chuyển quyền sở hữu của
       bất kỳ cửa hàng nào cho người chơi khác."
+    - "&7- &c/&eecsadmin uploadlogs &7| upload ECS related infos to ECS's debug website. For faster help, include this in your bug report on ECS's discord!"
     - "&7 Để được trợ giúp thêm, hãy tham gia [&bDiscord](%discord_link% Nhấp để
       tham gia hỗ trợ Discord!)&7!"
   alreadyashop: "&cVật này đã là một cửa hàng!"

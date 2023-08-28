@@ -83,7 +83,9 @@ public class BlockBoundHologram {
     }
 
     public HologramRotation getRotation() {
-
+        if (!ShopContainer.isShop(location)) {
+            return HologramRotation.UP;
+        }
         String rotation = ShopContainer.getShop(location).getSettings().getRotation();
         rotation = Config.holo_rotation ? rotation : Config.settings_defaults_rotation;
 

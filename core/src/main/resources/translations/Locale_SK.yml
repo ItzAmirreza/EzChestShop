@@ -278,6 +278,7 @@ command-messages:
     - "&7- &c/&eecsadmin reload &7| Znova nahraj konfiguráciu pluginu"
     - "&7- &c/&eecsadmin create (nákup) (predaj) &7| Vytvor správcovský obchod"
     - "&7- &c/&eecsadmin transfer-ownership (player) &7| Prenes vlastníctvo ktoréhokoľvek obchodu na iného hráča."
+    - "&7- &c/&eecsadmin uploadlogs &7| upload ECS related infos to ECS's debug website. For faster help, include this in your bug report on ECS's discord!"
     - "&7 Ak chceš ďalšiu pomoc, pridaj sa na náš [&bDiscord](%discord_link% Klikni a pridaj sa na Discord pre získanie podpory!)&7!"
   alreadyashop: "&cTento kontajner už je obchod!"
   shopcreated: "&aÚspešne si vytvoril(-a) obchod!"
