@@ -1,13 +1,11 @@
 package me.deadlight.ezchestshop.commands;
 import com.palmergames.bukkit.towny.utils.ShopPlotUtil;
-import me.deadlight.ezchestshop.data.Config;
-import me.deadlight.ezchestshop.data.DatabaseManager;
-import me.deadlight.ezchestshop.data.LanguageManager;
-import me.deadlight.ezchestshop.data.ShopContainer;
+import me.deadlight.ezchestshop.data.*;
 import me.deadlight.ezchestshop.EzChestShop;
-import me.deadlight.ezchestshop.guis.SettingsGUI;
+import me.deadlight.ezchestshop.guis.shop.SettingsGUI;
 import me.deadlight.ezchestshop.utils.BlockOutline;
 import me.deadlight.ezchestshop.utils.holograms.ShopHologram;
+import me.deadlight.ezchestshop.utils.holograms.TradeShopHologram;
 import me.deadlight.ezchestshop.utils.objects.EzShop;
 import me.deadlight.ezchestshop.utils.objects.ShopSettings;
 import me.deadlight.ezchestshop.utils.Utils;
@@ -95,8 +93,46 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                         player.sendMessage(lm.notenoughARGS());
                     }
 
+                } else if (mainarg.equalsIgnoreCase("create-trade") && target != null) {
+                    if (args.length == 1) {
+                        if (checkTradeShopPermissionLimit(player)) return false;
+                        try {
+                            createTradeShop(player, target, player.getInventory().getItemInMainHand().getAmount(), player.getInventory().getItemInOffHand().getAmount());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    } else if (args.length >= 3) {
+                        if (Utils.isNumeric(args[1]) && Utils.isNumeric(args[2])) {
+
+                            if (isPositive(Integer.parseInt(args[1])) && isPositive(Integer.parseInt(args[2]))) {
+                                if (checkTradeShopPermissionLimit(player)) return false;
+                                try {
+                                    createTradeShop(player, target, Integer.parseInt(args[1]), Integer.parseInt(args[2]));
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+
+                            } else {
+                                player.sendMessage(lm.negativePrice());
+                            }
+
+                        } else {
+                            sendHelp(player);
+                        }
+
+                    } else {
+                        player.sendMessage(lm.notenoughARGS());
+                    }
+
                 } else if (mainarg.equalsIgnoreCase("remove") && target != null) {
-                        removeShop(player ,args, target);
+                    if (ShopContainer.isShop(target.getLocation())) {
+                        removeShop(player, target);
+                    } else if (TradeShopContainer.isTradeShop(target.getLocation())) {
+                        removeTradeShop(player, target);
+                    } else {
+                        //TODO maybe a different message here too?
+                        player.sendMessage(lm.notAChestOrChestShop());
+                    }
 
 
                 } else if (mainarg.equalsIgnoreCase("settings") && target != null) {
@@ -129,10 +165,24 @@ public class MainCommands implements CommandExecutor, TabCompleter {
         return false;
     }
 
+    private boolean checkTradeShopPermissionLimit(Player player) {
+        if (Config.permissions_create_trade_shop_enabled) {
+            int maxShops = Utils.getMaxPermission(player, "ecs.trade-shops.limit.");
+            maxShops = maxShops == -1 ? 10000 : maxShops;
+            int shops = TradeShopContainer.getShopCount(player);
+            if (shops >= maxShops) {
+                //TODO check if this message needs to be changed
+                player.sendMessage(lm.maxShopLimitReached(maxShops));
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
         List<String> fList = new ArrayList<>();
-        List<String> list_mainarg = Arrays.asList("create", "remove", "settings", "emptyshops" ,"version");
+        List<String> list_mainarg = Arrays.asList("create", "create-trade", "remove", "settings", "emptyshops" ,"version");
         List<String> list_create_1 = Arrays.asList("[BuyPrice]");
         List<String> list_create_2 = Arrays.asList("[SellPrice]");
         List<String> list_settings_1 = Arrays.asList("copy", "paste", "toggle-message", "toggle-buying", "toggle-selling", "admins", "toggle-shared-income", "change-rotation", "buyprice", "sellprice"); //, "transfer-ownership"
@@ -327,6 +377,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                             ItemStack thatIteminplayer = player.getInventory().getItemInMainHand();
                             ItemStack thatItem = thatIteminplayer.clone();
                             thatItem.setAmount(1);
+                            String encodedItem = Utils.encodeItem(thatItem);
                             if (Utils.isShulkerBox(thatItem.getType()) && Utils.isShulkerBox(target)) {
                                 player.sendMessage(lm.invalidShopItem());
                                 return;
@@ -357,7 +408,9 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                             //container.set(new NamespacedKey(EzChestShop.getPlugin(), "trans"), PersistentDataType.STRING, "none");
                             container.set(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"), PersistentDataType.INTEGER, 0);
                             container.set(new NamespacedKey(EzChestShop.getPlugin(), "rotation"), PersistentDataType.STRING, Config.settings_defaults_rotation);
-
+                            if (encodedItem != null) {
+                                container.set(new NamespacedKey(EzChestShop.getPlugin(), "item"), PersistentDataType.STRING, encodedItem);
+                            }
 
 
 
@@ -369,7 +422,6 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                             //logs [list of infos seperated by @ in string form]
                             //trans [list of infos seperated by @ in string form]
                             //adminshop 0/1
-                            Utils.storeItem(thatItem, container);
                             state.update();
                             ShopContainer.createShop(target.getLocation(), player, thatItem, buyprice, sellprice, false,
                                     false, false, "none", true, false, Config.settings_defaults_rotation);
@@ -406,7 +458,141 @@ public class MainCommands implements CommandExecutor, TabCompleter {
         }
 
     }
-    private void removeShop(Player player, String[] args, Block target) {
+
+    private void createTradeShop(Player player, Block target, int item1Amount, int item2Amount) throws IOException {
+
+        if (target != null && target.getType() != Material.AIR) {
+            BlockState blockState = target.getState();
+            //slimefun check
+            if (EzChestShop.slimefun) {
+                boolean sfresult = BlockStorage.hasBlockInfo(target.getLocation());
+                if (sfresult) {
+                    player.sendMessage(lm.slimeFunBlockNotSupported());
+                    return;
+                }
+            }
+
+            if (EzChestShop.worldguard) {
+                if (!WorldGuardUtils.queryStateFlag(FlagRegistry.CREATE_TRADE_SHOP, player)) {
+                    player.sendMessage(lm.notAllowedToCreateOrRemove());
+                    return;
+                }
+            }
+
+            if (blockState instanceof TileState) {
+
+                if (Utils.isApplicableContainer(target)) {
+
+                    if (checkIfLocation(target.getLocation(), player)) {
+
+                        if (EzChestShop.towny) {
+                            if (!ShopPlotUtil.isShopPlot(target.getLocation())) {
+                                player.sendMessage(lm.notAllowedToCreateOrRemove());
+                                return;
+                            }
+                            if (!(ShopPlotUtil.doesPlayerOwnShopPlot(player, target.getLocation()) ||
+                                    ShopPlotUtil.doesPlayerHaveAbilityToEditShopPlot(player, target.getLocation()))) {
+                                player.sendMessage(lm.notAllowedToCreateOrRemove());
+                                return;
+                            }
+                        }
+                        TileState state = (TileState) blockState;
+
+                        PersistentDataContainer container = state.getPersistentDataContainer();
+
+                        //owner (String) (player name)
+                        //buy (double)
+                        //sell (double)
+                        //item (String) (itemstack)
+
+                        //already a shop
+                        if (container.has(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING) || ifItsADoubleChestShop(target) != null) {
+                            //TODO check if message needs to be changed
+                            player.sendMessage(lm.alreadyAShop());
+
+                        } else {
+                            //not a shop
+
+                            if (player.getInventory().getItemInMainHand().getType() != Material.AIR) {
+                                ItemStack item1 = player.getInventory().getItemInMainHand().clone();
+                                ItemStack item2 = player.getInventory().getItemInOffHand().clone();
+                                item1.setAmount(item1Amount);
+                                item2.setAmount(item2Amount);
+                                String encodedItem1 = Utils.encodeItem(item1);
+                                String encodedItem2 = Utils.encodeItem(item2);
+                                if ((Utils.isShulkerBox(item1.getType()) || Utils.isShulkerBox(item2.getType())) && Utils.isShulkerBox(target)) {
+                                    // TODO split this up into item1 and item2 for better error messages maybe?
+                                    player.sendMessage(lm.invalidShopItem());
+                                    return;
+                                }
+
+                                //owner, buy, sell, msgtoggle, dbuy, dsell, admins, shareincome, trans, adminshop, rotation
+
+                                container.set(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING, player.getUniqueId().toString());
+                                //add new settings data later
+                                container.set(new NamespacedKey(EzChestShop.getPlugin(), "msgtoggle"), PersistentDataType.INTEGER, Config.settings_defaults_transactions ? 1 : 0);
+                                container.set(new NamespacedKey(EzChestShop.getPlugin(), "tradedirection"), PersistentDataType.STRING, Config.settings_defaults_trade_direction.toString());
+                                container.set(new NamespacedKey(EzChestShop.getPlugin(), "admins"), PersistentDataType.STRING, "none");
+                                //container.set(new NamespacedKey(EzChestShop.getPlugin(), "trans"), PersistentDataType.STRING, "none");
+                                container.set(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"), PersistentDataType.INTEGER, 0);
+                                container.set(new NamespacedKey(EzChestShop.getPlugin(), "rotation"), PersistentDataType.STRING, Config.settings_defaults_rotation);
+                                if (encodedItem1 != null) {
+                                    container.set(new NamespacedKey(EzChestShop.getPlugin(), "item1"), PersistentDataType.STRING, encodedItem1);
+                                }
+                                if (encodedItem2 != null) {
+                                    container.set(new NamespacedKey(EzChestShop.getPlugin(), "item2"), PersistentDataType.STRING, encodedItem2);
+                                }
+
+
+
+
+                                //msgtoggle 0/1
+                                //dbuy 0/1
+                                //dsell 0/1
+                                //admins [list of uuids seperated with @ in string form]
+                                //shareincome 0/1
+                                //logs [list of infos seperated by @ in string form]
+                                //trans [list of infos seperated by @ in string form]
+                                //adminshop 0/1
+                                state.update();
+                                TradeShopContainer.createTradeShop(target.getLocation(), player, item1, item2, false,
+                                        Config.settings_defaults_trade_direction, "none", false, Config.settings_defaults_rotation);
+
+                                player.sendMessage(lm.shopCreated());
+
+
+                            } else {
+
+                                player.sendMessage(lm.holdSomething());
+
+                            }
+
+
+                        }
+
+                    }
+                    else {
+                        player.sendMessage(lm.notAllowedToCreateOrRemove());
+                    }
+                } else {
+
+                    player.sendMessage(lm.noChest());
+
+                }
+
+            } else {
+                player.sendMessage(lm.lookAtChest());
+            }
+
+
+        } else {
+            player.sendMessage(lm.lookAtChest());
+        }
+
+    }
+
+
+    private void removeShop(Player player, Block target) {
         BlockState blockState = getLookedAtBlockStateIfOwner(player, true, true, target);
         if (blockState != null) {
             if (EzChestShop.worldguard) {
@@ -445,6 +631,51 @@ public class MainCommands implements CommandExecutor, TabCompleter {
 
             ShopContainer.deleteShop(blockState.getLocation());
             ShopHologram.hideForAll(blockState.getLocation());
+
+
+            blockState.update();
+            player.sendMessage(lm.chestShopRemoved());
+        } else {
+            player.sendMessage(lm.lookAtChest());
+        }
+    }
+
+    private void removeTradeShop(Player player, Block target) {
+        BlockState blockState = getLookedAtBlockStateIfOwner(player, true, true, target);
+        if (blockState != null) {
+            if (EzChestShop.worldguard) {
+                if (!WorldGuardUtils.queryStateFlag(FlagRegistry.REMOVE_TRADE_SHOP, player)) {
+                    player.sendMessage(lm.notAllowedToCreateOrRemove());
+                    return;
+                }
+            }
+            //is the owner remove it
+            PersistentDataContainer container = ((TileState) blockState).getPersistentDataContainer();
+            container.remove(new NamespacedKey(EzChestShop.getPlugin(), "owner"));
+            container.remove(new NamespacedKey(EzChestShop.getPlugin(), "item1"));
+            container.remove(new NamespacedKey(EzChestShop.getPlugin(), "item2"));
+            //add new settings data later
+            try {
+                container.remove(new NamespacedKey(EzChestShop.getPlugin(), "msgtoggle"));
+                container.remove(new NamespacedKey(EzChestShop.getPlugin(), "tradedirection"));
+                container.remove(new NamespacedKey(EzChestShop.getPlugin(), "admins"));
+                //container.remove(new NamespacedKey(EzChestShop.getPlugin(), "trans"));
+                container.remove(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"));
+                container.remove(new NamespacedKey(EzChestShop.getPlugin(), "rotation"));
+                //msgtoggle 0/1
+                //dbuy 0/1
+                //dsell 0/1
+                //admins [list of uuids seperated with @ in string form]
+                //shareincome 0/1
+                //logs [list of infos seperated by @ in string form]
+                //trans [list of infos seperated by @ in string form]
+                //adminshop 0/1
+            } catch (Exception ex) {
+                //nothing really worrying...
+            }
+
+            TradeShopContainer.deleteShop(blockState.getLocation());
+            TradeShopHologram.hideForAll(blockState.getLocation());
 
 
             blockState.update();

@@ -1,4 +1,4 @@
-package me.deadlight.ezchestshop.guis;
+package me.deadlight.ezchestshop.guis.shop;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
 import me.deadlight.ezchestshop.data.gui.ContainerGui;
@@ -6,6 +6,7 @@ import me.deadlight.ezchestshop.data.gui.ContainerGuiItem;
 import me.deadlight.ezchestshop.data.gui.GuiData;
 import me.deadlight.ezchestshop.data.LanguageManager;
 import me.deadlight.ezchestshop.enums.LogType;
+import me.deadlight.ezchestshop.guis.shop.SettingsGUI;
 import me.deadlight.ezchestshop.utils.objects.TransactionLogObject;
 import me.deadlight.ezchestshop.utils.Utils;
 import org.bukkit.block.Block;

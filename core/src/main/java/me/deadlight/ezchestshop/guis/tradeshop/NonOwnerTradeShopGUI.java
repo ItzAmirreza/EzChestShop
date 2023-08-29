@@ -1,19 +1,19 @@
-package me.deadlight.ezchestshop.guis;
+package me.deadlight.ezchestshop.guis.tradeshop;
+
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
+import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.data.Config;
+import me.deadlight.ezchestshop.data.LanguageManager;
+import me.deadlight.ezchestshop.data.ShopContainer;
 import me.deadlight.ezchestshop.data.gui.ContainerGui;
 import me.deadlight.ezchestshop.data.gui.ContainerGuiItem;
 import me.deadlight.ezchestshop.data.gui.GuiData;
-import me.deadlight.ezchestshop.data.LanguageManager;
-import me.deadlight.ezchestshop.data.ShopContainer;
-import me.deadlight.ezchestshop.EzChestShop;
-import me.deadlight.ezchestshop.utils.objects.EzShop;
 import me.deadlight.ezchestshop.utils.SignMenuFactory;
 import me.deadlight.ezchestshop.utils.Utils;
+import me.deadlight.ezchestshop.utils.objects.EzShop;
 import org.bukkit.*;
 import org.bukkit.block.Block;
-import org.bukkit.block.TileState;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -23,12 +23,12 @@ import org.bukkit.persistence.PersistentDataType;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+//mojodi
+//balance
 
-public class ServerShopGUI {
+public class NonOwnerTradeShopGUI {
 
-    public ServerShopGUI() {
-
-    }
+    public NonOwnerTradeShopGUI() {}
 
     public void showGUI(Player player, PersistentDataContainer data, Block containerBlock) {
         LanguageManager lm = new LanguageManager();
@@ -56,7 +56,7 @@ public class ServerShopGUI {
 
         ContainerGui container = GuiData.getShop();
 
-        Gui gui = new Gui(container.getRows(), lm.adminshopguititle());
+        Gui gui = new Gui(container.getRows(), lm.guiNonOwnerTitle(shopOwner));
         gui.getFiller().fill(container.getBackground());
 
         ItemStack mainitem = Utils.decodeItem(data.get(new NamespacedKey(EzChestShop.getPlugin(), "item"), PersistentDataType.STRING));
@@ -78,6 +78,7 @@ public class ServerShopGUI {
             GuiItem guiitem = new GuiItem(guiMainItem, event -> {
                 event.setCancelled(true);
             });
+
             Utils.addItemIfEnoughSlots(gui, container.getItem("shop-item").getSlot(), guiitem);
         }
 
@@ -105,7 +106,7 @@ public class ServerShopGUI {
                     if (disabledSell) {
                         return;
                     }
-                    ShopContainer.sellServerItem(containerBlock, sellPrice * finalAmount, finalAmount, mainitem, player, data);
+                    ShopContainer.sellItem(containerBlock, sellPrice * finalAmount, finalAmount, mainitem, player, offlinePlayerOwner, data);
                     showGUI(player, data, containerBlock);
                 });
 
@@ -133,7 +134,7 @@ public class ServerShopGUI {
                     if (disabledBuy) {
                         return;
                     }
-                    ShopContainer.buyServerItem(containerBlock, buyPrice * finalAmount, finalAmount, player, mainitem, data);
+                    ShopContainer.buyItem(containerBlock, buyPrice * finalAmount, finalAmount, mainitem, player, offlinePlayerOwner, data);
                     showGUI(player, data, containerBlock);
                 });
 
@@ -150,31 +151,10 @@ public class ServerShopGUI {
             }
         });
 
+        if (container.hasItem("custom-buy-sell")) {
 
-        //settings item
-        boolean result = isAdmin(((TileState)containerBlock.getState()).getPersistentDataContainer(), player.getUniqueId().toString());
-        //place moved vvv because of settingsGUI
-        if (container.hasItem("settings")) {
-            if (player.hasPermission("ecs.admin") || result) {
-                ContainerGuiItem settingsItemStack = container.getItem("settings");
-                settingsItemStack.setName(lm.settingsButton());
-                GuiItem settingsGui = new GuiItem(settingsItemStack.getItem(), event -> {
-                    event.setCancelled(true);
-                    //opening the settigns menu
-                    SettingsGUI settingsGUI = new SettingsGUI();
-
-                    settingsGUI.showGUI(player, containerBlock, result);
-                    player.playSound(player.getLocation(), Sound.BLOCK_PISTON_EXTEND, 0.5f, 0.5f);
-                });
-
-                Utils.addItemIfEnoughSlots(gui, settingsItemStack.getSlot(), settingsGui);
-            }
-        }
-
-        if (container.hasItem("custome-buy-sell")) {
-            List<String> possibleCounts = Utils.calculatePossibleAmount(Bukkit.getOfflinePlayer(player.getUniqueId()), null, player.getInventory().getStorageContents(), null, buyPrice, sellPrice, mainitem);
-            ContainerGuiItem customBuySellItemStack = container.getItem("custom-buy-sell").setName(lm.customAmountSignTitle())
-                    .setLore(lm.customAmountSignLore(possibleCounts.get(0), possibleCounts.get(1)));
+            List<String> possibleCounts = Utils.calculatePossibleAmount(Bukkit.getOfflinePlayer(player.getUniqueId()), offlinePlayerOwner, player.getInventory().getStorageContents(), Utils.getBlockInventory(containerBlock).getStorageContents(), buyPrice, sellPrice, mainitem);
+            ContainerGuiItem customBuySellItemStack = container.getItem("custom-buy-sell").setName(lm.customAmountSignTitle()).setLore(lm.customAmountSignLore(possibleCounts.get(0), possibleCounts.get(1)));
 
             GuiItem guiSignItem = new GuiItem(customBuySellItemStack.getItem(), event -> {
                 event.setCancelled(true);
@@ -199,8 +179,12 @@ public class ServerShopGUI {
                                             player.sendMessage(lm.unsupportedInteger());
                                             return false;
                                         }
-                                        Bukkit.getScheduler().scheduleSyncDelayedTask(EzChestShop.getPlugin(),
-                                                () -> ShopContainer.buyServerItem(containerBlock, buyPrice * amount, amount, thatplayer, mainitem, data));
+                                        Bukkit.getScheduler().scheduleSyncDelayedTask(EzChestShop.getPlugin(), new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                ShopContainer.buyItem(containerBlock, buyPrice * amount, amount, mainitem, player, offlinePlayerOwner, data);
+                                            }
+                                        });
                                     } else {
                                         thatplayer.sendMessage(lm.wrongInput());
                                     }
@@ -235,11 +219,16 @@ public class ServerShopGUI {
                                             player.sendMessage(lm.unsupportedInteger());
                                             return false;
                                         }
-                                        Bukkit.getScheduler().scheduleSyncDelayedTask(EzChestShop.getPlugin(),
-                                                () -> ShopContainer.sellServerItem(containerBlock, sellPrice * amount, amount, mainitem, thatplayer, data));
+                                        Bukkit.getScheduler().scheduleSyncDelayedTask(EzChestShop.getPlugin(), new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                ShopContainer.sellItem(containerBlock, sellPrice * amount, amount, mainitem, player, offlinePlayerOwner, data);
+                                            }
+                                        });
                                     } else {
                                         thatplayer.sendMessage(lm.wrongInput());
                                     }
+
 
                                 } catch (Exception e) {
                                     return false;
@@ -252,7 +241,6 @@ public class ServerShopGUI {
 
                 }
             });
-
             if (Config.settings_custom_amout_transactions) {
                 //sign item
                 Utils.addItemIfEnoughSlots(gui, customBuySellItemStack.getSlot(), guiSignItem);
@@ -263,15 +251,15 @@ public class ServerShopGUI {
         gui.open(player);
 
 
+
     }
 
-
-
+    
 
     private ItemStack disablingCheck(ItemStack mainItem, boolean disabling) {
+        LanguageManager lm = new LanguageManager();
         if (disabling){
             //disabled Item
-            LanguageManager lm = new LanguageManager();
             ItemStack disabledItemStack = new ItemStack(Material.BARRIER, mainItem.getAmount());
             ItemMeta disabledItemMeta = disabledItemStack.getItemMeta();
             disabledItemMeta.setDisplayName(lm.disabledButtonTitle());
@@ -283,18 +271,4 @@ public class ServerShopGUI {
             return mainItem;
         }
     }
-
-
-
-    private boolean isAdmin(PersistentDataContainer data, String uuid) {
-        UUID owneruuid = UUID.fromString(uuid);
-        List<UUID> adminsUUID = Utils.getAdminsList(data);
-        if (adminsUUID.contains(owneruuid)) {
-            return true;
-        } else {
-            return false;
-        }
-
-    }
-
 }

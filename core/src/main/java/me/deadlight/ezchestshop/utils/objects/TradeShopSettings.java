@@ -2,27 +2,24 @@ package me.deadlight.ezchestshop.utils.objects;
 
 import me.deadlight.ezchestshop.data.Config;
 import me.deadlight.ezchestshop.data.ShopContainer;
+import me.deadlight.ezchestshop.data.TradeShopContainer;
 import me.deadlight.ezchestshop.enums.Changes;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.entity.Player;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class ShopSettings {
+public class TradeShopSettings {
 
     private String sloc;
     private boolean msgtoggle;
-    private boolean dbuy;
-    private boolean dsell;
+    private TradeDirection tradeDirection;
     private String admins;
-    private boolean shareincome;
     private boolean adminshop;
     private String rotation;
     private List<String> customMessages;
     private SqlQueue sqlQueue;
-    private EzShop assignedShop;
+    private EzTradeShop assignedShop;
     // Use some form of static Hashmap to cash this per shop/location/player smth.
     // Querying is only viable once, since we have the SQL Queue which makes things
     // pretty hard to track.
@@ -31,26 +28,38 @@ public class ShopSettings {
     private static List<String> customMessagesInitialChecked = new ArrayList<>();
     private static Map<UUID, Map<Location, String>> customMessagesTotal = new HashMap<>();
 
-    public ShopSettings(String sloc, boolean msgtoggle, boolean dbuy, boolean dsell, String admins, boolean shareincome,
-             boolean adminshop, String rotation, List<String> customMessages) {
+    /**
+     * The direction of the trade.
+     * <ul>
+     *     <li>ITEM1_TO_ITEM2 means that the first item is the item that the player is selling.</li>
+     *     <li>ITEM2_TO_ITEM1 means that the first item is the item that the player is buying.</li>
+     *     <li>BOTH means that the player can trade both ways.</li>
+     *     <li>DISABLED means that the player cannot trade.</li>
+     * </ul>
+     */
+    public enum TradeDirection {
+        ITEM1_TO_ITEM2,
+        ITEM2_TO_ITEM1,
+        BOTH,
+        DISABLED
+    }
+
+    public TradeShopSettings(String sloc, boolean msgtoggle, TradeDirection tradeDirection, String admins,
+                             boolean adminshop, String rotation, List<String> customMessages) {
         this.sloc = sloc;
         this.msgtoggle = msgtoggle;
-        this.dbuy = dbuy;
-        this.dsell = dsell;
+        this.tradeDirection = tradeDirection;
         this.admins = admins;
-        this.shareincome = shareincome;
         this.adminshop = adminshop;
         this.rotation = rotation;
         this.customMessages = customMessages;
     }
 
-    private ShopSettings(ShopSettings settings) {
+    private TradeShopSettings(TradeShopSettings settings) {
         this.sloc = settings.sloc;
         this.msgtoggle = settings.msgtoggle;
-        this.dbuy = settings.dbuy;
-        this.dsell = settings.dsell;
+        this.tradeDirection = settings.tradeDirection;
         this.admins = settings.admins;
-        this.shareincome = settings.shareincome;
         this.adminshop = settings.adminshop;
         this.rotation = settings.rotation;
         this.customMessages = settings.customMessages;
@@ -58,37 +67,27 @@ public class ShopSettings {
         this.sqlQueue = settings.sqlQueue;
     }
 
-    public ShopSettings clone() {
-        return new ShopSettings(this);
+    public TradeShopSettings clone() {
+        return new TradeShopSettings(this);
     }
 
     public boolean isMsgtoggle() {
         return msgtoggle;
     }
 
-    public ShopSettings setMsgtoggle(boolean msgtoggle) {
+    public TradeShopSettings setMsgtoggle(boolean msgtoggle) {
         sqlQueue.setChange(Changes.MESSAGE_TOGGLE, msgtoggle);
         this.msgtoggle = msgtoggle;
         return this;
     }
 
-    public boolean isDbuy() {
-        return dbuy;
+    public TradeDirection getTradeDirection() {
+        return tradeDirection;
     }
 
-    public ShopSettings setDbuy(boolean dbuy) {
-        sqlQueue.setChange(Changes.DISABLE_BUY, dbuy);
-        this.dbuy = dbuy;
-        return this;
-    }
-
-    public boolean isDsell() {
-        return dsell;
-    }
-
-    public ShopSettings setDsell(boolean dsell) {
-        sqlQueue.setChange(Changes.DISABLE_SELL, dsell);
-        this.dsell = dsell;
+    public TradeShopSettings setTradeDirection(TradeDirection tradeDirection) {
+        sqlQueue.setChange(Changes.TRADE_DIRECTION, tradeDirection.toString());
+        this.tradeDirection = tradeDirection;
         return this;
     }
 
@@ -96,28 +95,19 @@ public class ShopSettings {
         return admins;
     }
 
-    public ShopSettings setAdmins(String admins) {
+    public TradeShopSettings setAdmins(String admins) {
         sqlQueue.setChange(Changes.ADMINS_LIST, admins);
         this.admins = admins;
         return this;
     }
 
-    public boolean isShareincome() {
-        return shareincome;
-    }
-
-    public ShopSettings setShareincome(boolean shareincome) {
-        sqlQueue.setChange(Changes.SHAREINCOME, shareincome);
-        this.shareincome = shareincome;
-        return this;
-    }
 
 
     public boolean isAdminshop() {
         return adminshop;
     }
 
-    public ShopSettings setAdminshop(boolean adminshop) {
+    public TradeShopSettings setAdminshop(boolean adminshop) {
         sqlQueue.setChange(Changes.IS_ADMIN, adminshop);
         this.adminshop = adminshop;
         return this;
@@ -127,7 +117,7 @@ public class ShopSettings {
         return rotation == null ? Config.settings_defaults_rotation : rotation;
     }
 
-    public ShopSettings setRotation(String rotation) {
+    public TradeShopSettings setRotation(String rotation) {
         sqlQueue.setChange(Changes.ROTATION, rotation);
         this.rotation = rotation;
         return this;
@@ -142,7 +132,7 @@ public class ShopSettings {
         return customMessages;
     }
 
-    public ShopSettings setCustomMessages(List<String> customMessages) {
+    public TradeShopSettings setCustomMessages(List<String> customMessages) {
         String newMessages = customMessages.stream().collect(Collectors.joining("#,#"));
         if (!newMessages.equals(this.customMessages)) {
             if (newMessages.isEmpty()) {
@@ -158,13 +148,13 @@ public class ShopSettings {
 
     public static Map<Location, String> getAllCustomMessages(String owner) {
 
-        List<EzShop> ezShops = ShopContainer.getShopFromOwner(UUID.fromString(owner)).stream().filter(
+        List<EzTradeShop> ezShops = TradeShopContainer.getTradeShopFromOwner(UUID.fromString(owner)).stream().filter(
                 ezShop -> !ezShop.getSettings().customMessages.isEmpty()
         ).collect(Collectors.toList());
 
         Map<Location, String> stringMap = new HashMap<>();
 
-        for (EzShop ezShop : ezShops) {
+        for (EzTradeShop ezShop : ezShops) {
             stringMap.put(ezShop.getLocation(),ezShop.getSettings().customMessages.get(0));
         }
 
@@ -175,11 +165,11 @@ public class ShopSettings {
         return getAllCustomMessages(owner);
     }
 
-    public void assignShop(EzShop shop) {
+    public void assignShop(EzTradeShop shop) {
         this.assignedShop = shop;
     }
 
-    public EzShop getAssignedShop() {
+    public EzTradeShop getAssignedShop() {
         return this.assignedShop;
     }
 

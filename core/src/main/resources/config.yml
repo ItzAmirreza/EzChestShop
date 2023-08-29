@@ -41,6 +41,42 @@ shops:
       - "<itemdata4/>"
       - "<itemdataRest/>"
       - "[item]"
+    holo-structure-trade:
+      - "<custom1/>"
+      - "<custom2/>"
+      - "<custom3/>"
+      - "<custom4/>"
+      - "<item1data1/>"
+      - "<item1data2/>"
+      - "<item1data3/>"
+      - "<item1data4/>"
+      - "<item1dataRest/>"
+      - "[item1]          %item1amount%"
+      - "&a%item1name%<item1toitem2> &a↑</item1toitem2><separator></separator><item2toitem1>&c↓ </item2toitem1>&c%item2name%"
+      - "[item2]          %item2amount%"
+      - "<item2data1/>"
+      - "<item2data2/>"
+      - "<item2data3/>"
+      - "<item2data4/>"
+      - "<item2dataRest/>"
+    holo-structure-trade-adminshop:
+      - "<custom1/>"
+      - "<custom2/>"
+      - "<custom3/>"
+      - "<custom4/>"
+      - "<item1data1/>"
+      - "<item1data2/>"
+      - "<item1data3/>"
+      - "<item1data4/>"
+      - "<item1dataRest/>"
+      - "[item1]          %item1amount%"
+      - "&a%item1name%<item1toitem2> &a↑</item1toitem2><separator></separator><item2toitem1>&c↓ </item2toitem1>&c%item2name%"
+      - "[item2]          %item2amount%"
+      - "<item2data1/>"
+      - "<item2data2/>"
+      - "<item2data3/>"
+      - "<item2data4/>"
+      - "<item2dataRest/>"
     # Define a custom Line spacing multiplier. 1 is default.
     holo-line-spacing: 1
     # hologram will get removed after x seconds if plugin doesn't detect any movement toward chest shop (default: 10)
@@ -74,6 +110,8 @@ shops:
       disable-selling: false
       rotation: "up"
       share-profit: true
+      # Available options: BOTH, ITEM1_TO_ITEM2, ITEM2_TO_ITEM1, DISABLED
+      trade-direction: "BOTH"
     # If set to true, "/ecs create 12 0" will automatically disable selling(or buying if "/ecs create 0 12")
     zero-price-equals-disabled: true
     # If set to true, this setting will require players to use a buy price that is greater than the sell price.
@@ -124,6 +162,8 @@ commands:
 permissions:
   # If set to true, players require the permission "ecs.shops.limit.X" where X is the maximum amount of shops a player can create.
   create-shops: false
+  # If set to true, players require the permission "ecs.tradeshops.limit.X" where X is the maximum amount of tradeshops a player can create.
+  create-trade-shops: false
   # Limit the amount of hologram messages a player can create. Use "ecs.shops.hologram.messages.limit.X"
   hologram-message-limit: false
   # Specify how many lines a player can use for their hologram messages. Use "ecs.shops.hologram.messages.lines.X"

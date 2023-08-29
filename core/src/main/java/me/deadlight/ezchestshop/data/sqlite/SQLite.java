@@ -4,8 +4,10 @@ import me.deadlight.ezchestshop.data.sqlite.structure.SQLColumn;
 import me.deadlight.ezchestshop.data.sqlite.structure.SQLTable;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.utils.objects.EzShop;
+import me.deadlight.ezchestshop.utils.objects.EzTradeShop;
 import me.deadlight.ezchestshop.utils.objects.ShopSettings;
 import me.deadlight.ezchestshop.utils.Utils;
+import me.deadlight.ezchestshop.utils.objects.TradeShopSettings;
 import org.bukkit.Location;
 
 import java.io.File;
@@ -116,9 +118,26 @@ public class SQLite extends DatabaseManager {
                 put("adminshop", new SQLColumn("BOOLEAN", false, false));
                 put("rotation", new SQLColumn("STRING (32)", false, false));
                 put("customMessages", new SQLColumn("STRING (32)", false, false));
-
             }
         }));
+
+        tables.put("tradeshopdata", new SQLTable(new LinkedHashMap<String, SQLColumn>() {
+            {
+                put("location", new SQLColumn("STRING (32)", true, false));
+                put("owner", new SQLColumn("STRING (32)", false, false));
+                put("item1", new SQLColumn("STRING (32)", false, false));
+                put("item2", new SQLColumn("STRING (32)", false, false));
+                put("msgToggle", new SQLColumn("BOOLEAN", false, false));
+                put("tradeDirection", new SQLColumn("STRING (32)", false, false));
+                put("buyDisabled", new SQLColumn("BOOLEAN", false, false));
+                put("sellDisabled", new SQLColumn("BOOLEAN", false, false));
+                put("admins", new SQLColumn("STRING (32)", false, false));
+                put("adminshop", new SQLColumn("BOOLEAN", false, false));
+                put("rotation", new SQLColumn("STRING (32)", false, false));
+                put("customMessages", new SQLColumn("STRING (32)", false, false));
+            }
+        }));
+
         tables.put("playerdata", new SQLTable(new LinkedHashMap<String, SQLColumn>() {
             {
                 put("uuid", new SQLColumn("STRING (32)", true, false));
@@ -869,7 +888,6 @@ public class SQLite extends DatabaseManager {
             ps.setString(12, rotation);
             ps.setString(13, customMessages.stream().collect(Collectors.joining("#,#")));
             ps.executeUpdate();
-            return;
         } catch (SQLException e) {
             plugin.getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute(), e);
         } finally {
@@ -882,9 +900,46 @@ public class SQLite extends DatabaseManager {
                 plugin.getLogger().log(Level.SEVERE, Errors.sqlConnectionClose(), e);
             }
         }
-        return;
     }
 
+    @Override
+    public void insertTradeShop(String sloc, String owner, String item1, String item2, boolean msgtoggle, TradeShopSettings.TradeDirection tradeDirection, String admins, boolean adminshop, String rotation, List<String> customMessages) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try {
+            conn = getSQLConnection();
+            ps = conn.prepareStatement(
+                    "REPLACE INTO tradeshopdata (location,owner,item1,item2,msgToggle,"
+                            + "tradeDirection,admins,adminshop,rotation,customMessages) "
+                            + "VALUES(?,?,?,?,?,?,?,?,?,?)");
+
+            ps.setString(1, sloc);
+            ps.setString(2, owner);
+            ps.setString(3, item1);
+            ps.setString(4, item2);
+            ps.setBoolean(5, msgtoggle);
+            ps.setString(6, tradeDirection.toString());
+            ps.setString(7, admins);
+            ps.setBoolean(8, adminshop);
+            ps.setString(9, rotation);
+            ps.setString(10, customMessages.stream().collect(Collectors.joining("#,#")));
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            plugin.getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute(), e);
+        } finally {
+            try {
+                if (ps != null)
+                    ps.close();
+                if (conn != null)
+                    conn.close();
+            } catch (SQLException e) {
+                plugin.getLogger().log(Level.SEVERE, Errors.sqlConnectionClose(), e);
+            }
+        }
+    }
+
+
+    @Override
     public HashMap<Location, EzShop> queryShops() {
         Connection conn = null;
         PreparedStatement ps = null;
@@ -920,5 +975,44 @@ public class SQLite extends DatabaseManager {
         }
         return null;
     }
+
+    @Override
+    public HashMap<Location, EzTradeShop> queryTradeShops() {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs;
+        try {
+            conn = getSQLConnection();
+            ps = conn.prepareStatement("SELECT * FROM tradeshopdata;");
+
+            rs = ps.executeQuery();
+            HashMap<Location, EzTradeShop> map = new HashMap<>();
+            while (rs.next()) {
+                String sloc = rs.getString("location");
+                String customMessages = rs.getString("customMessages");
+                String tradeDirection = rs.getString("tradeDirection") == null ? "BOTH" : rs.getString("tradeDirection");
+                if (customMessages == null) customMessages = "";
+                map.put(Utils.StringtoLocation(sloc), new EzTradeShop(Utils.StringtoLocation(sloc), rs.getString("owner"),
+                        Utils.decodeItem(rs.getString("item1")), Utils.decodeItem(rs.getString("item1")),
+                        new TradeShopSettings(sloc, rs.getBoolean("msgToggle"), TradeShopSettings.TradeDirection.valueOf(tradeDirection),
+                        rs.getString("admins"), rs.getBoolean("adminshop"),
+                        rs.getString("rotation"), Arrays.asList(customMessages.split("#,#")))));
+            }
+            return map;
+        } catch (SQLException e) {
+            plugin.getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute(), e);
+        } finally {
+            try {
+                if (ps != null)
+                    ps.close();
+                if (conn != null)
+                    conn.close();
+            } catch (SQLException e) {
+                plugin.getLogger().log(Level.SEVERE, Errors.sqlConnectionClose(), e);
+            }
+        }
+        return null;
+    }
+
 
 }

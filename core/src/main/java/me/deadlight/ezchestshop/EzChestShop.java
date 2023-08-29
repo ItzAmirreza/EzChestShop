@@ -2,16 +2,14 @@ package me.deadlight.ezchestshop;
 import me.deadlight.ezchestshop.commands.CommandCheckProfits;
 import me.deadlight.ezchestshop.commands.EcsAdmin;
 import me.deadlight.ezchestshop.commands.MainCommands;
-import me.deadlight.ezchestshop.data.Config;
-import me.deadlight.ezchestshop.data.DatabaseManager;
+import me.deadlight.ezchestshop.data.*;
 import me.deadlight.ezchestshop.data.gui.GuiData;
-import me.deadlight.ezchestshop.data.LanguageManager;
-import me.deadlight.ezchestshop.data.ShopContainer;
 import me.deadlight.ezchestshop.listeners.*;
 import me.deadlight.ezchestshop.tasks.LoadedChunksTask;
 import me.deadlight.ezchestshop.utils.*;
 import me.deadlight.ezchestshop.utils.exceptions.CommandFetchException;
 import me.deadlight.ezchestshop.utils.objects.EzShop;
+import me.deadlight.ezchestshop.utils.objects.EzTradeShop;
 import me.deadlight.ezchestshop.utils.worldguard.FlagRegistry;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
@@ -260,6 +258,8 @@ public final class EzChestShop extends JavaPlugin {
 
         ShopContainer.queryShopsToMemory();
         ShopContainer.startSqlQueueTask();
+        TradeShopContainer.queryShopsToMemory();
+        TradeShopContainer.startSqlQueueTask();
         if (Config.check_for_removed_shops) {
             LoadedChunksTask.startTask();
         }

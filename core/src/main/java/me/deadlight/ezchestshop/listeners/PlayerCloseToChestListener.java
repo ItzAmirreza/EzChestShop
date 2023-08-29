@@ -3,11 +3,14 @@ package me.deadlight.ezchestshop.listeners;
 import me.deadlight.ezchestshop.data.Config;
 import me.deadlight.ezchestshop.data.ShopContainer;
 import me.deadlight.ezchestshop.EzChestShop;
+import me.deadlight.ezchestshop.data.TradeShopContainer;
 import me.deadlight.ezchestshop.events.PlayerTransactEvent;
 import me.deadlight.ezchestshop.utils.holograms.BlockBoundHologram;
 import me.deadlight.ezchestshop.utils.holograms.ShopHologram;
+import me.deadlight.ezchestshop.utils.holograms.TradeShopHologram;
 import me.deadlight.ezchestshop.utils.objects.EzShop;
 import me.deadlight.ezchestshop.utils.Utils;
+import me.deadlight.ezchestshop.utils.objects.EzTradeShop;
 import me.mrCookieSlime.Slimefun.api.BlockStorage;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -37,6 +40,7 @@ public class PlayerCloseToChestListener implements Listener {
 
 
     private HashMap<Player, ShopHologram> inspectedShops = new HashMap<>();
+    private HashMap<Player, TradeShopHologram> inspectedTradeShops = new HashMap<>();
 
     @EventHandler
     public void onMove(PlayerMoveEvent event) {
@@ -83,6 +87,36 @@ public class PlayerCloseToChestListener implements Listener {
                             isLookingAtSameShop = true;
                         }
                     }
+                    if (TradeShopContainer.isTradeShop(loc)) {
+                        // Create a shop Hologram, so it can be used later
+                        // required to be called here, cause the inspection needs it already.
+                        TradeShopHologram tradeShopHolo = TradeShopHologram.getHologram(loc, player);
+
+                        // if the player is looking directly at a shop, he is inspecting it.
+                        // If he has been inspecting a shop before, then we need to check if he is looking at the same shop
+                        // or a different one.
+                        if (TradeShopHologram.isPlayerInspectingShop(player)) {
+                            if (TradeShopHologram.getInspectedShopHologram(player).getLocation().equals(loc)) {
+                                // if the player is looking at the same shop, then don't do anything
+                                isLookingAtSameShop = true;
+                            } else {
+                                // if the player is looking at a different shop, then remove the old one
+                                // and only show the item
+                                TradeShopHologram inspectedTradeShopHolo = TradeShopHologram.getInspectedShopHologram(player);
+                                inspectedTradeShopHolo.showOnlyItem();
+                                inspectedTradeShopHolo.showAlwaysVisibleText();
+                                inspectedTradeShopHolo.removeInspectedShop();
+                            }
+                        }
+                        // if the player is looking at a shop, and he is not inspecting it yet, then start inspecting it!
+                        if (TradeShopHologram.hasHologram(loc, player) && !tradeShopHolo.hasInspector()) {
+                            tradeShopHolo.showTextAfterItem();
+                            tradeShopHolo.setItemDataVisible(player.isSneaking());
+                            tradeShopHolo.setAsInspectedShop();
+                            alreadyRenderedHologram = true;
+                            isLookingAtSameShop = true;
+                        }
+                    }
                 }
             }
             // if the player is not looking at a shop, then remove the old one if he was inspecting one
@@ -93,6 +127,14 @@ public class PlayerCloseToChestListener implements Listener {
                     shopHolo.showAlwaysVisibleText();
                 }
                 shopHolo.removeInspectedShop();
+            }
+            if (TradeShopHologram.isPlayerInspectingShop(player) && !isLookingAtSameShop) {
+                TradeShopHologram tradeShopHolo = TradeShopHologram.getInspectedShopHologram(player);
+                if (ShopContainer.isShop(tradeShopHolo.getLocation())) {
+                    tradeShopHolo.showOnlyItem();
+                    tradeShopHolo.showAlwaysVisibleText();
+                }
+                tradeShopHolo.removeInspectedShop();
             }
         }
 
@@ -142,18 +184,61 @@ public class PlayerCloseToChestListener implements Listener {
                 }
             }
         }
+        List<EzTradeShop> tradeShops = TradeShopContainer.getTradeShops().stream()
+                .filter(ezTradeShop -> ezTradeShop.getLocation() != null
+                        && loc.getWorld().equals(ezTradeShop.getLocation().getWorld())
+                        && loc.distance(ezTradeShop.getLocation()) < Config.holodistancing_distance + 5)
+                .collect(Collectors.toList());
+        for (EzTradeShop ezTradeShop : tradeShops) {
+            if (EzChestShop.slimefun) {
+                if (BlockStorage.hasBlockInfo(ezTradeShop.getLocation())) {
+                    TradeShopContainer.deleteShop(ezTradeShop.getLocation());
+                    continue;
+                }
+            }
+            double dist = loc.distance(ezTradeShop.getLocation());
+            // Show the Hologram if Player close enough
+            if (dist < Config.holodistancing_distance) {
+                if (TradeShopHologram.hasHologram(ezTradeShop.getLocation(), player))
+                    continue;
+
+                Block target = ezTradeShop.getLocation().getWorld().getBlockAt(ezTradeShop.getLocation());
+                if (target == null || !Utils.isApplicableContainer(target)) {
+                    return;
+                }
+                if (Config.holodistancing_show_item_first) {
+                    TradeShopHologram tradeShopHolo = TradeShopHologram.getHologram(ezTradeShop.getLocation(), player);
+                    tradeShopHolo.showOnlyItem();
+                    tradeShopHolo.showAlwaysVisibleText();
+                } else {
+                    TradeShopHologram tradeShopHolo = TradeShopHologram.getHologram(ezTradeShop.getLocation(), player);
+                    tradeShopHolo.show();
+                }
+
+            }
+            // Hide the Hologram that is too far away from the player
+            else if (dist > Config.holodistancing_distance + 1
+                    && dist < Config.holodistancing_distance + 3) {
+                // Hide the Hologram
+                if (TradeShopHologram.hasHologram(ezTradeShop.getLocation(), player)) {
+                    TradeShopHologram.getHologram(ezTradeShop.getLocation(), player).hide();
+                }
+            }
+        }
     }
 
     @EventHandler
     public void onPlayerLogout(PlayerQuitEvent event) {
         Player player = event.getPlayer();
         ShopHologram.hideAll(player);
+        TradeShopHologram.hideAll(player);
     }
 
     @EventHandler
     public void onPlayerTeleport(PlayerTeleportEvent event) {
         Player player = event.getPlayer();
         ShopHologram.hideAll(player);
+        TradeShopHologram.hideAll(player);
     }
 
     @EventHandler
@@ -166,11 +251,22 @@ public class PlayerCloseToChestListener implements Listener {
             } else {
                 shopHolo.setItemDataVisible(false);
             }
+        } else if (TradeShopHologram.isPlayerInspectingShop(player)) {
+            TradeShopHologram tradeShopHolo = TradeShopHologram.getInspectedShopHologram(player);
+            if (event.isSneaking()) {
+                tradeShopHolo.setItemDataVisible(true);
+            } else {
+                tradeShopHolo.setItemDataVisible(false);
+            }
         } else if (!Config.holodistancing_show_item_first) {
             // When holodistancing_show_item_first is off, the shop needs to be queried separately.
             // It's less reactive but it works.
-            if (!event.isSneaking() && inspectedShops.containsKey(player)) {
-                inspectedShops.get(player).setItemDataVisible(false);
+            if (!event.isSneaking()) {
+                if (inspectedShops.containsKey(player)){
+                    inspectedShops.get(player).setItemDataVisible(false);
+                } else if (inspectedTradeShops.containsKey(player)) {
+                    inspectedTradeShops.get(player).setItemDataVisible(false);
+                }
             }
             RayTraceResult result = player.rayTraceBlocks(5);
             if (result == null)
@@ -184,6 +280,13 @@ public class PlayerCloseToChestListener implements Listener {
                 if (event.isSneaking()) {
                     shopHolo.setItemDataVisible(true);
                     inspectedShops.put(player, shopHolo);
+                }
+            }
+            if (TradeShopContainer.isTradeShop(loc)) {
+                TradeShopHologram tradeShopHolo = TradeShopHologram.getHologram(loc, player);
+                if (event.isSneaking()) {
+                    tradeShopHolo.setItemDataVisible(true);
+                    inspectedTradeShops.put(player, tradeShopHolo);
                 }
             }
         }
@@ -217,6 +320,9 @@ public class PlayerCloseToChestListener implements Listener {
             ShopHologram.getViewedHolograms((Player) event.getEntity()).forEach(shopHolo -> {
                 Bukkit.getScheduler().runTaskLater(EzChestShop.getPlugin(), () -> ShopHologram.updateInventoryReplacements(shopHolo.getLocation()), 1);
             });
+            TradeShopHologram.getViewedHolograms((Player) event.getEntity()).forEach(tradeShopHolo -> {
+                Bukkit.getScheduler().runTaskLater(EzChestShop.getPlugin(), () -> TradeShopHologram.updateInventoryReplacements(tradeShopHolo.getLocation()), 1);
+            });
         }
     }
 
@@ -227,6 +333,8 @@ public class PlayerCloseToChestListener implements Listener {
                 Location location = BlockBoundHologram.getShopChestLocation(event.getBlockPlaced());
                 if (ShopContainer.isShop(location)) {
                     ShopHologram.updateInventoryReplacements(location);
+                } else if (TradeShopContainer.isTradeShop(location)) {
+                    TradeShopHologram.updateInventoryReplacements(location);
                 }
             }, 1);
         }
@@ -247,12 +355,17 @@ public class PlayerCloseToChestListener implements Listener {
     @EventHandler
     public void onShopTransactionCapacityChange(PlayerTransactEvent event) {
         Bukkit.getScheduler().runTaskLater(EzChestShop.getPlugin(), () -> ShopHologram.updateInventoryReplacements(event.getContainerBlock().getLocation()), 1);
+        //TODO see if we can add some data to the event to show which type of shop is traded with.
+        Bukkit.getScheduler().runTaskLater(EzChestShop.getPlugin(), () -> TradeShopHologram.updateInventoryReplacements(event.getContainerBlock().getLocation()), 1);
     }
 
     private void inventoryModifyEventHandler(boolean cancelled, HumanEntity whoClicked) {
         if (!cancelled) {
             ShopHologram.getViewedHolograms((Player) whoClicked).forEach(shopHolo -> {
                 Bukkit.getScheduler().runTaskLater(EzChestShop.getPlugin(), () -> ShopHologram.updateInventoryReplacements(shopHolo.getLocation()), 1);
+            });
+            TradeShopHologram.getViewedHolograms((Player) whoClicked).forEach(tradeShopHolo -> {
+                Bukkit.getScheduler().runTaskLater(EzChestShop.getPlugin(), () -> TradeShopHologram.updateInventoryReplacements(tradeShopHolo.getLocation()), 1);
             });
         }
     }

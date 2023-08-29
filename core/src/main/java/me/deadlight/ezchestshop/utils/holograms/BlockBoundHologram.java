@@ -4,6 +4,7 @@ import me.deadlight.ezchestshop.data.Config;
 import me.deadlight.ezchestshop.data.LanguageManager;
 import me.deadlight.ezchestshop.data.ShopContainer;
 import me.deadlight.ezchestshop.EzChestShop;
+import me.deadlight.ezchestshop.data.TradeShopContainer;
 import me.deadlight.ezchestshop.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -83,10 +84,14 @@ public class BlockBoundHologram {
     }
 
     public HologramRotation getRotation() {
-        if (!ShopContainer.isShop(location)) {
+        String rotation = "UP";
+        if (ShopContainer.isShop(location)) {
+            rotation = ShopContainer.getShop(location).getSettings().getRotation();
+        } else if (TradeShopContainer.isTradeShop(location)) {
+            rotation = TradeShopContainer.getTradeShop(location).getSettings().getRotation();
+        } else {
             return HologramRotation.UP;
         }
-        String rotation = ShopContainer.getShop(location).getSettings().getRotation();
         rotation = Config.holo_rotation ? rotation : Config.settings_defaults_rotation;
 
         // Make sure we're not getting a null value or something that isn't a valid rotation
@@ -243,7 +248,12 @@ public class BlockBoundHologram {
         Inventory inventory = Utils.getBlockInventory(containerBlock);
 
         // get the rotation via memory as it updates faster
-        String rotation = ShopContainer.getShop(containerBlock.getLocation()).getSettings().getRotation();
+        String rotation = "up";
+        if (ShopContainer.isShop(containerBlock.getLocation())) {
+            rotation = ShopContainer.getShop(containerBlock.getLocation()).getSettings().getRotation();
+        } else if (TradeShopContainer.isTradeShop(containerBlock.getLocation())) {
+            rotation = TradeShopContainer.getTradeShop(containerBlock.getLocation()).getSettings().getRotation();
+        }
         rotation = Config.holo_rotation ? rotation : Config.settings_defaults_rotation;
 
         // Add rotation checks

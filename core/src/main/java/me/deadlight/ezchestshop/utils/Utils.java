@@ -74,22 +74,6 @@ public class Utils {
     }
 
     /**
-     * Store a ItemStack into a persistent Data Container using Base64 encoding.
-     *
-     * @param item
-     * @param data
-     * @throws IOException
-     */
-    public static void storeItem(ItemStack item, PersistentDataContainer data) throws IOException {
-
-        String encodedItem = encodeItem(item);
-        if (encodedItem != null) {
-            data.set(new NamespacedKey(EzChestShop.getPlugin(), "item"), PersistentDataType.STRING, encodedItem);
-        }
-
-    }
-
-    /**
      * Encode a ItemStack into a Base64 encoded String
      *
      * @param item
@@ -447,23 +431,12 @@ public class Utils {
         return emptySlots >= amount;
     }
 
-    public static int playerEmptyCount(ItemStack[] storageContents, ItemStack item) {
-        int emptySlots = 0;
-        for (ItemStack content : storageContents) {
-            if (content == null || content.getType() == Material.AIR) {
-                emptySlots += item.getMaxStackSize();
-            } else {
-                if (isSimilar(content, item) && !(content.getAmount() >= content.getMaxStackSize())) {
-
-                    int remaining = content.getMaxStackSize() - content.getAmount();
-                    emptySlots += remaining;
-
-                }
-            }
-        }
-        return emptySlots;
-    }
-
+    /**
+     * Get how many items of the given type can be stored in the given inventory
+     * @param storageContents the inventory to check
+     * @param item the item to check
+     * @return the amount of items that can be stored
+     */
     public static int containerEmptyCount(ItemStack[] storageContents, ItemStack item) {
 
         if (storageContents == null) {
@@ -557,25 +530,7 @@ public class Utils {
         int possibleCount = 0;
         double buyerBalance =
                 Config.useXP ? XPEconomy.getXP(offlinePlayer) : EzChestShop.getEconomy().getBalance(offlinePlayer);
-        int emptyCount = playerEmptyCount(playerInventory, itemStack);
-        int howManyExists = howManyOfItemExists(storageInventory, itemStack);
-
-        for (int num = 0; num < emptyCount; num++) {
-            if (possibleCount + 1 > howManyExists) {
-                break;
-            }
-            possibleCount += 1;
-        }
-
-        int result = 0;
-        for (int num = 0; num < possibleCount; num++) {
-            result += 1;
-            if ((num + 1) * eachBuyPrice > buyerBalance) {
-                return String.valueOf(num);
-            }
-        }
-
-        return String.valueOf(result);
+        return calculateForBuySellPossibleAmount(storageInventory, itemStack, playerInventory, possibleCount, eachBuyPrice, buyerBalance);
     }
 
     public static String calculateSellPossibleAmount(OfflinePlayer offlinePlayer, ItemStack[] playerInventory,
@@ -594,6 +549,15 @@ public class Utils {
                 buyerBalance = 0;
             }
         }
+        return calculateForBuySellPossibleAmount(storageInventory, itemStack, playerInventory, possibleCount, eachSellPrice, buyerBalance);
+    }
+
+    /**
+     * Code repetition removal, used by calculateBuyPossibleAmount and calculateSellPossibleAmount.
+     */
+    private static String calculateForBuySellPossibleAmount(ItemStack[] storageInventory, ItemStack itemStack,
+                                                            ItemStack[] playerInventory, int possibleCount,
+                                                            double eachPrice, double buyerBalance) {
         int emptyCount = containerEmptyCount(storageInventory, itemStack);
         int howManyExists = howManyOfItemExists(playerInventory, itemStack);
 
@@ -607,12 +571,67 @@ public class Utils {
         int result = 0;
         for (int num = 0; num < possibleCount; num++) {
             result += 1;
-            if ((num + 1) * eachSellPrice > buyerBalance) {
+            if ((num + 1) * eachPrice > buyerBalance) {
                 return String.valueOf(num);
             }
         }
 
         return String.valueOf(result);
+    }
+
+    /**
+     * Calculate the possible trade amount
+     * @param offlineCustomer The customer
+     * @param playerInventory The customer's inventory
+     * @param storageInventory The shops inventory
+     * @param item1 The first item of the trade shop
+     * @param item2 The second item of the trade shop
+     * @return A list containing [0] = item1 possible amount, [1] = item2 possible amount
+     */
+    public static List<String> calculatePossibleTradeAmount(OfflinePlayer offlineCustomer, ItemStack[] playerInventory,
+                                                            ItemStack[] storageInventory, ItemStack item1, ItemStack item2) {
+        List<String> results = new ArrayList<>();
+
+        int possibleItem1 = 0;
+        int possibleItem2 = 0;
+
+        int emptyCountPlayerItem1 = containerEmptyCount(playerInventory, item1);
+        int emptyCountPlayerItem2 = containerEmptyCount(playerInventory, item2);
+
+        int emptyCountStorageItem1 = containerEmptyCount(storageInventory, item1);
+        int emptyCountStorageItem2 = containerEmptyCount(storageInventory, item2);
+
+        int howManyExistsPlayerItem1 = howManyOfItemExists(playerInventory, item1);
+        int howManyExistsPlayerItem2 = howManyOfItemExists(playerInventory, item2);
+
+        int howManyExistsStorageItem1 = howManyOfItemExists(storageInventory, item1);
+        int howManyExistsStorageItem2 = howManyOfItemExists(storageInventory, item2);
+
+        int item1Amount = item1.getAmount();
+        int item2Amount = item2.getAmount();
+
+        // item1 -> item2
+        for (int num = 0; num < emptyCountPlayerItem2; num++) {
+            if (possibleItem1 + 1 > howManyExistsPlayerItem1) {
+                break;
+            }
+            possibleItem1 += 1;
+        }
+
+        // item2 -> item1
+        for (int num = 0; num < emptyCountPlayerItem1; num++) {
+            if (possibleItem2 + 1 > howManyExistsPlayerItem2) {
+                break;
+            }
+            possibleItem2 += 1;
+        }
+
+        // TODO this probably doesn't work yet, revisit it when you're more in mood for that logic/math mess
+
+        results.add(String.valueOf(possibleItem1));
+        results.add(String.valueOf(possibleItem2));
+
+        return results;
     }
 
     public static boolean containsAtLeast(Inventory inventory, ItemStack item, int amount) {

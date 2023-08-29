@@ -4,8 +4,10 @@ import me.deadlight.ezchestshop.data.Config;
 import me.deadlight.ezchestshop.data.DatabaseManager;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.utils.objects.EzShop;
+import me.deadlight.ezchestshop.utils.objects.EzTradeShop;
 import me.deadlight.ezchestshop.utils.objects.ShopSettings;
 import me.deadlight.ezchestshop.utils.Utils;
+import me.deadlight.ezchestshop.utils.objects.TradeShopSettings;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import tr.zeltuv.ezql.objects.*;
@@ -20,6 +22,7 @@ public class MySQL extends DatabaseManager {
     private EzqlDatabase database;
 
     private EzqlTable shopdata;
+    private EzqlTable tradeshopdata;
     private EzqlTable playerdata;
 
     private String prefix;
@@ -71,7 +74,7 @@ public class MySQL extends DatabaseManager {
         shopdata = database.addTable(prefix + "shopdata",
                 EzqlColumn.get(DataType.VARCHAR, "location", 64, true),
                 EzqlColumn.get(DataType.VARCHAR, "owner", 38),
-                EzqlColumn.get(DataType.BLOB, "item"),
+                EzqlColumn.get(DataType.TEXT, "item"),
                 EzqlColumn.get(DataType.DOUBLE, "buyPrice"),
                 EzqlColumn.get(DataType.DOUBLE, "sellPrice"),
                 EzqlColumn.get(DataType.TINYINT, "msgToggle"),
@@ -79,6 +82,18 @@ public class MySQL extends DatabaseManager {
                 EzqlColumn.get(DataType.TINYINT, "sellDisabled"),
                 EzqlColumn.get(DataType.VARCHAR, "admins", 526),
                 EzqlColumn.get(DataType.TINYINT, "shareIncome"),
+                EzqlColumn.get(DataType.TINYINT, "adminshop"),
+                EzqlColumn.get(DataType.VARCHAR, "rotation", 2000),
+                EzqlColumn.get(DataType.VARCHAR, "customMessages", 2000)
+        );
+        tradeshopdata = database.addTable(prefix + "tradeshopdata",
+                EzqlColumn.get(DataType.VARCHAR, "location", 64, true),
+                EzqlColumn.get(DataType.VARCHAR, "owner", 38),
+                EzqlColumn.get(DataType.TEXT, "item1"),
+                EzqlColumn.get(DataType.TEXT, "item2"),
+                EzqlColumn.get(DataType.TINYINT, "msgToggle"),
+                EzqlColumn.get(DataType.VARCHAR, "tradeDirection", 20),
+                EzqlColumn.get(DataType.VARCHAR, "admins", 526),
                 EzqlColumn.get(DataType.TINYINT, "adminshop"),
                 EzqlColumn.get(DataType.VARCHAR, "rotation", 2000),
                 EzqlColumn.get(DataType.VARCHAR, "customMessages", 2000)
@@ -108,7 +123,6 @@ public class MySQL extends DatabaseManager {
                     new EzShop(Utils.StringtoLocation(slocation),
                             (String) row.getValue("owner"),
                             Utils.decodeItem(row.getValue("item")),
-
                             row.getValue("buyPrice"),
                             row.getValue("sellPrice"),
                             new ShopSettings(slocation,
@@ -123,6 +137,33 @@ public class MySQL extends DatabaseManager {
         }
 
         return ezShopMap;
+    }
+
+    @Override
+    public HashMap<Location, EzTradeShop> queryTradeShops() {
+        HashMap<Location, EzTradeShop> ezTradeShopMap = new HashMap<>();
+
+        for (EzqlRow row : tradeshopdata.getAllRows()) {
+
+            String slocation = row.getValue("location");
+            String customMessages = row.getValue("customMessages") == null ? "" : row.getValue("customMessages");
+            String tradeDirectionString = row.getValue("tradeDirection") == null ? "BOTH" : row.getValue("tradeDirection");
+
+            ezTradeShopMap.put(Utils.StringtoLocation(slocation),
+                    new EzTradeShop(Utils.StringtoLocation(slocation),
+                            (String) row.getValue("owner"),
+                            Utils.decodeItem(row.getValue("item1")),
+                            Utils.decodeItem(row.getValue("item2")),
+                            new TradeShopSettings(slocation,
+                                    asBool(row.getValue("msgToggle")),
+                                    TradeShopSettings.TradeDirection.valueOf(tradeDirectionString.toUpperCase()),
+                                    row.getValue("admins"),
+                                    asBool(row.getValue("adminshop")),
+                                    row.getValue("rotation"),
+                                    Arrays.asList(customMessages.split("#,#")))));
+        }
+
+        return ezTradeShopMap;
     }
 
     public boolean asBool(int i){
@@ -154,6 +195,23 @@ public class MySQL extends DatabaseManager {
                 customMessages.stream().collect(Collectors.joining("#,#"))
         ));
     }
+
+    @Override
+    public void insertTradeShop(String sloc, String owner, String item1, String item2, boolean msgtoggle, TradeShopSettings.TradeDirection tradeDirection, String admins, boolean adminshop, String rotation, List<String> customMessages) {
+        Bukkit.getScheduler().runTaskAsynchronously(plugin,()->this.tradeshopdata.pushRow(
+                sloc,
+                owner,
+                item1,
+                item2,
+                msgtoggle,
+                tradeDirection.toString(),
+                admins,
+                adminshop,
+                rotation,
+                customMessages.stream().collect(Collectors.joining("#,#"))
+        ));
+    }
+
 
     @Override
     public String getString(String primary_key, String key, String column, String table) {

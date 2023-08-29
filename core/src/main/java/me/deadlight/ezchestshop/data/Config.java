@@ -2,6 +2,7 @@ package me.deadlight.ezchestshop.data;
 
 import me.deadlight.ezchestshop.enums.Database;
 import me.deadlight.ezchestshop.EzChestShop;
+import me.deadlight.ezchestshop.utils.objects.TradeShopSettings;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -19,6 +20,8 @@ public class Config {
     public static boolean showholo;
     public static List<String> holostructure;
     public static List<String> holostructure_admin;
+    public static List<String> trade_holostructure;
+    public static List<String> trade_holostructure_admin;
     public static double holo_linespacing;
     public static int holodelay;
     public static boolean holo_rotation;
@@ -41,6 +44,7 @@ public class Config {
     public static boolean settings_defaults_dsell;
     public static String settings_defaults_rotation;
     public static boolean settings_defaults_shareprofits;
+    public static TradeShopSettings.TradeDirection settings_defaults_trade_direction;
 
     public static boolean settings_zero_equals_disabled;
     public static boolean settings_buy_greater_than_sell;
@@ -57,6 +61,7 @@ public class Config {
     public static int command_checkprofit_lines_pp;
 
     public static boolean permissions_create_shop_enabled;
+    public static boolean permissions_create_trade_shop_enabled;
     public static boolean permission_hologram_message_limit;
     public static boolean permission_hologram_message_line_count;
 
@@ -113,6 +118,10 @@ public class Config {
         Collections.reverse(holostructure);
         holostructure_admin = config.getStringList("shops.hologram.holo-structure-adminshop");
         Collections.reverse(holostructure_admin);
+        trade_holostructure = config.getStringList("shops.hologram.holo-structure-trade");
+        Collections.reverse(trade_holostructure);
+        trade_holostructure_admin = config.getStringList("shops.hologram.holo-structure-trade-adminshop");
+        Collections.reverse(trade_holostructure_admin);
         holo_linespacing = config.getDouble("shops.hologram.holo-line-spacing");
         holodelay = config.getInt("shops.hologram.hologram-disappearance-delay");
         holo_rotation = config.getBoolean("shops.hologram.allow-rotation");
@@ -134,6 +143,11 @@ public class Config {
         settings_defaults_dsell = config.getBoolean("shops.settings.defaults.disable-selling");
         settings_defaults_rotation = config.getString("shops.settings.defaults.rotation");
         settings_defaults_shareprofits = config.getBoolean("shops.settings.defaults.share-profit");
+        try {
+            settings_defaults_trade_direction = TradeShopSettings.TradeDirection.valueOf(config.getString("shops.settings.defaults.trade-direction").toUpperCase());
+        } catch (IllegalArgumentException e) {
+            settings_defaults_trade_direction = TradeShopSettings.TradeDirection.BOTH;
+        }
 
         settings_zero_equals_disabled = config.getBoolean("shops.settings.zero-price-equals-disabled");
         settings_buy_greater_than_sell = config.getBoolean("shops.settings.buy-greater-than-sell");
@@ -150,6 +164,7 @@ public class Config {
         command_checkprofit_lines_pp = config.getInt("commands.checkprofit-lines-per-page");
 
         permissions_create_shop_enabled = config.getBoolean("permissions.create-shops");
+        permissions_create_trade_shop_enabled = config.getBoolean("permissions.create-trade-shops");
         permission_hologram_message_limit = config.getBoolean("permissions.hologram-message-limit");
         permission_hologram_message_line_count = config.getBoolean("permissions.hologram-message-line-count");
 

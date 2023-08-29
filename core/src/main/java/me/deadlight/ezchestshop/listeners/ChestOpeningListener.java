@@ -4,10 +4,14 @@ import me.deadlight.ezchestshop.data.Config;
 import me.deadlight.ezchestshop.data.ShopCommandManager;
 import me.deadlight.ezchestshop.data.ShopContainer;
 import me.deadlight.ezchestshop.EzChestShop;
-import me.deadlight.ezchestshop.guis.AdminShopGUI;
-import me.deadlight.ezchestshop.guis.NonOwnerShopGUI;
-import me.deadlight.ezchestshop.guis.OwnerShopGUI;
-import me.deadlight.ezchestshop.guis.ServerShopGUI;
+import me.deadlight.ezchestshop.data.TradeShopContainer;
+import me.deadlight.ezchestshop.guis.shop.AdminShopGUI;
+import me.deadlight.ezchestshop.guis.shop.NonOwnerShopGUI;
+import me.deadlight.ezchestshop.guis.shop.OwnerShopGUI;
+import me.deadlight.ezchestshop.guis.shop.ServerShopGUI;
+import me.deadlight.ezchestshop.guis.tradeshop.AdminTradeShopGUI;
+import me.deadlight.ezchestshop.guis.tradeshop.NonOwnerTradeShopGUI;
+import me.deadlight.ezchestshop.guis.tradeshop.ServerTradeShopGUI;
 import me.deadlight.ezchestshop.utils.BlockOutline;
 import me.deadlight.ezchestshop.utils.Utils;
 import me.deadlight.ezchestshop.utils.worldguard.FlagRegistry;
@@ -39,6 +43,10 @@ public class ChestOpeningListener implements Listener {
     private OwnerShopGUI ownerShopGUI = new OwnerShopGUI();
     private AdminShopGUI adminShopGUI = new AdminShopGUI();
 
+    private NonOwnerTradeShopGUI nonOwnerTradeShopGUI = new NonOwnerTradeShopGUI();
+    private OwnerShopGUI ownerTradeShopGUI = new OwnerShopGUI();
+    private AdminTradeShopGUI adminTradeShopGUI = new AdminTradeShopGUI();
+
     @EventHandler(priority = EventPriority.MONITOR)
     public void onChestOpening(PlayerInteractEvent event) {
         if (event.getClickedBlock() == null) return;
@@ -50,6 +58,7 @@ public class ChestOpeningListener implements Listener {
             if (EzChestShop.slimefun) {
                 if (BlockStorage.hasBlockInfo(chestblock.getLocation())) {
                     ShopContainer.deleteShop(chestblock.getLocation());
+                    TradeShopContainer.deleteShop(chestblock.getLocation());
                     return;
                 }
             }
@@ -85,10 +94,18 @@ public class ChestOpeningListener implements Listener {
 
             if (dataContainer.has(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING)) {
                 event.setCancelled(true);
-                // Load old shops into the Database when clicked
-                if (!ShopContainer.isShop(loc)) {
-                    ShopContainer.loadShop(loc, dataContainer);
+                boolean isTradeShop = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "item1"), PersistentDataType.STRING) != null;
+                if (isTradeShop) {
+                    if (!TradeShopContainer.isTradeShop(loc)) {
+                        TradeShopContainer.loadTradeShop(loc, dataContainer);
+                    }
+                } else {
+                    if (!ShopContainer.isShop(loc)) {
+                        ShopContainer.loadShop(loc, dataContainer);
+                    }
                 }
+                // Load old shops into the Database when clicked
+
 
                 List<BlockOutline> playerOutlinedShops = new ArrayList<>(Utils.activeOutlines.values());
                 for (BlockOutline outline : playerOutlinedShops) {
@@ -114,9 +131,16 @@ public class ChestOpeningListener implements Listener {
                             return;
                         }
                     }
-                    Config.shopCommandManager.executeCommands(player, loc, ShopCommandManager.ShopType.ADMINSHOP, ShopCommandManager.ShopAction.OPEN, null);
-                    ServerShopGUI serverShopGUI = new ServerShopGUI();
-                    serverShopGUI.showGUI(player, dataContainer, chestblock);
+                    if (isTradeShop) {
+                        //TODO set up the trade shop command manager
+//                        Config.tradeShopCommandManager.executeCommands(player, loc, ShopCommandManager.ShopType.ADMINSHOP, ShopCommandManager.ShopAction.OPEN, null);
+                        ServerTradeShopGUI serverTradeShopGUI = new ServerTradeShopGUI();
+                        serverTradeShopGUI.showGUI(player, dataContainer, chestblock);
+                    } else {
+                        Config.shopCommandManager.executeCommands(player, loc, ShopCommandManager.ShopType.ADMINSHOP, ShopCommandManager.ShopAction.OPEN, null);
+                        ServerShopGUI serverShopGUI = new ServerShopGUI();
+                        serverShopGUI.showGUI(player, dataContainer, chestblock);
+                    }
                     return;
                 }
                 boolean isAdmin = isAdmin(dataContainer, player.getUniqueId().toString());
@@ -127,20 +151,37 @@ public class ChestOpeningListener implements Listener {
                     }
                 }
                 // At this point it is clear that some shop will open, so run opening commands here.
-                Config.shopCommandManager.executeCommands(player, loc, ShopCommandManager.ShopType.SHOP, ShopCommandManager.ShopAction.OPEN, null);
+                if (isTradeShop) {
+                    //TODO set up the trade shop command manager
+//                    Config.tradeShopCommandManager.executeCommands(player, loc, ShopCommandManager.ShopType.SHOP, ShopCommandManager.ShopAction.OPEN, null);
+                } else {
+                    Config.shopCommandManager.executeCommands(player, loc, ShopCommandManager.ShopType.SHOP, ShopCommandManager.ShopAction.OPEN, null);
+                }
                 if (player.hasPermission("ecs.admin") || player.hasPermission("ecs.admin.view")) {
-                    adminShopGUI.showGUI(player, dataContainer, chestblock);
+                    if (isTradeShop) {
+                        adminTradeShopGUI.showGUI(player, dataContainer, chestblock);
+                    } else {
+                        adminShopGUI.showGUI(player, dataContainer, chestblock);
+                    }
                     return;
                 }
 
                 if (player.getUniqueId().toString().equalsIgnoreCase(owneruuid) || isAdmin) {
 
-                    ownerShopGUI.showGUI(player, dataContainer, chestblock, isAdmin);
+                    if (isTradeShop) {
+                        ownerTradeShopGUI.showGUI(player, dataContainer, chestblock, isAdmin);
+                    } else {
+                        ownerShopGUI.showGUI(player, dataContainer, chestblock, isAdmin);
+                    }
 
                 } else {
 
                     //not owner show default
-                    nonOwnerShopGUI.showGUI(player, dataContainer, chestblock);
+                    if (isTradeShop) {
+                        nonOwnerTradeShopGUI.showGUI(player, dataContainer, chestblock);
+                    } else {
+                        nonOwnerShopGUI.showGUI(player, dataContainer, chestblock);
+                    }
 
                 }
 

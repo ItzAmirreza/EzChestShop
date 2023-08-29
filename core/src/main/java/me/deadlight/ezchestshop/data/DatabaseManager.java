@@ -1,5 +1,7 @@
 package me.deadlight.ezchestshop.data;
 import me.deadlight.ezchestshop.utils.objects.EzShop;
+import me.deadlight.ezchestshop.utils.objects.EzTradeShop;
+import me.deadlight.ezchestshop.utils.objects.TradeShopSettings;
 import org.bukkit.Location;
 
 import java.util.HashMap;
@@ -11,9 +13,12 @@ public abstract class DatabaseManager {
     public abstract void load();
     public abstract void disconnect();
     public abstract HashMap<Location, EzShop> queryShops();
+    public abstract HashMap<Location, EzTradeShop> queryTradeShops();
     public abstract void deleteEntry(String primary_key, String key, String table);
     public abstract void insertShop(String sloc, String owner, String item, double buyprice, double sellprice, boolean msgtoggle,
-                                    boolean dbuy, boolean dsell, String admins, boolean shareincome, boolean adminshop, String rotation, List<String> customMessages);
+                                     boolean dbuy, boolean dsell, String admins, boolean shareincome, boolean adminshop, String rotation, List<String> customMessages);
+    public abstract void insertTradeShop(String sloc, String owner, String item1, String item2, boolean msgtoggle,
+                                     TradeShopSettings.TradeDirection tradeDirection, String admins, boolean adminshop, String rotation, List<String> customMessages);
     public abstract String getString(String primary_key, String key, String column, String table);
     public abstract void setString(String primary_key, String key, String column, String table, String data);
     public abstract void setInt(String primary_key, String key, String column, String table, int data);

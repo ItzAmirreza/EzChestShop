@@ -36,7 +36,9 @@ public class GuiEditorGUI {
 
     public void showGuiEditorOverview(Player player) {
 
-        Gui gui = Gui.gui().rows(3).title(Component.text(ChatColor.AQUA + "Gui Editor")).create();
+        int rows = (int) Math.ceil(GuiData.getConfig().getKeys(false).size() / 4.0) + 2;
+
+        Gui gui = Gui.gui().rows(rows).title(Component.text(ChatColor.AQUA + "Gui Editor")).create();
         gui.setDefaultClickAction(event -> event.setCancelled(true));
         gui.getFiller().fill(ContainerGui.getDefaultBackground());
         AtomicInteger i = new AtomicInteger();
@@ -44,8 +46,17 @@ public class GuiEditorGUI {
             ItemStack item;
             GuiData.GuiType type = GuiData.GuiType.valueOf(key.toUpperCase().replace("-", "_"));
             switch (type) {
+                case SHOP_GUI:
+                    item = new ItemStack(Material.CHEST);
+                    break;
                 case SHOP_SETTINGS:
                     item = new ItemStack(Material.SMITHING_TABLE);
+                    break;
+                case TRADE_SHOP_GUI:
+                    item = new ItemStack(Material.BARREL);
+                    break;
+                case TRADE_SHOP_SETTINGS:
+                    item = new ItemStack(Material.FLETCHING_TABLE);
                     break;
                 case TRANSACTION_LOGS:
                     item = new ItemStack(Material.PAPER);
@@ -54,7 +65,8 @@ public class GuiEditorGUI {
                     item = new ItemStack(Material.WRITABLE_BOOK);
                     break;
                 default:
-                    item = new ItemStack(Material.CHEST);
+                    item = new ItemStack(Material.BARRIER);
+                    break;
             }
             ItemMeta meta = item.getItemMeta();
             meta.setDisplayName(ChatColor.YELLOW + Utils.capitalizeFirstSplit(type.toString()));
@@ -63,8 +75,10 @@ public class GuiEditorGUI {
                 event.setCancelled(true);
                 showGuiSettingsEditor(player, type);
             });
+            int row = (int) Math.ceil((i.get() + 1) / 4.0) + 1;
+            int col = 2 + (i.get() % 4) * 2;
             // Simple way of spacing them out. If more items are needed one day, increase the row count and change the row/column calculation
-            gui.setItem(2, 2 + i.get() * 2, GuiItem);
+            gui.setItem(row, col, GuiItem);
             i.incrementAndGet();
         });
 
@@ -230,11 +244,21 @@ public class GuiEditorGUI {
         });
 
         container.getItemKeys().forEach(key -> {
-            if (key.equals("shop-item")) {
+            if (key.equals("shop-item") || key.equals("item1") || key.equals("item2")) {
                 ContainerGuiItem cgi = container.getItem(key);
                 ItemStack item = new ItemStack(Material.CHEST);
                 ItemMeta meta = item.getItemMeta();
-                meta.setDisplayName(ChatColor.GOLD + "Shop Item");
+                switch (key) {
+                    case "shop-item":
+                        meta.setDisplayName(ChatColor.GOLD + "Shop Item");
+                        break;
+                    case "item1":
+                        meta.setDisplayName(ChatColor.GOLD + "Item 1");
+                        break;
+                    case "item2":
+                        meta.setDisplayName(ChatColor.GOLD + "Item 2");
+                        break;
+                }
                 meta.setLore(Arrays.asList(ChatColor.GRAY + "- Left click to modify", ChatColor.GRAY + "  this item!",
                         ChatColor.GRAY + "- Drop click (Q) to remove", ChatColor.GRAY + "- Shift click to start moving",
                         ChatColor.GRAY + "  click again to place the item.", ChatColor.GRAY + "- Swap Hand click (F) to add",

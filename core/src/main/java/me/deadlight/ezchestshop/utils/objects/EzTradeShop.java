@@ -9,38 +9,35 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class EzShop {
+public class EzTradeShop {
 
     private Location location;
-    private ShopSettings settings;
+    private TradeShopSettings settings;
     private OfflinePlayer owner;
-    private ItemStack shopItem;
-    private double buyPrice;
-    private double sellPrice;
+    private ItemStack item1;
+    private ItemStack item2;
     private SqlQueue sqlQueue;
     private List<String> shopViewers = new ArrayList<>();
     private List<String> shopLoaders = new ArrayList<>();
 
 
 
-    public EzShop(Location location, OfflinePlayer owner, ItemStack shopItem, double buyPrice, double sellPrice, ShopSettings settings) {
+    public EzTradeShop(Location location, OfflinePlayer owner, ItemStack item1, ItemStack item2, TradeShopSettings settings) {
         this.location = location;
         this.owner = owner;
-        this.shopItem = shopItem;
-        this.buyPrice = buyPrice;
-        this.sellPrice = sellPrice;
+        this.item1 = item1;
+        this.item2 = item2;
         this.settings = settings;
         this.settings.assignShop(this);
         this.settings.createSqlQueue();
         this.createSqlQueue();
     }
 
-    public EzShop(Location location, String ownerID, ItemStack shopItem, double buyPrice, double sellPrice, ShopSettings settings) {
+    public EzTradeShop(Location location, String ownerID, ItemStack item1, ItemStack item2, TradeShopSettings settings) {
         this.location = location;
         this.owner = Bukkit.getOfflinePlayer(UUID.fromString(ownerID));
-        this.shopItem = shopItem;
-        this.buyPrice = buyPrice;
-        this.sellPrice = sellPrice;
+        this.item1 = item1;
+        this.item2 = item2;
         this.settings = settings;
         this.settings.assignShop(this);
         this.settings.createSqlQueue();
@@ -50,18 +47,27 @@ public class EzShop {
     public Location getLocation() {
         return location;
     }
-    public ShopSettings getSettings() {
+    public TradeShopSettings getSettings() {
         return settings;
     }
 
-    public ItemStack getShopItem() {
-        return shopItem.clone();
+    public ItemStack getItem1() {
+        return item1.clone();
+    }
+    public void setItem1(ItemStack item1) {
+        this.item1 = item1;
     }
 
+    public ItemStack getItem2() {
+        return item2.clone();
+    }
+    public void setItem2(ItemStack item2) {
+        this.item2 = item2;
+    }
     public void setLocation(Location location) {
         this.location = location;
     }
-    public void setSettings(ShopSettings settings) {
+    public void setSettings(TradeShopSettings settings) {
         this.settings = settings;
     }
 
@@ -75,20 +81,4 @@ public class EzShop {
         this.sqlQueue = new SqlQueue(this.getLocation(), getSettings(), this);
     }
     public void setOwner(OfflinePlayer owner) {this.owner = owner;}
-
-    public double getBuyPrice() {
-        return buyPrice;
-    }
-
-    public void setBuyPrice(double buyPrice) {
-        this.buyPrice = buyPrice;
-    }
-
-    public double getSellPrice() {
-        return sellPrice;
-    }
-
-    public void setSellPrice(double sellPrice) {
-        this.sellPrice = sellPrice;
-    }
 }

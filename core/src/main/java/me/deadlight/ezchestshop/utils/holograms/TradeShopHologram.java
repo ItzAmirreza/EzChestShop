@@ -1,10 +1,14 @@
 package me.deadlight.ezchestshop.utils.holograms;
+
+import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.data.Config;
 import me.deadlight.ezchestshop.data.LanguageManager;
 import me.deadlight.ezchestshop.data.ShopContainer;
-import me.deadlight.ezchestshop.EzChestShop;
-import me.deadlight.ezchestshop.utils.objects.EzShop;
+import me.deadlight.ezchestshop.data.TradeShopContainer;
 import me.deadlight.ezchestshop.utils.Utils;
+import me.deadlight.ezchestshop.utils.objects.EzShop;
+import me.deadlight.ezchestshop.utils.objects.EzTradeShop;
+import me.deadlight.ezchestshop.utils.objects.TradeShopSettings;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -27,19 +31,19 @@ import java.util.stream.Collectors;
  * <br>
  * When working with a shop hologram, this class should always be addressed, as it's a tailored abstraction to the BlockBoundHologram and PlayerBlockBoundHologram.
  */
-public class ShopHologram {
+public class TradeShopHologram {
 
     private static final LanguageManager lm = new LanguageManager();
-    private static HashMap<UUID, HashMap<Location, ShopHologram>> playerLocationShopHoloMap = new HashMap<>();
+    private static HashMap<UUID, HashMap<Location, TradeShopHologram>> playerLocationShopHoloMap = new HashMap<>();
     private static HashMap<Location, BlockBoundHologram> locationBlockHoloMap = new HashMap<>();
 
     /** The Hologram a player is currently inspecting (looking at). Only available if show item first is active. */
-    private static HashMap<UUID, ShopHologram> hologramInspections = new HashMap<>();
+    private static HashMap<UUID, TradeShopHologram> hologramInspections = new HashMap<>();
 
     private Location location;
     private Player player;
     private BlockBoundHologram blockHolo;
-    private EzShop shop;
+    private EzTradeShop tradeShop;
 
     /**
      * THIS CONSTRUCTOR IS MAINLY FOR INTERNAL USAGE, USE getHologram() INSTEAD!
@@ -47,7 +51,7 @@ public class ShopHologram {
      * @param location The location of the shop
      * @param player The player that is viewing the hologram
      */
-    public ShopHologram(Location location, Player player) {
+    public TradeShopHologram(Location location, Player player) {
         // Save the location and player
         this.location = location;
         this.player = player;
@@ -55,60 +59,70 @@ public class ShopHologram {
         // Make sure the BockBoundHologram is created
         if (!locationBlockHoloMap.containsKey(location)) {
             // Get the shop and it's hologram structure
-           shop = ShopContainer.getShop(location);
-            List<String> structure = new ArrayList<>(shop.getSettings().isAdminshop() ?
-                    Config.holostructure_admin : Config.holostructure);
+           tradeShop = TradeShopContainer.getTradeShop(location);
+            List<String> structure = new ArrayList<>(tradeShop.getSettings().isAdminshop() ?
+                    Config.trade_holostructure_admin : Config.trade_holostructure);
 
-            String itemName = Utils.getFinalItemName(shop.getShopItem());
+            String item1Name = Utils.getFinalItemName(tradeShop.getItem1());
+            String item2Name = Utils.getFinalItemName(tradeShop.getItem2());
             Inventory shopInventory = Utils.getBlockInventory(location.getBlock());
             int availableSlots = shopInventory.getSize();
             for (ItemStack item : shopInventory.getStorageContents()) {
                 // if item is one of the below, then it is a slot that can be used, otherwise subtract from available slots.
-                if (!(item == null || item.getType() == Material.AIR || item.isSimilar(shop.getShopItem()))) {
+                if (!(item == null || item.getType() == Material.AIR || item.isSimilar(tradeShop.getItem1()) || item.isSimilar(tradeShop.getItem2()))) {
                     availableSlots--;
                 }
             }
-            List<String> possibleCounts = Utils.calculatePossibleAmount(Bukkit.getOfflinePlayer(player.getUniqueId()),
-                    Bukkit.getOfflinePlayer(
-                            UUID.fromString(((TileState) location.getBlock().getState()).getPersistentDataContainer()
-                                    .get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING))),
+            List<String> possibleCounts = Utils.calculatePossibleTradeAmount(Bukkit.getOfflinePlayer(player.getUniqueId()),
                     player.getInventory().getStorageContents(),
-                    Utils.getBlockInventory(location.getBlock()).getStorageContents(),
-                    shop.getBuyPrice(), shop.getSellPrice(), shop.getShopItem());
+                    Utils.getBlockInventory(location.getBlock()).getStorageContents(), tradeShop.getItem1(), tradeShop.getItem2());
 
             /*
              * Text default placeholders:
              * (%buyprice% or <emptyShopInfo/> for example - simply variables that are replaced with the actual values)
              */
             HashMap<String, String> textReplacements = new HashMap<>();
-            textReplacements.put("%item%", itemName);
-            textReplacements.put("%buy%", shop.getBuyPrice() + "");
-            textReplacements.put("%sell%", shop.getSellPrice() + "");
+            textReplacements.put("%item1name%", item1Name);
+            textReplacements.put("%item2name%", item2Name);
+            textReplacements.put("%item1amount%", tradeShop.getItem1().getAmount() + "");
+            textReplacements.put("%item2amount%", tradeShop.getItem2().getAmount() + "");
             textReplacements.put("%currency%", Config.currency);
-            textReplacements.put("%owner%", Bukkit.getOfflinePlayer(shop.getOwnerID()).getName());
-            textReplacements.put("%maxbuy%", possibleCounts.get(0));
-            textReplacements.put("%maxsell%", possibleCounts.get(1));
-            textReplacements.put("%maxStackSize%", shop.getShopItem().getMaxStackSize() + "");
-            textReplacements.put("%stock%", Utils.howManyOfItemExists(shopInventory.getStorageContents(), shop.getShopItem()) + "");
-            textReplacements.put("%capacity%", availableSlots * shop.getShopItem().getMaxStackSize() + "");
+            textReplacements.put("%owner%", Bukkit.getOfflinePlayer(tradeShop.getOwnerID()).getName());
+            textReplacements.put("%maxtrade1%", possibleCounts.get(0));
+            textReplacements.put("%maxtrade2%", possibleCounts.get(1));
+            textReplacements.put("%maxStackSize1%", tradeShop.getItem1().getMaxStackSize() + "");
+            textReplacements.put("%maxStackSize2%", tradeShop.getItem2().getMaxStackSize() + "");
+            textReplacements.put("%stock1%", Utils.howManyOfItemExists(shopInventory.getStorageContents(), tradeShop.getItem1()) + "");
+            textReplacements.put("%stock2%", Utils.howManyOfItemExists(shopInventory.getStorageContents(), tradeShop.getItem2()) + "");
+            textReplacements.put("%capacity1%", availableSlots * tradeShop.getItem1().getMaxStackSize() + "");
+            textReplacements.put("%capacity2%", availableSlots * tradeShop.getItem2().getMaxStackSize() + "");
             // the amount of itemdata replacements is defined in the config and may wary
-            int itemDataLines = structure.stream()
-                    .filter(s -> s.startsWith("<itemdata") && !s.startsWith("<itemdataRest"))
+            int item1DataLines = structure.stream()
+                    .filter(s -> s.startsWith("<item1data") && !s.startsWith("<item1dataRest"))
                     .collect(Collectors.toList()).size();
-            for (int i = 0; i < itemDataLines; i++) {
-                textReplacements.put("<itemdata" + (i + 1) + "/>", "");
+            for (int i = 0; i < item1DataLines; i++) {
+                textReplacements.put("<item1data" + (i + 1) + "/>", "");
             }
-            textReplacements.put("<itemdataRest/>", "");
+            textReplacements.put("<item1dataRest/>", "");
+            int item2DataLines = structure.stream()
+                    .filter(s -> s.startsWith("<item2data") && !s.startsWith("<item2dataRest"))
+                    .collect(Collectors.toList()).size();
+            for (int i = 0; i < item2DataLines; i++) {
+                textReplacements.put("<item2data" + (i + 1) + "/>", "");
+            }
+            textReplacements.put("<item2dataRest/>", "");
             // visible if the shop does not contain at least 1 item.
-            boolean visible = !Utils.containsAtLeast(shopInventory, shop.getShopItem(), 1);
-            textReplacements.put("<emptyShopInfo/>", visible ? lm.emptyShopHologramInfo() : "");
+            boolean visibleItem1 = !Utils.containsAtLeast(shopInventory, tradeShop.getItem1(), 1);
+            textReplacements.put("<emptyShopItem1Info/>", visibleItem1 ? lm.emptyShopHologramInfo() : "");
+            boolean visibleItem2 = !Utils.containsAtLeast(shopInventory, tradeShop.getItem2(), 1);
+            textReplacements.put("<emptyShopItem2Info/>", visibleItem2 ? lm.emptyShopHologramInfo() : "");
             // the amount of custom message replacements is defined in the config and may wary
             int customLines = structure.stream()
                     .filter(s -> s.startsWith("<custom"))
                     .collect(Collectors.toList()).size();
             for (int i = 0; i < customLines; i++) {
-                if (shop.getSettings().getCustomMessages().size() > i) {
-                    textReplacements.put("<custom" + (i + 1) + "/>", shop.getSettings().getCustomMessages().get(i));
+                if (tradeShop.getSettings().getCustomMessages().size() > i) {
+                    textReplacements.put("<custom" + (i + 1) + "/>", tradeShop.getSettings().getCustomMessages().get(i));
                 } else {
                     textReplacements.put("<custom" + (i + 1) + "/>", "");
                 }
@@ -119,7 +133,8 @@ public class ShopHologram {
              * ([item] for example - variables that are replaced with the an item)
              */
             HashMap<String, ItemStack> itemReplacements = new HashMap<>();
-            itemReplacements.put("[item]", shop.getShopItem());
+            itemReplacements.put("[item1]", tradeShop.getItem1());
+            itemReplacements.put("[item2]", tradeShop.getItem2());
 
             /*
              * Conditional tags:
@@ -128,16 +143,18 @@ public class ShopHologram {
             HashMap<String,  Boolean> conditionalTags = new HashMap<>();
             // buy and sell are inverted because true for the Hologram means it is shown
             // and true for isDbuy/isDsell means it is disabled aka hidden
-            conditionalTags.put("buy", !shop.getSettings().isDbuy());
-            conditionalTags.put("sell", !shop.getSettings().isDsell());
+            conditionalTags.put("item1toitem2", tradeShop.getSettings().getTradeDirection() == TradeShopSettings.TradeDirection.ITEM1_TO_ITEM2 ||
+                    tradeShop.getSettings().getTradeDirection() == TradeShopSettings.TradeDirection.BOTH);
+            conditionalTags.put("item2toitem1", tradeShop.getSettings().getTradeDirection() == TradeShopSettings.TradeDirection.ITEM2_TO_ITEM1 ||
+                    tradeShop.getSettings().getTradeDirection() == TradeShopSettings.TradeDirection.BOTH);
             // true if both are visible aka false -> buy & sell is enabled
-            conditionalTags.put("separator", !shop.getSettings().isDbuy() && !shop.getSettings().isDsell());
+            conditionalTags.put("separator", tradeShop.getSettings().getTradeDirection() == TradeShopSettings.TradeDirection.BOTH);
 
             // Also set the separator replacement text if both are disabled
             // This is a special case, because few (only separator atm) of the conditional tags can also act as replacements.
             HashMap<String, String> conditionalTextReplacements = new HashMap<>();
             EzShop shop = ShopContainer.getShop(location);
-            if (shop != null && shop.getSettings() != null && shop.getSettings().isDbuy() && shop.getSettings().isDsell()) {
+            if (shop != null && shop.getSettings() != null && tradeShop.getSettings().getTradeDirection() == TradeShopSettings.TradeDirection.DISABLED) {
                 conditionalTextReplacements.put("separator", lm.disabledButtonTitle());
                 conditionalTags.put("separator", true);
             }
@@ -148,7 +165,8 @@ public class ShopHologram {
              * even if show Item first is enabled - these Hologram texts render regardless)
              */
             List<String> alwaysVisibleTextReplacements = new ArrayList<>();
-            alwaysVisibleTextReplacements.add("<emptyShopInfo/>");
+            alwaysVisibleTextReplacements.add("<emptyShopItem1Info/>");
+            alwaysVisibleTextReplacements.add("<emptyShopItem2Info/>");
             for (int i = 0; i < customLines; i++) {
                 alwaysVisibleTextReplacements.add("<custom" + (i + 1) + "/>");
             }
@@ -167,13 +185,13 @@ public class ShopHologram {
         if (playerLocationShopHoloMap.containsKey(player.getUniqueId())) {
             playerLocationShopHoloMap.get(player.getUniqueId()).put(location, this);
         } else {
-            HashMap<Location, ShopHologram> locationShopHoloMap = new HashMap<>();
+            HashMap<Location, TradeShopHologram> locationShopHoloMap = new HashMap<>();
             locationShopHoloMap.put(location, this);
             playerLocationShopHoloMap.put(player.getUniqueId(), locationShopHoloMap);
         }
 
         // Make sure inventory replacements are up to date for all players.
-        ShopHologram.updateInventoryReplacements(location);
+        TradeShopHologram.updateInventoryReplacements(location);
     }
 
     /**
@@ -182,9 +200,9 @@ public class ShopHologram {
      * @param player The player that is viewing the hologram
      * @return The hologram
      */
-    public static ShopHologram getHologram(Location location, Player player) {
+    public static TradeShopHologram getHologram(Location location, Player player) {
         if (!playerLocationShopHoloMap.containsKey(player.getUniqueId()) || !playerLocationShopHoloMap.get(player.getUniqueId()).containsKey(location)) {
-            new ShopHologram(location, player);
+            new TradeShopHologram(location, player);
         }
         return playerLocationShopHoloMap.get(player.getUniqueId()).get(location);
     }
@@ -205,7 +223,7 @@ public class ShopHologram {
      * @param player The player
      * @return The ShopHolograms
      */
-    public static List<ShopHologram> getViewedHolograms(Player player) {
+    public static List<TradeShopHologram> getViewedHolograms(Player player) {
         if (playerLocationShopHoloMap.containsKey(player.getUniqueId())) {
             return new ArrayList<>(playerLocationShopHoloMap.get(player.getUniqueId()).values());
         }
@@ -226,10 +244,10 @@ public class ShopHologram {
      * Reload all holograms. Called when the plugin is reloaded via /ecsadmin reload.
      */
     public static void reloadAll() {
-        List<ShopHologram> shopHolos = playerLocationShopHoloMap.values().stream().map(holo -> holo.values())
+        List<TradeShopHologram> shopHolos = playerLocationShopHoloMap.values().stream().map(holo -> holo.values())
                 .flatMap(Collection::stream).collect(Collectors.toList());
         shopHolos.forEach(hologram -> {
-            hologram.blockHolo.updateContents(hologram.shop.getSettings().isAdminshop() ? Config.holostructure_admin : Config.holostructure);
+            hologram.blockHolo.updateContents(hologram.tradeShop.getSettings().isAdminshop() ? Config.trade_holostructure_admin : Config.trade_holostructure);
             hideForAll(hologram.getLocation());
         });
     }
@@ -240,13 +258,13 @@ public class ShopHologram {
      */
     public static void hideAll(Player player) {
         if (playerLocationShopHoloMap.containsKey(player.getUniqueId())) {
-            List<ShopHologram> shopHolos = playerLocationShopHoloMap.get(player.getUniqueId()).values()
+            List<TradeShopHologram> shopHolos = playerLocationShopHoloMap.get(player.getUniqueId()).values()
                     .stream().collect(Collectors.toList());
 
             shopHolos.forEach(hologram -> hologram.hide());
             playerLocationShopHoloMap.remove(player.getUniqueId());
-            if (ShopHologram.isPlayerInspectingShop(player)) {
-                ShopHologram.getInspectedShopHologram(player).removeInspectedShop();
+            if (TradeShopHologram.isPlayerInspectingShop(player)) {
+                TradeShopHologram.getInspectedShopHologram(player).removeInspectedShop();
             }
         }
     }
@@ -263,7 +281,7 @@ public class ShopHologram {
                 locationShopHoloMap.get(location).hide();
             }
         });
-        ShopHologram.hologramInspections.values().stream().filter(shopHolo -> shopHolo.getLocation().equals(location)).collect(Collectors.toSet())
+        TradeShopHologram.hologramInspections.values().stream().filter(shopHolo -> shopHolo.getLocation().equals(location)).collect(Collectors.toSet())
                 .forEach(shopHolo -> shopHolo.removeInspectedShop());
         locationBlockHoloMap.remove(location);
     }
@@ -333,21 +351,33 @@ public class ShopHologram {
     public void setItemDataVisible(boolean visible) {
         PlayerBlockBoundHologram playerHolo = blockHolo.getPlayerHologram(player);
         int lines = playerHolo.getBlockHologram().getContents().stream()
-                .filter(s -> s.startsWith("<itemdata") && !s.startsWith("<itemdataRest"))
+                .filter(s -> s.startsWith("<item1data") && !s.startsWith("<item1dataRest"))
                 .collect(Collectors.toList()).size();
-        shop = ShopContainer.getShop(location);
+        tradeShop = TradeShopContainer.getTradeShop(location);
         if (playerHolo != null) {
             for (int i = -1; i < lines; i++) {
-                ItemStack item = shop.getShopItem();
-                if (item.getType().name().contains("SHULKER_BOX") || item.getEnchantments().size() > 0 ||
-                        (item.getType() == Material.ENCHANTED_BOOK
-                                && ((EnchantmentStorageMeta) item.getItemMeta()).getStoredEnchants().size() > 1)) {
+                ItemStack item1 = tradeShop.getItem1();
+                if (item1.getType().name().contains("SHULKER_BOX") || item1.getEnchantments().size() > 0 ||
+                        (item1.getType() == Material.ENCHANTED_BOOK
+                                && ((EnchantmentStorageMeta) item1.getItemMeta()).getStoredEnchants().size() > 1)) {
                     if (i == -1) {
-                        playerHolo.updateTextReplacement("<itemdataRest/>", visible ?
-                                BlockBoundHologram.getHologramItemData(i, item, lines) : "", false, true);
+                        playerHolo.updateTextReplacement("<item1dataRest/>", visible ?
+                                BlockBoundHologram.getHologramItemData(i, item1, lines) : "", false, true);
                     } else {
-                        playerHolo.updateTextReplacement("<itemdata" + (i + 1) + "/>", visible ?
-                                BlockBoundHologram.getHologramItemData(i, item, lines) : "", false, true);
+                        playerHolo.updateTextReplacement("<item1data" + (i + 1) + "/>", visible ?
+                                BlockBoundHologram.getHologramItemData(i, item1, lines) : "", false, true);
+                    }
+                }
+                ItemStack item2 = tradeShop.getItem2();
+                if (item2.getType().name().contains("SHULKER_BOX") || item2.getEnchantments().size() > 0 ||
+                        (item2.getType() == Material.ENCHANTED_BOOK
+                                && ((EnchantmentStorageMeta) item2.getItemMeta()).getStoredEnchants().size() > 1)) {
+                    if (i == -1) {
+                        playerHolo.updateTextReplacement("<item2dataRest/>", visible ?
+                                BlockBoundHologram.getHologramItemData(i, item2, lines) : "", false, true);
+                    } else {
+                        playerHolo.updateTextReplacement("<item2data" + (i + 1) + "/>", visible ?
+                                BlockBoundHologram.getHologramItemData(i, item2, lines) : "", false, true);
                     }
                 }
             }
@@ -355,60 +385,55 @@ public class ShopHologram {
     }
 
     public void updateEmptyShopInfo() {
-        if (shop.getOwnerID().equals(player.getUniqueId()) ||
-                shop.getSettings().getAdmins().contains(player.getUniqueId().toString())) {
+        if (tradeShop.getOwnerID().equals(player.getUniqueId()) ||
+                tradeShop.getSettings().getAdmins().contains(player.getUniqueId().toString())) {
             PlayerBlockBoundHologram playerHolo = blockHolo.getPlayerHologram(player);
             if (playerHolo != null) {
                 Inventory shopInventory = Utils.getBlockInventory(location.getBlock());
                 // visible if the shop does not contain at least 1 item.
-                boolean visible = !Utils.containsAtLeast(shopInventory, shop.getShopItem(), 1);
-                playerHolo.updateTextReplacement("<emptyShopInfo/>", visible ?
+                boolean visibleItem1 = !Utils.containsAtLeast(shopInventory, tradeShop.getItem1(), 1);
+                playerHolo.updateTextReplacement("<emptyShopItem1Info/>", visibleItem1 ?
+                        lm.emptyShopHologramInfo() : "", false, true);
+                boolean visibleItem2 = !Utils.containsAtLeast(shopInventory, tradeShop.getItem2(), 1);
+                playerHolo.updateTextReplacement("<emptyShopItem2Info/>", visibleItem2 ?
                         lm.emptyShopHologramInfo() : "", false, true);
             }
         }
     }
 
-    public void updateBuyPrice() {
+    public void updateItem1Amount() {
         PlayerBlockBoundHologram playerHolo = blockHolo.getPlayerHologram(player);
         if (playerHolo != null) {
-            shop = ShopContainer.getShop(location);
-            playerHolo.updateTextReplacement("%buy%", shop.getBuyPrice() + "", true, true);
+            tradeShop = TradeShopContainer.getTradeShop(location);
+            playerHolo.updateTextReplacement("%item1amount%", tradeShop.getItem1().getAmount() + "", true, true);
         }
     }
 
-    public void updateSellPrice() {
+    public void updateItem2Amount() {
         PlayerBlockBoundHologram playerHolo = blockHolo.getPlayerHologram(player);
         if (playerHolo != null) {
-            shop = ShopContainer.getShop(location);
-            playerHolo.updateTextReplacement("%sell%", shop.getSellPrice() + "", true, true);
+            tradeShop = TradeShopContainer.getTradeShop(location);
+            playerHolo.updateTextReplacement("%item2amount%", tradeShop.getItem2().getAmount() + "", true, true);
         }
     }
 
-    public void updateDbuy() {
+    public void updateTradeDirection() {
         PlayerBlockBoundHologram playerHolo = blockHolo.getPlayerHologram(player);
         if (playerHolo != null) {
-            shop = ShopContainer.getShop(location);
-            if (shop.getSettings().isDbuy() && shop.getSettings().isDsell()) {
-                updateBuySellSeparator(playerHolo);
-                playerHolo.updateConditionalTag("buy", !shop.getSettings().isDbuy(), true);
+            tradeShop = TradeShopContainer.getTradeShop(location);
+            if (tradeShop.getSettings().getTradeDirection() == TradeShopSettings.TradeDirection.DISABLED) {
+                updateSeparator(playerHolo);
+                playerHolo.updateConditionalTag("item1toitem2", false, true);
+                playerHolo.updateConditionalTag("item2toitem1", false, true);
+            } else if (tradeShop.getSettings().getTradeDirection() == TradeShopSettings.TradeDirection.ITEM1_TO_ITEM2) {
+                updateSeparator(playerHolo);
+                playerHolo.updateConditionalTag("item1toitem2", false, true);
+            } else if (tradeShop.getSettings().getTradeDirection() == TradeShopSettings.TradeDirection.ITEM2_TO_ITEM1) {
+                updateSeparator(playerHolo);
+                playerHolo.updateConditionalTag("item2toitem1", false, true);
             } else {
-                playerHolo.updateConditionalTag("buy", !shop.getSettings().isDbuy(), true);
-                updateBuySellSeparator(playerHolo);
-            }
-
-        }
-    }
-
-    public void updateDsell() {
-        PlayerBlockBoundHologram playerHolo = blockHolo.getPlayerHologram(player);
-        if (playerHolo != null) {
-            shop = ShopContainer.getShop(location);
-            if (shop.getSettings().isDbuy() && shop.getSettings().isDsell()) {
-                updateBuySellSeparator(playerHolo);
-                playerHolo.updateConditionalTag("sell", !shop.getSettings().isDsell(), true);
-            } else {
-                playerHolo.updateConditionalTag("sell", !shop.getSettings().isDsell(), true);
-                updateBuySellSeparator(playerHolo);
+                updateSeparator(playerHolo);
+                playerHolo.updateConditionalTag("tradeDirection", false, true);
             }
         }
     }
@@ -416,20 +441,24 @@ public class ShopHologram {
     public void updateOwner() {
         PlayerBlockBoundHologram playerHolo = blockHolo.getPlayerHologram(player);
         if (playerHolo != null) {
-            shop = ShopContainer.getShop(location);
-            playerHolo.updateTextReplacement("%owner%", Bukkit.getOfflinePlayer(shop.getOwnerID()).getName(), true, true);
+            tradeShop = TradeShopContainer.getTradeShop(location);
+            playerHolo.updateTextReplacement("%owner%", Bukkit.getOfflinePlayer(tradeShop.getOwnerID()).getName(), true, true);
         }
     }
 
     public void updateStockAndCapacity() {
         PlayerBlockBoundHologram playerHolo = blockHolo.getPlayerHologram(player);
         if (playerHolo != null) {
-            shop = ShopContainer.getShop(location);
+            tradeShop = TradeShopContainer.getTradeShop(location);
             Inventory shopInventory = Utils.getBlockInventory(location.getBlock());
             int availableSlots = shopInventory.getSize();
-            playerHolo.updateTextReplacement("%stock%", Utils.howManyOfItemExists(shopInventory.getStorageContents(),
-                    shop.getShopItem()) + "", true, false);
-            playerHolo.updateTextReplacement("%capacity%", availableSlots * shop.getShopItem().getMaxStackSize() + "",
+            playerHolo.updateTextReplacement("%stock1%", Utils.howManyOfItemExists(shopInventory.getStorageContents(),
+                    tradeShop.getItem1()) + "", true, false);
+            playerHolo.updateTextReplacement("%stock2%", Utils.howManyOfItemExists(shopInventory.getStorageContents(),
+                    tradeShop.getItem2()) + "", true, false);
+            playerHolo.updateTextReplacement("%capacity1%", availableSlots * tradeShop.getItem1().getMaxStackSize() + "",
+                    true, false);
+            playerHolo.updateTextReplacement("%capacity2%", availableSlots * tradeShop.getItem2().getMaxStackSize() + "",
                     true, false);
         }
     }
@@ -437,12 +466,9 @@ public class ShopHologram {
     public void updateMaxBuyAndSell() {
         PlayerBlockBoundHologram playerHolo = blockHolo.getPlayerHologram(player);
         if (playerHolo != null) {
-            shop = ShopContainer.getShop(location);
-            List<String> possibleCounts = Utils.calculatePossibleAmount(Bukkit.getOfflinePlayer(player.getUniqueId()),
-                    Bukkit.getOfflinePlayer(UUID.fromString(((TileState) shop.getLocation().getBlock().getState()).getPersistentDataContainer()
-                            .get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING))), player.getInventory().getStorageContents(),
-                    Utils.getBlockInventory(shop.getLocation().getBlock()).getStorageContents(),
-                    shop.getBuyPrice(), shop.getSellPrice(), shop.getShopItem());
+            tradeShop = TradeShopContainer.getTradeShop(location);
+            List<String> possibleCounts = Utils.calculatePossibleTradeAmount(Bukkit.getOfflinePlayer(player.getUniqueId()), player.getInventory().getStorageContents(),
+                    Utils.getBlockInventory(tradeShop.getLocation().getBlock()).getStorageContents(), tradeShop.getItem1(), tradeShop.getItem2());
             playerHolo.updateTextReplacement("%maxbuy%", possibleCounts.get(0) + "", false, false);
             playerHolo.updateTextReplacement("%maxsell%", possibleCounts.get(1) + "", false, false);
         }
@@ -450,7 +476,7 @@ public class ShopHologram {
 
     public static void updateInventoryReplacements(Location location) {
         locationBlockHoloMap.get(location).getViewerHolograms().forEach(playerBlockBoundHologram -> {
-            ShopHologram shopHolo = ShopHologram.getHologram(location, playerBlockBoundHologram.getPlayer());
+            TradeShopHologram shopHolo = TradeShopHologram.getHologram(location, playerBlockBoundHologram.getPlayer());
             shopHolo.updateStockAndCapacity();
             shopHolo.updateEmptyShopInfo();
             shopHolo.updateMaxBuyAndSell();
@@ -500,7 +526,7 @@ public class ShopHologram {
      * @param player The player
      * @return The hologram
      */
-    public static ShopHologram getInspectedShopHologram(Player player) {
+    public static TradeShopHologram getInspectedShopHologram(Player player) {
         return hologramInspections.get(player.getUniqueId());
     }
 
@@ -531,11 +557,11 @@ public class ShopHologram {
      * If both are disabled, the separator should be replaced with a text that says "disabled".
      * @param playerHolo The hologram
      */
-    private void updateBuySellSeparator(PlayerBlockBoundHologram playerHolo) {
-        if (!shop.getSettings().isDbuy() && !shop.getSettings().isDsell()) {
+    private void updateSeparator(PlayerBlockBoundHologram playerHolo) {
+        if (tradeShop.getSettings().getTradeDirection() == TradeShopSettings.TradeDirection.BOTH) {
             playerHolo.getBlockHologram().removeConditionalText("separator");
             playerHolo.updateConditionalTag("separator", true, true);
-        } else if (shop.getSettings().isDbuy() && shop.getSettings().isDsell())  {
+        } else if (tradeShop.getSettings().getTradeDirection() == TradeShopSettings.TradeDirection.DISABLED)  {
             playerHolo.getBlockHologram().setConditionalText("separator", lm.disabledButtonTitle());
             playerHolo.updateConditionalTag("separator", true, true);
         } else {

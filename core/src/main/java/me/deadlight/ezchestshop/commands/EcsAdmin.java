@@ -8,6 +8,7 @@ import me.deadlight.ezchestshop.data.LanguageManager;
 import me.deadlight.ezchestshop.data.ShopCommandManager;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.guis.GuiEditorGUI;
+import me.deadlight.ezchestshop.utils.holograms.TradeShopHologram;
 import me.deadlight.ezchestshop.utils.objects.EzShop;
 import me.deadlight.ezchestshop.utils.Utils;
 import me.deadlight.ezchestshop.utils.worldguard.FlagRegistry;
@@ -245,6 +246,7 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
     private void reload() {
         Config.loadConfig();
         ShopHologram.reloadAll();
+        TradeShopHologram.reloadAll();
         LanguageManager.reloadLanguages();
         GuiData.loadGuiData();
     }
@@ -472,6 +474,7 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
                                 ItemStack thatIteminplayer = player.getInventory().getItemInMainHand();
                                 ItemStack thatItem = thatIteminplayer.clone();
                                 thatItem.setAmount(1);
+                                String encodedItem = Utils.encodeItem(thatItem);
                                 if (Utils.isShulkerBox(thatItem.getType()) && Utils.isShulkerBox(target)) {
                                     player.sendMessage(lm.invalidShopItem());
                                     return;
@@ -495,6 +498,9 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
                                 container.set(new NamespacedKey(EzChestShop.getPlugin(), "shareincome"), PersistentDataType.INTEGER, Config.settings_defaults_shareprofits ? 1 : 0);
                                 container.set(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"), PersistentDataType.INTEGER, 1);
                                 container.set(new NamespacedKey(EzChestShop.getPlugin(), "rotation"), PersistentDataType.STRING, Config.settings_defaults_rotation);
+                                if (encodedItem != null) {
+                                    container.set(new NamespacedKey(EzChestShop.getPlugin(), "item"), PersistentDataType.STRING, encodedItem);
+                                }
 
                                 ShopContainer.createShop(target.getLocation(), player, thatItem, buyprice, sellprice, false,
                                         false, false, "none", true, true, Config.settings_defaults_rotation);
@@ -506,7 +512,6 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
                                 //logs [list of infos seperated by @ in string form]
                                 //trans [list of infos seperated by @ in string form]
                                 //adminshop 0/1
-                                Utils.storeItem(thatItem, container);
                                 state.update();
                                 player.sendMessage(lm.shopCreated());
 

@@ -11,18 +11,26 @@ public class FlagRegistry {
     // All the flags:
 
     public static StateFlag CREATE_SHOP;
+    public static StateFlag CREATE_TRADE_SHOP;
     public static StateFlag CREATE_ADMIN_SHOP;
     public static StateFlag REMOVE_SHOP;
+    public static StateFlag REMOVE_TRADE_SHOP;
     public static StateFlag REMOVE_ADMIN_SHOP;
     public static StateFlag USE_SHOP;
+    public static StateFlag USE_TRADE_SHOP;
     public static StateFlag USE_ADMIN_SHOP;
 
     public static void onLoad() {
         CREATE_SHOP = registerStateFlag("ecs-create-shop", true);
+        CREATE_TRADE_SHOP = registerStateFlag("ecs-create-trade-shop", true);
         CREATE_ADMIN_SHOP = registerStateFlag("ecs-create-admin-shop", true);
+
         REMOVE_SHOP = registerStateFlag("ecs-remove-shop", true);
+        REMOVE_TRADE_SHOP = registerStateFlag("ecs-remove-trade-shop", true);
         REMOVE_ADMIN_SHOP = registerStateFlag("ecs-remove-admin-shop", true);
+
         USE_SHOP = registerStateFlag("ecs-use-shop", true);
+        USE_TRADE_SHOP = registerStateFlag("ecs-use-trade-shop", true);
         USE_ADMIN_SHOP = registerStateFlag("ecs-use-admin-shop", true);
     }
 

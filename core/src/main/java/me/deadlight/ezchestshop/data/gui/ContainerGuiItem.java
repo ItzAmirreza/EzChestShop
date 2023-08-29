@@ -1,14 +1,24 @@
 package me.deadlight.ezchestshop.data.gui;
 
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.profile.PlayerProfile;
+import org.bukkit.profile.PlayerTextures;
 
+import java.lang.reflect.Field;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 public class ContainerGuiItem {
 
@@ -55,6 +65,17 @@ public class ContainerGuiItem {
                 meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
                 item.setItemMeta(meta);
             }
+            if (config.contains(path + ".display-model")) {
+                item.getItemMeta().setCustomModelData(config.getInt(path + ".display-model"));
+            }
+            if (item.getType() == Material.PLAYER_HEAD) {
+                if (config.contains(path + ".head-url")) {
+                    String headURL = config.getString(path + ".head-url");
+                    SkullMeta meta = (SkullMeta) item.getItemMeta();
+                    meta.setOwnerProfile(getProfile(headURL)); // Set the owning player of the head to the player profile
+                    item.setItemMeta(meta);
+                }
+            }
         }
 
         int row = 1;
@@ -73,6 +94,20 @@ public class ContainerGuiItem {
 
         return new ContainerGuiItem(path.split("\\.")[path.split("\\.").length - 1],
                 item, row, column);
+    }
+
+    private static PlayerProfile getProfile(String url) {
+        PlayerProfile profile = Bukkit.createPlayerProfile(UUID.randomUUID()); // Get a new player profile
+        PlayerTextures textures = profile.getTextures();
+        URL urlObject;
+        try {
+            urlObject = new URL(url); // The URL to the skin, for example: https://textures.minecraft.net/texture/18813764b2abc94ec3c3bc67b9147c21be850cdf996679703157f4555997ea63a
+        } catch (MalformedURLException exception) {
+            throw new RuntimeException("Invalid Head URL", exception);
+        }
+        textures.setSkin(urlObject); // Set the skin of the player profile to the URL
+        profile.setTextures(textures); // Set the textures back to the profile
+        return profile;
     }
 
     public String getName() {

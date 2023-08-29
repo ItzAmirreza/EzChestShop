@@ -3,7 +3,7 @@ package me.deadlight.ezchestshop.listeners;
 import me.deadlight.ezchestshop.data.LanguageManager;
 import me.deadlight.ezchestshop.data.ShopContainer;
 import me.deadlight.ezchestshop.EzChestShop;
-import me.deadlight.ezchestshop.guis.SettingsGUI;
+import me.deadlight.ezchestshop.guis.shop.SettingsGUI;
 import me.deadlight.ezchestshop.utils.objects.ChatWaitObject;
 import me.deadlight.ezchestshop.utils.Utils;
 import org.bukkit.Bukkit;

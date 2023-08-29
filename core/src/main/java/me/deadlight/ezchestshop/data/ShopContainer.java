@@ -559,12 +559,4 @@ public class ShopContainer {
         queue.resetChangeList(shop.getSettings(), shop); //giving new shop settings to keep the queue updated
 
     }
-
-/*
-
-            db.getDouble("location", sloc,
-                    "buyPrice", "shopdata");
-            db.getDouble("location", sloc,
-                    "sellPrice", "shopdata");
- */
 }
