@@ -125,6 +125,134 @@ shop-settings:
       column: 9
       material: paper
       count: 1
+trade-shop-gui:
+  rows: 3
+  background: default
+  items:
+    # The material of the trade shop item1 cannot be changes as it depends on item1 (the one that was in your mainhand when the shop was created.
+    # The count also depends on how many items will be traded.
+    item1:
+      row: 2
+      column: 4
+    # This head/barrier symbolises the direction of the trade.
+    trade-direction-item1toitem2:
+      material: player_head
+      head-url: "http://textures.minecraft.net/texture/51e94e1130201af1a3062f62d42ecbb55d59e4cabb3435a0e0062bc008cb0985"
+      row: 2
+      column: 5
+      count: 1
+    trade-direction-item2toitem1:
+      material: player_head
+      head-url: "http://textures.minecraft.net/texture/98b1b4819fda0f0babbcd36c8404f34862b529409ea55775712c0b67945977ea"
+      row: 2
+      column: 5
+      count: 1
+    trade-direction-both:
+      material: player_head
+      head-url: "http://textures.minecraft.net/texture/9438b51138f80a49f2d19f9b1abed99e1f3225ebcfe8c8b4798491e1bcda95e2"
+      row: 2
+      column: 5
+      count: 1
+    trade-direction-disabled:
+      material: barrier
+      row: 2
+      column: 5
+      count: 1
+    # The material of the trade shop item2 cannot be changes as it depends on item2 (the one that was in your offhand when the shop was created.
+    # The count also depends on how many items will be traded.
+    item2:
+      row: 2
+      column: 6
+      count: 1
+    storage:
+      row: 3
+      column: 1
+      material: chest
+      count: 1
+    admin-view:
+      row: 3
+      column: 1
+      material: redstone
+      count: 1
+      enchanted: true
+    settings:
+      row: 3
+      column: 9
+      material: smithing_table
+      count: 1
+trade-shop-settings:
+  rows: 3
+  background: default
+  items:
+    back:
+      row: 1
+      column: 1
+      material: dark_oak_door
+      count: 1
+    toggle-transaction-message-off:
+      row: 2
+      column: 2
+      material: gray_dye
+      count: 1
+    toggle-transaction-message-on:
+      row: 2
+      column: 2
+      material: lime_dye
+      count: 1
+    toggle-trade-direction-item1toitem2:
+      material: player_head
+      head-url: "http://textures.minecraft.net/texture/51e94e1130201af1a3062f62d42ecbb55d59e4cabb3435a0e0062bc008cb0985"
+      row: 2
+      column: 3
+      count: 1
+    toggle-trade-direction-item2toitem1:
+      material: player_head
+      head-url: "http://textures.minecraft.net/texture/98b1b4819fda0f0babbcd36c8404f34862b529409ea55775712c0b67945977ea"
+      row: 2
+      column: 3
+      count: 1
+    toggle-trade-direction-both:
+      material: player_head
+      head-url: "http://textures.minecraft.net/texture/9438b51138f80a49f2d19f9b1abed99e1f3225ebcfe8c8b4798491e1bcda95e2"
+      row: 2
+      column: 3
+      count: 1
+    toggle-trade-direction-disabled:
+      material: barrier
+      row: 2
+      column: 3
+      count: 1
+    shop-admins:
+      row: 2
+      column: 5
+      material: oak_sign
+      count: 1
+    # To change the item for different rotations, use hologram-rotation-up/north/east/south/west/down
+    hologram-rotation-all:
+      row: 2
+      column: 6
+      material: compass
+      count: 1
+    change-item1-amount:
+      row: 2
+      column: 7
+      material: hopper
+      count: 1
+    change-item2-amount:
+      row: 1
+      column: 7
+      material: hopper
+      count: 1
+    customize-hologram-message:
+      row: 2
+      column: 8
+      material: writable_book
+      count: 1
+    latest-transactions:
+      row: 3
+      column: 9
+      material: paper
+      count: 1
 transaction-logs:
   rows: 6
   items:
