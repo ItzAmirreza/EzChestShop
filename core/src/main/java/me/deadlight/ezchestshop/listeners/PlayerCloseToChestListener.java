@@ -130,7 +130,7 @@ public class PlayerCloseToChestListener implements Listener {
             }
             if (TradeShopHologram.isPlayerInspectingShop(player) && !isLookingAtSameShop) {
                 TradeShopHologram tradeShopHolo = TradeShopHologram.getInspectedShopHologram(player);
-                if (ShopContainer.isShop(tradeShopHolo.getLocation())) {
+                if (TradeShopContainer.isTradeShop(tradeShopHolo.getLocation())) {
                     tradeShopHolo.showOnlyItem();
                     tradeShopHolo.showAlwaysVisibleText();
                 }

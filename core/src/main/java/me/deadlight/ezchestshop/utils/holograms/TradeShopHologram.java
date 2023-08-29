@@ -153,8 +153,7 @@ public class TradeShopHologram {
             // Also set the separator replacement text if both are disabled
             // This is a special case, because few (only separator atm) of the conditional tags can also act as replacements.
             HashMap<String, String> conditionalTextReplacements = new HashMap<>();
-            EzShop shop = ShopContainer.getShop(location);
-            if (shop != null && shop.getSettings() != null && tradeShop.getSettings().getTradeDirection() == TradeShopSettings.TradeDirection.DISABLED) {
+            if (tradeShop != null && tradeShop.getSettings() != null && tradeShop.getSettings().getTradeDirection() == TradeShopSettings.TradeDirection.DISABLED) {
                 conditionalTextReplacements.put("separator", lm.disabledButtonTitle());
                 conditionalTags.put("separator", true);
             }
@@ -427,13 +426,16 @@ public class TradeShopHologram {
                 playerHolo.updateConditionalTag("item2toitem1", false, true);
             } else if (tradeShop.getSettings().getTradeDirection() == TradeShopSettings.TradeDirection.ITEM1_TO_ITEM2) {
                 updateSeparator(playerHolo);
-                playerHolo.updateConditionalTag("item1toitem2", false, true);
+                playerHolo.updateConditionalTag("item1toitem2", true, true);
+                playerHolo.updateConditionalTag("item2toitem1", false, true);
             } else if (tradeShop.getSettings().getTradeDirection() == TradeShopSettings.TradeDirection.ITEM2_TO_ITEM1) {
                 updateSeparator(playerHolo);
-                playerHolo.updateConditionalTag("item2toitem1", false, true);
+                playerHolo.updateConditionalTag("item1toitem2", false, true);
+                playerHolo.updateConditionalTag("item2toitem1", true, true);
             } else {
                 updateSeparator(playerHolo);
-                playerHolo.updateConditionalTag("tradeDirection", false, true);
+                playerHolo.updateConditionalTag("item1toitem2", true, true);
+                playerHolo.updateConditionalTag("item2toitem1", true, true);
             }
         }
     }

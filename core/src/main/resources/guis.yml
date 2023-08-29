@@ -230,12 +230,12 @@ trade-shop-settings:
     # To change the item for different rotations, use hologram-rotation-up/north/east/south/west/down
     hologram-rotation-all:
       row: 2
-      column: 6
+      column: 4
       material: compass
       count: 1
     change-item1-amount:
       row: 2
-      column: 7
+      column: 6
       material: hopper
       count: 1
     change-item2-amount:

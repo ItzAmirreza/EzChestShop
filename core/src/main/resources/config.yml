@@ -70,7 +70,7 @@ shops:
       - "<item1data4/>"
       - "<item1dataRest/>"
       - "[item1]          %item1amount%"
-      - "&a%item1name%<item1toitem2> &a↑</item1toitem2><separator></separator><item2toitem1>&c↓ </item2toitem1>&c%item2name%"
+      - "&a%item1name% <item1toitem2>&a↑</item1toitem2><separator></separator><item2toitem1>&c↓</item2toitem1> &c%item2name%"
       - "[item2]          %item2amount%"
       - "<item2data1/>"
       - "<item2data2/>"

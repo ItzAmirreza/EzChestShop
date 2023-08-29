@@ -123,6 +123,7 @@ public class TradeSettingsGUI {
                         state.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "tradedirection"),
                                 PersistentDataType.STRING, tradeShop.getSettings().getTradeDirection().toString());
                         state.update();
+                        TradeShopHologram.getHologram(containerBlock.getLocation(), player).updateTradeDirection();
                         showGUI(player, containerBlock, isAdmin);
                     });
                     break;
@@ -136,6 +137,7 @@ public class TradeSettingsGUI {
                         state.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "tradedirection"),
                                 PersistentDataType.STRING, tradeShop.getSettings().getTradeDirection().toString());
                         state.update();
+                        TradeShopHologram.getHologram(containerBlock.getLocation(), player).updateTradeDirection();
                         showGUI(player, containerBlock, isAdmin);
                     });
                     break;
@@ -149,6 +151,7 @@ public class TradeSettingsGUI {
                         state.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "tradedirection"),
                                 PersistentDataType.STRING, tradeShop.getSettings().getTradeDirection().toString());
                         state.update();
+                        TradeShopHologram.getHologram(containerBlock.getLocation(), player).updateTradeDirection();
                         showGUI(player, containerBlock, isAdmin);
                     });
                     break;
@@ -162,6 +165,7 @@ public class TradeSettingsGUI {
                         state.getPersistentDataContainer().set(new NamespacedKey(EzChestShop.getPlugin(), "tradedirection"),
                                 PersistentDataType.STRING, tradeShop.getSettings().getTradeDirection().toString());
                         state.update();
+                        TradeShopHologram.getHologram(containerBlock.getLocation(), player).updateTradeDirection();
                         showGUI(player, containerBlock, isAdmin);
                     });
             }
