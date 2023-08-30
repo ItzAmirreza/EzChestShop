@@ -513,7 +513,8 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                         } else {
                             //not a shop
 
-                            if (player.getInventory().getItemInMainHand().getType() != Material.AIR) {
+                            if (player.getInventory().getItemInMainHand().getType() != Material.AIR &&
+                                    player.getInventory().getItemInOffHand().getType() != Material.AIR) {
                                 ItemStack item1 = player.getInventory().getItemInMainHand().clone();
                                 ItemStack item2 = player.getInventory().getItemInOffHand().clone();
                                 item1.setAmount(item1Amount);
@@ -562,7 +563,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
 
 
                             } else {
-
+                                //TODO hold something in offhand too msg adjustment.
                                 player.sendMessage(lm.holdSomething());
 
                             }

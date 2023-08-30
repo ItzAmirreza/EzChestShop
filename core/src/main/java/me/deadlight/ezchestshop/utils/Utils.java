@@ -2,15 +2,13 @@ package me.deadlight.ezchestshop.utils;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
 import dev.triumphteam.gui.guis.PaginatedGui;
-import me.deadlight.ezchestshop.data.Config;
-import me.deadlight.ezchestshop.data.DatabaseManager;
-import me.deadlight.ezchestshop.data.LanguageManager;
+import me.deadlight.ezchestshop.data.*;
 import me.deadlight.ezchestshop.data.mysql.MySQL;
 import me.deadlight.ezchestshop.data.sqlite.SQLite;
-import me.deadlight.ezchestshop.data.ShopContainer;
 import me.deadlight.ezchestshop.enums.Database;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.utils.objects.EzShop;
+import me.deadlight.ezchestshop.utils.objects.EzTradeShop;
 import me.deadlight.ezchestshop.utils.objects.TransactionLogObject;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -979,6 +977,31 @@ public class Utils {
                         return ShopContainer.getShop(left.getLocation());
                     } else {
                         return ShopContainer.getShop(right.getLocation());
+                    }
+                }
+            } else {
+                return null;
+            }
+        }
+        return null;
+    }
+
+    public static EzTradeShop isPartOfTheChestTradeShop(Location location) {
+
+        Block block = location.getBlock();
+        if (block.getType() == Material.CHEST || block.getType() == Material.TRAPPED_CHEST) {
+            Chest chest = (Chest) block.getState();
+            if (chest.getInventory().getHolder() instanceof DoubleChest) {
+                DoubleChest doubleChest = (DoubleChest) chest.getInventory().getHolder();
+                Chest left = (Chest) doubleChest.getLeftSide();
+                Chest right = (Chest) doubleChest.getRightSide();
+                //check if either of the chests is a shop
+                if (TradeShopContainer.isTradeShop(left.getLocation()) || TradeShopContainer.isTradeShop(right.getLocation())) {
+                    //return the part that is a shop
+                    if (TradeShopContainer.isTradeShop(left.getLocation())) {
+                        return TradeShopContainer.getTradeShop(left.getLocation());
+                    } else {
+                        return TradeShopContainer.getTradeShop(right.getLocation());
                     }
                 }
             } else {

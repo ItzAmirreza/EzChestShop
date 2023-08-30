@@ -7,6 +7,7 @@ import me.deadlight.ezchestshop.utils.Utils;
 import me.deadlight.ezchestshop.utils.WebhookSender;
 import me.deadlight.ezchestshop.utils.XPEconomy;
 import me.deadlight.ezchestshop.utils.holograms.ShopHologram;
+import me.deadlight.ezchestshop.utils.holograms.TradeShopHologram;
 import me.deadlight.ezchestshop.utils.objects.*;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.*;
@@ -58,8 +59,8 @@ public class TradeShopContainer {
 
 
         for (Player p : Bukkit.getOnlinePlayers()) {
-            if (ShopHologram.hasHologram(loc, p))
-                ShopHologram.hideForAll(loc);
+            if (TradeShopHologram.hasHologram(loc, p))
+                TradeShopHologram.hideForAll(loc);
         }
     }
 

@@ -4,9 +4,12 @@ import me.deadlight.ezchestshop.data.Config;
 import me.deadlight.ezchestshop.data.LanguageManager;
 import me.deadlight.ezchestshop.data.ShopContainer;
 import me.deadlight.ezchestshop.EzChestShop;
+import me.deadlight.ezchestshop.data.TradeShopContainer;
 import me.deadlight.ezchestshop.utils.holograms.ShopHologram;
+import me.deadlight.ezchestshop.utils.holograms.TradeShopHologram;
 import me.deadlight.ezchestshop.utils.objects.EzShop;
 import me.deadlight.ezchestshop.utils.Utils;
+import me.deadlight.ezchestshop.utils.objects.EzTradeShop;
 import me.deadlight.ezchestshop.utils.worldguard.FlagRegistry;
 import me.deadlight.ezchestshop.utils.worldguard.WorldGuardUtils;
 import org.bukkit.Bukkit;
@@ -94,7 +97,31 @@ public class BlockBreakListener implements Listener {
                 ShopContainer.deleteShop(loc);
             }
 
-
+            boolean isPartOfTradeShop = Utils.isPartOfTheChestTradeShop(loc) != null;
+            if (isPartOfTradeShop) {
+                loc = Utils.isPartOfTheChestTradeShop(loc).getLocation();
+            }
+            if (TradeShopContainer.isTradeShop(loc) || isPartOfTradeShop) {
+                if (Utils.isShulkerBox(event.getBlock())) {
+                    if (event.isDropItems()) {
+                        event.setDropItems(false);
+                        ItemStack shulker = event.getBlock().getDrops().stream().findFirst().get();
+                        ItemMeta meta = shulker.getItemMeta();
+                        PersistentDataContainer container = meta.getPersistentDataContainer();
+                        PersistentDataContainer bcontainer = ((TileState) event.getBlock().getState()).getPersistentDataContainer();
+                        if (bcontainer.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING) != null) {
+                            container = TradeShopContainer.copyContainerData(bcontainer, container);
+                            meta = addLore(meta, container);
+                            shulker.setItemMeta(meta);
+                            loc.getWorld().dropItemNaturally(loc, shulker);
+                            if (Config.holodistancing) {
+                                TradeShopHologram.hideForAll(event.getBlock().getLocation());
+                            }
+                        }
+                    }
+                }
+                TradeShopContainer.deleteShop(loc);
+            }
         }
     }
 
@@ -148,6 +175,41 @@ public class BlockBreakListener implements Listener {
                     //check if player is owner of shop
                     EzShop shop = ShopContainer.getShop(loc);
                     if (!shop.getOwnerID().equals(event.getPlayer().getUniqueId())) {
+                        event.setCancelled(true);
+                        event.getPlayer().sendMessage(lm.cannotDestroyShop());
+                    }
+                }
+            }
+
+        }
+        boolean isPartOfTradeShop = Utils.isPartOfTheChestTradeShop(loc) != null;
+        if (isPartOfTradeShop) {
+            loc = Utils.isPartOfTheChestTradeShop(loc).getLocation();
+        }
+        if (TradeShopContainer.isTradeShop(loc) || isPartOfTradeShop) {
+            boolean adminshop = TradeShopContainer.getTradeShop(loc).getSettings().isAdminshop();
+            Player player = event.getPlayer();
+            if (EzChestShop.worldguard) {
+                if (adminshop) {
+                    if (!WorldGuardUtils.queryStateFlag(FlagRegistry.REMOVE_ADMIN_TRADE_SHOP, player)) {
+                        player.sendMessage(lm.notAllowedToCreateOrRemove());
+                        event.setCancelled(true);
+                    }
+                } else {
+                    if (!WorldGuardUtils.queryStateFlag(FlagRegistry.REMOVE_TRADE_SHOP, player)) {
+                        player.sendMessage(lm.notAllowedToCreateOrRemove());
+                        event.setCancelled(true);
+                    }
+                }
+            }
+
+            //shop protection section
+            if (Config.shopProtection) {
+
+                if (!event.getPlayer().hasPermission("ecs.admin")) {
+                    //check if player is owner of shop
+                    EzTradeShop tradeShop = TradeShopContainer.getTradeShop(loc);
+                    if (!tradeShop.getOwnerID().equals(event.getPlayer().getUniqueId())) {
                         event.setCancelled(true);
                         event.getPlayer().sendMessage(lm.cannotDestroyShop());
                     }

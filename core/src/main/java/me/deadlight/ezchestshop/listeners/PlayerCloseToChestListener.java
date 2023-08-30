@@ -76,6 +76,13 @@ public class PlayerCloseToChestListener implements Listener {
                                 inspectedShopHolo.showOnlyItem();
                                 inspectedShopHolo.showAlwaysVisibleText();
                                 inspectedShopHolo.removeInspectedShop();
+                                if (TradeShopHologram.isPlayerInspectingShop(player)) {
+                                    // if the player was looking at a tradeshop before this one, also remove that one.
+                                    TradeShopHologram inspectedTradeShopHolo = TradeShopHologram.getInspectedShopHologram(player);
+                                    inspectedTradeShopHolo.showOnlyItem();
+                                    inspectedTradeShopHolo.showAlwaysVisibleText();
+                                    inspectedTradeShopHolo.removeInspectedShop();
+                                }
                             }
                         }
                         // if the player is looking at a shop, and he is not inspecting it yet, then start inspecting it!
@@ -106,6 +113,13 @@ public class PlayerCloseToChestListener implements Listener {
                                 inspectedTradeShopHolo.showOnlyItem();
                                 inspectedTradeShopHolo.showAlwaysVisibleText();
                                 inspectedTradeShopHolo.removeInspectedShop();
+                                if (ShopHologram.isPlayerInspectingShop(player)) {
+                                    // if the player was looking at a shop before this one, also remove that one.
+                                    ShopHologram inspectedShopHolo = ShopHologram.getInspectedShopHologram(player);
+                                    inspectedShopHolo.showOnlyItem();
+                                    inspectedShopHolo.showAlwaysVisibleText();
+                                    inspectedShopHolo.removeInspectedShop();
+                                }
                             }
                         }
                         // if the player is looking at a shop, and he is not inspecting it yet, then start inspecting it!
