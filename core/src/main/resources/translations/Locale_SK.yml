@@ -190,6 +190,7 @@ customMessageManager:
       Title: "&eĎalšia"
     shopEntry:
       Title: "&7Obchod &7%shopitem%"
+      TradeTitle: "&7%item1% and &7%item2% &7trade shop"
       UnkownTitle: "&cNeznámy obchod"
       Lore:
         - "&7Pozícia &eX:%x%, Y:%y%, Z:%z%"

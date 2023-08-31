@@ -188,6 +188,7 @@ customMessageManager:
       Lore: null
     shopEntry:
       Title: "&7Shop %shopitem%"
+      TradeTitle: "&7%item1% and &7%item2% &7trade shop"
       UnkownTitle: "&cShop bất định"
       Lore:
         - "&7Vị trí &eX:%x%, Y:%y%, Z:%z%"

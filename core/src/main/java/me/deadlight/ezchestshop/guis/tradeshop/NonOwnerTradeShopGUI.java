@@ -6,12 +6,15 @@ import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.data.Config;
 import me.deadlight.ezchestshop.data.LanguageManager;
 import me.deadlight.ezchestshop.data.ShopContainer;
+import me.deadlight.ezchestshop.data.TradeShopContainer;
 import me.deadlight.ezchestshop.data.gui.ContainerGui;
 import me.deadlight.ezchestshop.data.gui.ContainerGuiItem;
 import me.deadlight.ezchestshop.data.gui.GuiData;
 import me.deadlight.ezchestshop.utils.SignMenuFactory;
 import me.deadlight.ezchestshop.utils.Utils;
 import me.deadlight.ezchestshop.utils.objects.EzShop;
+import me.deadlight.ezchestshop.utils.objects.EzTradeShop;
+import me.deadlight.ezchestshop.utils.objects.TradeShopSettings;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -34,6 +37,7 @@ public class NonOwnerTradeShopGUI {
         LanguageManager lm = new LanguageManager();
         OfflinePlayer offlinePlayerOwner = Bukkit.getOfflinePlayer(UUID.fromString(data.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING)));
         String shopOwner = offlinePlayerOwner.getName();
+        EzTradeShop tradeShop = TradeShopContainer.getTradeShop(containerBlock.getLocation());
         if (shopOwner == null) {
             boolean result = Utils.reInstallNamespacedKeyValues(data, containerBlock.getLocation());
             if (!result) {
@@ -45,101 +49,98 @@ public class NonOwnerTradeShopGUI {
             shopOwner = Bukkit.getOfflinePlayer(shop.getOwnerID()).getName();
             if (shopOwner == null) {
                 player.sendMessage(lm.chestShopProblem());
-                System.out.println("EzChestShop ERROR: Shop owner is STILL null. Please report this to the EzChestShop developer for furthur investigation.");
+                System.out.println("EzChestShop ERROR: Shop owner is STILL null. Please report this to the EzChestShop developer for further investigation.");
                 return;
             }
         }
-        double sellPrice = data.get(new NamespacedKey(EzChestShop.getPlugin(), "sell"), PersistentDataType.DOUBLE);
-        double buyPrice = data.get(new NamespacedKey(EzChestShop.getPlugin(), "buy"), PersistentDataType.DOUBLE);
-        boolean disabledBuy = data.get(new NamespacedKey(EzChestShop.getPlugin(), "dbuy"), PersistentDataType.INTEGER) == 1;
-        boolean disabledSell = data.get(new NamespacedKey(EzChestShop.getPlugin(), "dsell"), PersistentDataType.INTEGER) == 1;
 
-        ContainerGui container = GuiData.getShop();
+        ContainerGui container = GuiData.getTradeShop();
 
         Gui gui = new Gui(container.getRows(), lm.guiNonOwnerTitle(shopOwner));
         gui.getFiller().fill(container.getBackground());
 
-        ItemStack mainitem = Utils.decodeItem(data.get(new NamespacedKey(EzChestShop.getPlugin(), "item"), PersistentDataType.STRING));
-        if (container.hasItem("shop-item")) {
-            ItemStack guiMainItem = mainitem.clone();
-            ItemMeta mainmeta = guiMainItem.getItemMeta();
+        ItemStack shop_item1 = Utils.decodeItem(data.get(new NamespacedKey(EzChestShop.getPlugin(), "item1"), PersistentDataType.STRING)).clone();
+        ItemStack shop_item2 = Utils.decodeItem(data.get(new NamespacedKey(EzChestShop.getPlugin(), "item2"), PersistentDataType.STRING)).clone();
+        if (container.hasItem("item1")) {
+            ItemStack item1 = shop_item1.clone();
+            ItemMeta item1meta = item1.getItemMeta();
             // Set the lore and keep the old one if available
-            if (mainmeta.hasLore()) {
-                List<String> prevLore = mainmeta.getLore();
+            if (item1meta.hasLore()) {
+                List<String> prevLore = item1meta.getLore();
                 prevLore.add("");
-                List<String> mainItemLore = Arrays.asList(lm.initialBuyPrice(buyPrice), lm.initialSellPrice(sellPrice));
+                List<String> mainItemLore = Arrays.asList("");
                 prevLore.addAll(mainItemLore);
-                mainmeta.setLore(prevLore);
+                item1meta.setLore(prevLore);
             } else {
-                List<String> mainItemLore = Arrays.asList(lm.initialBuyPrice(buyPrice), lm.initialSellPrice(sellPrice));
-                mainmeta.setLore(mainItemLore);
+                List<String> mainItemLore = Arrays.asList("");
+                item1meta.setLore(mainItemLore);
             }
-            guiMainItem.setItemMeta(mainmeta);
-            GuiItem guiitem = new GuiItem(guiMainItem, event -> {
+            item1.setItemMeta(item1meta);
+            GuiItem guiitem = new GuiItem(item1, event -> {
+                event.setCancelled(true);
+                if (tradeShop.getSettings().getTradeDirection() == TradeShopSettings.TradeDirection.BOTH ||
+                        tradeShop.getSettings().getTradeDirection() == TradeShopSettings.TradeDirection.ITEM2_TO_ITEM1) {
+                    TradeShopContainer.buyItem1(containerBlock, 1, shop_item1, shop_item2, player, offlinePlayerOwner, data);
+                    showGUI(player, data, containerBlock);
+                }
+            });
+            Utils.addItemIfEnoughSlots(gui, container.getItem("item1").getSlot(), guiitem);
+        }
+        if (container.hasItem("item2")) {
+            ItemStack item2 = shop_item2.clone();
+            ItemMeta item2meta = item2.getItemMeta();
+            // Set the lore and keep the old one if available
+            if (item2meta.hasLore()) {
+                List<String> prevLore = item2meta.getLore();
+                prevLore.add("");
+                List<String> mainItemLore = Arrays.asList("");
+                prevLore.addAll(mainItemLore);
+                item2meta.setLore(prevLore);
+            } else {
+                List<String> mainItemLore = Arrays.asList("");
+                item2meta.setLore(mainItemLore);
+            }
+            item2.setItemMeta(item2meta);
+            GuiItem guiitem = new GuiItem(item2, event -> {
+                event.setCancelled(true);
+                if (tradeShop.getSettings().getTradeDirection() == TradeShopSettings.TradeDirection.BOTH ||
+                        tradeShop.getSettings().getTradeDirection() == TradeShopSettings.TradeDirection.ITEM1_TO_ITEM2) {
+                    TradeShopContainer.buyItem2(containerBlock, 1, shop_item1, shop_item2, player, offlinePlayerOwner, data);
+                    showGUI(player, data, containerBlock);
+                }
+            });
+            Utils.addItemIfEnoughSlots(gui, container.getItem("item2").getSlot(), guiitem);
+        }
+
+        if (container.hasItem("trade-direction-item1toitem2") || container.hasItem("trade-direction-item2toitem1") ||
+                container.hasItem("trade-direction-both") || container.hasItem("trade-direction-disabled")) {
+            ItemStack tradeDirectionItem;
+            ContainerGuiItem tradeDirectionContainerGuiItem;
+            switch (tradeShop.getSettings().getTradeDirection()) {
+                case ITEM1_TO_ITEM2:
+                    tradeDirectionContainerGuiItem = container.getItem("trade-direction-item1toitem2");
+                    tradeDirectionItem = tradeDirectionContainerGuiItem.getItem();
+                    break;
+                case ITEM2_TO_ITEM1:
+                    tradeDirectionContainerGuiItem = container.getItem("trade-direction-item2toitem1");
+                    tradeDirectionItem = tradeDirectionContainerGuiItem.getItem();
+                    break;
+                case BOTH:
+                    tradeDirectionContainerGuiItem = container.getItem("trade-direction-both");
+                    tradeDirectionItem = tradeDirectionContainerGuiItem.getItem();
+                    break;
+                default:
+                    tradeDirectionContainerGuiItem = container.getItem("trade-direction-disabled");
+                    tradeDirectionItem = tradeDirectionContainerGuiItem.getItem();
+            }
+            GuiItem tradeDirectionGuiItem = new GuiItem(tradeDirectionItem, event -> {
                 event.setCancelled(true);
             });
-
-            Utils.addItemIfEnoughSlots(gui, container.getItem("shop-item").getSlot(), guiitem);
+            Utils.addItemIfEnoughSlots(gui, tradeDirectionContainerGuiItem.getSlot(), tradeDirectionGuiItem);
         }
 
         container.getItemKeys().forEach(key -> {
-            if (key.startsWith("sell-")) {
-                String amountString = key.split("-")[1];
-                int amount = 1;
-                if (amountString.equals("all")) {
-                    amount = Integer.parseInt(Utils.calculateSellPossibleAmount(Bukkit.getOfflinePlayer(player.getUniqueId()), player.getInventory().getStorageContents(), Utils.getBlockInventory(containerBlock).getStorageContents(), sellPrice, mainitem));
-                } else if (amountString.equals("maxStackSize")) {
-                    amount = mainitem.getMaxStackSize();
-                    container.getItem(key).setAmount(amount);
-                } else {
-                    try {
-                        amount = Integer.parseInt(amountString);
-                    } catch (NumberFormatException e) {}
-                }
-
-                ContainerGuiItem sellItemStack = container.getItem(key).setLore(lm.buttonSellXLore(sellPrice * amount, amount)).setName(lm.buttonSellXTitle(amount));
-
-                final int finalAmount = amount;
-                GuiItem sellItem = new GuiItem(disablingCheck(sellItemStack.getItem(), disabledSell), event -> {
-                    // sell things
-                    event.setCancelled(true);
-                    if (disabledSell) {
-                        return;
-                    }
-                    ShopContainer.sellItem(containerBlock, sellPrice * finalAmount, finalAmount, mainitem, player, offlinePlayerOwner, data);
-                    showGUI(player, data, containerBlock);
-                });
-
-                Utils.addItemIfEnoughSlots(gui, sellItemStack.getSlot(), sellItem);
-            } else if (key.startsWith("buy-")) {
-                String amountString = key.split("-")[1];
-                int amount = 1;
-                if (amountString.equals("all")) {
-                    amount = Integer.parseInt(Utils.calculateBuyPossibleAmount(Bukkit.getOfflinePlayer(player.getUniqueId()), player.getInventory().getStorageContents(), Utils.getBlockInventory(containerBlock).getStorageContents(), buyPrice, mainitem));
-                } else if (amountString.equals("maxStackSize")) {
-                    amount = mainitem.getMaxStackSize();
-                    container.getItem(key).setAmount(amount);
-                } else {
-                    try {
-                        amount = Integer.parseInt(amountString);
-                    } catch (NumberFormatException e) {}
-                }
-
-                ContainerGuiItem buyItemStack = container.getItem(key).setLore(lm.buttonBuyXLore(buyPrice * amount, amount)).setName(lm.buttonBuyXTitle(amount));
-
-                final int finalAmount = amount;
-                GuiItem buyItem = new GuiItem(disablingCheck(buyItemStack.getItem(), disabledBuy), event -> {
-                    // buy things
-                    event.setCancelled(true);
-                    if (disabledBuy) {
-                        return;
-                    }
-                    ShopContainer.buyItem(containerBlock, buyPrice * finalAmount, finalAmount, mainitem, player, offlinePlayerOwner, data);
-                    showGUI(player, data, containerBlock);
-                });
-
-                Utils.addItemIfEnoughSlots(gui, buyItemStack.getSlot(), buyItem);
-            } else if (key.startsWith("decorative-")) {
+            if (key.startsWith("decorative-")) {
 
                 ContainerGuiItem decorativeItemStack = container.getItem(key).setName(Utils.colorify("&d"));
 
@@ -151,124 +152,10 @@ public class NonOwnerTradeShopGUI {
             }
         });
 
-        if (container.hasItem("custom-buy-sell")) {
-
-            List<String> possibleCounts = Utils.calculatePossibleAmount(Bukkit.getOfflinePlayer(player.getUniqueId()), offlinePlayerOwner, player.getInventory().getStorageContents(), Utils.getBlockInventory(containerBlock).getStorageContents(), buyPrice, sellPrice, mainitem);
-            ContainerGuiItem customBuySellItemStack = container.getItem("custom-buy-sell").setName(lm.customAmountSignTitle()).setLore(lm.customAmountSignLore(possibleCounts.get(0), possibleCounts.get(1)));
-
-            GuiItem guiSignItem = new GuiItem(customBuySellItemStack.getItem(), event -> {
-                event.setCancelled(true);
-                if (event.isRightClick()) {
-                    //buy
-                    if (disabledBuy) {
-                        player.sendMessage(lm.disabledBuyingMessage());
-                        return;
-                    }
-                    player.closeInventory();
-                    player.playSound(player.getLocation(), Sound.ITEM_BOOK_PAGE_TURN, 1.0f, 1.0f);
-                    SignMenuFactory signMenuFactory = new SignMenuFactory(EzChestShop.getPlugin());
-                    SignMenuFactory.Menu menu = signMenuFactory.newMenu(lm.signEditorGuiBuy(possibleCounts.get(0)))
-                            .reopenIfFail(false).response((thatplayer, strings) -> {
-                                try {
-                                    if (strings[0].equalsIgnoreCase("")) {
-                                        return false;
-                                    }
-                                    if (Utils.isInteger(strings[0])) {
-                                        int amount = Integer.parseInt(strings[0]);
-                                        if (!Utils.amountCheck(amount)) {
-                                            player.sendMessage(lm.unsupportedInteger());
-                                            return false;
-                                        }
-                                        Bukkit.getScheduler().scheduleSyncDelayedTask(EzChestShop.getPlugin(), new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                ShopContainer.buyItem(containerBlock, buyPrice * amount, amount, mainitem, player, offlinePlayerOwner, data);
-                                            }
-                                        });
-                                    } else {
-                                        thatplayer.sendMessage(lm.wrongInput());
-                                    }
-
-                                } catch (Exception e) {
-                                    return false;
-                                }
-                                return true;
-                            });
-                    menu.open(player);
-                    player.sendMessage(lm.enterTheAmount());
-
-
-                } else if (event.isLeftClick()) {
-                    //sell
-                    if (disabledSell) {
-                        player.sendMessage(lm.disabledSellingMessage());
-                        return;
-                    }
-                    player.closeInventory();
-                    player.playSound(player.getLocation(), Sound.ITEM_BOOK_PAGE_TURN, 1.0f, 1.0f);
-                    SignMenuFactory signMenuFactory = new SignMenuFactory(EzChestShop.getPlugin());
-                    SignMenuFactory.Menu menu = signMenuFactory.newMenu(lm.signEditorGuiSell(possibleCounts.get(1)))
-                            .reopenIfFail(false).response((thatplayer, strings) -> {
-                                try {
-                                    if (strings[0].equalsIgnoreCase("")) {
-                                        return false;
-                                    }
-                                    if (Utils.isInteger(strings[0])) {
-                                        int amount = Integer.parseInt(strings[0]);
-                                        if (!Utils.amountCheck(amount)) {
-                                            player.sendMessage(lm.unsupportedInteger());
-                                            return false;
-                                        }
-                                        Bukkit.getScheduler().scheduleSyncDelayedTask(EzChestShop.getPlugin(), new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                ShopContainer.sellItem(containerBlock, sellPrice * amount, amount, mainitem, player, offlinePlayerOwner, data);
-                                            }
-                                        });
-                                    } else {
-                                        thatplayer.sendMessage(lm.wrongInput());
-                                    }
-
-
-                                } catch (Exception e) {
-                                    return false;
-                                }
-                                return true;
-                            });
-                    menu.open(player);
-                    player.sendMessage(lm.enterTheAmount());
-
-
-                }
-            });
-            if (Config.settings_custom_amout_transactions) {
-                //sign item
-                Utils.addItemIfEnoughSlots(gui, customBuySellItemStack.getSlot(), guiSignItem);
-            }
-        }
-
 
         gui.open(player);
 
 
 
-    }
-
-    
-
-    private ItemStack disablingCheck(ItemStack mainItem, boolean disabling) {
-        LanguageManager lm = new LanguageManager();
-        if (disabling){
-            //disabled Item
-            ItemStack disabledItemStack = new ItemStack(Material.BARRIER, mainItem.getAmount());
-            ItemMeta disabledItemMeta = disabledItemStack.getItemMeta();
-            disabledItemMeta.setDisplayName(lm.disabledButtonTitle());
-            disabledItemMeta.setLore(lm.disabledButtonLore());
-            disabledItemStack.setItemMeta(disabledItemMeta);
-
-            return disabledItemStack;
-        } else {
-            return mainItem;
-        }
     }
 }

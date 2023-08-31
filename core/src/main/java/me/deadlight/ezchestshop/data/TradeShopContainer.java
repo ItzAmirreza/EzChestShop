@@ -259,6 +259,7 @@ public class TradeShopContainer {
         if (!Utils.hasEnoughSpace(player, item1_total_amount, item1)) {
             player.sendMessage(lm.fullinv());
             player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_IRON_XYLOPHONE, 0.5f, 0.5f);
+            return;
         }
 
         // check if the container has enough space to store the item2's
@@ -306,6 +307,7 @@ public class TradeShopContainer {
         if (!Utils.hasEnoughSpace(player, item1_total_amount, item1)) {
             player.sendMessage(lm.fullinv());
             player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_IRON_XYLOPHONE, 0.5f, 0.5f);
+            return;
         }
 
         // check if the container has enough space to store the item2's
@@ -331,7 +333,7 @@ public class TradeShopContainer {
         ItemStack item1 = shop_item1.clone();
         int item1_total_amount = item1.getAmount() * count;
         ItemStack item2 = shop_item2.clone();
-        int item2_total_amount = item1.getAmount() * count;
+        int item2_total_amount = item2.getAmount() * count;
 
         LanguageManager lm = new LanguageManager();
         //check for money
@@ -348,6 +350,7 @@ public class TradeShopContainer {
         if (!Utils.hasEnoughSpace(player, item1_total_amount, item1)) {
             player.sendMessage(lm.fullinv());
             player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_IRON_XYLOPHONE, 0.5f, 0.5f);
+            return;
         }
 
         int stacks = (int) Math.ceil(item1_total_amount / (double) item1.getMaxStackSize());
@@ -360,7 +363,7 @@ public class TradeShopContainer {
             }
             player.getInventory().addItem(item1);
         }
-        // remove the item1's from the container
+        // remove the item2's from the player
         item2.setAmount(item2_total_amount);
         Utils.removeItem(player.getInventory(), item2);
 
@@ -378,7 +381,7 @@ public class TradeShopContainer {
         ItemStack item1 = shop_item2.clone();
         int item1_total_amount = item1.getAmount() * count;
         ItemStack item2 = shop_item1.clone();
-        int item2_total_amount = item1.getAmount() * count;
+        int item2_total_amount = item2.getAmount() * count;
 
         LanguageManager lm = new LanguageManager();
         //check for money
@@ -395,6 +398,7 @@ public class TradeShopContainer {
         if (!Utils.hasEnoughSpace(player, item1_total_amount, item1)) {
             player.sendMessage(lm.fullinv());
             player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_IRON_XYLOPHONE, 0.5f, 0.5f);
+            return;
         }
 
         int stacks = (int) Math.ceil(item1_total_amount / (double) item1.getMaxStackSize());

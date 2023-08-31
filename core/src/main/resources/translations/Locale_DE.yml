@@ -199,6 +199,7 @@ customMessageManager:
       Lore:
     shopEntry:
       Title: "&7%shopitem% &7Shop"
+      TradeTitle: "&7%item1% und &7%item2% &7Handels-shop"
       UnkownTitle: "&cUnbekannter Shop"
       Lore:
         - "&7Koordinaten: &eX:%x%, Y:%y%, Z:%z%"

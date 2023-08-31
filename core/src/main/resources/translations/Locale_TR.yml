@@ -211,6 +211,7 @@ customMessageManager:
       Lore:
     shopEntry:
       Title: "&6%shopitem% &7Marketi"
+      TradeTitle: "&7%item1% and &7%item2% &7trade shop"
       UnkownTitle: "&cBilinmeyen Market"
       Lore:
         - ""

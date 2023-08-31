@@ -2,16 +2,21 @@ package me.deadlight.ezchestshop.guis.shared;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
 import dev.triumphteam.gui.guis.PaginatedGui;
+import me.deadlight.ezchestshop.data.TradeShopContainer;
 import me.deadlight.ezchestshop.data.gui.ContainerGui;
 import me.deadlight.ezchestshop.data.gui.ContainerGuiItem;
 import me.deadlight.ezchestshop.data.gui.GuiData;
 import me.deadlight.ezchestshop.data.LanguageManager;
 import me.deadlight.ezchestshop.data.ShopContainer;
 import me.deadlight.ezchestshop.guis.shop.SettingsGUI;
+import me.deadlight.ezchestshop.guis.tradeshop.TradeSettingsGUI;
 import me.deadlight.ezchestshop.utils.holograms.ShopHologram;
+import me.deadlight.ezchestshop.utils.holograms.TradeShopHologram;
 import me.deadlight.ezchestshop.utils.objects.EzShop;
+import me.deadlight.ezchestshop.utils.objects.EzTradeShop;
 import me.deadlight.ezchestshop.utils.objects.ShopSettings;
 import me.deadlight.ezchestshop.utils.Utils;
+import me.deadlight.ezchestshop.utils.objects.TradeShopSettings;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -41,7 +46,15 @@ public class CustomMessageManageGUI {
             event.setCancelled(true);
         });
 
-        Map<Location, String> customMessages = ShopSettings.getAllCustomMessages(ShopContainer.getShop(containerBlock.getLocation()).getOwnerID().toString());
+        boolean isShop = ShopContainer.isShop(containerBlock.getLocation());
+        boolean isTradeShop = TradeShopContainer.isTradeShop(containerBlock.getLocation());
+
+        Map<Location, String> customMessages = null;
+        if (isShop) {
+            customMessages = ShopSettings.getAllCustomMessages(ShopContainer.getShop(containerBlock.getLocation()).getOwnerID().toString());
+        } else if (isTradeShop) {
+            customMessages = TradeShopSettings.getAllCustomMessages(TradeShopContainer.getTradeShop(containerBlock.getLocation()).getOwnerID().toString());
+        }
 
         // Fill the bottom bar:
         paginatedGui.getFiller().fillBottom(container.getBackground());
@@ -74,8 +87,13 @@ public class CustomMessageManageGUI {
                     .setName(lm.backToSettingsButton());
             GuiItem doorItem = new GuiItem(back.getItem(), event -> {
                 event.setCancelled(true);
-                SettingsGUI settingsGUI = new SettingsGUI();
-                settingsGUI.showGUI(player, containerBlock, isAdmin);
+                if (isShop) {
+                    SettingsGUI settingsGUI = new SettingsGUI();
+                    settingsGUI.showGUI(player, containerBlock, isAdmin);
+                } else if (isTradeShop) {
+                    TradeSettingsGUI tradeShopSettingsGUI = new TradeSettingsGUI();
+                    tradeShopSettingsGUI.showGUI(player, containerBlock, isAdmin);
+                }
             });
             Utils.addItemIfEnoughSlots(paginatedGui, back.getSlot(), doorItem);
         }
@@ -84,14 +102,27 @@ public class CustomMessageManageGUI {
             for (Map.Entry<Location, String> entry : customMessages.entrySet()) {
                 Location loc = entry.getKey();
                 String message = entry.getValue();
+                // skip empty lines.
+                if (message.replace("#,#", "").trim().isEmpty()) {
+                    continue;
+                }
                 List<String> messages = Arrays.asList(message.split("#,#")).stream().map(s -> Utils.colorify(s)).collect(Collectors.toList());
 
                 ContainerGuiItem item = container.getItem("hologram-message-item");
-                EzShop ezShop = ShopContainer.getShop(loc);
-                if (ezShop != null) {
-                    item.setName(lm.customMessageManagerShopEntryTitle(ezShop.getShopItem()));
-                } else {
-                    item.setName(lm.customMessageManagerShopEntryUnkownTitle());
+                if (isShop) {
+                    EzShop shop = ShopContainer.getShop(loc);
+                    if (shop != null) {
+                        item.setName(lm.customMessageManagerShopEntryTitle(shop.getShopItem()));
+                    } else {
+                        item.setName(lm.customMessageManagerShopEntryUnkownTitle());
+                    }
+                } else if (isTradeShop) {
+                    EzTradeShop tradeShop = TradeShopContainer.getTradeShop(loc);
+                    if (tradeShop != null) {
+                        item.setName(lm.customMessageManagerShopEntryTradeTitle(tradeShop.getItem1(), tradeShop.getItem2()));
+                    } else {
+                        item.setName(lm.customMessageManagerShopEntryUnkownTitle());
+                    }
                 }
                 item.setLore(lm.customMessageManagerShopEntryLore(loc, messages));
 
@@ -100,7 +131,11 @@ public class CustomMessageManageGUI {
                     if (event.isLeftClick()) {
                         showDeleteConfirm(player, containerBlock, isAdmin, loc);
                     } else if (event.isRightClick()) {
-                        SettingsGUI.openCustomMessageEditor(player, loc);
+                        if (isShop) {
+                            SettingsGUI.openCustomMessageEditor(player, loc);
+                        } else if (isTradeShop) {
+                            TradeSettingsGUI.openCustomMessageEditor(player, loc);
+                        }
                     }
                 });
 
@@ -117,7 +152,11 @@ public class CustomMessageManageGUI {
                 if (event.isLeftClick()) {
                     showDeleteConfirm(player, containerBlock, isAdmin, containerBlock.getLocation());
                 } else if (event.isRightClick()) {
-                    SettingsGUI.openCustomMessageEditor(player, containerBlock.getLocation());
+                    if (isShop) {
+                        SettingsGUI.openCustomMessageEditor(player, containerBlock.getLocation());
+                    } else if (isTradeShop) {
+                        TradeSettingsGUI.openCustomMessageEditor(player, containerBlock.getLocation());
+                    }
                 }
             });
             Utils.addItemIfEnoughSlots(paginatedGui, modify.getSlot(), modifyItem);
@@ -129,6 +168,9 @@ public class CustomMessageManageGUI {
     }
 
     private void showDeleteConfirm(Player player, Block containerBlock, boolean isAdmin, Location loc) {
+        boolean isShop = ShopContainer.isShop(containerBlock.getLocation());
+        boolean isTradeShop = TradeShopContainer.isTradeShop(containerBlock.getLocation());
+
         Gui gui = new Gui(3, lm.customMessageManagerConfirmDeleteGuiTitle());
         ItemStack glassis = new ItemStack(Material.BLACK_STAINED_GLASS_PANE, 1);
         ItemMeta glassmeta = glassis.getItemMeta();
@@ -146,9 +188,17 @@ public class CustomMessageManageGUI {
         confirm.setItemMeta(confirmMeta);
         GuiItem confirmItem = new GuiItem(confirm, event -> {
             event.setCancelled(true);
-            ShopContainer.getShopSettings(loc).setCustomMessages(new ArrayList<>());
-            gui.close(player);
-            ShopHologram.getHologram(loc, player).setCustomHologramMessage(new ArrayList<>());
+            if (isShop) {
+                ShopContainer.getShopSettings(loc).setCustomMessages(new ArrayList<>());
+                gui.close(player);
+                ShopHologram.getHologram(loc, player).setCustomHologramMessage(new ArrayList<>());
+            } else if (isTradeShop) {
+                TradeShopContainer.getTradeShopSettings(loc).setCustomMessages(new ArrayList<>());
+                gui.close(player);
+                TradeShopHologram.getHologram(loc, player).setCustomHologramMessage(new ArrayList<>());
+            } else {
+                gui.close(player);
+            }
         });
         gui.setItem(2, 5, confirmItem);
 

@@ -10,6 +10,7 @@ import me.deadlight.ezchestshop.utils.objects.CheckProfitEntry;
 import me.deadlight.ezchestshop.utils.objects.ShopSettings;
 import me.deadlight.ezchestshop.utils.Utils;
 import me.deadlight.ezchestshop.utils.XPEconomy;
+import me.deadlight.ezchestshop.utils.objects.TradeShopSettings;
 import net.md_5.bungee.api.chat.*;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -444,12 +445,23 @@ public class LanguageManager {
         }
         // Add as many white slots as a player can use. Then fill the rest with the placeholder.
         List<String> output = new ArrayList<>();
-        ShopSettings settings = ShopContainer.getShopSettings(loc);
-        for (int i = 0; i < lines; i++) {
-            if (settings.getCustomMessages().size() > i) {
-                output.add(settings.getCustomMessages().get(i));
-            } else {
-                output.add("");
+        if (ShopContainer.isShop(loc)) {
+            ShopSettings settings = ShopContainer.getShopSettings(loc);
+            for (int i = 0; i < lines; i++) {
+                if (settings.getCustomMessages().size() > i) {
+                    output.add(settings.getCustomMessages().get(i));
+                } else {
+                    output.add("");
+                }
+            }
+        } else if (TradeShopContainer.isTradeShop(loc)) {
+            TradeShopSettings settings = TradeShopContainer.getTradeShopSettings(loc);
+            for (int i = 0; i < lines; i++) {
+                if (settings.getCustomMessages().size() > i) {
+                    output.add(settings.getCustomMessages().get(i));
+                } else {
+                    output.add("");
+                }
             }
         }
         for (int i = 0; i < 4 - lines; i++) {
@@ -592,6 +604,11 @@ public class LanguageManager {
     //customMessageManager.buttons.shopEntry.
     public String customMessageManagerShopEntryTitle(ItemStack item) {;
         return Utils.colorify(getString("customMessageManager.buttons.shopEntry.Title").replace("%shopitem%", Utils.getFinalItemName(item)));
+    }
+    public String customMessageManagerShopEntryTradeTitle(ItemStack item1, ItemStack item2) {;
+        return Utils.colorify(getString("customMessageManager.buttons.shopEntry.TradeTitle")
+                .replace("%item1%", Utils.getFinalItemName(item1))
+                .replace("%item2%", Utils.getFinalItemName(item2)));
     }
     public String customMessageManagerShopEntryUnkownTitle() {
         return Utils.colorify(getString("customMessageManager.buttons.shopEntry.UnkownTitle"));
