@@ -3,6 +3,9 @@ import me.deadlight.ezchestshop.data.Config;
 import me.deadlight.ezchestshop.data.LanguageManager;
 import me.deadlight.ezchestshop.data.ShopContainer;
 import me.deadlight.ezchestshop.EzChestShop;
+import me.deadlight.ezchestshop.utils.BlockMaterialUtils;
+import me.deadlight.ezchestshop.utils.InventoryUtils;
+import me.deadlight.ezchestshop.utils.ItemUtils;
 import me.deadlight.ezchestshop.utils.objects.EzShop;
 import me.deadlight.ezchestshop.utils.Utils;
 import org.bukkit.Bukkit;
@@ -59,8 +62,8 @@ public class ShopHologram {
             List<String> structure = new ArrayList<>(shop.getSettings().isAdminshop() ?
                     Config.holostructure_admin : Config.holostructure);
 
-            String itemName = Utils.getFinalItemName(shop.getShopItem());
-            Inventory shopInventory = Utils.getBlockInventory(location.getBlock());
+            String itemName = ItemUtils.getFinalItemName(shop.getShopItem());
+            Inventory shopInventory = BlockMaterialUtils.getBlockInventory(location.getBlock());
             int availableSlots = shopInventory.getSize();
             for (ItemStack item : shopInventory.getStorageContents()) {
                 // if item is one of the below, then it is a slot that can be used, otherwise subtract from available slots.
@@ -68,12 +71,12 @@ public class ShopHologram {
                     availableSlots--;
                 }
             }
-            List<String> possibleCounts = Utils.calculatePossibleAmount(Bukkit.getOfflinePlayer(player.getUniqueId()),
+            List<String> possibleCounts = InventoryUtils.calculatePossibleAmount(Bukkit.getOfflinePlayer(player.getUniqueId()),
                     Bukkit.getOfflinePlayer(
                             UUID.fromString(((TileState) location.getBlock().getState()).getPersistentDataContainer()
                                     .get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING))),
                     player.getInventory().getStorageContents(),
-                    Utils.getBlockInventory(location.getBlock()).getStorageContents(),
+                    BlockMaterialUtils.getBlockInventory(location.getBlock()).getStorageContents(),
                     shop.getBuyPrice(), shop.getSellPrice(), shop.getShopItem());
 
             /*
@@ -89,7 +92,7 @@ public class ShopHologram {
             textReplacements.put("%maxbuy%", possibleCounts.get(0));
             textReplacements.put("%maxsell%", possibleCounts.get(1));
             textReplacements.put("%maxStackSize%", shop.getShopItem().getMaxStackSize() + "");
-            textReplacements.put("%stock%", Utils.howManyOfItemExists(shopInventory.getStorageContents(), shop.getShopItem()) + "");
+            textReplacements.put("%stock%", InventoryUtils.howManyOfItemExists(shopInventory.getStorageContents(), shop.getShopItem()) + "");
             textReplacements.put("%capacity%", availableSlots * shop.getShopItem().getMaxStackSize() + "");
             // the amount of itemdata replacements is defined in the config and may wary
             int itemDataLines = structure.stream()
@@ -100,7 +103,7 @@ public class ShopHologram {
             }
             textReplacements.put("<itemdataRest/>", "");
             // visible if the shop does not contain at least 1 item.
-            boolean visible = !Utils.containsAtLeast(shopInventory, shop.getShopItem(), 1);
+            boolean visible = !InventoryUtils.containsAtLeast(shopInventory, shop.getShopItem(), 1);
             textReplacements.put("<emptyShopInfo/>", visible ? lm.emptyShopHologramInfo() : "");
             // the amount of custom message replacements is defined in the config and may wary
             int customLines = structure.stream()
@@ -359,9 +362,9 @@ public class ShopHologram {
                 shop.getSettings().getAdmins().contains(player.getUniqueId().toString())) {
             PlayerBlockBoundHologram playerHolo = blockHolo.getPlayerHologram(player);
             if (playerHolo != null) {
-                Inventory shopInventory = Utils.getBlockInventory(location.getBlock());
+                Inventory shopInventory = BlockMaterialUtils.getBlockInventory(location.getBlock());
                 // visible if the shop does not contain at least 1 item.
-                boolean visible = !Utils.containsAtLeast(shopInventory, shop.getShopItem(), 1);
+                boolean visible = !InventoryUtils.containsAtLeast(shopInventory, shop.getShopItem(), 1);
                 playerHolo.updateTextReplacement("<emptyShopInfo/>", visible ?
                         lm.emptyShopHologramInfo() : "", false, true);
             }
@@ -425,9 +428,9 @@ public class ShopHologram {
         PlayerBlockBoundHologram playerHolo = blockHolo.getPlayerHologram(player);
         if (playerHolo != null) {
             shop = ShopContainer.getShop(location);
-            Inventory shopInventory = Utils.getBlockInventory(location.getBlock());
+            Inventory shopInventory = BlockMaterialUtils.getBlockInventory(location.getBlock());
             int availableSlots = shopInventory.getSize();
-            playerHolo.updateTextReplacement("%stock%", Utils.howManyOfItemExists(shopInventory.getStorageContents(),
+            playerHolo.updateTextReplacement("%stock%", InventoryUtils.howManyOfItemExists(shopInventory.getStorageContents(),
                     shop.getShopItem()) + "", true, false);
             playerHolo.updateTextReplacement("%capacity%", availableSlots * shop.getShopItem().getMaxStackSize() + "",
                     true, false);
@@ -438,10 +441,10 @@ public class ShopHologram {
         PlayerBlockBoundHologram playerHolo = blockHolo.getPlayerHologram(player);
         if (playerHolo != null) {
             shop = ShopContainer.getShop(location);
-            List<String> possibleCounts = Utils.calculatePossibleAmount(Bukkit.getOfflinePlayer(player.getUniqueId()),
+            List<String> possibleCounts = InventoryUtils.calculatePossibleAmount(Bukkit.getOfflinePlayer(player.getUniqueId()),
                     Bukkit.getOfflinePlayer(UUID.fromString(((TileState) shop.getLocation().getBlock().getState()).getPersistentDataContainer()
                             .get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING))), player.getInventory().getStorageContents(),
-                    Utils.getBlockInventory(shop.getLocation().getBlock()).getStorageContents(),
+                    BlockMaterialUtils.getBlockInventory(shop.getLocation().getBlock()).getStorageContents(),
                     shop.getBuyPrice(), shop.getSellPrice(), shop.getShopItem());
             playerHolo.updateTextReplacement("%maxbuy%", possibleCounts.get(0) + "", false, false);
             playerHolo.updateTextReplacement("%maxsell%", possibleCounts.get(1) + "", false, false);

@@ -4,6 +4,8 @@ import me.deadlight.ezchestshop.data.LanguageManager;
 import me.deadlight.ezchestshop.data.ShopContainer;
 import me.deadlight.ezchestshop.events.ShulkerShopDropEvent;
 import me.deadlight.ezchestshop.EzChestShop;
+import me.deadlight.ezchestshop.utils.BlockMaterialUtils;
+import me.deadlight.ezchestshop.utils.ItemUtils;
 import me.deadlight.ezchestshop.utils.Utils;
 import me.deadlight.ezchestshop.utils.holograms.ShopHologram;
 import me.deadlight.ezchestshop.utils.worldguard.FlagRegistry;
@@ -42,12 +44,12 @@ public class BlockPistonExtendListener implements Listener {
     public void onExtend(BlockPistonExtendEvent event) {
 
         for (Block block : event.getBlocks()) {
-            if (Utils.isShulkerBox(block)) {
+            if (BlockMaterialUtils.isShulkerBox(block)) {
                 BlockState blockState = block.getState();
                 TileState state = (TileState) blockState;
                 PersistentDataContainer container = state.getPersistentDataContainer();
 
-                if (Utils.isShulkerBox(block.getType())) {
+                if (BlockMaterialUtils.isShulkerBox(block.getType())) {
                     //it is a shulkerbox, now checking if its a shop
                     Location shulkerLoc = block.getLocation();
                     if (ShopContainer.isShop(shulkerLoc)) {
@@ -86,7 +88,7 @@ public class BlockPistonExtendListener implements Listener {
                                 if (entity instanceof Item) {
                                     Item item = (Item) entity;
                                     ItemStack itemStack = item.getItemStack();
-                                    if (Utils.isShulkerBox(itemStack.getType())) {
+                                    if (BlockMaterialUtils.isShulkerBox(itemStack.getType())) {
                                         //get the lock
                                         BlockStateMeta bsm = (BlockStateMeta) itemStack.getItemMeta();
                                         ShulkerBox box = (ShulkerBox) bsm.getBlockState();
@@ -134,7 +136,7 @@ public class BlockPistonExtendListener implements Listener {
     public void InventoryItemPickup(InventoryPickupItemEvent event) {
         Item item = event.getItem();
         ItemStack itemStack = item.getItemStack();
-        if (Utils.isShulkerBox(itemStack.getType())) {
+        if (BlockMaterialUtils.isShulkerBox(itemStack.getType())) {
             //get the lock
             BlockStateMeta bsm = (BlockStateMeta) itemStack.getItemMeta();
             ShulkerBox box = (ShulkerBox) bsm.getBlockState();
@@ -176,7 +178,7 @@ public class BlockPistonExtendListener implements Listener {
     private ItemMeta addLore(ItemMeta meta, PersistentDataContainer container) {
         if (Config.settings_add_shulkershop_lore) {
             List<String> nlore = lm.shulkerboxLore(Bukkit.getOfflinePlayer(UUID.fromString(getContainerString(container, "owner"))).getName(),
-                    Utils.getFinalItemName(Utils.decodeItem(getContainerString(container, "item"))),
+                    ItemUtils.getFinalItemName(ItemUtils.decodeItem(getContainerString(container, "item"))),
                     getContainerDouble(container, "buy"),
                     getContainerDouble(container, "sell"));
             meta.setLore(nlore);

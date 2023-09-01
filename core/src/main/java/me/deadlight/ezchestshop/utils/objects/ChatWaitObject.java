@@ -1,4 +1,5 @@
 package me.deadlight.ezchestshop.utils.objects;
+import me.deadlight.ezchestshop.utils.BlockMaterialUtils;
 import me.deadlight.ezchestshop.utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.block.*;
@@ -34,7 +35,7 @@ public class ChatWaitObject {
             return ((Chest) state).getPersistentDataContainer();
         } else if (type == Material.BARREL) {
             return ((Barrel) state).getPersistentDataContainer();
-        } else if (Utils.isShulkerBox(type)) {
+        } else if (BlockMaterialUtils.isShulkerBox(type)) {
             return ((ShulkerBox) state).getPersistentDataContainer();
         }
         return null;

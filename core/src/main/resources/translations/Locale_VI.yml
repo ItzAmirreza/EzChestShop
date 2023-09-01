@@ -260,6 +260,7 @@ shop-messages:
     liên hệ với quản trị viên và kiểm tra bảng điều khiển."
   joinEmptyShopActionBar: "&b%emptyCount% &ccửa hàng trống gần bạn!"
 command-messages:
+  noPermissionForCommand: "&cYou don't have permission to execute this command."
   negativeprice: "&cGiá âm??? nhưng bạn phải sử dụng giá dương..."
   notenoughargs: |-
     &cBạn chưa cung cấp đủ đối số liệu! 

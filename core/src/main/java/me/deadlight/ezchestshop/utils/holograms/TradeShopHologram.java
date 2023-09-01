@@ -5,6 +5,9 @@ import me.deadlight.ezchestshop.data.Config;
 import me.deadlight.ezchestshop.data.LanguageManager;
 import me.deadlight.ezchestshop.data.ShopContainer;
 import me.deadlight.ezchestshop.data.TradeShopContainer;
+import me.deadlight.ezchestshop.utils.BlockMaterialUtils;
+import me.deadlight.ezchestshop.utils.InventoryUtils;
+import me.deadlight.ezchestshop.utils.ItemUtils;
 import me.deadlight.ezchestshop.utils.Utils;
 import me.deadlight.ezchestshop.utils.objects.EzShop;
 import me.deadlight.ezchestshop.utils.objects.EzTradeShop;
@@ -63,9 +66,9 @@ public class TradeShopHologram {
             List<String> structure = new ArrayList<>(tradeShop.getSettings().isAdminshop() ?
                     Config.trade_holostructure_admin : Config.trade_holostructure);
 
-            String item1Name = Utils.getFinalItemName(tradeShop.getItem1());
-            String item2Name = Utils.getFinalItemName(tradeShop.getItem2());
-            Inventory shopInventory = Utils.getBlockInventory(location.getBlock());
+            String item1Name = ItemUtils.getFinalItemName(tradeShop.getItem1());
+            String item2Name = ItemUtils.getFinalItemName(tradeShop.getItem2());
+            Inventory shopInventory = BlockMaterialUtils.getBlockInventory(location.getBlock());
             int availableSlots = shopInventory.getSize();
             for (ItemStack item : shopInventory.getStorageContents()) {
                 // if item is one of the below, then it is a slot that can be used, otherwise subtract from available slots.
@@ -73,9 +76,9 @@ public class TradeShopHologram {
                     availableSlots--;
                 }
             }
-            List<String> possibleCounts = Utils.calculatePossibleTradeAmount(Bukkit.getOfflinePlayer(player.getUniqueId()),
+            List<String> possibleCounts = InventoryUtils.calculatePossibleTradeAmount(Bukkit.getOfflinePlayer(player.getUniqueId()),
                     player.getInventory().getStorageContents(),
-                    Utils.getBlockInventory(location.getBlock()).getStorageContents(), tradeShop.getItem1(), tradeShop.getItem2());
+                    BlockMaterialUtils.getBlockInventory(location.getBlock()).getStorageContents(), tradeShop.getItem1(), tradeShop.getItem2());
 
             /*
              * Text default placeholders:
@@ -92,8 +95,8 @@ public class TradeShopHologram {
             textReplacements.put("%maxtrade2%", possibleCounts.get(1));
             textReplacements.put("%maxStackSize1%", tradeShop.getItem1().getMaxStackSize() + "");
             textReplacements.put("%maxStackSize2%", tradeShop.getItem2().getMaxStackSize() + "");
-            textReplacements.put("%stock1%", Utils.howManyOfItemExists(shopInventory.getStorageContents(), tradeShop.getItem1()) + "");
-            textReplacements.put("%stock2%", Utils.howManyOfItemExists(shopInventory.getStorageContents(), tradeShop.getItem2()) + "");
+            textReplacements.put("%stock1%", InventoryUtils.howManyOfItemExists(shopInventory.getStorageContents(), tradeShop.getItem1()) + "");
+            textReplacements.put("%stock2%", InventoryUtils.howManyOfItemExists(shopInventory.getStorageContents(), tradeShop.getItem2()) + "");
             textReplacements.put("%capacity1%", availableSlots * tradeShop.getItem1().getMaxStackSize() + "");
             textReplacements.put("%capacity2%", availableSlots * tradeShop.getItem2().getMaxStackSize() + "");
             // the amount of itemdata replacements is defined in the config and may wary
@@ -112,9 +115,9 @@ public class TradeShopHologram {
             }
             textReplacements.put("<item2dataRest/>", "");
             // visible if the shop does not contain at least 1 item.
-            boolean visibleItem1 = !Utils.containsAtLeast(shopInventory, tradeShop.getItem1(), 1);
+            boolean visibleItem1 = !InventoryUtils.containsAtLeast(shopInventory, tradeShop.getItem1(), 1);
             textReplacements.put("<emptyShopItem1Info/>", visibleItem1 ? lm.emptyShopHologramInfo() : "");
-            boolean visibleItem2 = !Utils.containsAtLeast(shopInventory, tradeShop.getItem2(), 1);
+            boolean visibleItem2 = !InventoryUtils.containsAtLeast(shopInventory, tradeShop.getItem2(), 1);
             textReplacements.put("<emptyShopItem2Info/>", visibleItem2 ? lm.emptyShopHologramInfo() : "");
             // the amount of custom message replacements is defined in the config and may wary
             int customLines = structure.stream()
@@ -388,12 +391,12 @@ public class TradeShopHologram {
                 tradeShop.getSettings().getAdmins().contains(player.getUniqueId().toString())) {
             PlayerBlockBoundHologram playerHolo = blockHolo.getPlayerHologram(player);
             if (playerHolo != null) {
-                Inventory shopInventory = Utils.getBlockInventory(location.getBlock());
+                Inventory shopInventory = BlockMaterialUtils.getBlockInventory(location.getBlock());
                 // visible if the shop does not contain at least 1 item.
-                boolean visibleItem1 = !Utils.containsAtLeast(shopInventory, tradeShop.getItem1(), 1);
+                boolean visibleItem1 = !InventoryUtils.containsAtLeast(shopInventory, tradeShop.getItem1(), 1);
                 playerHolo.updateTextReplacement("<emptyShopItem1Info/>", visibleItem1 ?
                         lm.emptyShopHologramInfo() : "", false, true);
-                boolean visibleItem2 = !Utils.containsAtLeast(shopInventory, tradeShop.getItem2(), 1);
+                boolean visibleItem2 = !InventoryUtils.containsAtLeast(shopInventory, tradeShop.getItem2(), 1);
                 playerHolo.updateTextReplacement("<emptyShopItem2Info/>", visibleItem2 ?
                         lm.emptyShopHologramInfo() : "", false, true);
             }
@@ -452,11 +455,11 @@ public class TradeShopHologram {
         PlayerBlockBoundHologram playerHolo = blockHolo.getPlayerHologram(player);
         if (playerHolo != null) {
             tradeShop = TradeShopContainer.getTradeShop(location);
-            Inventory shopInventory = Utils.getBlockInventory(location.getBlock());
+            Inventory shopInventory = BlockMaterialUtils.getBlockInventory(location.getBlock());
             int availableSlots = shopInventory.getSize();
-            playerHolo.updateTextReplacement("%stock1%", Utils.howManyOfItemExists(shopInventory.getStorageContents(),
+            playerHolo.updateTextReplacement("%stock1%", InventoryUtils.howManyOfItemExists(shopInventory.getStorageContents(),
                     tradeShop.getItem1()) + "", true, false);
-            playerHolo.updateTextReplacement("%stock2%", Utils.howManyOfItemExists(shopInventory.getStorageContents(),
+            playerHolo.updateTextReplacement("%stock2%", InventoryUtils.howManyOfItemExists(shopInventory.getStorageContents(),
                     tradeShop.getItem2()) + "", true, false);
             playerHolo.updateTextReplacement("%capacity1%", availableSlots * tradeShop.getItem1().getMaxStackSize() + "",
                     true, false);
@@ -469,8 +472,8 @@ public class TradeShopHologram {
         PlayerBlockBoundHologram playerHolo = blockHolo.getPlayerHologram(player);
         if (playerHolo != null) {
             tradeShop = TradeShopContainer.getTradeShop(location);
-            List<String> possibleCounts = Utils.calculatePossibleTradeAmount(Bukkit.getOfflinePlayer(player.getUniqueId()), player.getInventory().getStorageContents(),
-                    Utils.getBlockInventory(tradeShop.getLocation().getBlock()).getStorageContents(), tradeShop.getItem1(), tradeShop.getItem2());
+            List<String> possibleCounts = InventoryUtils.calculatePossibleTradeAmount(Bukkit.getOfflinePlayer(player.getUniqueId()), player.getInventory().getStorageContents(),
+                    BlockMaterialUtils.getBlockInventory(tradeShop.getLocation().getBlock()).getStorageContents(), tradeShop.getItem1(), tradeShop.getItem2());
             playerHolo.updateTextReplacement("%maxbuy%", possibleCounts.get(0) + "", false, false);
             playerHolo.updateTextReplacement("%maxsell%", possibleCounts.get(1) + "", false, false);
         }

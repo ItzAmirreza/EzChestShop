@@ -259,6 +259,7 @@ shop-messages:
   openingShopProblem: "&cVyskytol sa problém s otvorením tohto obchodu, kontaktuj prosím správcu a skontroluj konzolu."
   joinEmptyShopActionBar: "&c&lPrázdné obchody blízko teba: &b&l%emptyCount%"
 command-messages:
+  noPermissionForCommand: "&cYou don't have permission to execute this command."
   negativeprice: "&cZáporná cena? máš predsa použiť kladnú hodnotu ceny..."
   notenoughargs: "&cNezadal si dostatočné množstvo parametrov! \n &cSprávne použitiee: /ecs create (cena pre nákup) (cena pri predaji)"
   consolenotallowed: "&cNemáš povolené spustiť akýkoľvek príkaz na konzole."

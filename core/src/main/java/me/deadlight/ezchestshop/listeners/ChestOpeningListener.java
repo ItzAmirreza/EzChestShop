@@ -12,6 +12,7 @@ import me.deadlight.ezchestshop.guis.shop.ServerShopGUI;
 import me.deadlight.ezchestshop.guis.tradeshop.AdminTradeShopGUI;
 import me.deadlight.ezchestshop.guis.tradeshop.NonOwnerTradeShopGUI;
 import me.deadlight.ezchestshop.guis.tradeshop.ServerTradeShopGUI;
+import me.deadlight.ezchestshop.utils.BlockMaterialUtils;
 import me.deadlight.ezchestshop.utils.BlockOutline;
 import me.deadlight.ezchestshop.utils.Utils;
 import me.deadlight.ezchestshop.utils.worldguard.FlagRegistry;
@@ -52,7 +53,7 @@ public class ChestOpeningListener implements Listener {
         if (event.getClickedBlock() == null) return;
         if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
         Material clickedType = event.getClickedBlock().getType();
-        if (Utils.isApplicableContainer(clickedType)) {
+        if (BlockMaterialUtils.isApplicableContainer(clickedType)) {
 
             Block chestblock = event.getClickedBlock();
             if (EzChestShop.slimefun) {
@@ -65,7 +66,7 @@ public class ChestOpeningListener implements Listener {
             PersistentDataContainer dataContainer = null;
             Location loc = chestblock.getLocation();
             TileState state = (TileState) chestblock.getState();
-            Inventory inventory = Utils.getBlockInventory(chestblock);
+            Inventory inventory = BlockMaterialUtils.getBlockInventory(chestblock);
 
             if (clickedType == Material.CHEST || clickedType == Material.TRAPPED_CHEST) {
                 if (inventory instanceof DoubleChestInventory) {
@@ -87,7 +88,7 @@ public class ChestOpeningListener implements Listener {
                 }
             } else if (clickedType == Material.BARREL) {
                 dataContainer = state.getPersistentDataContainer();
-            } else if (Utils.isShulkerBox(clickedType)) {
+            } else if (BlockMaterialUtils.isShulkerBox(clickedType)) {
                 dataContainer = state.getPersistentDataContainer();
             }
 

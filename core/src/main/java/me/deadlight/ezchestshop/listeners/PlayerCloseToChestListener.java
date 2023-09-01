@@ -5,6 +5,7 @@ import me.deadlight.ezchestshop.data.ShopContainer;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.data.TradeShopContainer;
 import me.deadlight.ezchestshop.events.PlayerTransactEvent;
+import me.deadlight.ezchestshop.utils.BlockMaterialUtils;
 import me.deadlight.ezchestshop.utils.holograms.BlockBoundHologram;
 import me.deadlight.ezchestshop.utils.holograms.ShopHologram;
 import me.deadlight.ezchestshop.utils.holograms.TradeShopHologram;
@@ -55,7 +56,7 @@ public class PlayerCloseToChestListener implements Listener {
             // Make sure the player is looking at a shop
             if (result != null) {
                 Block target = result.getHitBlock();
-                if (Utils.isApplicableContainer(target)) {
+                if (BlockMaterialUtils.isApplicableContainer(target)) {
                     Location loc = BlockBoundHologram.getShopChestLocation(target);
                     if (ShopContainer.isShop(loc)) {
                         // Create a shop Hologram, so it can be used later
@@ -176,7 +177,7 @@ public class PlayerCloseToChestListener implements Listener {
                     continue;
 
                 Block target = ezShop.getLocation().getWorld().getBlockAt(ezShop.getLocation());
-                if (target == null || !Utils.isApplicableContainer(target)) {
+                if (target == null || !BlockMaterialUtils.isApplicableContainer(target)) {
                     return;
                 }
                 if (Config.holodistancing_show_item_first) {
@@ -217,7 +218,7 @@ public class PlayerCloseToChestListener implements Listener {
                     continue;
 
                 Block target = ezTradeShop.getLocation().getWorld().getBlockAt(ezTradeShop.getLocation());
-                if (target == null || !Utils.isApplicableContainer(target)) {
+                if (target == null || !BlockMaterialUtils.isApplicableContainer(target)) {
                     return;
                 }
                 if (Config.holodistancing_show_item_first) {

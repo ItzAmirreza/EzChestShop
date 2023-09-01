@@ -29,7 +29,7 @@ public class LogsGUI {
     public void showGUI(Player player, PersistentDataContainer data, Block containerBlock, LogType type, boolean isAdmin) {
 
         if (true) {
-            player.sendMessage(Utils.colorify("&cUnfortunately, this feature is not available anymore, but it will be available again soon!"));
+            player.sendMessage(StringUtils.colorify("&cUnfortunately, this feature is not available anymore, but it will be available again soon!"));
             player.closeInventory();
             return;
         }
@@ -45,7 +45,7 @@ public class LogsGUI {
 
         ContainerGui container = GuiData.getLogs();
 
-        Gui gui = new Gui(container.getRows(), Utils.colorify(guititle));
+        Gui gui = new Gui(container.getRows(), StringUtils.colorify(guititle));
         gui.setDefaultClickAction(event -> event.setCancelled(true));
 
         ContainerGuiItem door = null;
@@ -56,7 +56,7 @@ public class LogsGUI {
                SettingsGUI settingsGUI = new SettingsGUI();
                settingsGUI.showGUI(player, containerBlock, isAdmin);
             });
-            Utils.addItemIfEnoughSlots(gui, door.getSlot(), doorItem);
+            InventoryUtils.addItemIfEnoughSlots(gui, door.getSlot(), doorItem);
         }
 
 
@@ -86,7 +86,7 @@ public class LogsGUI {
                     GuiItem paper = new GuiItem(transactionItem.getItem(), event -> {
                         event.setCancelled(true);
                     });
-                    Utils.addItemIfEnoughSlots(gui, slot, paper);
+                    InventoryUtils.addItemIfEnoughSlots(gui, slot, paper);
                     slot++;
                 }
             }

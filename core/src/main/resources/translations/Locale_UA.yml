@@ -261,6 +261,7 @@ shop-messages:
   openingShopProblem: "&cВиникла проблема з відкриттям цього магазину скринь. Звˈяжіться з адміністратором і перевірте консоль."
   joinEmptyShopActionBar: "&b&l%emptyCount% &c&lempty shops near you!"
 command-messages:
+  noPermissionForCommand: "&cYou don't have permission to execute this command."
   negativeprice: "&cВід'ємна ціна? Ви повинні використовувати ціну більше нуля..."
   notenoughargs: "&cНедостатньо аргументів! \n &cПравильне використання: /ecs create (Ціна покупки) (Ціна продажу)"
   consolenotallowed: "&cВам заборонено виконувати будь-які команди з консолі."

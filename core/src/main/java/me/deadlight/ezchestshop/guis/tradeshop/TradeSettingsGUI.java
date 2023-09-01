@@ -11,6 +11,8 @@ import me.deadlight.ezchestshop.data.gui.ContainerGuiItem;
 import me.deadlight.ezchestshop.data.gui.GuiData;
 import me.deadlight.ezchestshop.guis.shared.CustomMessageManageGUI;
 import me.deadlight.ezchestshop.listeners.ChatListener;
+import me.deadlight.ezchestshop.utils.InventoryUtils;
+import me.deadlight.ezchestshop.utils.NumberUtils;
 import me.deadlight.ezchestshop.utils.SignMenuFactory;
 import me.deadlight.ezchestshop.utils.Utils;
 import me.deadlight.ezchestshop.utils.holograms.TradeShopHologram;
@@ -63,7 +65,7 @@ public class TradeSettingsGUI {
 //               logsGUI.showGUI(player, dataContainer, containerBlock, LogType.TRANSACTION, isAdmin);
 //            });
 //
-//            Utils.addItemIfEnoughSlots(gui, lastTransItem.getSlot(), lastTrans);
+//            InventoryUtils.addItemIfEnoughSlots(gui, lastTransItem.getSlot(), lastTrans);
 //        }
 
         //I was going to add logs section which would be about actions in that containerBlock shop but I decided not to implement it. maybe later
@@ -104,7 +106,7 @@ public class TradeSettingsGUI {
 
                 }
             });
-            Utils.addItemIfEnoughSlots(gui, messageToggleItem.getSlot(), messageToggle);
+            InventoryUtils.addItemIfEnoughSlots(gui, messageToggleItem.getSlot(), messageToggle);
         }
 
         if (container.hasItem("toggle-trade-direction-item1toitem2") || container.hasItem("toggle-trade-direction-item2toitem1") ||
@@ -170,7 +172,7 @@ public class TradeSettingsGUI {
                     });
             }
 
-            Utils.addItemIfEnoughSlots(gui, tradeDirectionContainerGuiItem.getSlot(), tradeDirectionGuiItem);
+            InventoryUtils.addItemIfEnoughSlots(gui, tradeDirectionContainerGuiItem.getSlot(), tradeDirectionGuiItem);
         }
 
         //How it saves the owners? like this man
@@ -199,7 +201,7 @@ public class TradeSettingsGUI {
                     }
 
                 });
-                Utils.addItemIfEnoughSlots(gui, signItem.getSlot(), signItemg);
+                InventoryUtils.addItemIfEnoughSlots(gui, signItem.getSlot(), signItemg);
             }
 
             if (container.hasItem("customize-hologram-message")) {
@@ -234,7 +236,7 @@ public class TradeSettingsGUI {
                     }
                 });
                 if (Config.settings_hologram_message_enabled) {
-                    Utils.addItemIfEnoughSlots(gui, customMessageItemStack.getSlot(), customMessageItem);
+                    InventoryUtils.addItemIfEnoughSlots(gui, customMessageItemStack.getSlot(), customMessageItem);
                 }
             }
         }
@@ -274,7 +276,7 @@ public class TradeSettingsGUI {
             });
 
             if (Config.holo_rotation) {
-                Utils.addItemIfEnoughSlots(gui, rotationItemStack.getSlot(), rotationItem);
+                InventoryUtils.addItemIfEnoughSlots(gui, rotationItemStack.getSlot(), rotationItem);
             }
         }
 
@@ -295,7 +297,7 @@ public class TradeSettingsGUI {
                                     if (strings[0].equalsIgnoreCase("")) {
                                         return false;
                                     }
-                                    if (Utils.isInteger(strings[0])) {
+                                    if (NumberUtils.isInteger(strings[0])) {
                                         int amount = Integer.parseInt(strings[0]);
                                         if (amount < 0) {
                                             player.sendMessage(lm.negativePrice());
@@ -330,7 +332,7 @@ public class TradeSettingsGUI {
                                     if (strings[0].equalsIgnoreCase("")) {
                                         return false;
                                     }
-                                    if (Utils.isInteger(strings[0])) {
+                                    if (NumberUtils.isInteger(strings[0])) {
                                         int amount = Integer.parseInt(strings[0]);
                                         if (amount < 0) {
                                             player.sendMessage(lm.negativePrice());
@@ -357,7 +359,7 @@ public class TradeSettingsGUI {
                     menu.open(player);
                 }
             });
-            Utils.addItemIfEnoughSlots(gui, priceItemStack.getSlot(), priceItem);
+            InventoryUtils.addItemIfEnoughSlots(gui, priceItemStack.getSlot(), priceItem);
         }
 
         if (container.hasItem("back")) {
@@ -397,7 +399,7 @@ public class TradeSettingsGUI {
                 }
 
             });
-            Utils.addItemIfEnoughSlots(gui, backItemStack.getSlot(), backItem);
+            InventoryUtils.addItemIfEnoughSlots(gui, backItemStack.getSlot(), backItem);
         }
 
         gui.open(player);

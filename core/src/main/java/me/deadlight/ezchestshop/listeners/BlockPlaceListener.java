@@ -2,6 +2,7 @@ package me.deadlight.ezchestshop.listeners;
 
 import me.deadlight.ezchestshop.data.ShopContainer;
 import me.deadlight.ezchestshop.EzChestShop;
+import me.deadlight.ezchestshop.utils.BlockMaterialUtils;
 import me.deadlight.ezchestshop.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
@@ -43,7 +44,7 @@ public class BlockPlaceListener implements Listener {
     }
 
     private void placeBlock(Block block, ItemStack shulker) {
-        if (Utils.isShulkerBox(shulker.getType()) && Utils.isShulkerBox(block)) {
+        if (BlockMaterialUtils.isShulkerBox(shulker.getType()) && BlockMaterialUtils.isShulkerBox(block)) {
             if (shulker.hasItemMeta()) {
                 ItemMeta meta = shulker.getItemMeta();
                 PersistentDataContainer container = meta.getPersistentDataContainer();

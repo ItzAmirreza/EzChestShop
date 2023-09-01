@@ -2,13 +2,11 @@ package me.deadlight.ezchestshop.data;
 import me.deadlight.ezchestshop.enums.Changes;
 import me.deadlight.ezchestshop.events.PlayerTransactEvent;
 import me.deadlight.ezchestshop.EzChestShop;
+import me.deadlight.ezchestshop.utils.*;
 import me.deadlight.ezchestshop.utils.holograms.ShopHologram;
 import me.deadlight.ezchestshop.utils.objects.EzShop;
 import me.deadlight.ezchestshop.utils.objects.ShopSettings;
 import me.deadlight.ezchestshop.utils.objects.SqlQueue;
-import me.deadlight.ezchestshop.utils.Utils;
-import me.deadlight.ezchestshop.utils.WebhookSender;
-import me.deadlight.ezchestshop.utils.XPEconomy;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -52,7 +50,7 @@ public class ShopContainer {
      */
     public static void deleteShop(Location loc) {
         DatabaseManager db = EzChestShop.getPlugin().getDatabase();
-        db.deleteEntry("location", Utils.LocationtoString(loc),
+        db.deleteEntry("location", StringUtils.LocationtoString(loc),
                 "shopdata");
         shopMap.remove(loc);
 
@@ -72,8 +70,8 @@ public class ShopContainer {
                                   boolean dbuy, boolean dsell, String admins, boolean shareincome,
                                    boolean adminshop, String rotation) {
         DatabaseManager db = EzChestShop.getPlugin().getDatabase();
-        String sloc = Utils.LocationtoString(loc);
-        String encodedItem = Utils.encodeItem(item);
+        String sloc = StringUtils.LocationtoString(loc);
+        String encodedItem = ItemUtils.encodeItem(item);
         db.insertShop(sloc, p.getUniqueId().toString(), encodedItem == null ? "Error" : encodedItem, buyprice, sellprice, msgtoggle, dbuy, dsell, admins, shareincome, adminshop, rotation, new ArrayList<>());
         ShopSettings settings = new ShopSettings(sloc, msgtoggle, dbuy, dsell, admins, shareincome, adminshop, rotation, new ArrayList<>());
         EzShop shop = new EzShop(loc, p, item, buyprice, sellprice, settings);
@@ -106,7 +104,7 @@ public class ShopContainer {
 
     public static void loadShop(Location loc, PersistentDataContainer dataContainer) {
         DatabaseManager db = EzChestShop.getPlugin().getDatabase();
-        String sloc = Utils.LocationtoString(loc);
+        String sloc = StringUtils.LocationtoString(loc);
         boolean msgtoggle = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "msgtoggle"), PersistentDataType.INTEGER) == 1;
         boolean dbuy = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "dbuy"), PersistentDataType.INTEGER) == 1;
         boolean dsell = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "dsell"), PersistentDataType.INTEGER) == 1;
@@ -122,7 +120,7 @@ public class ShopContainer {
         db.insertShop(sloc, owner, encodedItem == null ? "Error" : encodedItem, buyprice, sellprice, msgtoggle, dbuy, dsell, admins, shareincome, adminshop, rotation, new ArrayList<>());
 
         ShopSettings settings = new ShopSettings(sloc, msgtoggle, dbuy, dsell, admins, shareincome, adminshop, rotation, new ArrayList<>());
-        EzShop shop = new EzShop(loc, owner, Utils.decodeItem(encodedItem), buyprice, sellprice, settings);
+        EzShop shop = new EzShop(loc, owner, ItemUtils.decodeItem(encodedItem), buyprice, sellprice, settings);
         shopMap.put(loc, shop);;
     }
 
@@ -209,8 +207,8 @@ public class ShopContainer {
         } else {
 
             //why we would need to use database data for getting settings? just setting them in database is enough
-            PersistentDataContainer dataContainer = Utils.getDataContainer(loc.getBlock());
-            String sloc = Utils.LocationtoString(loc);
+            PersistentDataContainer dataContainer = BlockMaterialUtils.getDataContainer(loc.getBlock());
+            String sloc = StringUtils.LocationtoString(loc);
             boolean msgtoggle = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "msgtoggle"), PersistentDataType.INTEGER) == 1;
             boolean dbuy = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "dbuy"), PersistentDataType.INTEGER) == 1;
             boolean dsell = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "dsell"), PersistentDataType.INTEGER) == 1;
@@ -225,7 +223,7 @@ public class ShopContainer {
             String rotation = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "rotation"), PersistentDataType.STRING);
             rotation = rotation == null ? Config.settings_defaults_rotation : rotation;
             ShopSettings settings = new ShopSettings(sloc, msgtoggle, dbuy, dsell, admins, shareincome, adminshop, rotation, new ArrayList<>());
-            EzShop shop = new EzShop(loc, owner, Utils.decodeItem(encodedItem), buyprice, sellprice, settings);
+            EzShop shop = new EzShop(loc, owner, ItemUtils.decodeItem(encodedItem), buyprice, sellprice, settings);
             shopMap.put(loc, shop);
             return settings;
         }
@@ -236,11 +234,11 @@ public class ShopContainer {
 
         LanguageManager lm = new LanguageManager();
         //check for money
-        if (Utils.containsAtLeast(Utils.getBlockInventory(containerBlock), thatItem , count)) {
+        if (InventoryUtils.containsAtLeast(BlockMaterialUtils.getBlockInventory(containerBlock), thatItem , count)) {
 
             if (ifHasMoney(Bukkit.getOfflinePlayer(player.getUniqueId()), price)) {
 
-                if (Utils.hasEnoughSpace(player, count, thatItem)) {
+                if (InventoryUtils.hasEnoughSpace(player, count, thatItem)) {
 
                     int stacks = (int) Math.ceil(count / (double) thatItem.getMaxStackSize());
                     int max_size = thatItem.getMaxStackSize();
@@ -254,7 +252,7 @@ public class ShopContainer {
                     }
                     //For the transaction event
                     thatItem.setAmount(count);
-                    Utils.removeItem(Utils.getBlockInventory(containerBlock), thatItem);
+                    InventoryUtils.removeItem(BlockMaterialUtils.getBlockInventory(containerBlock), thatItem);
                     getandgive(Bukkit.getOfflinePlayer(player.getUniqueId()), price, owner);
                     sharedIncomeCheck(data, price);
                     transactionMessage(data, owner, player, price, true, tthatItem, count, containerBlock.getLocation().getBlock());
@@ -287,11 +285,11 @@ public class ShopContainer {
 
         ItemStack thatItem = tthatItem.clone();
 
-        if (Utils.containsAtLeast(player.getInventory(), thatItem, count)) {
+        if (InventoryUtils.containsAtLeast(player.getInventory(), thatItem, count)) {
 
             if (ifHasMoney(owner, price)) {
 
-                if (Utils.containerHasEnoughSpace(Utils.getBlockInventory(containerBlock), count, thatItem)) {
+                if (InventoryUtils.containerHasEnoughSpace(BlockMaterialUtils.getBlockInventory(containerBlock), count, thatItem)) {
                     int stacks = (int) Math.ceil(count / (double) thatItem.getMaxStackSize());
                     int max_size = thatItem.getMaxStackSize();
                     for (int i = 0; i < stacks; i++) {
@@ -300,11 +298,11 @@ public class ShopContainer {
                         } else {
                             thatItem.setAmount(max_size);
                         }
-                        Utils.getBlockInventory(containerBlock).addItem(thatItem);
+                        BlockMaterialUtils.getBlockInventory(containerBlock).addItem(thatItem);
                     }
                     //For the transaction event
                     thatItem.setAmount(count);
-                    Utils.removeItem(player.getInventory(), thatItem);
+                    InventoryUtils.removeItem(player.getInventory(), thatItem);
                     getandgive(owner, price, Bukkit.getOfflinePlayer(player.getUniqueId()));
                     transactionMessage(data, owner, Bukkit.getOfflinePlayer(player.getUniqueId()), price, false, tthatItem, count, containerBlock.getLocation().getBlock());
                     player.sendMessage(lm.messageSuccSell(price));
@@ -338,7 +336,7 @@ public class ShopContainer {
 
         if (ifHasMoney(Bukkit.getOfflinePlayer(player.getUniqueId()), price)) {
 
-            if (Utils.hasEnoughSpace(player, count, thatItem)) {
+            if (InventoryUtils.hasEnoughSpace(player, count, thatItem)) {
 
                 int stacks = (int) Math.ceil(count / (double) thatItem.getMaxStackSize());
                 int max_size = thatItem.getMaxStackSize();
@@ -383,14 +381,14 @@ public class ShopContainer {
 
         ItemStack thatItem = tthatItem.clone();
 
-        if (Utils.containsAtLeast(player.getInventory(), thatItem, count)) {
+        if (InventoryUtils.containsAtLeast(player.getInventory(), thatItem, count)) {
 
             thatItem.setAmount(count);
             deposit(price, Bukkit.getOfflinePlayer(player.getUniqueId()));
             transactionMessage(data, Bukkit.getOfflinePlayer(UUID.fromString(
                     data.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING))),
                     Bukkit.getOfflinePlayer(player.getUniqueId()), price, false, tthatItem, count, containerBlock);
-            Utils.removeItem(player.getInventory(), thatItem);
+            InventoryUtils.removeItem(player.getInventory(), thatItem);
             player.sendMessage(lm.messageSuccSell(price));
             player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 0.5f, 0.5f);
             Config.shopCommandManager.executeCommands(player, containerBlock.getLocation(),

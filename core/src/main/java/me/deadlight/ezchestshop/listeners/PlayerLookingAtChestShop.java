@@ -4,11 +4,9 @@ import me.deadlight.ezchestshop.data.Config;
 import me.deadlight.ezchestshop.data.LanguageManager;
 import me.deadlight.ezchestshop.data.ShopContainer;
 import me.deadlight.ezchestshop.EzChestShop;
-import me.deadlight.ezchestshop.utils.ASHologram;
-import me.deadlight.ezchestshop.utils.FloatingItem;
+import me.deadlight.ezchestshop.utils.*;
 import me.deadlight.ezchestshop.utils.holograms.BlockBoundHologram;
 import me.deadlight.ezchestshop.utils.objects.EzShop;
-import me.deadlight.ezchestshop.utils.Utils;
 import org.bukkit.*;
 import org.bukkit.block.*;
 import org.bukkit.entity.EntityType;
@@ -40,9 +38,9 @@ public class PlayerLookingAtChestShop implements Listener {
         Block target = event.getPlayer().getTargetBlockExact(5);
 
         if (target != null) {
-            if (Utils.isApplicableContainer(target)) {
+            if (BlockMaterialUtils.isApplicableContainer(target)) {
 
-                Inventory inventory = Utils.getBlockInventory(target);
+                Inventory inventory = BlockMaterialUtils.getBlockInventory(target);
                 if (inventory instanceof DoubleChestInventory) {
                     //double chest
 
@@ -69,7 +67,7 @@ public class PlayerLookingAtChestShop implements Listener {
 //                                    "[ECS] Something unexpected happened with this container's data, so this shop has been removed.");
 //                            return;
 //                        }
-                        ItemStack thatItem = Utils.decodeItem(rightone.get(new NamespacedKey(EzChestShop.getPlugin(), "item"), PersistentDataType.STRING));
+                        ItemStack thatItem = ItemUtils.decodeItem(rightone.get(new NamespacedKey(EzChestShop.getPlugin(), "item"), PersistentDataType.STRING));
                         double buy = rightone.get(new NamespacedKey(EzChestShop.getPlugin(), "buy"), PersistentDataType.DOUBLE);
                         double sell = rightone.get(new NamespacedKey(EzChestShop.getPlugin(), "sell"), PersistentDataType.DOUBLE);
                         boolean is_adminshop = rightone.get(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"),
@@ -104,7 +102,7 @@ public class PlayerLookingAtChestShop implements Listener {
 //                            return;
 //                        }
                         //show the hologram
-                        ItemStack thatItem = Utils.decodeItem(container.get(new NamespacedKey(EzChestShop.getPlugin(), "item"), PersistentDataType.STRING));
+                        ItemStack thatItem = ItemUtils.decodeItem(container.get(new NamespacedKey(EzChestShop.getPlugin(), "item"), PersistentDataType.STRING));
                         double buy = container.get(new NamespacedKey(EzChestShop.getPlugin(), "buy"), PersistentDataType.DOUBLE);
                         double sell = container.get(new NamespacedKey(EzChestShop.getPlugin(), "sell"), PersistentDataType.DOUBLE);
                         boolean is_adminshop = container.get(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"),
@@ -144,11 +142,11 @@ public class PlayerLookingAtChestShop implements Listener {
 
         Location lineLocation = spawnLocation.clone().subtract(0, 0.1, 0);
         String itemname = "Error";
-        itemname = Utils.getFinalItemName(thatItem);
-        List<String> possibleCounts = Utils.calculatePossibleAmount(Bukkit.getOfflinePlayer(player.getUniqueId()),
+        itemname = ItemUtils.getFinalItemName(thatItem);
+        List<String> possibleCounts = InventoryUtils.calculatePossibleAmount(Bukkit.getOfflinePlayer(player.getUniqueId()),
                 Bukkit.getOfflinePlayer(UUID.fromString(((TileState) shopLocation.getBlock().getState()).getPersistentDataContainer()
                         .get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING))), player.getInventory().getStorageContents(),
-                Utils.getBlockInventory(shopLocation.getBlock()).getStorageContents(),
+                BlockMaterialUtils.getBlockInventory(shopLocation.getBlock()).getStorageContents(),
                 buy, sell, thatItem);
 
         List<String> structure = new ArrayList<>(is_adminshop ? Config.holostructure_admin : Config.holostructure);
@@ -163,12 +161,12 @@ public class PlayerLookingAtChestShop implements Listener {
                 lineLocation.add(0, 0.35 * Config.holo_linespacing, 0);
             } else {
 
-                String line = Utils.colorify(element.replace("%item%", itemname).replace("%buy%", Utils.formatNumber(buy, Utils.FormatType.HOLOGRAM)).
-                        replace("%sell%", Utils.formatNumber(sell, Utils.FormatType.HOLOGRAM)).replace("%currency%", Config.currency)
+                String line = StringUtils.colorify(element.replace("%item%", itemname).replace("%buy%", NumberUtils.formatNumber(buy, NumberUtils.FormatType.HOLOGRAM)).
+                        replace("%sell%", NumberUtils.formatNumber(sell, NumberUtils.FormatType.HOLOGRAM)).replace("%currency%", Config.currency)
                         .replace("%owner%", shop_owner).replace("%maxbuy%", possibleCounts.get(0)).replace("%maxsell%", possibleCounts.get(1))
                         .replace("%maxStackSize%", thatItem.getMaxStackSize() + "")
-                        .replace("%stock%", Utils.howManyOfItemExists(Utils.getBlockInventory(shopLocation.getBlock()).getStorageContents(), thatItem) + "")
-                        .replace("%capacity%", Utils.getBlockInventory(shopLocation.getBlock()).getSize() + ""));
+                        .replace("%stock%", InventoryUtils.howManyOfItemExists(BlockMaterialUtils.getBlockInventory(shopLocation.getBlock()).getStorageContents(), thatItem) + "")
+                        .replace("%capacity%", BlockMaterialUtils.getBlockInventory(shopLocation.getBlock()).getSize() + ""));
                 if (is_dbuy || is_dsell) {
                     line = line.replaceAll("<separator>.*?<\\/separator>", "");
                     if (is_dbuy && is_dsell) {
@@ -187,7 +185,7 @@ public class PlayerLookingAtChestShop implements Listener {
                         List<String> customMessages = ShopContainer.getShopSettings(shopLocation).getCustomMessages();
 
                         if (customNum > customMessages.size()) continue;
-                        line = Utils.colorify(customMessages.get(customNum - 1));
+                        line = StringUtils.colorify(customMessages.get(customNum - 1));
                     } else {
                         continue;
                     }
@@ -214,8 +212,8 @@ public class PlayerLookingAtChestShop implements Listener {
                     // Shops that are not selling anything should not show this message.
                     if (player.getUniqueId().equals(shop.getOwnerID()) && !is_dbuy && !is_adminshop) {
                         // Check if the shop is empty by getting the inventory of the block
-                        Inventory inv = Utils.getBlockInventory(shopLocation.getBlock());
-                        if (!Utils.containsAtLeast(inv, shop.getShopItem(), 1)) {
+                        Inventory inv = BlockMaterialUtils.getBlockInventory(shopLocation.getBlock());
+                        if (!InventoryUtils.containsAtLeast(inv, shop.getShopItem(), 1)) {
                             line = line.replace("<emptyShopInfo/>", lm.emptyShopHologramInfo());
                         } else {
                             continue;
@@ -281,7 +279,7 @@ public class PlayerLookingAtChestShop implements Listener {
 
     private Location getHoloLoc(Block containerBlock) {
         Location holoLoc;
-        Inventory inventory = Utils.getBlockInventory(containerBlock);
+        Inventory inventory = BlockMaterialUtils.getBlockInventory(containerBlock);
         PersistentDataContainer container = ((TileState) containerBlock.getState()).getPersistentDataContainer();
         String rotation = container.get(new NamespacedKey(EzChestShop.getPlugin(), "rotation"), PersistentDataType.STRING);
         rotation = rotation == null ? Config.settings_defaults_rotation : rotation;

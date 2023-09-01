@@ -10,7 +10,7 @@ import me.deadlight.ezchestshop.data.TradeShopContainer;
 import me.deadlight.ezchestshop.data.gui.ContainerGui;
 import me.deadlight.ezchestshop.data.gui.ContainerGuiItem;
 import me.deadlight.ezchestshop.data.gui.GuiData;
-import me.deadlight.ezchestshop.utils.Utils;
+import me.deadlight.ezchestshop.utils.*;
 import me.deadlight.ezchestshop.utils.objects.EzShop;
 import me.deadlight.ezchestshop.utils.objects.EzTradeShop;
 import me.deadlight.ezchestshop.utils.objects.TradeShopSettings;
@@ -63,8 +63,8 @@ public class OwnerTradeShopGUI {
         Gui gui = new Gui(container.getRows(), lm.guiOwnerTitle(shopOwner));
         gui.getFiller().fill(container.getBackground());
 
-        ItemStack shop_item1 = Utils.decodeItem(data.get(new NamespacedKey(EzChestShop.getPlugin(), "item1"), PersistentDataType.STRING)).clone();
-        ItemStack shop_item2 = Utils.decodeItem(data.get(new NamespacedKey(EzChestShop.getPlugin(), "item2"), PersistentDataType.STRING)).clone();
+        ItemStack shop_item1 = ItemUtils.decodeItem(data.get(new NamespacedKey(EzChestShop.getPlugin(), "item1"), PersistentDataType.STRING)).clone();
+        ItemStack shop_item2 = ItemUtils.decodeItem(data.get(new NamespacedKey(EzChestShop.getPlugin(), "item2"), PersistentDataType.STRING)).clone();
         if (container.hasItem("item1")) {
             ItemStack item1 = shop_item1.clone();
             ItemMeta item1meta = item1.getItemMeta();
@@ -92,7 +92,7 @@ public class OwnerTradeShopGUI {
                     showGUI(player, data, containerBlock, isAdmin);
                 }
             });
-            Utils.addItemIfEnoughSlots(gui, container.getItem("item1").getSlot(), guiitem);
+            InventoryUtils.addItemIfEnoughSlots(gui, container.getItem("item1").getSlot(), guiitem);
         }
         if (container.hasItem("item2")) {
             ItemStack item2 = shop_item2.clone();
@@ -121,7 +121,7 @@ public class OwnerTradeShopGUI {
                     showGUI(player, data, containerBlock, isAdmin);
                 }
             });
-            Utils.addItemIfEnoughSlots(gui, container.getItem("item2").getSlot(), guiitem);
+            InventoryUtils.addItemIfEnoughSlots(gui, container.getItem("item2").getSlot(), guiitem);
         }
 
         if (container.hasItem("trade-direction-item1toitem2") || container.hasItem("trade-direction-item2toitem1") ||
@@ -148,19 +148,19 @@ public class OwnerTradeShopGUI {
             GuiItem tradeDirectionGuiItem = new GuiItem(tradeDirectionItem, event -> {
                 event.setCancelled(true);
             });
-            Utils.addItemIfEnoughSlots(gui, tradeDirectionContainerGuiItem.getSlot(), tradeDirectionGuiItem);
+            InventoryUtils.addItemIfEnoughSlots(gui, tradeDirectionContainerGuiItem.getSlot(), tradeDirectionGuiItem);
         }
 
         container.getItemKeys().forEach(key -> {
             if (key.startsWith("decorative-")) {
 
-                ContainerGuiItem decorativeItemStack = container.getItem(key).setName(Utils.colorify("&d"));
+                ContainerGuiItem decorativeItemStack = container.getItem(key).setName(StringUtils.colorify("&d"));
 
                 GuiItem buyItem = new GuiItem(decorativeItemStack.getItem(), event -> {
                     event.setCancelled(true);
                 });
 
-                Utils.addItemIfEnoughSlots(gui, decorativeItemStack.getSlot(), buyItem);
+                InventoryUtils.addItemIfEnoughSlots(gui, decorativeItemStack.getSlot(), buyItem);
             }
         });
 
@@ -169,7 +169,7 @@ public class OwnerTradeShopGUI {
 
             GuiItem storageGUI = new GuiItem(guiStorageItem.getItem(), event -> {
                 event.setCancelled(true);
-                Inventory lastinv = Utils.getBlockInventory(containerBlock);
+                Inventory lastinv = BlockMaterialUtils.getBlockInventory(containerBlock);
                 if (lastinv instanceof DoubleChestInventory) {
                     DoubleChest doubleChest = (DoubleChest) lastinv.getHolder();
                     lastinv = doubleChest.getInventory();
@@ -179,7 +179,7 @@ public class OwnerTradeShopGUI {
             });
 
             //containerBlock storage
-            Utils.addItemIfEnoughSlots(gui, guiStorageItem.getSlot(), storageGUI);
+            InventoryUtils.addItemIfEnoughSlots(gui, guiStorageItem.getSlot(), storageGUI);
         }
 
         //settings item
@@ -194,7 +194,7 @@ public class OwnerTradeShopGUI {
                 player.playSound(player.getLocation(), Sound.BLOCK_PISTON_EXTEND, 0.5f, 0.5f);
             });
             //settings item
-            Utils.addItemIfEnoughSlots(gui, settingsItemStack.getSlot(), settingsGui);
+            InventoryUtils.addItemIfEnoughSlots(gui, settingsItemStack.getSlot(), settingsGui);
         }
 
 

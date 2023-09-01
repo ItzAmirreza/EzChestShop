@@ -2,6 +2,8 @@ package me.deadlight.ezchestshop.data;
 
 import me.clip.placeholderapi.PlaceholderAPI;
 import me.deadlight.ezchestshop.EzChestShop;
+import me.deadlight.ezchestshop.utils.ItemUtils;
+import me.deadlight.ezchestshop.utils.StringUtils;
 import me.deadlight.ezchestshop.utils.objects.EzShop;
 import me.deadlight.ezchestshop.utils.Utils;
 import net.md_5.bungee.api.ChatColor;
@@ -171,14 +173,14 @@ public class ShopCommandManager {
                 if (fc.contains(path)) {
                     // if there's a list, there are no options.
                     if (fc.isList(path)) {
-                        addEntry(Utils.StringtoLocation(location),
+                        addEntry(StringUtils.StringtoLocation(location),
                                 new ShopCommandEntry(location, action, null, fc.getStringList(path)));
                     } else {
                         // interate over all options.
                         fc.getConfigurationSection(path).getKeys(false).forEach(option -> {
                             String path2 = path + "." + option;
                             if (fc.isList(path2)) {
-                                addEntry(Utils.StringtoLocation(location),
+                                addEntry(StringUtils.StringtoLocation(location),
                                         new ShopCommandEntry(location, action, option, fc.getStringList(path2)));
                             }
                         });
@@ -204,7 +206,7 @@ public class ShopCommandManager {
     public void setCommandsOfShop(Location loc, ShopCommandsAtLocation shopCommandsAtLocation) {
         shopCommandEntryHashMap.put(loc, shopCommandsAtLocation);
         //TODO save the data to the config file.
-        String path = "commands." + Utils.LocationRoundedtoString(loc, 0);
+        String path = "commands." + StringUtils.LocationRoundedtoString(loc, 0);
         File customConfigFile = new File(EzChestShop.getPlugin().getDataFolder(),
                 "shopCommands.yml");
         YamlConfiguration fc = YamlConfiguration.loadConfiguration(customConfigFile);
@@ -327,7 +329,7 @@ public class ShopCommandManager {
         if (shop == null) return;
         compb.append("\n----------------------------------------------------\n").color(ChatColor.YELLOW);
         compb.append("Editing " + (shop.getSettings().isAdminshop() ? "admin " : "") + "shop trading " +
-                        Utils.getFinalItemName(shop.getShopItem()) + "\n").color(ChatColor.YELLOW);
+                        ItemUtils.getFinalItemName(shop.getShopItem()) + "\n").color(ChatColor.YELLOW);
 
         compb.append(
                 "Choose a action from below! Whenever this action is performed, the configured commands will be executed!\n",
@@ -339,9 +341,9 @@ public class ShopCommandManager {
                 option = " none";
             }
             compb.append(" - ", ComponentBuilder.FormatRetention.NONE).color(ChatColor.GOLD)
-                    .append(Utils.capitalizeFirstSplit(action.name())).color(ChatColor.YELLOW)
+                    .append(StringUtils.capitalizeFirstSplit(action.name())).color(ChatColor.YELLOW)
                     .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
-                            "/ecsadmin shop-commands " + Utils.LocationRoundedtoString(location, 0) + " " + action.name() + option))
+                            "/ecsadmin shop-commands " + StringUtils.LocationRoundedtoString(location, 0) + " " + action.name() + option))
                     .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("Click to edit the " +
                             action.name() + " action!")));
             if (i != ShopAction.values().length - 1) {
@@ -367,7 +369,7 @@ public class ShopCommandManager {
                         "The buy and sell options are for specific buy/sell amounts, so use numbers!\n",
                 ComponentBuilder.FormatRetention.NONE).color(ChatColor.GRAY);
         compb.append("Editing options of " + (shop.getSettings().isAdminshop() ? "admin " : "") + "shop trading " +
-                Utils.getFinalItemName(shop.getShopItem()) + "\n").color(ChatColor.YELLOW);
+                ItemUtils.getFinalItemName(shop.getShopItem()) + "\n").color(ChatColor.YELLOW);
 
         ShopCommandsAtLocation commandsAtLocation;
         if (shopCommandEntryHashMap.containsKey(location)) {
@@ -382,9 +384,9 @@ public class ShopCommandManager {
         }
         for (String option : options) {
             compb.append(" - ", ComponentBuilder.FormatRetention.NONE).color(ChatColor.GOLD)
-                    .append(Utils.capitalizeFirstSplit(option)).color(ChatColor.YELLOW)
+                    .append(StringUtils.capitalizeFirstSplit(option)).color(ChatColor.YELLOW)
                     .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
-                            "/ecsadmin shop-commands " + Utils.LocationRoundedtoString(location, 0) + " " + action.name() + " " + option))
+                            "/ecsadmin shop-commands " + StringUtils.LocationRoundedtoString(location, 0) + " " + action.name() + " " + option))
                     .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("Click to edit the " +
                             option + " option!")))
                     .append("\n");
@@ -393,12 +395,12 @@ public class ShopCommandManager {
         //TODO add a button to add a new option
         compb.append("[+]", ComponentBuilder.FormatRetention.NONE).color(ChatColor.GREEN)
                 .event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND,
-                        "/ecsadmin shop-commands " + Utils.LocationRoundedtoString(location, 0) + " " + action.name() + " "))
+                        "/ecsadmin shop-commands " + StringUtils.LocationRoundedtoString(location, 0) + " " + action.name() + " "))
                 .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("Click to add a new option!")));
         compb.append("\n ← Back").color(ChatColor.GRAY)
                 .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(ChatColor.YELLOW + "Go back to the action selection")))
                 .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
-                        "/ecsadmin shop-commands " + Utils.LocationRoundedtoString(location, 0)));
+                        "/ecsadmin shop-commands " + StringUtils.LocationRoundedtoString(location, 0)));
 
         player.spigot().sendMessage(compb.create());
     }
@@ -419,7 +421,7 @@ public class ShopCommandManager {
         }
         compb.append("----------------------------------------------------\n").color(ChatColor.YELLOW);
         compb.append("Editing " + action.name() + (option != null ? " " + option : "") + " commands of " + (shop.getSettings().isAdminshop() ? "admin " : "") + "shop trading " +
-                Utils.getFinalItemName(shop.getShopItem()) + "\n").color(ChatColor.YELLOW);
+                ItemUtils.getFinalItemName(shop.getShopItem()) + "\n").color(ChatColor.YELLOW);
         compb.append(
                 "Add/Edit/Delete commands here. If you need longer commands, use the shopCommands.yml file!\n",
                 ComponentBuilder.FormatRetention.NONE).color(ChatColor.GRAY);
@@ -438,13 +440,13 @@ public class ShopCommandManager {
                         compb.append(" ⇧", ComponentBuilder.FormatRetention.NONE).color(ChatColor.GRAY)
                                 .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(ChatColor.YELLOW + "Move command up")))
                                 .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
-                                        "/ecsadmin shop-commands " + Utils.LocationRoundedtoString(location, 0) + " " + action.name() + " " + optionCmd + " move " + i + " up"));
+                                        "/ecsadmin shop-commands " + StringUtils.LocationRoundedtoString(location, 0) + " " + action.name() + " " + optionCmd + " move " + i + " up"));
                     }
                     if (i != size - 1) {
                         compb.append(" ⇩", ComponentBuilder.FormatRetention.NONE).color(ChatColor.GRAY)
                                 .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(ChatColor.YELLOW + "Move command down")))
                                 .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
-                                        "/ecsadmin shop-commands " + Utils.LocationRoundedtoString(location, 0) + " " + action.name() + " " + optionCmd + " move " + i + " down"));
+                                        "/ecsadmin shop-commands " + StringUtils.LocationRoundedtoString(location, 0) + " " + action.name() + " " + optionCmd + " move " + i + " down"));
                     }
                 }
 
@@ -452,22 +454,22 @@ public class ShopCommandManager {
                     .append(" " + command, ComponentBuilder.FormatRetention.NONE).color(ChatColor.YELLOW)
                     .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(ChatColor.YELLOW + "Edit command")))
                     .event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND,
-                            "/ecsadmin shop-commands " + Utils.LocationRoundedtoString(location, 0) + " " + action.name() + " " + optionCmd + " edit " + i + " " + command))
+                            "/ecsadmin shop-commands " + StringUtils.LocationRoundedtoString(location, 0) + " " + action.name() + " " + optionCmd + " edit " + i + " " + command))
                     .append(" [-]", ComponentBuilder.FormatRetention.NONE).color(ChatColor.RED)
                     .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(ChatColor.RED + "Remove command")))
                     .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
-                            "/ecsadmin shop-commands " + Utils.LocationRoundedtoString(location, 0) + " " + action.name() + " " + optionCmd + " remove " + i))
+                            "/ecsadmin shop-commands " + StringUtils.LocationRoundedtoString(location, 0) + " " + action.name() + " " + optionCmd + " remove " + i))
                     .append("\n");
             }
         }
         compb.append("[+]").color(ChatColor.GREEN)
                 .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(ChatColor.GREEN + "Add new command")))
                 .event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND,
-                        "/ecsadmin shop-commands " + Utils.LocationRoundedtoString(location, 0) + " " + action.name() + " " + optionCmd + " add "));
+                        "/ecsadmin shop-commands " + StringUtils.LocationRoundedtoString(location, 0) + " " + action.name() + " " + optionCmd + " add "));
         compb.append("\n ← Back").color(ChatColor.GRAY)
                 .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(ChatColor.YELLOW + "Go back to the action selection")))
                 .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
-                        "/ecsadmin shop-commands " + Utils.LocationRoundedtoString(location, 0) + (option == null ? "" : " " + action.name())));
+                        "/ecsadmin shop-commands " + StringUtils.LocationRoundedtoString(location, 0) + (option == null ? "" : " " + action.name())));
 
         player.spigot().sendMessage(compb.create());
 
@@ -487,7 +489,7 @@ public class ShopCommandManager {
         ShopCommandManager.ShopCommandsAtLocation cmds = getCommandsOfShop(location);
         ShopCommandEntry entry =  cmds.getEntry(action, option);
         if (entry == null) {
-            entry = new ShopCommandEntry(Utils.LocationRoundedtoString(location, 0), action, option, new ArrayList<>());
+            entry = new ShopCommandEntry(StringUtils.LocationRoundedtoString(location, 0), action, option, new ArrayList<>());
             cmds.entries.add(entry);
         }
         entry.commands.add(command);
@@ -513,7 +515,7 @@ public class ShopCommandManager {
         ShopCommandManager.ShopCommandsAtLocation cmds = getCommandsOfShop(location);
         ShopCommandEntry entry = cmds.getEntry(action, option);
         if (entry == null) {
-            entry = new ShopCommandEntry(Utils.LocationRoundedtoString(location, 0), action, option, new ArrayList<>());
+            entry = new ShopCommandEntry(StringUtils.LocationRoundedtoString(location, 0), action, option, new ArrayList<>());
             cmds.entries.add(entry);
         }
         if (index >= entry.commands.size()) {

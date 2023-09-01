@@ -263,6 +263,7 @@ shop-messages:
   openingShopProblem: "&cMoteasefane moshkeli dar baz kardan in shop vojod darad. Be admin ha etela dahid."
   joinEmptyShopActionBar: "&b&l%emptyCount% &c&lempty shops near you!"
 command-messages:
+  noPermissionForCommand: "&cYou don't have permission to execute this command."
   negativeprice: "&cMeghdare manfi? vali shoma bayad yek adad balaye 0 entekhab konid."
   notenoughargs: "&cCommand be dorosti ersal nashode \n &cRavesh dorost: /ecs create (Gheymate kharid az shoma) (Gheymat forosh be shoma)"
   consolenotallowed: "&cShoma ghader be ersal hich commandi az console nistid."

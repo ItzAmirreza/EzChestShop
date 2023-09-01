@@ -9,9 +9,8 @@ import me.deadlight.ezchestshop.data.gui.GuiData;
 import me.deadlight.ezchestshop.data.LanguageManager;
 import me.deadlight.ezchestshop.data.ShopContainer;
 import me.deadlight.ezchestshop.EzChestShop;
+import me.deadlight.ezchestshop.utils.*;
 import me.deadlight.ezchestshop.utils.objects.EzShop;
-import me.deadlight.ezchestshop.utils.SignMenuFactory;
-import me.deadlight.ezchestshop.utils.Utils;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.DoubleChest;
@@ -62,7 +61,7 @@ public class AdminShopGUI {
         Gui gui = new Gui(container.getRows(), lm.guiAdminTitle(shopOwner));
         gui.getFiller().fill(container.getBackground());
 
-        ItemStack mainitem = Utils.decodeItem(data.get(new NamespacedKey(EzChestShop.getPlugin(), "item"), PersistentDataType.STRING));
+        ItemStack mainitem = ItemUtils.decodeItem(data.get(new NamespacedKey(EzChestShop.getPlugin(), "item"), PersistentDataType.STRING));
         if (container.hasItem("shop-item")) {
             ItemStack guiMainItem = mainitem.clone();
             ItemMeta mainmeta = guiMainItem.getItemMeta();
@@ -81,7 +80,7 @@ public class AdminShopGUI {
             GuiItem guiitem = new GuiItem(guiMainItem, event -> {
                 event.setCancelled(true);
             });
-            Utils.addItemIfEnoughSlots(gui, container.getItem("shop-item").getSlot(), guiitem);
+            InventoryUtils.addItemIfEnoughSlots(gui, container.getItem("shop-item").getSlot(), guiitem);
         }
 
         container.getItemKeys().forEach(key -> {
@@ -89,7 +88,7 @@ public class AdminShopGUI {
                 String amountString = key.split("-")[1];
                 int amount = 1;
                 if (amountString.equals("all")) {
-                    amount = Integer.parseInt(Utils.calculateSellPossibleAmount(Bukkit.getOfflinePlayer(player.getUniqueId()), player.getInventory().getStorageContents(), Utils.getBlockInventory(containerBlock).getStorageContents(), sellPrice, mainitem));
+                    amount = Integer.parseInt(InventoryUtils.calculateSellPossibleAmount(Bukkit.getOfflinePlayer(player.getUniqueId()), player.getInventory().getStorageContents(), BlockMaterialUtils.getBlockInventory(containerBlock).getStorageContents(), sellPrice, mainitem));
                 } else if (amountString.equals("maxStackSize")) {
                     amount = mainitem.getMaxStackSize();
                     container.getItem(key).setAmount(amount);
@@ -116,12 +115,12 @@ public class AdminShopGUI {
                     showGUI(player, data, containerBlock);
                 });
 
-                Utils.addItemIfEnoughSlots(gui, sellItemStack.getSlot(), sellItem);
+                InventoryUtils.addItemIfEnoughSlots(gui, sellItemStack.getSlot(), sellItem);
             } else if (key.startsWith("buy-")) {
                 String amountString = key.split("-")[1];
                 int amount = 1;
                 if (amountString.equals("all")) {
-                    amount = Integer.parseInt(Utils.calculateBuyPossibleAmount(Bukkit.getOfflinePlayer(player.getUniqueId()), player.getInventory().getStorageContents(), Utils.getBlockInventory(containerBlock).getStorageContents(), buyPrice, mainitem));
+                    amount = Integer.parseInt(InventoryUtils.calculateBuyPossibleAmount(Bukkit.getOfflinePlayer(player.getUniqueId()), player.getInventory().getStorageContents(), BlockMaterialUtils.getBlockInventory(containerBlock).getStorageContents(), buyPrice, mainitem));
                 } else if (amountString.equals("maxStackSize")) {
                     amount = mainitem.getMaxStackSize();
                     container.getItem(key).setAmount(amount);
@@ -148,16 +147,16 @@ public class AdminShopGUI {
                     showGUI(player, data, containerBlock);
                 });
 
-                Utils.addItemIfEnoughSlots(gui, buyItemStack.getSlot(), buyItem);
+                InventoryUtils.addItemIfEnoughSlots(gui, buyItemStack.getSlot(), buyItem);
             } else if (key.startsWith("decorative-")) {
 
-                ContainerGuiItem decorativeItemStack = container.getItem(key).setName(Utils.colorify("&d"));
+                ContainerGuiItem decorativeItemStack = container.getItem(key).setName(StringUtils.colorify("&d"));
 
                 GuiItem buyItem = new GuiItem(decorativeItemStack.getItem(), event -> {
                     event.setCancelled(true);
                 });
 
-                Utils.addItemIfEnoughSlots(gui, decorativeItemStack.getSlot(), buyItem);
+                InventoryUtils.addItemIfEnoughSlots(gui, decorativeItemStack.getSlot(), buyItem);
             }
         });
 
@@ -166,7 +165,7 @@ public class AdminShopGUI {
 
             GuiItem storageGUI = new GuiItem(guiStorageItem.getItem(), event -> {
                 event.setCancelled(true);
-                Inventory lastinv = Utils.getBlockInventory(containerBlock);
+                Inventory lastinv = BlockMaterialUtils.getBlockInventory(containerBlock);
                 if (lastinv instanceof DoubleChestInventory) {
                     DoubleChest doubleChest = (DoubleChest) lastinv.getHolder();
                     lastinv = doubleChest.getInventory();
@@ -179,7 +178,7 @@ public class AdminShopGUI {
             });
 
             //containerBlock storage
-            Utils.addItemIfEnoughSlots(gui, guiStorageItem.getSlot(), storageGUI);
+            InventoryUtils.addItemIfEnoughSlots(gui, guiStorageItem.getSlot(), storageGUI);
         }
 
         if (container.hasItem("settings")) {
@@ -193,13 +192,13 @@ public class AdminShopGUI {
                 player.playSound(player.getLocation(), Sound.BLOCK_PISTON_EXTEND, 0.5f, 0.5f);
             });
             //settings item
-            Utils.addItemIfEnoughSlots(gui, settingsItemStack.getSlot(), settingsGui);
+            InventoryUtils.addItemIfEnoughSlots(gui, settingsItemStack.getSlot(), settingsGui);
         }
 
         if (container.hasItem("custom-buy-sell")) {
-            List<String> possibleCounts = Utils.calculatePossibleAmount(Bukkit.getOfflinePlayer(player.getUniqueId()),
+            List<String> possibleCounts = InventoryUtils.calculatePossibleAmount(Bukkit.getOfflinePlayer(player.getUniqueId()),
                     offlinePlayerOwner, player.getInventory().getStorageContents(),
-                    Utils.getBlockInventory(containerBlock).getStorageContents(),
+                    BlockMaterialUtils.getBlockInventory(containerBlock).getStorageContents(),
                     buyPrice, sellPrice, mainitem);
             ContainerGuiItem customBuySellItemStack = container.getItem("custom-buy-sell").setName(lm.customAmountSignTitle()).setLore(lm.customAmountSignLore(possibleCounts.get(0), possibleCounts.get(1)));
 
@@ -226,9 +225,9 @@ public class AdminShopGUI {
                                     if (strings[0].equalsIgnoreCase("")) {
                                         return false;
                                     }
-                                    if (Utils.isInteger(strings[0])) {
+                                    if (NumberUtils.isInteger(strings[0])) {
                                         int amount = Integer.parseInt(strings[0]);
-                                        if (!Utils.amountCheck(amount)) {
+                                        if (amount <= 0) {
                                             player.sendMessage(lm.unsupportedInteger());
                                             return false;
                                         }
@@ -267,9 +266,9 @@ public class AdminShopGUI {
                                     if (strings[0].equalsIgnoreCase("")) {
                                         return false;
                                     }
-                                    if (Utils.isInteger(strings[0])) {
+                                    if (NumberUtils.isInteger(strings[0])) {
                                         int amount = Integer.parseInt(strings[0]);
-                                        if (!Utils.amountCheck(amount)) {
+                                        if (amount <= 0) {
                                             player.sendMessage(lm.unsupportedInteger());
                                             return false;
                                         }
@@ -298,7 +297,7 @@ public class AdminShopGUI {
 
             if (Config.settings_custom_amout_transactions) {
                 //sign item
-                Utils.addItemIfEnoughSlots(gui, customBuySellItemStack.getSlot(), guiSignItem);
+                InventoryUtils.addItemIfEnoughSlots(gui, customBuySellItemStack.getSlot(), guiSignItem);
             }
         }
 

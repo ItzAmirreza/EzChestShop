@@ -365,12 +365,12 @@ public final class EzChestShop extends JavaPlugin {
     }
 
     public static void logConsole(String str) {
-        EzChestShop.getPlugin().getServer().getConsoleSender().sendMessage(Utils.colorify(str));
+        EzChestShop.getPlugin().getServer().getConsoleSender().sendMessage(StringUtils.colorify(str));
     }
 
     public static void logDebug(String str) {
         if (Config.debug_logging)
-            EzChestShop.getPlugin().getServer().getConsoleSender().sendMessage("[Ecs-Debug] " + Utils.colorify(str));
+            EzChestShop.getPlugin().getServer().getConsoleSender().sendMessage("[Ecs-Debug] " + StringUtils.colorify(str));
     }
 
     private boolean setupEconomy() {

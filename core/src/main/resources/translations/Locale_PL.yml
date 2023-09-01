@@ -264,6 +264,7 @@ shop-messages:
   openingShopProblem: '&cWystąpił problem z otworzeniem tego sklepu, skontaktuj się z administratorem.'
   joinEmptyShopActionBar: "&b&l%emptyCount% &c&lempty shops near you!"
 command-messages:
+  noPermissionForCommand: "&cYou don't have permission to execute this command."
   negativeprice: '&cMusisz użyć wartości na plusie...'
   notenoughargs: "&cNie wprowadziłeś odopowiednich argumentów! \n &cPoprawne użycie: /ecs\
     \ create (cena zakupu) (cena sprzedaży)"

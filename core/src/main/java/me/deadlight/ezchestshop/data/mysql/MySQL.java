@@ -3,6 +3,8 @@ package me.deadlight.ezchestshop.data.mysql;
 import me.deadlight.ezchestshop.data.Config;
 import me.deadlight.ezchestshop.data.DatabaseManager;
 import me.deadlight.ezchestshop.EzChestShop;
+import me.deadlight.ezchestshop.utils.ItemUtils;
+import me.deadlight.ezchestshop.utils.StringUtils;
 import me.deadlight.ezchestshop.utils.objects.EzShop;
 import me.deadlight.ezchestshop.utils.objects.EzTradeShop;
 import me.deadlight.ezchestshop.utils.objects.ShopSettings;
@@ -119,10 +121,10 @@ public class MySQL extends DatabaseManager {
             String slocation = row.getValue("location");
             String customMessages = row.getValue("customMessages") == null ? "" : row.getValue("customMessages");
 
-            ezShopMap.put(Utils.StringtoLocation(slocation),
-                    new EzShop(Utils.StringtoLocation(slocation),
+            ezShopMap.put(StringUtils.StringtoLocation(slocation),
+                    new EzShop(StringUtils.StringtoLocation(slocation),
                             (String) row.getValue("owner"),
-                            Utils.decodeItem(row.getValue("item")),
+                            ItemUtils.decodeItem(row.getValue("item")),
                             row.getValue("buyPrice"),
                             row.getValue("sellPrice"),
                             new ShopSettings(slocation,
@@ -149,11 +151,11 @@ public class MySQL extends DatabaseManager {
             String customMessages = row.getValue("customMessages") == null ? "" : row.getValue("customMessages");
             String tradeDirectionString = row.getValue("tradeDirection") == null ? "BOTH" : row.getValue("tradeDirection");
 
-            ezTradeShopMap.put(Utils.StringtoLocation(slocation),
-                    new EzTradeShop(Utils.StringtoLocation(slocation),
+            ezTradeShopMap.put(StringUtils.StringtoLocation(slocation),
+                    new EzTradeShop(StringUtils.StringtoLocation(slocation),
                             (String) row.getValue("owner"),
-                            Utils.decodeItem(row.getValue("item1")),
-                            Utils.decodeItem(row.getValue("item2")),
+                            ItemUtils.decodeItem(row.getValue("item1")),
+                            ItemUtils.decodeItem(row.getValue("item2")),
                             new TradeShopSettings(slocation,
                                     asBool(row.getValue("msgToggle")),
                                     TradeShopSettings.TradeDirection.valueOf(tradeDirectionString.toUpperCase()),

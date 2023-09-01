@@ -1,6 +1,7 @@
 package me.deadlight.ezchestshop.data.gui;
 
 import dev.triumphteam.gui.guis.GuiItem;
+import me.deadlight.ezchestshop.utils.StringUtils;
 import me.deadlight.ezchestshop.utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -66,7 +67,7 @@ public class ContainerGui {
     public void setBackground(ItemStack item) {
         if (item.hasItemMeta()) {
             ItemMeta itemmeta = item.getItemMeta();
-            itemmeta.setDisplayName(Utils.colorify("&d"));
+            itemmeta.setDisplayName(StringUtils.colorify("&d"));
             item.setItemMeta(itemmeta);
         }
         this.background = new GuiItem(item, event -> event.setCancelled(true));
@@ -79,7 +80,7 @@ public class ContainerGui {
     public static GuiItem getDefaultBackground() {
         ItemStack glassis = new ItemStack(Material.BLACK_STAINED_GLASS_PANE, 1);
         ItemMeta glassmeta = glassis.getItemMeta();
-        glassmeta.setDisplayName(Utils.colorify("&d"));
+        glassmeta.setDisplayName(StringUtils.colorify("&d"));
         glassis.setItemMeta(glassmeta);
         return new GuiItem(glassis, event -> event.setCancelled(true));
     }

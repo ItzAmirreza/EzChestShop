@@ -5,6 +5,8 @@ import me.deadlight.ezchestshop.data.LanguageManager;
 import me.deadlight.ezchestshop.data.ShopContainer;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.data.TradeShopContainer;
+import me.deadlight.ezchestshop.utils.BlockMaterialUtils;
+import me.deadlight.ezchestshop.utils.ItemUtils;
 import me.deadlight.ezchestshop.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -245,7 +247,7 @@ public class BlockBoundHologram {
      */
     public Location getHoloLoc(Block containerBlock) {
         Location holoLoc;
-        Inventory inventory = Utils.getBlockInventory(containerBlock);
+        Inventory inventory = BlockMaterialUtils.getBlockInventory(containerBlock);
 
         // get the rotation via memory as it updates faster
         String rotation = "up";
@@ -382,7 +384,7 @@ public class BlockBoundHologram {
                     Map<String, Integer> itemCounts = new HashMap<>();
                     for (ItemStack itemStack : inv.getContents()) {
                         if (itemStack != null) {
-                            String itemName = Utils.getFinalItemName(itemStack);
+                            String itemName = ItemUtils.getFinalItemName(itemStack);
                             if (itemCounts.containsKey(itemName)) {
                                 itemCounts.put(itemName, itemCounts.get(itemName) + itemStack.getAmount());
                             } else {

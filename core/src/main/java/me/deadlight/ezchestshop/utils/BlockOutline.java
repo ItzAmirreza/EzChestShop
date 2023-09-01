@@ -62,7 +62,7 @@ public class BlockOutline {
         //check if the block is a chest and if it is a double chest
         if (block.getType().equals(Material.CHEST) || block.getType().equals(Material.TRAPPED_CHEST)) {
             //now we check if its a double chest instance
-            Inventory blockInv = Utils.getBlockInventory(block);
+            Inventory blockInv = BlockMaterialUtils.getBlockInventory(block);
             if (blockInv instanceof DoubleChestInventory) {
                 //get the other half of the double chest
                 DoubleChest doubleChest = (DoubleChest) blockInv.getHolder();

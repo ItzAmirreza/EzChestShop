@@ -1,5 +1,6 @@
 package me.deadlight.ezchestshop.utils.objects;
 
+import me.deadlight.ezchestshop.utils.ItemUtils;
 import me.deadlight.ezchestshop.utils.Utils;
 import org.bukkit.inventory.ItemStack;
 
@@ -36,7 +37,7 @@ public class CheckProfitEntry {
         if (string != null && !string.equals("") && !string.contains("null")) {
             String[] split = string.split(itemInlineSpacer);
             id = split[0];
-            item = Utils.decodeItem(split[1]);
+            item = ItemUtils.decodeItem(split[1]);
             buyAmount = Integer.valueOf(split[2]);
             buyPrice = Double.valueOf(split[3]);
             buyUnitPrice = Double.valueOf(split[4]);
@@ -48,7 +49,7 @@ public class CheckProfitEntry {
     }
 
     public String toString() {
-        return id + itemInlineSpacer + Utils.encodeItem(item) + itemInlineSpacer + buyAmount + itemInlineSpacer
+        return id + itemInlineSpacer + ItemUtils.encodeItem(item) + itemInlineSpacer + buyAmount + itemInlineSpacer
                 + buyPrice + itemInlineSpacer + buyUnitPrice + itemInlineSpacer + sellAmount + itemInlineSpacer
                 + sellPrice + itemInlineSpacer + sellUnitPrice;
     }

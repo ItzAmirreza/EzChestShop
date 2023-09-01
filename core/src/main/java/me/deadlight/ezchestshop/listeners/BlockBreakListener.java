@@ -5,6 +5,8 @@ import me.deadlight.ezchestshop.data.LanguageManager;
 import me.deadlight.ezchestshop.data.ShopContainer;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.data.TradeShopContainer;
+import me.deadlight.ezchestshop.utils.BlockMaterialUtils;
+import me.deadlight.ezchestshop.utils.ItemUtils;
 import me.deadlight.ezchestshop.utils.holograms.ShopHologram;
 import me.deadlight.ezchestshop.utils.holograms.TradeShopHologram;
 import me.deadlight.ezchestshop.utils.objects.EzShop;
@@ -76,7 +78,7 @@ public class BlockBreakListener implements Listener {
                 loc = Utils.isPartOfTheChestShop(event.getBlock().getLocation()).getLocation();
             }
             if (ShopContainer.isShop(loc) || isPartOfShop) {
-                if (Utils.isShulkerBox(event.getBlock())) {
+                if (BlockMaterialUtils.isShulkerBox(event.getBlock())) {
                     if (event.isDropItems()) {
                         event.setDropItems(false);
                         ItemStack shulker = event.getBlock().getDrops().stream().findFirst().get();
@@ -102,7 +104,7 @@ public class BlockBreakListener implements Listener {
                 loc = Utils.isPartOfTheChestTradeShop(loc).getLocation();
             }
             if (TradeShopContainer.isTradeShop(loc) || isPartOfTradeShop) {
-                if (Utils.isShulkerBox(event.getBlock())) {
+                if (BlockMaterialUtils.isShulkerBox(event.getBlock())) {
                     if (event.isDropItems()) {
                         event.setDropItems(false);
                         ItemStack shulker = event.getBlock().getDrops().stream().findFirst().get();
@@ -128,7 +130,7 @@ public class BlockBreakListener implements Listener {
     private ItemMeta addLore(ItemMeta meta, PersistentDataContainer container) {
         if (Config.settings_add_shulkershop_lore) {
             List<String> nlore = lm.shulkerboxLore(Bukkit.getOfflinePlayer(UUID.fromString(getContainerString(container, "owner"))).getName(),
-                    Utils.getFinalItemName(Utils.decodeItem(getContainerString(container, "item"))),
+                    ItemUtils.getFinalItemName(ItemUtils.decodeItem(getContainerString(container, "item"))),
                     getContainerDouble(container, "buy"),
                     getContainerDouble(container, "sell"));
             meta.setLore(nlore);

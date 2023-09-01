@@ -3,6 +3,8 @@ import me.deadlight.ezchestshop.data.DatabaseManager;
 import me.deadlight.ezchestshop.data.sqlite.structure.SQLColumn;
 import me.deadlight.ezchestshop.data.sqlite.structure.SQLTable;
 import me.deadlight.ezchestshop.EzChestShop;
+import me.deadlight.ezchestshop.utils.ItemUtils;
+import me.deadlight.ezchestshop.utils.StringUtils;
 import me.deadlight.ezchestshop.utils.objects.EzShop;
 import me.deadlight.ezchestshop.utils.objects.EzTradeShop;
 import me.deadlight.ezchestshop.utils.objects.ShopSettings;
@@ -954,7 +956,7 @@ public class SQLite extends DatabaseManager {
                 String sloc = rs.getString("location");
                 String customMessages = rs.getString("customMessages");
                 if (customMessages == null) customMessages = "";
-                map.put(Utils.StringtoLocation(sloc), new EzShop(Utils.StringtoLocation(sloc), rs.getString("owner"), Utils.decodeItem(rs.getString("item")),
+                map.put(StringUtils.StringtoLocation(sloc), new EzShop(StringUtils.StringtoLocation(sloc), rs.getString("owner"), ItemUtils.decodeItem(rs.getString("item")),
                         rs.getDouble("buyPrice"), rs.getDouble("sellPrice"), new ShopSettings(sloc, rs.getBoolean("msgToggle"),
                         rs.getBoolean("buyDisabled"), rs.getBoolean("sellDisabled"), rs.getString("admins"),
                         rs.getBoolean("shareIncome"), rs.getBoolean("adminshop"),
@@ -992,8 +994,8 @@ public class SQLite extends DatabaseManager {
                 String customMessages = rs.getString("customMessages");
                 String tradeDirection = rs.getString("tradeDirection") == null ? "BOTH" : rs.getString("tradeDirection");
                 if (customMessages == null) customMessages = "";
-                map.put(Utils.StringtoLocation(sloc), new EzTradeShop(Utils.StringtoLocation(sloc), rs.getString("owner"),
-                        Utils.decodeItem(rs.getString("item1")), Utils.decodeItem(rs.getString("item1")),
+                map.put(StringUtils.StringtoLocation(sloc), new EzTradeShop(StringUtils.StringtoLocation(sloc), rs.getString("owner"),
+                        ItemUtils.decodeItem(rs.getString("item1")), ItemUtils.decodeItem(rs.getString("item1")),
                         new TradeShopSettings(sloc, rs.getBoolean("msgToggle"), TradeShopSettings.TradeDirection.valueOf(tradeDirection),
                         rs.getString("admins"), rs.getBoolean("adminshop"),
                         rs.getString("rotation"), Arrays.asList(customMessages.split("#,#")))));

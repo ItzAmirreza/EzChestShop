@@ -1,5 +1,6 @@
 package me.deadlight.ezchestshop.events;
 import me.deadlight.ezchestshop.EzChestShop;
+import me.deadlight.ezchestshop.utils.ItemUtils;
 import me.deadlight.ezchestshop.utils.Utils;
 import org.bukkit.NamespacedKey;
 import org.bukkit.OfflinePlayer;
@@ -49,7 +50,7 @@ public class PlayerTransactEvent extends Event {
         this.time = LocalDateTime.now();
         this.isBuy = isBuy;
         this.item = item;
-        this.itemName = Utils.getFinalItemName(item);
+        this.itemName = ItemUtils.getFinalItemName(item);
         this.count = count;
         this.admins = admins;
         this.containerBlock = containerBlock;

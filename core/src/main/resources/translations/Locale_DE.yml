@@ -268,6 +268,7 @@ shop-messages:
   openingShopProblem: "&cBeim öffnen dieses Shops ist ein Problem aufgetreten. Bitte kontaktiere einen Administrator um in der Konsole nachzusehen."
   joinEmptyShopActionBar: "&b&l%emptyCount% &c&lleere Shops in deiner Nähe!"
 command-messages:
+  noPermissionForCommand: "&cDu hast keine Berechtigungen um diesen Befehl auszuführen."
   negativeprice: "&cNegativer Preis? Aber er muss positiv sein..."
   notenoughargs: "&cDu hast nicht genügend Argumente verwendet! \n &cRichtige Verwendung: /ecs create (Kaufpreis) (Verkaufspreis)"
   consolenotallowed: "&cDu hast nicht genügend Rechte um Befehle von der Konsole auszuführen."

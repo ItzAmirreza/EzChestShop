@@ -10,6 +10,8 @@ import me.deadlight.ezchestshop.data.ShopContainer;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.guis.shared.CustomMessageManageGUI;
 import me.deadlight.ezchestshop.listeners.ChatListener;
+import me.deadlight.ezchestshop.utils.InventoryUtils;
+import me.deadlight.ezchestshop.utils.NumberUtils;
 import me.deadlight.ezchestshop.utils.holograms.ShopHologram;
 import me.deadlight.ezchestshop.utils.objects.ChatWaitObject;
 import me.deadlight.ezchestshop.utils.objects.EzShop;
@@ -61,7 +63,7 @@ public class SettingsGUI {
 //               logsGUI.showGUI(player, dataContainer, containerBlock, LogType.TRANSACTION, isAdmin);
 //            });
 //
-//            Utils.addItemIfEnoughSlots(gui, lastTransItem.getSlot(), lastTrans);
+//            InventoryUtils.addItemIfEnoughSlots(gui, lastTransItem.getSlot(), lastTrans);
 //        }
 
         //I was going to add logs section which would be about actions in that containerBlock shop but I decided not to implement it. maybe later
@@ -102,7 +104,7 @@ public class SettingsGUI {
 
                 }
             });
-            Utils.addItemIfEnoughSlots(gui, messageToggleItem.getSlot(), messageToggle);
+            InventoryUtils.addItemIfEnoughSlots(gui, messageToggleItem.getSlot(), messageToggle);
         }
 
 
@@ -134,7 +136,7 @@ public class SettingsGUI {
                 ShopHologram.getHologram(containerBlock.getState().getLocation(), player).updateDbuy();
 
             });
-            Utils.addItemIfEnoughSlots(gui, buyDisabledItem.getSlot(), buyDisabled);
+            InventoryUtils.addItemIfEnoughSlots(gui, buyDisabledItem.getSlot(), buyDisabled);
         }
 
         if (container.hasItem("disable-sell-on") && container.hasItem("disable-sell-off")) {
@@ -161,7 +163,7 @@ public class SettingsGUI {
                 }
                 ShopHologram.getHologram(containerBlock.getState().getLocation(), player).updateDsell();
             });
-            Utils.addItemIfEnoughSlots(gui, sellDisabledItem.getSlot(), sellDisabled);
+            InventoryUtils.addItemIfEnoughSlots(gui, sellDisabledItem.getSlot(), sellDisabled);
         }
 
         //How it saves the owners? like this man
@@ -190,7 +192,7 @@ public class SettingsGUI {
                     }
 
                 });
-                Utils.addItemIfEnoughSlots(gui, signItem.getSlot(), signItemg);
+                InventoryUtils.addItemIfEnoughSlots(gui, signItem.getSlot(), signItemg);
             }
             if (container.hasItem("share-income-on") && container.hasItem("share-income-off")) {
                 boolean isSharedIncome = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "shareincome"), PersistentDataType.INTEGER) == 1;
@@ -220,7 +222,7 @@ public class SettingsGUI {
                 });
                 if (hastAtLeastOneAdmin) {
                     if (dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"), PersistentDataType.INTEGER) == 0) {
-                        Utils.addItemIfEnoughSlots(gui, sharedIncomeItem.getSlot(), sharedIncome);
+                        InventoryUtils.addItemIfEnoughSlots(gui, sharedIncomeItem.getSlot(), sharedIncome);
                     }
 
                 }
@@ -258,7 +260,7 @@ public class SettingsGUI {
                     }
                 });
                 if (Config.settings_hologram_message_enabled) {
-                    Utils.addItemIfEnoughSlots(gui, customMessageItemStack.getSlot(), customMessageItem);
+                    InventoryUtils.addItemIfEnoughSlots(gui, customMessageItemStack.getSlot(), customMessageItem);
                 }
             }
         }
@@ -298,7 +300,7 @@ public class SettingsGUI {
             });
 
             if (Config.holo_rotation) {
-                Utils.addItemIfEnoughSlots(gui, rotationItemStack.getSlot(), rotationItem);
+                InventoryUtils.addItemIfEnoughSlots(gui, rotationItemStack.getSlot(), rotationItem);
             }
         }
 
@@ -319,7 +321,7 @@ public class SettingsGUI {
                                     if (strings[0].equalsIgnoreCase("")) {
                                         return false;
                                     }
-                                    if (Utils.isInteger(strings[0])) {
+                                    if (NumberUtils.isInteger(strings[0])) {
                                         int amount = Integer.parseInt(strings[0]);
                                         if (amount < 0) {
                                             player.sendMessage(lm.negativePrice());
@@ -354,7 +356,7 @@ public class SettingsGUI {
                                     if (strings[0].equalsIgnoreCase("")) {
                                         return false;
                                     }
-                                    if (Utils.isInteger(strings[0])) {
+                                    if (NumberUtils.isInteger(strings[0])) {
                                         int amount = Integer.parseInt(strings[0]);
                                         if (amount < 0) {
                                             player.sendMessage(lm.negativePrice());
@@ -381,7 +383,7 @@ public class SettingsGUI {
                     menu.open(player);
                 }
             });
-            Utils.addItemIfEnoughSlots(gui, priceItemStack.getSlot(), priceItem);
+            InventoryUtils.addItemIfEnoughSlots(gui, priceItemStack.getSlot(), priceItem);
         }
 
         if (container.hasItem("back")) {
@@ -421,7 +423,7 @@ public class SettingsGUI {
                 }
 
             });
-            Utils.addItemIfEnoughSlots(gui, backItemStack.getSlot(), backItem);
+            InventoryUtils.addItemIfEnoughSlots(gui, backItemStack.getSlot(), backItem);
         }
 
         gui.open(player);

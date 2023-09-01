@@ -4,6 +4,7 @@ import me.deadlight.ezchestshop.data.LanguageManager;
 import me.deadlight.ezchestshop.data.PlayerContainer;
 import me.deadlight.ezchestshop.events.PlayerTransactEvent;
 import me.deadlight.ezchestshop.EzChestShop;
+import me.deadlight.ezchestshop.utils.StringUtils;
 import me.deadlight.ezchestshop.utils.Utils;
 import me.deadlight.ezchestshop.utils.WebhookSender;
 import org.bukkit.Bukkit;
@@ -125,7 +126,7 @@ public class PlayerTransactionListener implements Listener {
         // These next 4 are interesting:
         //Integer count = amount / defaultAmount; // How many times were items bought. Considers Stack buying.
         // Double single_price = price / count;
-        String id = Utils.LocationtoString(event.getContainerBlock().getLocation());
+        String id = StringUtils.LocationtoString(event.getContainerBlock().getLocation());
         ItemStack item = event.getItem(); // Item shop sells
         PlayerContainer owner = PlayerContainer.get(event.getOwner());
         if (event.isBuy()) {

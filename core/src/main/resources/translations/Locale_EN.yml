@@ -261,6 +261,7 @@ shop-messages:
   openingShopProblem: "&cThere is a problem in opening this chest shop, Please contact administrator and check the console."
   joinEmptyShopActionBar: "&b&l%emptyCount% &c&lempty shops near you!"
 command-messages:
+  noPermissionForCommand: "&cYou don't have permission to execute this command."
   negativeprice: "&cNegative price? but you have to use positive price..."
   notenoughargs: "&cYou haven't provided enough arguments! \n &cCorrect usage: /ecs create (Buy price) (Sell price)"
   consolenotallowed: "&cYou are not allowed to execute any command from console."

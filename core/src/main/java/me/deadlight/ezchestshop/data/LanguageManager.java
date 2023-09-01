@@ -6,10 +6,9 @@ import me.deadlight.ezchestshop.commands.MainCommands;
 import me.deadlight.ezchestshop.data.gui.GuiData;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.listeners.ChatListener;
+import me.deadlight.ezchestshop.utils.*;
 import me.deadlight.ezchestshop.utils.objects.CheckProfitEntry;
 import me.deadlight.ezchestshop.utils.objects.ShopSettings;
-import me.deadlight.ezchestshop.utils.Utils;
-import me.deadlight.ezchestshop.utils.XPEconomy;
 import me.deadlight.ezchestshop.utils.objects.TradeShopSettings;
 import net.md_5.bungee.api.chat.*;
 import org.bukkit.ChatColor;
@@ -65,6 +64,9 @@ public class LanguageManager {
                 "translations/" + Config.language + ".yml"));
         languageConfig = fc;
         LanguageManager newLanguage = new LanguageManager();
+        //TODO language managers are used in various places, this system is requires a ton of updaterfunctions and is
+        // super easy to forget, we should have 1 central languagemanager that can be accessed from anywhere. We might
+        // use a singleton for this.
         MainCommands.updateLM(newLanguage);
         ChatListener.updateLM(newLanguage);
         EcsAdmin.updateLM(newLanguage);
@@ -215,199 +217,199 @@ public class LanguageManager {
      */
     public String initialBuyPrice(double price) {
 
-        return Utils.colorify(getString("shop-gui.initialbuyprice").replace("%buyprice%",
-                Utils.formatNumber(price, Utils.FormatType.GUI)).replace("%currency%", Config.currency));
+        return StringUtils.colorify(getString("shop-gui.initialbuyprice").replace("%buyprice%",
+                NumberUtils.formatNumber(price, NumberUtils.FormatType.GUI)).replace("%currency%", Config.currency));
     }/**
      * @return returns buy price of GUI item in lore
      */
     public String initialSellPrice(double price) {
 
-        return Utils.colorify(getString("shop-gui.initialsellprice").replace("%sellprice%",
-                Utils.formatNumber(price, Utils.FormatType.GUI)).replace("%currency%", Config.currency));
+        return StringUtils.colorify(getString("shop-gui.initialsellprice").replace("%sellprice%",
+                NumberUtils.formatNumber(price, NumberUtils.FormatType.GUI)).replace("%currency%", Config.currency));
     }/**
      * @return returns buy price of GUI item in lore
      */
     public String guiAdminTitle(String shopowner) {
 
-        return Utils.colorify(getString("shop-gui.admin-title").replace("%shopowner%", String.valueOf(shopowner)));
+        return StringUtils.colorify(getString("shop-gui.admin-title").replace("%shopowner%", String.valueOf(shopowner)));
     }
     public String guiNonOwnerTitle(String shopowner) {
 
-        return Utils.colorify(getString("shop-gui.nonowner-title").replace("%shopowner%", String.valueOf(shopowner)));
+        return StringUtils.colorify(getString("shop-gui.nonowner-title").replace("%shopowner%", String.valueOf(shopowner)));
     }
     public String guiOwnerTitle(String shopowner) {
 
-        return Utils.colorify(getString("shop-gui.owner-title").replace("%shopowner%", String.valueOf(shopowner)));
+        return StringUtils.colorify(getString("shop-gui.owner-title").replace("%shopowner%", String.valueOf(shopowner)));
     }
     public String adminshopguititle() {
-        return Utils.colorify(getString("shop-gui.adminshop-title"));
+        return StringUtils.colorify(getString("shop-gui.adminshop-title"));
     }
 
 
     //shop-gui.buttons.
     public String buttonSellXTitle(int amount) {
-        return Utils.colorify(getString("shop-gui.buttons.sellX-title").replace("%amount%", "" + amount));
+        return StringUtils.colorify(getString("shop-gui.buttons.sellX-title").replace("%amount%", "" + amount));
     }
     public List<String> buttonSellXLore(double price, int amount) {
-        return getList("shop-gui.buttons.sellX-lore").stream().map(s -> Utils.colorify(s.replace("%price%",
-                Utils.formatNumber(price, Utils.FormatType.GUI)).replace("%currency%", Config.currency).replace("%amount%", "" + amount)))
+        return getList("shop-gui.buttons.sellX-lore").stream().map(s -> StringUtils.colorify(s.replace("%price%",
+                        NumberUtils.formatNumber(price, NumberUtils.FormatType.GUI)).replace("%currency%", Config.currency).replace("%amount%", "" + amount)))
                 .collect(Collectors.toList());
     }
 
     public String buttonBuyXTitle(int amount) {
 
-        return Utils.colorify(getString("shop-gui.buttons.buyX-title").replace("%amount%", "" + amount));
+        return StringUtils.colorify(getString("shop-gui.buttons.buyX-title").replace("%amount%", "" + amount));
     }
     public List<String> buttonBuyXLore(double price, int amount) {
-        return getList("shop-gui.buttons.buyX-lore").stream().map(s -> Utils.colorify(s.replace("%price%",
-                Utils.formatNumber(price, Utils.FormatType.GUI)).replace("%currency%", Config.currency).replace("%amount%", "" + amount)))
+        return getList("shop-gui.buttons.buyX-lore").stream().map(s -> StringUtils.colorify(s.replace("%price%",
+                        NumberUtils.formatNumber(price, NumberUtils.FormatType.GUI)).replace("%currency%", Config.currency).replace("%amount%", "" + amount)))
                 .collect(Collectors.toList());
     }
 
     public String buttonAdminView() {
 
-        return Utils.colorify(getString("shop-gui.buttons.adminview"));
+        return StringUtils.colorify(getString("shop-gui.buttons.adminview"));
     }
     public String buttonStorage() {
 
-        return Utils.colorify(getString("shop-gui.buttons.storage"));
+        return StringUtils.colorify(getString("shop-gui.buttons.storage"));
     }
     public String settingsButton() {
-        return Utils.colorify(getString("shop-gui.buttons.settings"));
+        return StringUtils.colorify(getString("shop-gui.buttons.settings"));
     }
     public String disabledButtonTitle() {
-        return Utils.colorify(getString("shop-gui.buttons.disabled-title"));
+        return StringUtils.colorify(getString("shop-gui.buttons.disabled-title"));
     }
     public List<String> disabledButtonLore() {
-        return getList("shop-gui.buttons.disabled-lore").stream().map(s -> Utils.colorify(s)).collect(Collectors.toList());
+        return getList("shop-gui.buttons.disabled-lore").stream().map(s -> StringUtils.colorify(s)).collect(Collectors.toList());
     }
 
 
     //transactions.
     public String transactionButtonTitle() {
-        return Utils.colorify(getString("transactions.transactionButtonTitle"));
+        return StringUtils.colorify(getString("transactions.transactionButtonTitle"));
     }
     public String backToSettingsButton() {
-        return Utils.colorify(getString("transactions.backToSettingsButton"));
+        return StringUtils.colorify(getString("transactions.backToSettingsButton"));
     }
     public String transactionPaperTitleBuy(String name) {
-        return Utils.colorify(getString("transactions.PaperTitleBuy").replace("%player%", name));
+        return StringUtils.colorify(getString("transactions.PaperTitleBuy").replace("%player%", name));
     }
     public String transactionPaperTitleSell(String name) {
-        return Utils.colorify(getString("transactions.PaperTitleSell").replace("%player%", name));
+        return StringUtils.colorify(getString("transactions.PaperTitleSell").replace("%player%", name));
     }
     public List<String> transactionPaperLoreBuy(String price, int count, String time) {
         return getList("transactions.PaperLoreBuy").stream().map(s ->
-                Utils.colorify(s.replace("%price%", Utils.formatNumber(Double.valueOf(price),
-                Utils.FormatType.GUI)).replace("%currency%", Config.currency).replace("%count%", String.valueOf(count)).replace("%time%", time)))
+                StringUtils.colorify(s.replace("%price%", NumberUtils.formatNumber(Double.valueOf(price),
+                        NumberUtils.FormatType.GUI)).replace("%currency%", Config.currency).replace("%count%", String.valueOf(count)).replace("%time%", time)))
                 .collect(Collectors.toList());
     }
     public List<String> transactionPaperLoreSell(String price, int count, String time) {
         return getList("transactions.PaperLoreSell").stream().map(s ->
-                Utils.colorify(s.replace("%price%", Utils.formatNumber(Double.valueOf(price),
-                Utils.FormatType.GUI)).replace("%currency%", Config.currency).replace("%count%", String.valueOf(count)).replace("%time%", time)))
+                StringUtils.colorify(s.replace("%price%", NumberUtils.formatNumber(Double.valueOf(price),
+                        NumberUtils.FormatType.GUI)).replace("%currency%", Config.currency).replace("%count%", String.valueOf(count)).replace("%time%", time)))
                 .collect(Collectors.toList());
     }
 
     public String lessthanminute() {
-        return Utils.colorify(getString("transactions.lessthanminute"));
+        return StringUtils.colorify(getString("transactions.lessthanminute"));
     }
     public String minutesago(long minutes) {
-        return Utils.colorify(getString("transactions.minutesago").replace("%minutes%", String.valueOf(minutes)));
+        return StringUtils.colorify(getString("transactions.minutesago").replace("%minutes%", String.valueOf(minutes)));
     }
     public String hoursago(long hours) {
-        return Utils.colorify(getString("transactions.hoursago").replace("%hours%", String.valueOf(hours)));
+        return StringUtils.colorify(getString("transactions.hoursago").replace("%hours%", String.valueOf(hours)));
     }
     public String daysago(long days) {
-        return Utils.colorify(getString("transactions.daysago").replace("%days%", String.valueOf(days)));
+        return StringUtils.colorify(getString("transactions.daysago").replace("%days%", String.valueOf(days)));
     }
 
     public String transactionBuyInform(String player, int amount, String item, double price) {
-        return Utils.colorify(getString("transactions.player-inform-buy").replace("%player%", player).replace("%amount%",
+        return StringUtils.colorify(getString("transactions.player-inform-buy").replace("%player%", player).replace("%amount%",
                 String.valueOf(amount)).replace("%item%", item).replace("%price%", String.valueOf(price)).replace("%currency%", Config.currency));
     }
     public String transactionSellInform(String player, int amount, String item, double price) {
-        return Utils.colorify(getString("transactions.player-inform-sell").replace("%player%", player).replace("%amount%",
+        return StringUtils.colorify(getString("transactions.player-inform-sell").replace("%player%", player).replace("%amount%",
                         String.valueOf(amount)).replace("%item%", item).replace("%price%", String.valueOf(price)).replace("%currency%", Config.currency));
     }
 
 
     //settings.
     public String settingsGuiTitle() {
-        return Utils.colorify(getString("settings.GuiTitle"));
+        return StringUtils.colorify(getString("settings.GuiTitle"));
     }
     public String statusOn() {
-        return Utils.colorify(getString("settings.statusOn"));
+        return StringUtils.colorify(getString("settings.statusOn"));
     }
     public String statusOff() {
-        return Utils.colorify(getString("settings.statusOff"));
+        return StringUtils.colorify(getString("settings.statusOff"));
     }
     //settings.buttons.
     //settings.buttons.toggleTransactions.
     public String toggleTransactionMessageButton() {
-        return Utils.colorify(getString("settings.buttons.toggleTransactions.Title"));
+        return StringUtils.colorify(getString("settings.buttons.toggleTransactions.Title"));
     }
     public List<String> toggleTransactionMessageButtonLore(String status) {
         return getList("settings.buttons.toggleTransactions.Lore").stream()
-                .map(s -> Utils.colorify(s.replace("%status%", status))).collect(Collectors.toList());
+                .map(s -> StringUtils.colorify(s.replace("%status%", status))).collect(Collectors.toList());
     }
     //settings.buttons.disableBuying.
     public String disableBuyingButtonTitle() {
-        return Utils.colorify(getString("settings.buttons.disableBuying.Title"));
+        return StringUtils.colorify(getString("settings.buttons.disableBuying.Title"));
     }
     public List<String> disableBuyingButtonLore(String status) {
         return getList("settings.buttons.disableBuying.Lore").stream()
-                .map(s -> Utils.colorify(s.replace("%status%", status))).collect(Collectors.toList());
+                .map(s -> StringUtils.colorify(s.replace("%status%", status))).collect(Collectors.toList());
     }
     //settings.buttons.disableSelling.
     public String disableSellingButtonTitle() {
-        return Utils.colorify(getString("settings.buttons.disableSelling.Title"));
+        return StringUtils.colorify(getString("settings.buttons.disableSelling.Title"));
     }
     public List<String> disableSellingButtonLore(String status) {
         return getList("settings.buttons.disableSelling.Lore").stream()
-                .map(s -> Utils.colorify(s.replace("%status%", status))).collect(Collectors.toList());
+                .map(s -> StringUtils.colorify(s.replace("%status%", status))).collect(Collectors.toList());
     }
     //settings.buttons.shopAdmins.
     public String shopAdminsButtonTitle() {
-        return Utils.colorify(getString("settings.buttons.shopAdmins.Title"));
+        return StringUtils.colorify(getString("settings.buttons.shopAdmins.Title"));
     }
     public String nobodyStatusAdmins() {
-        return Utils.colorify(getString("settings.buttons.shopAdmins.nobodyStatusAdmins"));
+        return StringUtils.colorify(getString("settings.buttons.shopAdmins.nobodyStatusAdmins"));
     }
     public List<String> shopAdminsButtonLore(String admins) {
         return getList("settings.buttons.shopAdmins.Lore").stream()
-                .map(s -> Utils.colorify(s.replace("%admins%", admins))).collect(Collectors.toList());
+                .map(s -> StringUtils.colorify(s.replace("%admins%", admins))).collect(Collectors.toList());
     }
     //settings.buttons.sharedIncome.
     public String shareIncomeButtonTitle() {
-        return Utils.colorify(getString("settings.buttons.sharedIncome.Title"));
+        return StringUtils.colorify(getString("settings.buttons.sharedIncome.Title"));
     }
     public List<String> shareIncomeButtonLore(String admins) {
         return getList("settings.buttons.sharedIncome.Lore").stream()
-                .map(s -> Utils.colorify(s.replace("%status%", admins))).collect(Collectors.toList());
+                .map(s -> StringUtils.colorify(s.replace("%status%", admins))).collect(Collectors.toList());
     }
     //settings.buttons.hologramRotation.
-    public String rotateHologramButtonTitle() {return Utils.colorify(getString("settings.buttons.hologramRotation.Title"));}
+    public String rotateHologramButtonTitle() {return StringUtils.colorify(getString("settings.buttons.hologramRotation.Title"));}
     public List<String> rotateHologramButtonLore(String rotation) {
         return getList("settings.buttons.hologramRotation.Lore").stream()
-                .map(s -> Utils.colorify(s.replace("%rotations%", formatRotations(rotation))
+                .map(s -> StringUtils.colorify(s.replace("%rotations%", formatRotations(rotation))
                         .replace("%rotation%", rotationFromData(rotation)))).collect(Collectors.toList());
     }
     //settings.buttons.changePrices
     public String changePricesButtonTitle() {
-        return Utils.colorify(getString("settings.buttons.changePrices.Title"));
+        return StringUtils.colorify(getString("settings.buttons.changePrices.Title"));
     }
     public List<String> changePricesButtonLore() {
         return getList("settings.buttons.changePrices.Lore").stream()
-                .map(s -> Utils.colorify(s)).collect(Collectors.toList());
+                .map(s -> StringUtils.colorify(s)).collect(Collectors.toList());
     }
     public List<String> changePriceSingGUI(boolean isBuy) {
         return getList("settings.buttons.changePrices." + (isBuy ? "SignPlaceholderBuy" : "SignPlaceholderSell")).stream()
-                .map(s -> Utils.colorify(s)).collect(Collectors.toList());
+                .map(s -> StringUtils.colorify(s)).collect(Collectors.toList());
     }
     //settings.buttons.hologramMessage
     public String hologramMessageButtonTitle() {
-        return Utils.colorify(getString("settings.buttons.hologramMessage.Title"));
+        return StringUtils.colorify(getString("settings.buttons.hologramMessage.Title"));
     }
     public List<String> hologramMessageButtonLore(Player player, String ownerID) {
         int lines = Config.settings_hologram_message_line_count_default;
@@ -428,13 +430,13 @@ public class LanguageManager {
         boolean value = hasNoMaxShopLimit && hasPermissionLimit ? false : hasNoMaxShopLimit ? false : hasPermissionLimit;
         return getList(currentMessages == 0 ? "settings.buttons.hologramMessage.Lore" : "settings.buttons.hologramMessage.LoreEdit").stream()
                 .filter(s -> ((value) || !s.startsWith("<ifhasmax>")))
-                .map(s -> Utils.colorify(s).replace("%lineNumbers%", lineMsg).replace("%messagesleft%",  "" + (maxMessages - currentMessages))
+                .map(s -> StringUtils.colorify(s).replace("%lineNumbers%", lineMsg).replace("%messagesleft%",  "" + (maxMessages - currentMessages))
                         .replace("<ifhasmax>", "").replace("</ifhasmax>", "")).collect(Collectors.toList());
     }
     public List<String> hologramMessageButtonLoreMaxReached(Player player) {
         int maxMessages = Utils.getMaxPermission(player, "ecs.shops.hologram.messages.limit.");
         return getList("settings.buttons.hologramMessage.LoreMaxReached").stream()
-                .map(s -> Utils.colorify(s.replace("%maxLines%", "" + maxMessages))).collect(Collectors.toList());
+                .map(s -> StringUtils.colorify(s.replace("%maxLines%", "" + maxMessages))).collect(Collectors.toList());
     }
     public List<String> hologramMessageSingGUI(Player player, Location loc) {
         int lines = Config.settings_hologram_message_line_count_default;
@@ -465,81 +467,81 @@ public class LanguageManager {
             }
         }
         for (int i = 0; i < 4 - lines; i++) {
-            output.add(Utils.colorify(getString("settings.buttons.hologramMessage.SignPlaceholderTexts")));
+            output.add(StringUtils.colorify(getString("settings.buttons.hologramMessage.SignPlaceholderTexts")));
         }
         return output;
     }
     //settings.buttons.other.
     public String backToShopGuiButton() {
-        return Utils.colorify(getString("settings.buttons.other.backToShopGuiButton"));
+        return StringUtils.colorify(getString("settings.buttons.other.backToShopGuiButton"));
     }
     public String latestTransactionsTitle() {
-        return Utils.colorify(getString("settings.buttons.other.latestTransactionsTitle"));
+        return StringUtils.colorify(getString("settings.buttons.other.latestTransactionsTitle"));
     }
 
 
     //settings.chat.
     //settings.chat.toggleTransactions.
     public String toggleTransactionMessageOnInChat() {
-        return Utils.colorify(getString("settings.chat.toggleTransactions.MessageOn"));
+        return StringUtils.colorify(getString("settings.chat.toggleTransactions.MessageOn"));
     }
     public String toggleTransactionMessageOffInChat() {
-        return Utils.colorify(getString("settings.chat.toggleTransactions.MessageOff"));
+        return StringUtils.colorify(getString("settings.chat.toggleTransactions.MessageOff"));
     }
     //settings.chat.disableBuying.
     public String disableBuyingOnInChat() {
-        return Utils.colorify(getString("settings.chat.disableBuying.MessageOn"));
+        return StringUtils.colorify(getString("settings.chat.disableBuying.MessageOn"));
     }
     public String disableBuyingOffInChat() {
-        return Utils.colorify(getString("settings.chat.disableBuying.MessageOff"));
+        return StringUtils.colorify(getString("settings.chat.disableBuying.MessageOff"));
     }
     //settings.chat.disableSelling.
     public String disableSellingOnInChat() {
-        return Utils.colorify(getString("settings.chat.disableSelling.MessageOn"));
+        return StringUtils.colorify(getString("settings.chat.disableSelling.MessageOn"));
     }
     public String disableSellingOffInChat() {
-        return Utils.colorify(getString("settings.chat.disableSelling.MessageOff"));
+        return StringUtils.colorify(getString("settings.chat.disableSelling.MessageOff"));
     }
     //settings.chat.shopAdmins.
     public String addingAdminWaiting() {
-        return Utils.colorify(getString("settings.chat.shopAdmins.addingAdminWaiting"));
+        return StringUtils.colorify(getString("settings.chat.shopAdmins.addingAdminWaiting"));
     }
     public String removingAdminWaiting() {
-        return Utils.colorify(getString("settings.chat.shopAdmins.removingAdminWaiting"));
+        return StringUtils.colorify(getString("settings.chat.shopAdmins.removingAdminWaiting"));
     }
     public String selfAdmin() {
-        return Utils.colorify(getString("settings.chat.shopAdmins.selfAdmin"));
+        return StringUtils.colorify(getString("settings.chat.shopAdmins.selfAdmin"));
     }
     public String sucAdminAdded(String player) {
-        return Utils.colorify(getString("settings.chat.shopAdmins.sucAdminAdded").replace("%player%", player));
+        return StringUtils.colorify(getString("settings.chat.shopAdmins.sucAdminAdded").replace("%player%", player));
     }
     public String alreadyAdmin() {
-        return Utils.colorify(getString("settings.chat.shopAdmins.alreadyAdmin"));
+        return StringUtils.colorify(getString("settings.chat.shopAdmins.alreadyAdmin"));
     }
     public String noPlayer() {
-        return Utils.colorify(getString("settings.chat.shopAdmins.noPlayer"));
+        return StringUtils.colorify(getString("settings.chat.shopAdmins.noPlayer"));
     }
     public String sucAdminRemoved(String player) {
-        return Utils.colorify(getString("settings.chat.shopAdmins.sucAdminRemoved").replace("%player%", player));
+        return StringUtils.colorify(getString("settings.chat.shopAdmins.sucAdminRemoved").replace("%player%", player));
     }
     public String notInAdminList() {
-        return Utils.colorify(getString("settings.chat.shopAdmins.notInAdminList"));
+        return StringUtils.colorify(getString("settings.chat.shopAdmins.notInAdminList"));
     }
-    public String clearedAdmins() { return Utils.colorify(getString("settings.chat.shopAdmins.clearedAdmins")); }
+    public String clearedAdmins() { return StringUtils.colorify(getString("settings.chat.shopAdmins.clearedAdmins")); }
     //settings.chat.sharedIncome.
     public String sharedIncomeOnInChat() {
-        return Utils.colorify(getString("settings.chat.sharedIncome.MessageOn"));
+        return StringUtils.colorify(getString("settings.chat.sharedIncome.MessageOn"));
     }
     public String sharedIncomeOffInChat() {
-        return Utils.colorify(getString("settings.chat.sharedIncome.MessageOff"));
+        return StringUtils.colorify(getString("settings.chat.sharedIncome.MessageOff"));
     }
     //settings.chat.copy-paste.
     public BaseComponent[] copiedShopSettings(String hover) { return MineDown.parse(
             getString("settings.chat.copy-paste.copiedShopSettings").replace("%settings%", hover)); }
-    public String pastedShopSettings() { return Utils.colorify(getString("settings.chat.copy-paste.pastedShopSettings")); }
+    public String pastedShopSettings() { return StringUtils.colorify(getString("settings.chat.copy-paste.pastedShopSettings")); }
     //settings.chat.hologramRotation.
     public String rotateHologramInChat(String rotation) {
-        return Utils.colorify(getString("settings.chat.hologramRotation.rotateHologramInChat")
+        return StringUtils.colorify(getString("settings.chat.hologramRotation.rotateHologramInChat")
                 .replace("%rotation%", rotationFromData(rotation)));
     }
     public String formatRotations(String rotation) {
@@ -572,46 +574,46 @@ public class LanguageManager {
         }
     }
     //settings.chat.hologramRotation.rotation.
-    public String rotationUp() {return Utils.colorify(getString("settings.chat.hologramRotation.rotation.Up"));}
-    public String rotationNorth() {return Utils.colorify(getString("settings.chat.hologramRotation.rotation.North"));}
-    public String rotationEast() {return Utils.colorify(getString("settings.chat.hologramRotation.rotation.East"));}
-    public String rotationSouth() {return Utils.colorify(getString("settings.chat.hologramRotation.rotation.South"));}
-    public String rotationWest() {return Utils.colorify(getString("settings.chat.hologramRotation.rotation.West"));}
-    public String rotationDown() {return Utils.colorify(getString("settings.chat.hologramRotation.rotation.Down"));}
+    public String rotationUp() {return StringUtils.colorify(getString("settings.chat.hologramRotation.rotation.Up"));}
+    public String rotationNorth() {return StringUtils.colorify(getString("settings.chat.hologramRotation.rotation.North"));}
+    public String rotationEast() {return StringUtils.colorify(getString("settings.chat.hologramRotation.rotation.East"));}
+    public String rotationSouth() {return StringUtils.colorify(getString("settings.chat.hologramRotation.rotation.South"));}
+    public String rotationWest() {return StringUtils.colorify(getString("settings.chat.hologramRotation.rotation.West"));}
+    public String rotationDown() {return StringUtils.colorify(getString("settings.chat.hologramRotation.rotation.Down"));}
 
     //customMessageManager.
     public String customMessageManagerTitle() {
-        return Utils.colorify(getString("customMessageManager.GuiTitle"));
+        return StringUtils.colorify(getString("customMessageManager.GuiTitle"));
     }
     public String customMessageManagerConfirmDeleteGuiTitle() {
-        return Utils.colorify(getString("customMessageManager.ConfirmDeleteGuiTitle"));
+        return StringUtils.colorify(getString("customMessageManager.ConfirmDeleteGuiTitle"));
     }
     //customMessageManager.buttons.
     //customMessageManager.buttons.previousPage.
     public String customMessageManagerPreviousPageTitle() {
-        return Utils.colorify(getString("customMessageManager.buttons.previousPage.Title"));
+        return StringUtils.colorify(getString("customMessageManager.buttons.previousPage.Title"));
     }
     public List<String> customMessageManagerPreviousPageLore() {
-        return getList("customMessageManager.buttons.previousPage.Lore").stream().map(s -> Utils.colorify(s)).collect(Collectors.toList());
+        return getList("customMessageManager.buttons.previousPage.Lore").stream().map(s -> StringUtils.colorify(s)).collect(Collectors.toList());
     }
     //customMessageManager.buttons.nextPage.
     public String customMessageManagerNextPageTitle() {
-        return Utils.colorify(getString("customMessageManager.buttons.nextPage.Title"));
+        return StringUtils.colorify(getString("customMessageManager.buttons.nextPage.Title"));
     }
     public List<String> customMessageManagerNextPageLore() {
-        return getList("customMessageManager.buttons.nextPage.Lore").stream().map(s -> Utils.colorify(s)).collect(Collectors.toList());
+        return getList("customMessageManager.buttons.nextPage.Lore").stream().map(s -> StringUtils.colorify(s)).collect(Collectors.toList());
     }
     //customMessageManager.buttons.shopEntry.
     public String customMessageManagerShopEntryTitle(ItemStack item) {;
-        return Utils.colorify(getString("customMessageManager.buttons.shopEntry.Title").replace("%shopitem%", Utils.getFinalItemName(item)));
+        return StringUtils.colorify(getString("customMessageManager.buttons.shopEntry.Title").replace("%shopitem%", ItemUtils.getFinalItemName(item)));
     }
     public String customMessageManagerShopEntryTradeTitle(ItemStack item1, ItemStack item2) {;
-        return Utils.colorify(getString("customMessageManager.buttons.shopEntry.TradeTitle")
-                .replace("%item1%", Utils.getFinalItemName(item1))
-                .replace("%item2%", Utils.getFinalItemName(item2)));
+        return StringUtils.colorify(getString("customMessageManager.buttons.shopEntry.TradeTitle")
+                .replace("%item1%", ItemUtils.getFinalItemName(item1))
+                .replace("%item2%", ItemUtils.getFinalItemName(item2)));
     }
     public String customMessageManagerShopEntryUnkownTitle() {
-        return Utils.colorify(getString("customMessageManager.buttons.shopEntry.UnkownTitle"));
+        return StringUtils.colorify(getString("customMessageManager.buttons.shopEntry.UnkownTitle"));
     }
     public List<String> customMessageManagerShopEntryLore(Location loc, List<String> messages) {
         List<String> lore = new ArrayList<>(getList("customMessageManager.buttons.shopEntry.Lore"));
@@ -627,118 +629,121 @@ public class LanguageManager {
             }
         }
         return lore.stream()
-                .map(s -> Utils.colorify(s).replace("%x%", "" + loc.getX()).replace("%y%", "" + loc.getY()).replace("%z%", "" + loc.getZ())
+                .map(s -> StringUtils.colorify(s).replace("%x%", "" + loc.getX()).replace("%y%", "" + loc.getY()).replace("%z%", "" + loc.getZ())
                 ).collect(Collectors.toList());
     }
     //customMessageManager.buttons.confirmDelete.
     public String customMessageManagerConfirmDeleteTitle() {
-        return Utils.colorify(getString("customMessageManager.buttons.confirmDelete.Title"));
+        return StringUtils.colorify(getString("customMessageManager.buttons.confirmDelete.Title"));
     }
     public List<String> customMessageManagerConfirmDeleteLore() {
-        return getList("customMessageManager.buttons.confirmDelete.Lore").stream().map(s -> Utils.colorify(s)).collect(Collectors.toList());
+        return getList("customMessageManager.buttons.confirmDelete.Lore").stream().map(s -> StringUtils.colorify(s)).collect(Collectors.toList());
     }
     //customMessageManager.buttons.backToCustomMessageManager.
     public String customMessageManagerBackToCustomMessageManagerTitle() {
-        return Utils.colorify(getString("customMessageManager.buttons.backToCustomMessageManager.Title"));
+        return StringUtils.colorify(getString("customMessageManager.buttons.backToCustomMessageManager.Title"));
     }
     public List<String> customMessageManagerBackToCustomMessageManagerLore() {
-        return getList("customMessageManager.buttons.backToCustomMessageManager.Lore").stream().map(s -> Utils.colorify(s)).collect(Collectors.toList());
+        return getList("customMessageManager.buttons.backToCustomMessageManager.Lore").stream().map(s -> StringUtils.colorify(s)).collect(Collectors.toList());
     }
     //customMessageManager.buttons.modifyCurrentHologram.
     public String customMessageManagerModifyCurrentHologramTitle() {
-        return Utils.colorify(getString("customMessageManager.buttons.modifyCurrentHologram.Title"));
+        return StringUtils.colorify(getString("customMessageManager.buttons.modifyCurrentHologram.Title"));
     }
     public List<String> customMessageManagerModifyCurrentHologramLore() {
-        return getList("customMessageManager.buttons.modifyCurrentHologram.Lore").stream().map(s -> Utils.colorify(s)).collect(Collectors.toList());
+        return getList("customMessageManager.buttons.modifyCurrentHologram.Lore").stream().map(s -> StringUtils.colorify(s)).collect(Collectors.toList());
     }
 
     //customBuySell.
     public String customAmountSignTitle() {
-        return Utils.colorify(getString("customBuySell.gui-customAmountSign-title"));
+        return StringUtils.colorify(getString("customBuySell.gui-customAmountSign-title"));
     }
     public List<String> customAmountSignLore(String possibleBuyAmount, String possibleSellAmount) {
         return getList("customBuySell.gui-customAmountSign-lore").stream()
-                .map(s -> Utils.colorify(s.replace("%buycount%", possibleBuyAmount).
+                .map(s -> StringUtils.colorify(s.replace("%buycount%", possibleBuyAmount).
                         replace("%sellcount%", possibleSellAmount))).collect(Collectors.toList());
     }
     //customBuySell.singEditorGui.
     public List<String> signEditorGuiBuy(String max) {
         List<String> list = getList("customBuySell.signEditorGui.buy");
         list.add(0, "");
-        return list.stream().limit(4).map(s -> Utils.colorify(s.replace("%max%", max))).collect(Collectors.toList());
+        return list.stream().limit(4).map(s -> StringUtils.colorify(s.replace("%max%", max))).collect(Collectors.toList());
     }
     public List<String> signEditorGuiSell(String max) {
         List<String> list = getList("customBuySell.signEditorGui.sell");
         list.add(0, "");
-        return list.stream().limit(4).map(s -> Utils.colorify(s.replace("%max%", max))).collect(Collectors.toList());
+        return list.stream().limit(4).map(s -> StringUtils.colorify(s.replace("%max%", max))).collect(Collectors.toList());
     }
     //customBuySell.errors.
     public String disabledBuyingMessage() {
-        return Utils.colorify(getString("customBuySell.errors.buyingIsDisabled"));
+        return StringUtils.colorify(getString("customBuySell.errors.buyingIsDisabled"));
     }
     public String disabledSellingMessage() {
-        return Utils.colorify(getString("customBuySell.errors.sellingIsDisabled"));
+        return StringUtils.colorify(getString("customBuySell.errors.sellingIsDisabled"));
     }
     public String wrongInput() {
-        return Utils.colorify(getString("customBuySell.errors.wrongInput"));
+        return StringUtils.colorify(getString("customBuySell.errors.wrongInput"));
     }
     public String enterTheAmount() {
-        return Utils.colorify(getString("customBuySell.errors.enterTheAmount"));
+        return StringUtils.colorify(getString("customBuySell.errors.enterTheAmount"));
     }
     public String unsupportedInteger() {
-        return Utils.colorify(getString("customBuySell.errors.unsupportedInteger"));
+        return StringUtils.colorify(getString("customBuySell.errors.unsupportedInteger"));
     }
 
 
     //shop-messages.
     public String messageSuccBuy(double price) {
-        return Utils.colorify(getString("shop-messages.successful-buy")
-                .replace("%price%", Utils.formatNumber(price, Utils.FormatType.CHAT))
+        return StringUtils.colorify(getString("shop-messages.successful-buy")
+                .replace("%price%", NumberUtils.formatNumber(price, NumberUtils.FormatType.CHAT))
                 .replace("%currency%", Config.currency));
     }
     public String fullinv() {
-        return Utils.colorify(getString("shop-messages.fullinv"));
+        return StringUtils.colorify(getString("shop-messages.fullinv"));
     }
     public String cannotAfford() {
-        return Utils.colorify(getString("shop-messages.cannotafford"));
+        return StringUtils.colorify(getString("shop-messages.cannotafford"));
     }
     public String outofStock() {
-        return Utils.colorify(getString("shop-messages.outofstock"));
+        return StringUtils.colorify(getString("shop-messages.outofstock"));
     }
     public String messageSuccSell(double price) {
-        return Utils.colorify(getString("shop-messages.successful-sell")
-                .replace("%price%", Utils.formatNumber(price, Utils.FormatType.CHAT))
+        return StringUtils.colorify(getString("shop-messages.successful-sell")
+                .replace("%price%", NumberUtils.formatNumber(price, NumberUtils.FormatType.CHAT))
                 .replace("%currency%", Config.currency));
     }
     public String shopCannotAfford() {
-        return Utils.colorify(getString("shop-messages.shopcannotafford"));
+        return StringUtils.colorify(getString("shop-messages.shopcannotafford"));
     }
     public String notEnoughItemToSell() {
-        return Utils.colorify(getString("shop-messages.notenoughitemtosell"));
+        return StringUtils.colorify(getString("shop-messages.notenoughitemtosell"));
     }
     public String chestIsFull() {
-        return Utils.colorify(getString("shop-messages.chestisFull"));
+        return StringUtils.colorify(getString("shop-messages.chestisFull"));
     }
     public String selfTransaction() {
-        return Utils.colorify(getString("shop-messages.selftransaction"));
+        return StringUtils.colorify(getString("shop-messages.selftransaction"));
     }
     public String chestShopProblem() {
-        return Utils.colorify(getString("shop-messages.openingShopProblem"));
+        return StringUtils.colorify(getString("shop-messages.openingShopProblem"));
     }
     public String emptyShopActionBar(int shopCount) {
-        return Utils.colorify(getString("shop-messages.joinEmptyShopActionBar").replace("%emptyCount%", "" + shopCount));
+        return StringUtils.colorify(getString("shop-messages.joinEmptyShopActionBar").replace("%emptyCount%", "" + shopCount));
     }
 
 
     //command-messages.
+    public String noPermissionForCommand() {
+        return StringUtils.colorify(getString("command-messages.noPermissionForCommand"));
+    }
     public String negativePrice() {
-        return Utils.colorify(getString("command-messages.negativeprice"));
+        return StringUtils.colorify(getString("command-messages.negativeprice"));
     }
     public String notenoughARGS() {
-        return Utils.colorify(getString("command-messages.notenoughargs"));
+        return StringUtils.colorify(getString("command-messages.notenoughargs"));
     }
     public String consoleNotAllowed() {
-        return Utils.colorify(getString("command-messages.consolenotallowed"));
+        return StringUtils.colorify(getString("command-messages.consolenotallowed"));
     }
     public BaseComponent[] cmdHelp(boolean isAdmin) {
         List<String> helpText = new ArrayList<>(getList("command-messages.help"));
@@ -746,70 +751,70 @@ public class LanguageManager {
             helpText.addAll(getList("command-messages.help-admin-view-addition"));
         }
         return MineDown.parse(helpText.stream()
-                .map(s -> Utils.colorify(s)).collect(Collectors.joining("\n")));
+                .map(s -> StringUtils.colorify(s)).collect(Collectors.joining("\n")));
     }
     public BaseComponent[] cmdadminHelp() {
         return MineDown.parse(new ArrayList<>(getList("command-messages.adminhelp")).stream()
-                .map(s -> Utils.colorify(s)).collect(Collectors.joining("\n")).replace("%discord_link%", Utils.getDiscordLink()));
+                .map(s -> StringUtils.colorify(s)).collect(Collectors.joining("\n")).replace("%discord_link%", Utils.getDiscordLink()));
     }
     public String alreadyAShop() {
-        return Utils.colorify(getString("command-messages.alreadyashop"));
+        return StringUtils.colorify(getString("command-messages.alreadyashop"));
     }
     public String shopCreated() {
-        return Utils.colorify(getString("command-messages.shopcreated"));
+        return StringUtils.colorify(getString("command-messages.shopcreated"));
     }
     public String holdSomething() {
-        return Utils.colorify(getString("command-messages.holdsomething"));
+        return StringUtils.colorify(getString("command-messages.holdsomething"));
     }
     public String notAllowedToCreateOrRemove() {
-        return Utils.colorify(getString("command-messages.notallowdtocreate"));
+        return StringUtils.colorify(getString("command-messages.notallowdtocreate"));
     }
     public String noChest() {
-        return Utils.colorify(getString("command-messages.notchest"));
+        return StringUtils.colorify(getString("command-messages.notchest"));
     }
     public String lookAtChest() {
-        return Utils.colorify(getString("command-messages.lookatchest"));
+        return StringUtils.colorify(getString("command-messages.lookatchest"));
     }
     public String chestShopRemoved() {
-        return Utils.colorify(getString("command-messages.csremoved"));
+        return StringUtils.colorify(getString("command-messages.csremoved"));
     }
     public String notOwner() {
-        return Utils.colorify(getString("command-messages.notowner"));
+        return StringUtils.colorify(getString("command-messages.notowner"));
     }
     public String notAChestOrChestShop() {
-        return Utils.colorify(getString("command-messages.notachestorcs"));
+        return StringUtils.colorify(getString("command-messages.notachestorcs"));
     }
     public String maxShopLimitReached(int max) {
-        return Utils.colorify(getString("command-messages.maxShopLimitReached")).replace("%shoplimit%", "" + max);
+        return StringUtils.colorify(getString("command-messages.maxShopLimitReached")).replace("%shoplimit%", "" + max);
     }
     public String slimeFunBlockNotSupported() {
-        return Utils.colorify(getString("command-messages.slimeFunBlockNotSupported"));
+        return StringUtils.colorify(getString("command-messages.slimeFunBlockNotSupported"));
     }
     public String buyGreaterThanSellRequired() {
-        return Utils.colorify(getString("command-messages.buypriceGreaterThanSellRequired"));
+        return StringUtils.colorify(getString("command-messages.buypriceGreaterThanSellRequired"));
     }
     public String invalidShopItem() {
-        return Utils.colorify(getString("command-messages.invalidShopItem"));
+        return StringUtils.colorify(getString("command-messages.invalidShopItem"));
     }
     public String shopTransferred(String targetPlayer) {
-        return Utils.colorify(getString("command-messages.shopTransferred").replaceAll("%player%", targetPlayer));
+        return StringUtils.colorify(getString("command-messages.shopTransferred").replaceAll("%player%", targetPlayer));
     }
     public BaseComponent[] shopTransferConfirm(String targetPlayer, boolean isAdmin) {
         String msg = getString("command-messages.shopTransferConfirm");
         if (isAdmin) msg = msg.replace("/ecs settings", "/ecsadmin");
-        return MineDown.parse(Utils.colorify(msg.replace("%player%", targetPlayer)));
+        return MineDown.parse(StringUtils.colorify(msg.replace("%player%", targetPlayer)));
     }
     public String shopBuyPriceUpdated() {
-        return Utils.colorify(getString("command-messages.buyPriceUpdated"));
+        return StringUtils.colorify(getString("command-messages.buyPriceUpdated"));
     }
     public String shopSellPriceUpdated() {
-        return Utils.colorify(getString("command-messages.sellPriceUpdated"));
+        return StringUtils.colorify(getString("command-messages.sellPriceUpdated"));
     }
     public String emptyShopHighlightedDisabled() {
-        return Utils.colorify(getString("command-messages.emptyShopHightLighted.enabled"));
+        return StringUtils.colorify(getString("command-messages.emptyShopHightLighted.enabled"));
     }
     public String emptyShopHighlightedEnabled(int shopCount) {
-        return Utils.colorify(getString("command-messages.emptyShopHightLighted.disabled").replace("%emptyCount%", "" + shopCount));
+        return StringUtils.colorify(getString("command-messages.emptyShopHightLighted.disabled").replace("%emptyCount%", "" + shopCount));
     }
 
 
@@ -823,9 +828,9 @@ public class LanguageManager {
                 EzChestShop.getEconomy().getBalance(player));
 
 
-        return MineDown.parse( getList("checkprofits.landing-menu").stream().map(s -> Utils.colorify(s)).collect(Collectors.joining("\n"))
+        return MineDown.parse( getList("checkprofits.landing-menu").stream().map(s -> StringUtils.colorify(s)).collect(Collectors.joining("\n"))
                 .replace("%currency%", Config.currency)
-                .replace("%balance%", Utils.formatNumber(balance, Utils.FormatType.CHAT))
+                .replace("%balance%", NumberUtils.formatNumber(balance, NumberUtils.FormatType.CHAT))
                 .replace("%income%","" + buyCost)
                 .replace("%sales%", "" + buyAmount)
                 .replace("%cost%","" + sellCost)
@@ -835,7 +840,7 @@ public class LanguageManager {
     public BaseComponent[] checkProfitsDetailpage(Player player, List<CheckProfitEntry> checkProfitEntries, int page, int pages) {
         ComponentBuilder compb = new ComponentBuilder("");
         //Header
-        compb.append(MineDown.parse(getList("checkprofits.details-menu.header").stream().map(s -> Utils.colorify(s))
+        compb.append(MineDown.parse(getList("checkprofits.details-menu.header").stream().map(s -> StringUtils.colorify(s))
                 .collect(Collectors.joining("\n")))).append("\n");
         //Content
         for (int i = 0; i < Config.command_checkprofit_lines_pp; i++) {
@@ -843,7 +848,7 @@ public class LanguageManager {
             if (index == checkProfitEntries.size())
                 break;
             CheckProfitEntry checkProfitEntry = checkProfitEntries.get(i + ((page - 1) * Config.command_checkprofit_lines_pp));
-            String[] details = getList("checkprofits.details-menu.content").stream().map(s -> Utils.colorify(s))
+            String[] details = getList("checkprofits.details-menu.content").stream().map(s -> StringUtils.colorify(s))
                     .collect(Collectors.joining("\n")).split("%item%");
             for (int j = 0; j < details.length; j++) {
                 compb.append(MineDown.parse(details[j].replace("%currency%", Config.currency)
@@ -855,8 +860,8 @@ public class LanguageManager {
                         .replace("%unit_cost%", "" + checkProfitEntry.getSellUnitPrice())
                 ), ComponentBuilder.FormatRetention.NONE);
                 if (details.length - 1 != j) {
-                    compb.append(TextComponent.fromLegacyText(Utils.getFinalItemName(checkProfitEntry.getItem()))).event(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new BaseComponent[] {
-                            new TextComponent(Utils.ItemToTextCompoundString(checkProfitEntry.getItem())) }));
+                    compb.append(TextComponent.fromLegacyText(ItemUtils.getFinalItemName(checkProfitEntry.getItem()))).event(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new BaseComponent[] {
+                            new TextComponent(ItemUtils.ItemToTextCompoundString(checkProfitEntry.getItem())) }));
                 } else {
                     compb.append("\n");
                 }
@@ -864,7 +869,7 @@ public class LanguageManager {
         }
         //Footer
         compb.append(MineDown.parse(getList("checkprofits.details-menu.footer").stream().map(s -> {
-            s = Utils.colorify(s);
+            s = StringUtils.colorify(s);
             s = s.replace("%page%","" + page).replace("%pages%", "" + pages);
             if (page > 1) {
                 s = s.replace("%button_previous%", "[← ](" + getButtonPrevious() +
@@ -883,46 +888,46 @@ public class LanguageManager {
         return compb.create();
     }
     public String getButtonNext() {
-        return Utils.colorify(getString("checkprofits.details-menu.hover-extra.button-next"));
+        return StringUtils.colorify(getString("checkprofits.details-menu.hover-extra.button-next"));
     }
     public String getButtonPrevious() {
-        return Utils.colorify(getString("checkprofits.details-menu.hover-extra.button-previous"));
+        return StringUtils.colorify(getString("checkprofits.details-menu.hover-extra.button-previous"));
     }
     public BaseComponent[] confirmProfitClear() {
-        return MineDown.parse( getList("checkprofits.confirm-clear").stream().map(s -> Utils.colorify(s)).collect(Collectors.joining("\n")));
+        return MineDown.parse( getList("checkprofits.confirm-clear").stream().map(s -> StringUtils.colorify(s)).collect(Collectors.joining("\n")));
     }
     public String confirmProfitClearSuccess() {
-        return Utils.colorify(getString("checkprofits.confirm-clear-success"));
+        return StringUtils.colorify(getString("checkprofits.confirm-clear-success"));
     }
     public BaseComponent[] joinProfitNotification() {
-        return MineDown.parse( getList("checkprofits.join-notification").stream().map(s -> Utils.colorify(s)).collect(Collectors.joining("\n")));
+        return MineDown.parse( getList("checkprofits.join-notification").stream().map(s -> StringUtils.colorify(s)).collect(Collectors.joining("\n")));
     }
 
 
     //shulkershop-dropped-lore.
     public List<String> shulkerboxLore(String owner, String item, double buy, double sell) {
-        List<String> list = getList("shulkershop-dropped-lore").stream().map(s -> Utils.colorify(s).replace("%owner%", owner)
-                .replace("%item%", item).replace("%buy_price%", Utils.formatNumber(buy, Utils.FormatType.GUI))
-                .replace("%sell_price%", Utils.formatNumber(sell, Utils.FormatType.GUI))
+        List<String> list = getList("shulkershop-dropped-lore").stream().map(s -> StringUtils.colorify(s).replace("%owner%", owner)
+                .replace("%item%", item).replace("%buy_price%", NumberUtils.formatNumber(buy, NumberUtils.FormatType.GUI))
+                .replace("%sell_price%", NumberUtils.formatNumber(sell, NumberUtils.FormatType.GUI))
                 .replace("%currency%", Config.currency)).collect(Collectors.toList());
         return list;
     }
 
     //hologram.
     public String emptyShopHologramInfo() {
-        return Utils.colorify(getString("hologram.shop-empty"));
+        return StringUtils.colorify(getString("hologram.shop-empty"));
     }
     public String shulkerboxItemHologram(String item, int amount) {
-        return Utils.colorify(getString("hologram.shulkerbox-item")).replace("%item%", item).replace("%amount%", "" + amount);
+        return StringUtils.colorify(getString("hologram.shulkerbox-item")).replace("%item%", item).replace("%amount%", "" + amount);
     }
     public String shulkerboxItemHologramMore(int amount) {
-        return Utils.colorify(getString("hologram.shulkerbox-item-more")).replace("%amount%", "" + amount);
+        return StringUtils.colorify(getString("hologram.shulkerbox-item-more")).replace("%amount%", "" + amount);
     }
     public String cannotDestroyShop() {
-        return Utils.colorify(getString("settings.chat.protection.cannotDestroyShop"));
+        return StringUtils.colorify(getString("settings.chat.protection.cannotDestroyShop"));
     }
     public String itemEnchantHologram(Enchantment enchant, int level) {
-        String msg = Utils.colorify(getString("hologram.item-enchantment")).replace("%enchantment%", Utils.capitalizeFirstSplit(enchant.getKey().getKey()));
+        String msg = StringUtils.colorify(getString("hologram.item-enchantment")).replace("%enchantment%", StringUtils.capitalizeFirstSplit(enchant.getKey().getKey()));
         if (enchant.getMaxLevel() == 1) {
             return  msg.replace("%level%", "").replace("%level-roman%", "").trim();
         }
@@ -970,7 +975,7 @@ public class LanguageManager {
         return msg;
     }
     public String itemEnchantHologramMore(int amount) {
-        return Utils.colorify(getString("hologram.item-enchantment-more")).replace("%amount%", "" + amount);
+        return StringUtils.colorify(getString("hologram.item-enchantment-more")).replace("%amount%", "" + amount);
     }
 
 
@@ -978,9 +983,9 @@ public class LanguageManager {
     //other.
     public BaseComponent[] updateNotification(String curV, String newV) {
         return new ComponentBuilder("").append(TextComponent.fromLegacyText(
-                Utils.colorify(getString("other.update-notifications").replace("%current_version%", curV).replace("%new_version%", newV))))
+                StringUtils.colorify(getString("other.update-notifications").replace("%current_version%", curV).replace("%new_version%", newV))))
                 .event(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.spigotmc.org/resources/ez-chest-shop-ecs-1-14-x-1-17-x.90411/"))
-                .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(Utils.colorify("&cClick to check out the Spigot Page!")))).create();
+                .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(StringUtils.colorify("&cClick to check out the Spigot Page!")))).create();
     }
 
     public BaseComponent[] overflowingGuiItemsNotification(HashMap<GuiData.GuiType, Integer> requiredOverflowRows) {
@@ -988,12 +993,12 @@ public class LanguageManager {
 
         ComponentBuilder compb = new ComponentBuilder("");
 
-        compb.append(TextComponent.fromLegacyText(Utils.colorify(messages[0])));
+        compb.append(TextComponent.fromLegacyText(StringUtils.colorify(messages[0])));
         compb.append(TextComponent.fromLegacyText(requiredOverflowRows.entrySet().stream().map(entry ->
-                Utils.colorify(Utils.capitalizeFirstSplit(entry.getKey().toString()) + ">= " + entry.getValue())).collect(Collectors.joining(", "))));
+                StringUtils.colorify(StringUtils.capitalizeFirstSplit(entry.getKey().toString()) + ">= " + entry.getValue())).collect(Collectors.joining(", "))));
 
         if (messages.length > 1) {
-            compb.append(TextComponent.fromLegacyText(Utils.colorify(messages[1])));
+            compb.append(TextComponent.fromLegacyText(StringUtils.colorify(messages[1])));
         }
 
         return compb.create();
@@ -1004,17 +1009,17 @@ public class LanguageManager {
 
         ComponentBuilder compb = new ComponentBuilder("");
 
-        compb.append(TextComponent.fromLegacyText(Utils.colorify(messages[0])));
+        compb.append(TextComponent.fromLegacyText(StringUtils.colorify(messages[0])));
         overlappingItems.entrySet().forEach(entry -> {
-            compb.append(TextComponent.fromLegacyText(Utils.colorify("\n&e" + Utils.capitalizeFirstSplit(entry.getKey().toString()) + "&c: \n  &c>> ")));
-            compb.append(TextComponent.fromLegacyText(Utils.colorify("&7" + entry.getValue().stream().map(list -> Utils.colorify(list.stream()
-                    .collect(Collectors.joining(Utils.colorify("&e, &7"))))).collect(Collectors.joining(Utils.colorify("\n  &c>> &7"))))));
+            compb.append(TextComponent.fromLegacyText(StringUtils.colorify("\n&e" + StringUtils.capitalizeFirstSplit(entry.getKey().toString()) + "&c: \n  &c>> ")));
+            compb.append(TextComponent.fromLegacyText(StringUtils.colorify("&7" + entry.getValue().stream().map(list -> StringUtils.colorify(list.stream()
+                    .collect(Collectors.joining(StringUtils.colorify("&e, &7"))))).collect(Collectors.joining(StringUtils.colorify("\n  &c>> &7"))))));
         });
 //        compb.append(TextComponent.fromLegacyText("\n" + overlappingItems.entrySet().stream().map(entry ->
-//                Utils.colorify(Utils.capitalizeFirstSplit(entry.getKey().toString()) + ": " + entry.getValue().stream().map(list -> list.stream().collect(Collectors.joining(", "))).collect(Collectors.joining(" and "))))
+//                StringUtils.colorify(StringUtils.capitalizeFirstSplit(entry.getKey().toString()) + ": " + entry.getValue().stream().map(list -> list.stream().collect(Collectors.joining(", "))).collect(Collectors.joining(" and "))))
 //                .collect(Collectors.joining(",\n"))));
         if (messages.length > 1) {
-            compb.append(TextComponent.fromLegacyText(Utils.colorify(messages[1])));
+            compb.append(TextComponent.fromLegacyText(StringUtils.colorify(messages[1])));
         }
 
         return compb.create();

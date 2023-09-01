@@ -68,7 +68,7 @@ public class CustomMessageManageGUI {
             event.setCancelled(true);
             paginatedGui.previous();
         });
-        Utils.addItemIfEnoughSlots(paginatedGui, previous.getSlot(), previousItem);
+        InventoryUtils.addItemIfEnoughSlots(paginatedGui, previous.getSlot(), previousItem);
         }
         // Next item
         if (container.hasItem("next")) {
@@ -79,7 +79,7 @@ public class CustomMessageManageGUI {
                 event.setCancelled(true);
                 paginatedGui.next();
             });
-            Utils.addItemIfEnoughSlots(paginatedGui, next.getSlot(), nextItem);
+            InventoryUtils.addItemIfEnoughSlots(paginatedGui, next.getSlot(), nextItem);
         }
         // Back item
         if (container.hasItem("back")) {
@@ -95,7 +95,7 @@ public class CustomMessageManageGUI {
                     tradeShopSettingsGUI.showGUI(player, containerBlock, isAdmin);
                 }
             });
-            Utils.addItemIfEnoughSlots(paginatedGui, back.getSlot(), doorItem);
+            InventoryUtils.addItemIfEnoughSlots(paginatedGui, back.getSlot(), doorItem);
         }
 
         if (container.hasItem("hologram-message-item")) {
@@ -106,7 +106,7 @@ public class CustomMessageManageGUI {
                 if (message.replace("#,#", "").trim().isEmpty()) {
                     continue;
                 }
-                List<String> messages = Arrays.asList(message.split("#,#")).stream().map(s -> Utils.colorify(s)).collect(Collectors.toList());
+                List<String> messages = Arrays.asList(message.split("#,#")).stream().map(s -> StringUtils.colorify(s)).collect(Collectors.toList());
 
                 ContainerGuiItem item = container.getItem("hologram-message-item");
                 if (isShop) {
@@ -159,7 +159,7 @@ public class CustomMessageManageGUI {
                     }
                 }
             });
-            Utils.addItemIfEnoughSlots(paginatedGui, modify.getSlot(), modifyItem);
+            InventoryUtils.addItemIfEnoughSlots(paginatedGui, modify.getSlot(), modifyItem);
         }
 
         paginatedGui.open(player);
@@ -174,7 +174,7 @@ public class CustomMessageManageGUI {
         Gui gui = new Gui(3, lm.customMessageManagerConfirmDeleteGuiTitle());
         ItemStack glassis = new ItemStack(Material.BLACK_STAINED_GLASS_PANE, 1);
         ItemMeta glassmeta = glassis.getItemMeta();
-        glassmeta.setDisplayName(Utils.colorify("&d"));
+        glassmeta.setDisplayName(StringUtils.colorify("&d"));
         glassis.setItemMeta(glassmeta);
         GuiItem glasses = new GuiItem(glassis, event -> {
             event.setCancelled(true);

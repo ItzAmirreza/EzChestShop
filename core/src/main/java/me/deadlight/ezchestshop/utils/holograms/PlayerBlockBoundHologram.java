@@ -445,7 +445,7 @@ public class PlayerBlockBoundHologram {
         }
 
         // Apply color codes
-        return Utils.colorify(lineContent);
+        return StringUtils.colorify(lineContent);
     }
 
     /**
@@ -670,7 +670,7 @@ public class PlayerBlockBoundHologram {
 
         // Apply color codes
         return processedContents.stream()
-                .map((line) -> Utils.colorify(line)).collect(Collectors.toList());
+                .map((line) -> StringUtils.colorify(line)).collect(Collectors.toList());
     }
 
     /**

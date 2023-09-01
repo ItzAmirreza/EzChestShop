@@ -274,6 +274,7 @@ shop-messages:
   openingShopProblem: " &cBu marketi açarken bir sorun oluştu, lütfen ASENAL ile iletişime geçin!"
   joinEmptyShopActionBar: "&b&l%emptyCount% &c&lempty shops near you!"
 command-messages:
+  noPermissionForCommand: "&cYou don't have permission to execute this command."
   negativeprice: " &cOlumsuz fiyat? olumlu fiyat kullanmalısın..."
   notenoughargs: " &cYanlış komut kullandınız. \n &cDoğru kullanım: &f/ecs create &f(Satış fiyatı) (Alış fiyatı)"
   consolenotallowed: " &cKonsoldan herhangi bir komut yürütmenize izin verilmiyor."

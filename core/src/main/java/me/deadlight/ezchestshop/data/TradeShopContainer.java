@@ -3,9 +3,7 @@ package me.deadlight.ezchestshop.data;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.enums.Changes;
 import me.deadlight.ezchestshop.events.PlayerTransactEvent;
-import me.deadlight.ezchestshop.utils.Utils;
-import me.deadlight.ezchestshop.utils.WebhookSender;
-import me.deadlight.ezchestshop.utils.XPEconomy;
+import me.deadlight.ezchestshop.utils.*;
 import me.deadlight.ezchestshop.utils.holograms.ShopHologram;
 import me.deadlight.ezchestshop.utils.holograms.TradeShopHologram;
 import me.deadlight.ezchestshop.utils.objects.*;
@@ -53,7 +51,7 @@ public class TradeShopContainer {
      */
     public static void deleteShop(Location loc) {
         DatabaseManager db = EzChestShop.getPlugin().getDatabase();
-        db.deleteEntry("location", Utils.LocationtoString(loc),
+        db.deleteEntry("location", StringUtils.LocationtoString(loc),
                 "tradeshopdata");
         tradeShopMap.remove(loc);
 
@@ -73,9 +71,9 @@ public class TradeShopContainer {
     public static void createTradeShop(Location loc, Player p, ItemStack item1, ItemStack item2, boolean msgtoggle,
                                        TradeShopSettings.TradeDirection tradeDirection, String admins, boolean adminshop, String rotation) {
         DatabaseManager db = EzChestShop.getPlugin().getDatabase();
-        String sloc = Utils.LocationtoString(loc);
-        String encodedItem1 = Utils.encodeItem(item1);
-        String encodedItem2 = Utils.encodeItem(item2);
+        String sloc = StringUtils.LocationtoString(loc);
+        String encodedItem1 = ItemUtils.encodeItem(item1);
+        String encodedItem2 = ItemUtils.encodeItem(item2);
         db.insertTradeShop(sloc, p.getUniqueId().toString(), encodedItem1 == null ? "Error" : encodedItem1, encodedItem2 == null ? "Error" : encodedItem2, msgtoggle, tradeDirection, admins, adminshop, rotation, new ArrayList<>());
         TradeShopSettings settings = new TradeShopSettings(sloc, msgtoggle, tradeDirection, admins, adminshop, rotation, new ArrayList<>());
         EzTradeShop shop = new EzTradeShop(loc, p, item1, item2, settings);
@@ -108,7 +106,7 @@ public class TradeShopContainer {
 
     public static void loadTradeShop(Location loc, PersistentDataContainer dataContainer) {
         DatabaseManager db = EzChestShop.getPlugin().getDatabase();
-        String sloc = Utils.LocationtoString(loc);
+        String sloc = StringUtils.LocationtoString(loc);
         boolean msgtoggle = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "msgtoggle"), PersistentDataType.INTEGER) == 1;
         TradeShopSettings.TradeDirection tradeDirection = TradeShopSettings.TradeDirection.valueOf(
                 dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "tradedirection"), PersistentDataType.STRING));
@@ -123,7 +121,7 @@ public class TradeShopContainer {
                 encodedItem2 == null ? "Error" : encodedItem2, msgtoggle, tradeDirection, admins, adminshop, rotation, new ArrayList<>());
 
         TradeShopSettings settings = new TradeShopSettings(sloc, msgtoggle, tradeDirection, admins, adminshop, rotation, new ArrayList<>());
-        EzTradeShop shop = new EzTradeShop(loc, owner, Utils.decodeItem(encodedItem1), Utils.decodeItem(encodedItem2), settings);
+        EzTradeShop shop = new EzTradeShop(loc, owner, ItemUtils.decodeItem(encodedItem1), ItemUtils.decodeItem(encodedItem2), settings);
         tradeShopMap.put(loc, shop);
     }
 
@@ -202,8 +200,8 @@ public class TradeShopContainer {
         if (tradeShopMap.containsKey(loc)) {
             return tradeShopMap.get(loc).getSettings();
         } else {
-            PersistentDataContainer dataContainer = Utils.getDataContainer(loc.getBlock());
-            String sloc = Utils.LocationtoString(loc);
+            PersistentDataContainer dataContainer = BlockMaterialUtils.getDataContainer(loc.getBlock());
+            String sloc = StringUtils.LocationtoString(loc);
             boolean msgtoggle = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "msgtoggle"), PersistentDataType.INTEGER) == 1;
             TradeShopSettings.TradeDirection tradeDirection = TradeShopSettings.TradeDirection.valueOf(
                     dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "tradedirection"), PersistentDataType.STRING));
@@ -216,7 +214,7 @@ public class TradeShopContainer {
             String rotation = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "rotation"), PersistentDataType.STRING);
             rotation = rotation == null ? Config.settings_defaults_rotation : rotation;
             TradeShopSettings settings = new TradeShopSettings(sloc, msgtoggle, tradeDirection, admins, adminshop, rotation, new ArrayList<>());
-            EzTradeShop shop = new EzTradeShop(loc, owner, Utils.decodeItem(encodedItem1), Utils.decodeItem(encodedItem2), settings);
+            EzTradeShop shop = new EzTradeShop(loc, owner, ItemUtils.decodeItem(encodedItem1), ItemUtils.decodeItem(encodedItem2), settings);
             tradeShopMap.put(loc, shop);
             return settings;
         }
@@ -242,36 +240,36 @@ public class TradeShopContainer {
 
         LanguageManager lm = new LanguageManager();
         //check if the shop has enough item1's to sell
-        if (!Utils.containsAtLeast(Utils.getBlockInventory(containerBlock), item1 , item1_total_amount)) {
+        if (!InventoryUtils.containsAtLeast(BlockMaterialUtils.getBlockInventory(containerBlock), item1 , item1_total_amount)) {
             player.sendMessage(lm.outofStock());
             player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_IRON_XYLOPHONE, 0.5f, 0.5f);
             return;
         }
 
         //check if the player has enough item2's to pay
-        if (!Utils.containsAtLeast(player.getInventory(), item2, item2_total_amount)) {
+        if (!InventoryUtils.containsAtLeast(player.getInventory(), item2, item2_total_amount)) {
             player.sendMessage(lm.cannotAfford());
             player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_IRON_XYLOPHONE, 0.5f, 0.5f);
             return;
         }
 
         // check if the player has enough space to fit the item1's
-        if (!Utils.hasEnoughSpace(player, item1_total_amount, item1)) {
+        if (!InventoryUtils.hasEnoughSpace(player, item1_total_amount, item1)) {
             player.sendMessage(lm.fullinv());
             player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_IRON_XYLOPHONE, 0.5f, 0.5f);
             return;
         }
 
         // check if the container has enough space to store the item2's
-        if (!Utils.containerHasEnoughSpace(Utils.getBlockInventory(containerBlock), item2_total_amount, item2)) {
+        if (!InventoryUtils.containerHasEnoughSpace(BlockMaterialUtils.getBlockInventory(containerBlock), item2_total_amount, item2)) {
             player.sendMessage(lm.chestIsFull());
             player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_IRON_XYLOPHONE, 0.5f, 0.5f);
             return;
         }
         // item1 is the item the player wants, so give it to the player
-        moveItemBetweenContainers(item1_total_amount, item1, Utils.getBlockInventory(containerBlock), player.getInventory());
+        moveItemBetweenContainers(item1_total_amount, item1, BlockMaterialUtils.getBlockInventory(containerBlock), player.getInventory());
         // item2 is the item the player gives, so give it to the container
-        moveItemBetweenContainers(item2_total_amount, item2, player.getInventory(), Utils.getBlockInventory(containerBlock));
+        moveItemBetweenContainers(item2_total_amount, item2, player.getInventory(), BlockMaterialUtils.getBlockInventory(containerBlock));
         //TODO send the transaction message and execute the commands
 //        transactionMessage(data, owner, player, price, true, item1, count, containerBlock.getLocation().getBlock());
 //        player.sendMessage(lm.messageSuccBuy(price));
@@ -290,36 +288,36 @@ public class TradeShopContainer {
 
         LanguageManager lm = new LanguageManager();
         //check if the shop has enough item1's to sell
-        if (!Utils.containsAtLeast(Utils.getBlockInventory(containerBlock), item1 , item1_total_amount)) {
+        if (!InventoryUtils.containsAtLeast(BlockMaterialUtils.getBlockInventory(containerBlock), item1 , item1_total_amount)) {
             player.sendMessage(lm.outofStock());
             player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_IRON_XYLOPHONE, 0.5f, 0.5f);
             return;
         }
 
         //check if the player has enough item2's to pay
-        if (!Utils.containsAtLeast(player.getInventory(), item2, item2_total_amount)) {
+        if (!InventoryUtils.containsAtLeast(player.getInventory(), item2, item2_total_amount)) {
             player.sendMessage(lm.cannotAfford());
             player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_IRON_XYLOPHONE, 0.5f, 0.5f);
             return;
         }
 
         // check if the player has enough space to fit the item1's
-        if (!Utils.hasEnoughSpace(player, item1_total_amount, item1)) {
+        if (!InventoryUtils.hasEnoughSpace(player, item1_total_amount, item1)) {
             player.sendMessage(lm.fullinv());
             player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_IRON_XYLOPHONE, 0.5f, 0.5f);
             return;
         }
 
         // check if the container has enough space to store the item2's
-        if (!Utils.containerHasEnoughSpace(Utils.getBlockInventory(containerBlock), item2_total_amount, item2)) {
+        if (!InventoryUtils.containerHasEnoughSpace(BlockMaterialUtils.getBlockInventory(containerBlock), item2_total_amount, item2)) {
             player.sendMessage(lm.chestIsFull());
             player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_IRON_XYLOPHONE, 0.5f, 0.5f);
             return;
         }
         // item1 is the item the player wants, so give it to the player
-        moveItemBetweenContainers(item1_total_amount, item1, Utils.getBlockInventory(containerBlock), player.getInventory());
+        moveItemBetweenContainers(item1_total_amount, item1, BlockMaterialUtils.getBlockInventory(containerBlock), player.getInventory());
         // item2 is the item the player gives, so give it to the container
-        moveItemBetweenContainers(item2_total_amount, item2, player.getInventory(), Utils.getBlockInventory(containerBlock));
+        moveItemBetweenContainers(item2_total_amount, item2, player.getInventory(), BlockMaterialUtils.getBlockInventory(containerBlock));
         //TODO send the transaction message and execute the commands
 //        transactionMessage(data, owner, player, price, true, item1, count, containerBlock.getLocation().getBlock());
 //        player.sendMessage(lm.messageSuccBuy(price));
@@ -340,14 +338,14 @@ public class TradeShopContainer {
 
 
         //check if the player has enough item2's to pay
-        if (!Utils.containsAtLeast(player.getInventory(), item2, item2_total_amount)) {
+        if (!InventoryUtils.containsAtLeast(player.getInventory(), item2, item2_total_amount)) {
             player.sendMessage(lm.cannotAfford());
             player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_IRON_XYLOPHONE, 0.5f, 0.5f);
             return;
         }
 
         // check if the player has enough space to fit the item1's
-        if (!Utils.hasEnoughSpace(player, item1_total_amount, item1)) {
+        if (!InventoryUtils.hasEnoughSpace(player, item1_total_amount, item1)) {
             player.sendMessage(lm.fullinv());
             player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_IRON_XYLOPHONE, 0.5f, 0.5f);
             return;
@@ -365,7 +363,7 @@ public class TradeShopContainer {
         }
         // remove the item2's from the player
         item2.setAmount(item2_total_amount);
-        Utils.removeItem(player.getInventory(), item2);
+        InventoryUtils.removeItem(player.getInventory(), item2);
 
 //        transactionMessage(data, Bukkit.getOfflinePlayer(UUID.fromString(
 //                data.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING))),
@@ -388,14 +386,14 @@ public class TradeShopContainer {
 
 
         //check if the player has enough item2's to pay
-        if (!Utils.containsAtLeast(player.getInventory(), item2, item2_total_amount)) {
+        if (!InventoryUtils.containsAtLeast(player.getInventory(), item2, item2_total_amount)) {
             player.sendMessage(lm.cannotAfford());
             player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_IRON_XYLOPHONE, 0.5f, 0.5f);
             return;
         }
 
         // check if the player has enough space to fit the item1's
-        if (!Utils.hasEnoughSpace(player, item1_total_amount, item1)) {
+        if (!InventoryUtils.hasEnoughSpace(player, item1_total_amount, item1)) {
             player.sendMessage(lm.fullinv());
             player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_IRON_XYLOPHONE, 0.5f, 0.5f);
             return;
@@ -413,7 +411,7 @@ public class TradeShopContainer {
         }
         // remove the item1's from the container
         item2.setAmount(item2_total_amount);
-        Utils.removeItem(player.getInventory(), item2);
+        InventoryUtils.removeItem(player.getInventory(), item2);
 
 //        transactionMessage(data, Bukkit.getOfflinePlayer(UUID.fromString(
 //                data.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING))),
@@ -438,7 +436,7 @@ public class TradeShopContainer {
         }
         // remove the item1's from the container
         item.setAmount(amount);
-        Utils.removeItem(from, item);
+        InventoryUtils.removeItem(from, item);
     }
 
 
@@ -473,7 +471,7 @@ public class TradeShopContainer {
             if (isItem1) {
                 ItemStack item1 = tradeShop.getItem1().clone();
                 item1.setAmount(newAmount);
-                String encodedItem = Utils.encodeItem(item1);
+                String encodedItem = ItemUtils.encodeItem(item1);
                 if (encodedItem != null) {
                     container.set(new NamespacedKey(EzChestShop.getPlugin(), "item1"), PersistentDataType.STRING, encodedItem);
                 }
@@ -482,7 +480,7 @@ public class TradeShopContainer {
             } else {
                 ItemStack item2 = tradeShop.getItem2().clone();
                 item2.setAmount(newAmount);
-                String encodedItem = Utils.encodeItem(item2);
+                String encodedItem = ItemUtils.encodeItem(item2);
                 if (encodedItem != null) {
                     container.set(new NamespacedKey(EzChestShop.getPlugin(), "item2"), PersistentDataType.STRING, encodedItem);
                 }

@@ -7,6 +7,7 @@ import me.deadlight.ezchestshop.data.gui.ContainerGuiItem;
 import me.deadlight.ezchestshop.data.gui.GuiData;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.listeners.UpdateChecker;
+import me.deadlight.ezchestshop.utils.StringUtils;
 import me.deadlight.ezchestshop.utils.Utils;
 import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
@@ -69,7 +70,7 @@ public class GuiEditorGUI {
                     break;
             }
             ItemMeta meta = item.getItemMeta();
-            meta.setDisplayName(ChatColor.YELLOW + Utils.capitalizeFirstSplit(type.toString()));
+            meta.setDisplayName(ChatColor.YELLOW + StringUtils.capitalizeFirstSplit(type.toString()));
             item.setItemMeta(meta);
             GuiItem GuiItem = new GuiItem(item, event -> {
                 event.setCancelled(true);
@@ -92,7 +93,7 @@ public class GuiEditorGUI {
         FileConfiguration config = GuiData.getConfig();
         ContainerGui container = GuiData.getViaType(type);
 
-        Gui gui = Gui.gui().rows(4).title(Component.text(ChatColor.AQUA + Utils.capitalizeFirstSplit(type.toString()) + "Settings")).create();
+        Gui gui = Gui.gui().rows(4).title(Component.text(ChatColor.AQUA + StringUtils.capitalizeFirstSplit(type.toString()) + "Settings")).create();
         gui.setDefaultClickAction(event -> event.setCancelled(true));
         gui.getFiller().fill(ContainerGui.getDefaultBackground());
 
@@ -203,7 +204,7 @@ public class GuiEditorGUI {
         FileConfiguration config = GuiData.getConfig();
         ContainerGui container = GuiData.getViaType(type);
 
-        Gui gui = Gui.gui().rows(container.getRows()).title(Component.text(ChatColor.AQUA + Utils.capitalizeFirstSplit(type.toString()) + "Editor")).create();
+        Gui gui = Gui.gui().rows(container.getRows()).title(Component.text(ChatColor.AQUA + StringUtils.capitalizeFirstSplit(type.toString()) + "Editor")).create();
         gui.setDefaultClickAction(event -> event.setCancelled(true));
         GuiItem filler = container.getBackground();
         ItemStack fillerItem = new ItemStack(filler.getItemStack().clone());
@@ -282,7 +283,7 @@ public class GuiEditorGUI {
                     }
                 }));
             } else {
-                ContainerGuiItem cgi = container.getItem(key).setName(ChatColor.YELLOW + Utils.capitalizeFirstSplit(key.replace("-", "_")));
+                ContainerGuiItem cgi = container.getItem(key).setName(ChatColor.YELLOW + StringUtils.capitalizeFirstSplit(key.replace("-", "_")));
                 if (sameSlotItems.containsKey(cgi.getSlot())) {
                     sameSlotItems.get(cgi.getSlot()).add(key);
                 } else {
@@ -291,7 +292,7 @@ public class GuiEditorGUI {
                 }
                 ItemStack item = cgi.getItem().clone();
                 ItemMeta meta = item.getItemMeta();
-                meta.setDisplayName(ChatColor.YELLOW +Utils.capitalizeFirstSplit(key.replace("-", "_")));
+                meta.setDisplayName(ChatColor.YELLOW +StringUtils.capitalizeFirstSplit(key.replace("-", "_")));
                 meta.setLore(Arrays.asList(ChatColor.GRAY + "- Left click to modify", ChatColor.GRAY + "  this item!",
                         ChatColor.GRAY + "- Drop click (Q) to remove", ChatColor.GRAY + "- Shift click to start moving",
                         ChatColor.GRAY + "  click again to place the item.", ChatColor.GRAY + "- Swap Hand click (F) to add",
@@ -329,12 +330,12 @@ public class GuiEditorGUI {
                 String key = sameSlotItems.get(slot).get(index);
                 ItemStack item = container.getItem(sameSlotItems.get(slot).get(index)).getItem().clone();
                 ItemMeta meta = item.getItemMeta();
-                meta.setDisplayName(ChatColor.YELLOW +Utils.capitalizeFirstSplit(key.replace("-", "_")));
+                meta.setDisplayName(ChatColor.YELLOW +StringUtils.capitalizeFirstSplit(key.replace("-", "_")));
                 List<String> lore = sameSlotItems.get(slot).stream().map(s -> {
                     if (sameSlotItems.get(slot).indexOf(s) == index) {
-                        return ChatColor.GREEN + "» " + ChatColor.GRAY + Utils.capitalizeFirstSplit(s.replace("-", "_"));
+                        return ChatColor.GREEN + "» " + ChatColor.GRAY + StringUtils.capitalizeFirstSplit(s.replace("-", "_"));
                     } else {
-                        return ChatColor.GRAY + "   " + ChatColor.GRAY + Utils.capitalizeFirstSplit(s.replace("-", "_"));
+                        return ChatColor.GRAY + "   " + ChatColor.GRAY + StringUtils.capitalizeFirstSplit(s.replace("-", "_"));
                     }
                 }).collect(Collectors.toList());
                 lore.add(0, ChatColor.RED + "Multiple Items in this spot!");
@@ -383,7 +384,7 @@ public class GuiEditorGUI {
         FileConfiguration config = GuiData.getConfig();
         ContainerGui container = GuiData.getViaType(type);
 
-        Gui gui = Gui.gui().rows(3).title(Component.text(ChatColor.AQUA + Utils.capitalizeFirstSplit(type.toString()) + "Item Editor")).create();
+        Gui gui = Gui.gui().rows(3).title(Component.text(ChatColor.AQUA + StringUtils.capitalizeFirstSplit(type.toString()) + "Item Editor")).create();
         gui.getFiller().fill(ContainerGui.getDefaultBackground());
 
         gui.setDefaultClickAction(event -> {
@@ -519,7 +520,7 @@ public class GuiEditorGUI {
         FileConfiguration config = GuiData.getConfig();
         ContainerGui container = GuiData.getViaType(type);
 
-        PaginatedGui gui = Gui.paginated().rows(3).title(Component.text(ChatColor.AQUA + Utils.capitalizeFirstSplit(type.toString()) + "Item Adder")).create();
+        PaginatedGui gui = Gui.paginated().rows(3).title(Component.text(ChatColor.AQUA + StringUtils.capitalizeFirstSplit(type.toString()) + "Item Adder")).create();
         gui.getFiller().fillBottom(ContainerGui.getDefaultBackground());
 
         gui.setDefaultClickAction(event -> {
@@ -558,7 +559,7 @@ public class GuiEditorGUI {
             }
             ItemStack item = new ItemStack(Material.matchMaterial(material));
             ItemMeta meta = item.getItemMeta();
-            meta.setDisplayName(ChatColor.RED + Utils.capitalizeFirstSplit(key.toString().replace("-", "_")));
+            meta.setDisplayName(ChatColor.RED + StringUtils.capitalizeFirstSplit(key.toString().replace("-", "_")));
             item.setItemMeta(meta);
             gui.addItem(new GuiItem(item, event -> {
                 event.setCancelled(true);
