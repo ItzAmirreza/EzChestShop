@@ -3,6 +3,7 @@ package me.deadlight.ezchestshop.utils.holograms;
 import me.deadlight.ezchestshop.data.Config;
 import me.deadlight.ezchestshop.utils.ASHologram;
 import me.deadlight.ezchestshop.utils.FloatingItem;
+import me.deadlight.ezchestshop.utils.StringUtils;
 import me.deadlight.ezchestshop.utils.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;

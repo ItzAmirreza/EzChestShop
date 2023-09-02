@@ -7,6 +7,8 @@ import me.deadlight.ezchestshop.data.gui.GuiData;
 import me.deadlight.ezchestshop.data.LanguageManager;
 import me.deadlight.ezchestshop.enums.LogType;
 import me.deadlight.ezchestshop.guis.shop.SettingsGUI;
+import me.deadlight.ezchestshop.utils.InventoryUtils;
+import me.deadlight.ezchestshop.utils.StringUtils;
 import me.deadlight.ezchestshop.utils.objects.TransactionLogObject;
 import me.deadlight.ezchestshop.utils.Utils;
 import org.bukkit.block.Block;

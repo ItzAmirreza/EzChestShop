@@ -10,6 +10,8 @@ import me.deadlight.ezchestshop.data.LanguageManager;
 import me.deadlight.ezchestshop.data.ShopContainer;
 import me.deadlight.ezchestshop.guis.shop.SettingsGUI;
 import me.deadlight.ezchestshop.guis.tradeshop.TradeSettingsGUI;
+import me.deadlight.ezchestshop.utils.InventoryUtils;
+import me.deadlight.ezchestshop.utils.StringUtils;
 import me.deadlight.ezchestshop.utils.holograms.ShopHologram;
 import me.deadlight.ezchestshop.utils.holograms.TradeShopHologram;
 import me.deadlight.ezchestshop.utils.objects.EzShop;
