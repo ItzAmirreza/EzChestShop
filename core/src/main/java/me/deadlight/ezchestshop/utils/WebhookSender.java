@@ -8,7 +8,6 @@ import org.json.simple.parser.ParseException;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.io.IOException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -21,16 +20,16 @@ public class WebhookSender {
     private static final ScheduledExecutorService slowScheduler = Executors.newScheduledThreadPool(1);
     private static final LinkedBlockingQueue<JSONObject> fastQueue = new LinkedBlockingQueue<>();
     private static final LinkedBlockingQueue<JSONObject> slowQueue = new LinkedBlockingQueue<>();
-    private static final AtomicInteger fastQueueCounter = new AtomicInteger(0);
+    private static final AtomicInteger rateLimitRemaining = new AtomicInteger(5);
+    private static final AtomicInteger rateLimitReset = new AtomicInteger(0);
 
     static {
         fastScheduler.scheduleAtFixedRate(() -> {
             try {
-                for (int i = 0; i < 5; i++) {
+                if (rateLimitRemaining.get() > 0) {
                     JSONObject message = fastQueue.poll();
                     if (message != null) {
                         sendDiscordWebhookInternal(message);
-                        fastQueueCounter.incrementAndGet();
                     }
                 }
             } catch (Exception e) {
@@ -40,21 +39,17 @@ public class WebhookSender {
 
         slowScheduler.scheduleAtFixedRate(() -> {
             try {
-                if (fastQueueCounter.get() >= 25) {
-                    JSONObject message = slowQueue.poll();
-                    if (message != null) {
-                        sendDiscordWebhookInternal(message);
-                    }
+                if (System.currentTimeMillis() / 1000 > rateLimitReset.get()) {
+                    rateLimitRemaining.set(5); // Reset the remaining rate limit
                 }
-                fastQueueCounter.set(0);  // Reset the counter every minute
             } catch (Exception e) {
-                System.err.println("Error while sending queued webhooks: " + e.getMessage());
+                System.err.println("Error while resetting rate limit: " + e.getMessage());
             }
-        }, 0, 1, TimeUnit.MINUTES);
+        }, 0, 60, TimeUnit.SECONDS);
     }
 
     public static void sendDiscordWebhook(JSONObject messageJson) {
-        if (fastQueueCounter.get() < 25) {
+        if (rateLimitRemaining.get() > 0) {
             fastQueue.offer(messageJson);
         } else {
             slowQueue.offer(messageJson);
@@ -74,15 +69,20 @@ public class WebhookSender {
             }
 
             int responseCode = connection.getResponseCode();
-            if (responseCode != 200) {
-                System.err.println("Failed to send webhook message: " + responseCode);
+            if (responseCode == 429) { // Rate-limited
+                rateLimitRemaining.set(Integer.parseInt(connection.getHeaderField("X-RateLimit-Remaining")));
+                rateLimitReset.set(Integer.parseInt(connection.getHeaderField("X-RateLimit-Reset")));
+                fastQueue.offer(messageJson); // Requeue the message
+            } else if (responseCode != 200 && responseCode != 204) {
+                System.err.println("Failed to send webhook message to Discord servers: " + responseCode);
             }
 
             connection.disconnect();
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.err.println("Error sending webhook message: " + e.getMessage());
         }
     }
+
 
     public static void sendDiscordNewTransactionAlert(
             String buyer,
