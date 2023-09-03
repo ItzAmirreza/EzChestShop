@@ -9,9 +9,59 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.io.IOException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.atomic.AtomicInteger;
+
 public class WebhookSender {
 
+    private static final ScheduledExecutorService fastScheduler = Executors.newScheduledThreadPool(1);
+    private static final ScheduledExecutorService slowScheduler = Executors.newScheduledThreadPool(1);
+    private static final LinkedBlockingQueue<JSONObject> fastQueue = new LinkedBlockingQueue<>();
+    private static final LinkedBlockingQueue<JSONObject> slowQueue = new LinkedBlockingQueue<>();
+    private static final AtomicInteger fastQueueCounter = new AtomicInteger(0);
+
+    static {
+        fastScheduler.scheduleAtFixedRate(() -> {
+            try {
+                for (int i = 0; i < 5; i++) {
+                    JSONObject message = fastQueue.poll();
+                    if (message != null) {
+                        sendDiscordWebhookInternal(message);
+                        fastQueueCounter.incrementAndGet();
+                    }
+                }
+            } catch (Exception e) {
+                System.err.println("Error while sending queued webhooks: " + e.getMessage());
+            }
+        }, 0, 1, TimeUnit.SECONDS);
+
+        slowScheduler.scheduleAtFixedRate(() -> {
+            try {
+                if (fastQueueCounter.get() >= 25) {
+                    JSONObject message = slowQueue.poll();
+                    if (message != null) {
+                        sendDiscordWebhookInternal(message);
+                    }
+                }
+                fastQueueCounter.set(0);  // Reset the counter every minute
+            } catch (Exception e) {
+                System.err.println("Error while sending queued webhooks: " + e.getMessage());
+            }
+        }, 0, 1, TimeUnit.MINUTES);
+    }
+
     public static void sendDiscordWebhook(JSONObject messageJson) {
+        if (fastQueueCounter.get() < 25) {
+            fastQueue.offer(messageJson);
+        } else {
+            slowQueue.offer(messageJson);
+        }
+    }
+
+    private static void sendDiscordWebhookInternal(JSONObject messageJson) {
         try {
             URL url = new URL(Config.discordWebhookUrl);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
