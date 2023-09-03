@@ -12,6 +12,8 @@ import me.deadlight.ezchestshop.utils.worldguard.FlagRegistry;
 import me.deadlight.ezchestshop.utils.worldguard.WorldGuardUtils;
 import me.deadlight.ezchestshop.utils.holograms.ShopHologram;
 import me.mrCookieSlime.Slimefun.api.BlockStorage;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.*;
 import org.bukkit.block.*;
 import org.bukkit.command.Command;
@@ -82,24 +84,6 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
 
         String mainarg = args[0];
         switch (mainarg) {
-            case "test" : {
-                String x = null;
-                if (x.equals("test")) {
-                    player.sendMessage("test");
-                }
-            }
-            case "tester" : {
-                String x = null;
-                if (x.equals("test")) {
-                    player.sendMessage("test");
-                }
-            }
-            case "testerer" : {
-                String x = null;
-                if (x.equals("test")) {
-                    player.sendMessage("test");
-                }
-            }
             case "create": {
 
                 if (!(player.hasPermission("ecs.admin.create") || player.hasPermission("ecs.admin"))) {
@@ -227,10 +211,6 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
                 manageShopCommands(player, args, target);
                 break;
             }
-            case "help": {
-                sendHelp(player);
-                break;
-            }
             case "reload": {
                 if (!(player.hasPermission("ecs.admin.reload") || player.hasPermission("ecs.admin"))) {
                     player.sendMessage(lm.noPermissionForCommand());
@@ -248,13 +228,29 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
                 new GuiEditorGUI().showGuiEditorOverview(player);
                 break;
             }
-            case "uploadlogs": {
-                if (!(player.hasPermission("ecs.admin.uploadlogs") || player.hasPermission("ecs.admin"))) {
+            case "debug": {
+                if (!(player.hasPermission("ecs.admin.debug") || player.hasPermission("ecs.admin"))) {
                     player.sendMessage(lm.noPermissionForCommand());
                     return false;
                 }
-                generateAndUploadLogs(player);
+                if (size == 2 && args[1].equals("-confirm")) {
+                    generateAndUploadLogs(player);
+                } else {
+                    //TODO translate this probably
+                    ComponentBuilder compb = new ComponentBuilder();
+                    compb.append("This command will generate a debug log and upload it to a private EzChestShop owned backend server.\n" +
+                            "This log will contain information about your server (e.g. plugins used, ECS related logs, " +
+                            "server version, server software), the plugin (e.g. ECS config - without database infos) and the shops on your server.\n" +
+                            "If you wish to submit a bug report, please include the (soon to be) generated link in your discord support post " +
+                            "(the link will be hidden by our bot to protect your servers privacy).\n\n"
+                    ).color(net.md_5.bungee.api.ChatColor.YELLOW);
+                    compb.append("If you wish to continue, please click here: ").color(net.md_5.bungee.api.ChatColor.YELLOW);
+                    compb.append("[✔]").color(net.md_5.bungee.api.ChatColor.GREEN).bold(true)
+                            .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/ecsadmin debug -confirm"));
+                    player.spigot().sendMessage(compb.create());
+                }
             }
+            break;
             default: {
                 sendHelp(player);
                 break;
@@ -266,12 +262,12 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
         List<String> fList = new ArrayList<>();
-        List<String> list_firstarg = Arrays.asList("create", "create-trade", "reload", "remove", "help", "transfer-ownership", "configure-guis", "shop-commands", "uploadlogs");
+        List<String> list_firstarg = Arrays.asList("create", "create-trade", "reload", "remove", "help", "transfer-ownership", "configure-guis", "shop-commands", "debug");
         List<String> list_create_1 = Arrays.asList("[BuyPrice]");
         List<String> list_create_2 = Arrays.asList("[SellPrice]");
         List<String> list_create_trade_1 = Arrays.asList("[MainHandAmount]");
         List<String> list_create_trade_2 = Arrays.asList("[OffHandAmount]");
-        List<String> list_transfer_2 = Arrays.asList("-confirm");
+        List<String> list_confirm = Arrays.asList("-confirm");
         if (sender instanceof Player) {
             Player p = (Player) sender;
             List<String> list_shop_commands_1;
@@ -301,7 +297,7 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
                         StringUtil.copyPartialMatches(args[2], list_create_trade_2, fList);
                 } else if (args.length > 1 && args[0].equalsIgnoreCase("transfer-ownership")) {
                     if (args.length == 3) {
-                        StringUtil.copyPartialMatches(args[2], list_transfer_2, fList);
+                        StringUtil.copyPartialMatches(args[2], list_confirm, fList);
                     } else {
                         // If null is returned a list of online players will be suggested
                         return null;
@@ -327,6 +323,10 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
                         } else if (args[4].equalsIgnoreCase("move") && args.length == 7) {
                             StringUtil.copyPartialMatches(args[6], list_shop_commands_move_6, fList);
                         }
+                    }
+                } else if (args.length > 1 && args[0].equalsIgnoreCase("debug")) {
+                    if (args.length == 2) {
+                        StringUtil.copyPartialMatches(args[1], list_confirm, fList);
                     }
                 }
             }
@@ -685,7 +685,7 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
             }
         }
 
-// Now we gonna censor specific values
+        // Now we gonna censor specific values
         String[] censoredKeys = {
                 "database.mysql.ip", "database.mysql.port", "database.mysql.tables-prefix",
                 "database.mysql.database", "database.mysql.username", "database.mysql.password",
@@ -705,52 +705,83 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
 
         jsonObject.add("config", ourConfig);
 
-        //now we gotta put any bukkit generated errors in the latest.log file into the logs field, anything that is related to EzChestShop
-        //we gonna use the grep command to do that
+        // now we gotta put any bukkit generated errors in the latest.log file into the logs field, anything that is related to EzChestShop
+        // we are going to look for any ECS related lines and if a warning or error is thrown, we'll include the full error message and stacktrace.
         File latestLog = new File(Bukkit.getServer().getWorldContainer().getAbsolutePath() + "/logs/latest.log");
         if (latestLog.exists()) {
             try {
+                // The reader of the logs will load each individual line.
                 BufferedReader reader = new BufferedReader(new FileReader(latestLog));
                 String line;
+
+                // lines contains anything ecs related. If it's a error message, it will start with [ecserror], it's an
+                // error and we'll include the full error message and stacktrace from the errors map.
                 List<String> lines = new ArrayList<>();
 
+                // This pattern will match any time in the format of 00:00:00, which is a format used by the majority of
+                // loggers like paper, puprur, spigot, bukkit, etc (at least Elito thinks that's what determines the format)
                 Pattern pattern = Pattern.compile("(\\d{2}:\\d{2}:\\d{2})");
+
+                // The following variables are used to keep track of the current error we are looking at.
                 String currentTime = null;
                 String latestTime = null;
-                String currentKey = null;
+                String currentKey = null; // key for the error map => first line of an error msg
                 boolean lookingForError = false;
-                boolean currentECSrelated = false;
+                boolean currentECSrelated = false; // only search for ecs related errors
+                // Similar errors will be skipped, but we need to make sure we don't skip errors just based on their key,
+                // cause the stacktrace might be different.
                 boolean currentMarkedForSkipCauseSimilar = false;
-                boolean currentWasSimilar = true;
-                List<String> matchingIndexes = new ArrayList<>();
+                boolean currentWasSimilar = true; // if the current error key is similar to existing error keys
+                // List of keys the current errors matches with. Will be filled with similar errors at first, then
+                // non-matching errors will be removed until we found a match, or it's a new error (list empty).
+                List<String> matchingKeys = new ArrayList<>();
+
+                // Collecting the lines of the current error
                 List<String> currentError = null;
+
+                // These two maps keep track of the errors and how many times they have been repeated.
                 HashMap<String, List<String>> errors = new HashMap<>();
                 HashMap<String, Integer> errorCounter = new HashMap<>();
+
+
+
+                // Read each line of the log file
                 while ((line = reader.readLine()) != null) {
 
                     // get the time matching this regex \d{2}:\d{2}:\d{2}
                     Matcher matcher = pattern.matcher(line);
                     if (matcher.find())
                     {
+                        // if the line contained a timestamp, update the currentTime.
                         currentTime = matcher.group(1);
                     }
                     // save the stuff or increase the error counter if the time changed
                     if (currentTime != null && !currentTime.equals(latestTime)) {
+
                         if (lookingForError && currentECSrelated) {
+                            // check if the current error was marked for skipping cause it's similar to existing errors
                             if (currentMarkedForSkipCauseSimilar) {
                                 if (currentWasSimilar) {
+                                    // if previous run checks say it's similar just increase the count
                                     errorCounter.put(currentKey, errorCounter.get(currentKey) + 1);
                                 } else {
-                                    if (!matchingIndexes.isEmpty()) {
-                                        currentKey = matchingIndexes.get(0);
+                                    // otherwise we need to find a new key for the error
+                                    if (!matchingKeys.isEmpty()) {
+                                        // if the previous checks already found identical errors, just get the first one
+                                        // we may have others, but those are more likely duplicates, so just take the
+                                        // first one.
+                                        currentKey = matchingKeys.get(0);
                                     } else {
+                                        // if we haven't found a similar one, generate a new key with a unique number
                                         int i = 1;
                                         while (errors.containsKey(currentKey + " (" + i + ")")) {
                                             i++;
                                         }
                                         currentKey = currentKey + " (" + i + ")";
                                     }
-                                    EzChestShop.logDebug("New key: " + currentKey);
+
+                                    // now that we have potentially modified our key, we need to save it as a new entry
+                                    // or increase the counter if it already exists.
                                     if (errors.containsKey(currentKey)) {
                                         errorCounter.put(currentKey, errorCounter.get(currentKey) + 1);
                                     } else {
@@ -760,16 +791,18 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
                                         lines.add("[ecserror]" + currentKey);
                                     }
                                 }
+                                // reset the current (skip related) error variables
                                 currentWasSimilar = true;
                                 currentMarkedForSkipCauseSimilar = false;
                             } else {
-                                // save key
+                                // save the key as there is no similar error problem.
                                 errors.put(currentKey, currentError);
                                 errorCounter.put(currentKey, 1);
                                 lines.add("[ecserror]" + currentKey);
                             }
                         }
-                        matchingIndexes.clear();
+                        // reset the current error variables
+                        matchingKeys.clear();
                         lookingForError = false;
                         currentKey = null;
                         currentECSrelated = false;
@@ -779,13 +812,15 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
                     if (currentTime != null && line.matches(".*\\d{2}:\\d{2}:\\d{2}.*(ERROR|WARN).*")) {
 
                         if (currentKey == null) {
+                            // make error lines comparable by removing the time
                             String newKey = line.replaceAll("\\d{2}:\\d{2}:\\d{2}", "");
                             if (errors.containsKey(newKey)) {
+                                // error start already exists, so mark it and note all possible matching keys
                                 currentMarkedForSkipCauseSimilar = true;
-                                matchingIndexes.add(newKey);
+                                matchingKeys.add(newKey);
                                 int i = 1;
                                 while (errors.containsKey(newKey + " (" + i + ")")) {
-                                    matchingIndexes.add(newKey + " (" + i + ")");
+                                    matchingKeys.add(newKey + " (" + i + ")");
                                     i++;
                                 }
                             }
@@ -803,17 +838,22 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
                     boolean ecsRelatedCheck = line.contains("EzChestShop") || line.contains("ECS") ||
                             line.contains("DeadLight") || line.contains("ezchestshop");
                     if (lookingForError) {
+                        // the line is part of an error, so we add it to the current error list
                         if (ecsRelatedCheck) {
+                            // the line is related to EzChestShop, so we need to check for similar errors and definitely
+                            // mark the error/stacktrace to be included in the logs.
                             if (currentMarkedForSkipCauseSimilar) {
-                                // check if the error is similar to existing errors, even to ones with a key offset.
+                                // Check if the error is identical to existing errors, even to ones with a key offset.
+                                // We do that by removing the entry from the matchingKeys list if a previous error doesn't
+                                // contain the current line. (All identical errors must have the same ECS related errors)
                                 if (!errors.get(currentKey).contains(line)) {
                                     currentWasSimilar = false;
-                                    matchingIndexes.remove(currentKey);
+                                    matchingKeys.remove(currentKey);
                                 }
                                 int i = 1;
                                 while (errors.containsKey(currentKey + " (" + i + ")")) {
                                     if (!errors.get(currentKey + " (" + i + ")").contains(line)) {
-                                        matchingIndexes.remove(currentKey + " (" + i + ")");
+                                        matchingKeys.remove(currentKey + " (" + i + ")");
                                     }
                                     i++;
                                 }
@@ -844,7 +884,6 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
                             error.add(logLine.replace("\\t", "    "));
                         }
                         errorObject.add("errorLogs", error);
-                        errorObject.addProperty("key", log.substring(10));
                         errorObject.addProperty("count", errorCounter.get(log.substring(10)));
                         logs.add(errorObject);
                     } else {
