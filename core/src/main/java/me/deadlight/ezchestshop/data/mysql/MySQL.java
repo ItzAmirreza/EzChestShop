@@ -71,7 +71,7 @@ public class MySQL extends DatabaseManager {
         shopdata = database.addTable(prefix + "shopdata",
                 EzqlColumn.get(DataType.VARCHAR, "location", 64, true),
                 EzqlColumn.get(DataType.VARCHAR, "owner", 38),
-                EzqlColumn.get(DataType.BLOB, "item"),
+                EzqlColumn.get(DataType.TEXT, "item"),
                 EzqlColumn.get(DataType.DOUBLE, "buyPrice"),
                 EzqlColumn.get(DataType.DOUBLE, "sellPrice"),
                 EzqlColumn.get(DataType.TINYINT, "msgToggle"),

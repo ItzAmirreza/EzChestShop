@@ -107,9 +107,15 @@ public class ShopHologram {
                 textReplacements.put("<itemdata" + (i + 1) + "/>", "");
             }
             textReplacements.put("<itemdataRest/>", "");
-            // visible if the shop does not contain at least 1 item.
-            boolean visible = !Utils.containsAtLeast(shopInventory, shop.getShopItem(), 1);
-            textReplacements.put("<emptyShopInfo/>", visible ? lm.emptyShopHologramInfo() : "");
+            // Emptyshop should only be shown for non-adminshops.
+            // Previous config versions had the placeholder, so this check is needed for backwards compatibility.
+            if (!shop.getSettings().isAdminshop()) {
+                // visible if the shop does not contain at least 1 item.
+                boolean visible = !Utils.containsAtLeast(shopInventory, shop.getShopItem(), 1);
+                textReplacements.put("<emptyShopInfo/>", visible ? lm.emptyShopHologramInfo() : "");
+            } else {
+                textReplacements.put("<emptyShopInfo/>", "");
+            }
             // the amount of custom message replacements is defined in the config and may wary
             int customLines = structure.stream()
                     .filter(s -> s.startsWith("<itemdata") && !s.startsWith("<itemdataRest"))
@@ -363,8 +369,10 @@ public class ShopHologram {
     }
 
     public void updateEmptyShopInfo() {
-        if (shop.getOwnerID().equals(player.getUniqueId()) ||
-                shop.getSettings().getAdmins().contains(player.getUniqueId().toString())) {
+        if (!shop.getSettings().isAdminshop() && (
+                shop.getOwnerID().equals(player.getUniqueId()) ||
+                shop.getSettings().getAdmins().contains(player.getUniqueId().toString())
+            )) {
             PlayerBlockBoundHologram playerHolo = blockHolo.getPlayerHologram(player);
             if (playerHolo != null) {
                 Inventory shopInventory = Utils.getBlockInventory(location.getBlock());
@@ -457,6 +465,10 @@ public class ShopHologram {
     }
 
     public static void updateInventoryReplacements(Location location) {
+        // Ignore if the shop's Hologram doesn't exist
+        if (!locationBlockHoloMap.containsKey(location)) {
+            return;
+        }
         locationBlockHoloMap.get(location).getViewerHolograms().forEach(playerBlockBoundHologram -> {
             ShopHologram shopHolo = ShopHologram.getHologram(location, playerBlockBoundHologram.getPlayer());
             shopHolo.updateStockAndCapacity();
