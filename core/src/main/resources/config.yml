@@ -148,6 +148,8 @@ database:
     ssl: false
 integration:
   worldguard: true
+  towny:
+    shops-only-in-shop-plots: true
 other:
   notify-op-of-updates: true
   # When certain items are overlapping/overflowing in the gui configuration, the plugin will notify ops to take actions.

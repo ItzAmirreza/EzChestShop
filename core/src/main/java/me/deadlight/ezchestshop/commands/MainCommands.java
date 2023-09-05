@@ -295,7 +295,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
 
                     if (checkIfLocation(target.getLocation(), player)) {
 
-                    if (EzChestShop.towny) {
+                    if (EzChestShop.towny && Config.towny_integration_shops_only_in_shop_plots) {
                         if (!ShopPlotUtil.isShopPlot(target.getLocation())) {
                             player.sendMessage(lm.notAllowedToCreateOrRemove());
                             return;
