@@ -69,12 +69,26 @@ public class MainCommands implements CommandExecutor, TabCompleter {
 
                             if (isPositive(Double.parseDouble(args[1])) && isPositive(Double.parseDouble(args[2]))) {
                                 if (Config.permissions_create_shop_enabled) {
-                                    int maxShops = Utils.getMaxPermission(player, "ecs.shops.limit.");
-                                    maxShops = maxShops == -1 ? 10000 : maxShops;
-                                    int shops = ShopContainer.getShopCount(player);
-                                    if (shops >= maxShops) {
-                                        player.sendMessage(lm.maxShopLimitReached(maxShops));
-                                        return false;
+                                    // first check the world, if nothing is found return -2
+                                    int maxShopsWorld = Utils.getMaxPermission(player,
+                                            "ecs.shops.limit." + player.getWorld().getName() + ".", -2);
+                                    if (maxShopsWorld == -2) {
+                                        // if nothing is found for the world, check the default permission
+                                        int maxShops = Utils.getMaxPermission(player, "ecs.shops.limit.");
+                                        maxShops = maxShops == -1 ? 10000 : maxShops;
+                                        int shops = ShopContainer.getShopCount(player);
+                                        if (shops >= maxShops) {
+                                            player.sendMessage(lm.maxShopLimitReached(maxShops));
+                                            return false;
+                                        }
+                                    } else {
+                                        // there is a world limit, so check it
+                                        maxShopsWorld = maxShopsWorld == -1 ? 10000 : maxShopsWorld;
+                                        int shops = ShopContainer.getShopCount(player, player.getWorld());
+                                        if (shops >= maxShopsWorld) {
+                                            player.sendMessage(lm.maxShopLimitReached(maxShopsWorld));
+                                            return false;
+                                        }
                                     }
                                 }
                                 try {

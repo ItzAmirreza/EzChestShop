@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * ShopContainer - a tool to retrieve and store data regarding shops,
@@ -165,6 +166,19 @@ public class ShopContainer {
         }
 
         return ezShops;
+    }
+
+    /**
+     * Query the Database to retrieve all Shops a player owns.
+     *
+     * @param p the Player to query
+     * @return the amount of shops a player owns.
+     */
+    public static int getShopCount(Player p, World world) {
+        return getShopFromOwner(p.getUniqueId()).stream().filter(ezShop -> {
+            if (world == null) return false;
+            return world.equals(ezShop.getLocation().getWorld());
+        }).collect(Collectors.toList()).size();
     }
 
     /**

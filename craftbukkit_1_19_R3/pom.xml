@@ -11,7 +11,7 @@
     <parent>
         <groupId>me.deadlight</groupId>
         <artifactId>EzChestShop-parent</artifactId>
-        <version>1.6.4.2</version>
+        <version>1.6.4.3</version>
     </parent>
 
     <name>EzChestShop-craftbukkit_1_19_R3</name>

@@ -36,7 +36,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class EcsAdmin implements CommandExecutor, TabCompleter {
 
@@ -213,7 +216,7 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
                                 }
                             }
                         }
-                    } else if (firstarg.equalsIgnoreCase("uploadlogs")) {
+                    } else if (firstarg.equalsIgnoreCase("debug")) {
                         generateAndUploadLogs(player);
 
                     } else {
@@ -252,7 +255,7 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
         List<String> fList = new ArrayList<>();
-        List<String> list_firstarg = Arrays.asList("create", "reload", "remove", "help", "transfer-ownership", "configure-guis", "shop-commands", "uploadlogs");
+        List<String> list_firstarg = Arrays.asList("create", "reload", "remove", "help", "transfer-ownership", "configure-guis", "shop-commands", "debug");
         List<String> list_create_1 = Arrays.asList("[BuyPrice]");
         List<String> list_create_2 = Arrays.asList("[SellPrice]");
         List<String> list_transfer_2 = Arrays.asList("-confirm");
@@ -790,18 +793,188 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
         File latestLog = new File(Bukkit.getServer().getWorldContainer().getAbsolutePath() + "/logs/latest.log");
         if (latestLog.exists()) {
             try {
+                // The reader of the logs will load each individual line.
                 BufferedReader reader = new BufferedReader(new FileReader(latestLog));
                 String line;
-                StringBuilder sb = new StringBuilder();
+
+                // lines contains anything ecs related. If it's a error message, it will start with [ecserror], it's an
+                // error and we'll include the full error message and stacktrace from the errors map.
+                List<String> lines = new ArrayList<>();
+
+                // This pattern will match any time in the format of 00:00:00, which is a format used by the majority of
+                // loggers like paper, puprur, spigot, bukkit, etc (at least Elito thinks that's what determines the format)
+                Pattern pattern = Pattern.compile("(\\d{2}:\\d{2}:\\d{2})");
+
+                // The following variables are used to keep track of the current error we are looking at.
+                String currentTime = null;
+                String latestTime = null;
+                String currentKey = null; // key for the error map => first line of an error msg
+                boolean lookingForError = false;
+                boolean currentECSrelated = false; // only search for ecs related errors
+                // Similar errors will be skipped, but we need to make sure we don't skip errors just based on their key,
+                // cause the stacktrace might be different.
+                boolean currentMarkedForSkipCauseSimilar = false;
+                boolean currentWasSimilar = true; // if the current error key is similar to existing error keys
+                // List of keys the current errors matches with. Will be filled with similar errors at first, then
+                // non-matching errors will be removed until we found a match, or it's a new error (list empty).
+                List<String> matchingKeys = new ArrayList<>();
+
+                // Collecting the lines of the current error
+                List<String> currentError = null;
+
+                // These two maps keep track of the errors and how many times they have been repeated.
+                HashMap<String, List<String>> errors = new HashMap<>();
+                HashMap<String, Integer> errorCounter = new HashMap<>();
+
+
+
+                // Read each line of the log file
                 while ((line = reader.readLine()) != null) {
-                    // Check if the line contains any of the specified keywords
-                    if (line.contains("EzChestShop") || line.contains("ECS") || line.contains("DeadLight")) {
-                        sb.append(line);
-                        sb.append("\n"); // Add a line break for each line
+
+                    // get the time matching this regex \d{2}:\d{2}:\d{2}
+                    Matcher matcher = pattern.matcher(line);
+                    if (matcher.find())
+                    {
+                        // if the line contained a timestamp, update the currentTime.
+                        currentTime = matcher.group(1);
+                    }
+                    // save the stuff or increase the error counter if the time changed
+                    if (currentTime != null && !currentTime.equals(latestTime)) {
+
+                        if (lookingForError && currentECSrelated) {
+                            // check if the current error was marked for skipping cause it's similar to existing errors
+                            if (currentMarkedForSkipCauseSimilar) {
+                                if (currentWasSimilar) {
+                                    // if previous run checks say it's similar just increase the count
+                                    errorCounter.put(currentKey, errorCounter.get(currentKey) + 1);
+                                } else {
+                                    // otherwise we need to find a new key for the error
+                                    if (!matchingKeys.isEmpty()) {
+                                        // if the previous checks already found identical errors, just get the first one
+                                        // we may have others, but those are more likely duplicates, so just take the
+                                        // first one.
+                                        currentKey = matchingKeys.get(0);
+                                    } else {
+                                        // if we haven't found a similar one, generate a new key with a unique number
+                                        int i = 1;
+                                        while (errors.containsKey(currentKey + " (" + i + ")")) {
+                                            i++;
+                                        }
+                                        currentKey = currentKey + " (" + i + ")";
+                                    }
+
+                                    // now that we have potentially modified our key, we need to save it as a new entry
+                                    // or increase the counter if it already exists.
+                                    if (errors.containsKey(currentKey)) {
+                                        errorCounter.put(currentKey, errorCounter.get(currentKey) + 1);
+                                    } else {
+                                        // save key
+                                        errors.put(currentKey, currentError);
+                                        errorCounter.put(currentKey, 1);
+                                        lines.add("[ecserror]" + currentKey);
+                                    }
+                                }
+                                // reset the current (skip related) error variables
+                                currentWasSimilar = true;
+                                currentMarkedForSkipCauseSimilar = false;
+                            } else {
+                                // save the key as there is no similar error problem.
+                                errors.put(currentKey, currentError);
+                                errorCounter.put(currentKey, 1);
+                                lines.add("[ecserror]" + currentKey);
+                            }
+                        }
+                        // reset the current error variables
+                        matchingKeys.clear();
+                        lookingForError = false;
+                        currentKey = null;
+                        currentECSrelated = false;
+                    }
+                    // If the line contains this regex: .*\d{2}:\d{2}:\d{2}.*(ERROR|WARN)
+                    // then it's an error or warning, so we add it to the logs
+                    if (currentTime != null && line.matches(".*\\d{2}:\\d{2}:\\d{2}.*(ERROR|WARN).*")) {
+
+                        if (currentKey == null) {
+                            // make error lines comparable by removing the time
+                            String newKey = line.replaceAll("\\d{2}:\\d{2}:\\d{2}", "");
+                            if (errors.containsKey(newKey)) {
+                                // error start already exists, so mark it and note all possible matching keys
+                                currentMarkedForSkipCauseSimilar = true;
+                                matchingKeys.add(newKey);
+                                int i = 1;
+                                while (errors.containsKey(newKey + " (" + i + ")")) {
+                                    matchingKeys.add(newKey + " (" + i + ")");
+                                    i++;
+                                }
+                            }
+                            // start a new error and continue to skip the rest of the checks
+                            currentKey = newKey;
+                            currentError = new ArrayList<>();
+                            currentError.add(currentKey);
+                            latestTime = currentTime;
+                            lookingForError = true;
+                            continue;
+                        }
+                    }
+
+                    // Check if it's a related log or error piece, then add it to the correct list.
+                    boolean ecsRelatedCheck = line.contains("EzChestShop") || line.contains("ECS") ||
+                            line.contains("DeadLight") || line.contains("ezchestshop");
+                    if (lookingForError) {
+                        // the line is part of an error, so we add it to the current error list
+                        if (ecsRelatedCheck) {
+                            // the line is related to EzChestShop, so we need to check for similar errors and definitely
+                            // mark the error/stacktrace to be included in the logs.
+                            if (currentMarkedForSkipCauseSimilar) {
+                                // Check if the error is identical to existing errors, even to ones with a key offset.
+                                // We do that by removing the entry from the matchingKeys list if a previous error doesn't
+                                // contain the current line. (All identical errors must have the same ECS related errors)
+                                if (!errors.get(currentKey).contains(line)) {
+                                    currentWasSimilar = false;
+                                    matchingKeys.remove(currentKey);
+                                }
+                                int i = 1;
+                                while (errors.containsKey(currentKey + " (" + i + ")")) {
+                                    if (!errors.get(currentKey + " (" + i + ")").contains(line)) {
+                                        matchingKeys.remove(currentKey + " (" + i + ")");
+                                    }
+                                    i++;
+                                }
+                            }
+                            currentECSrelated = true;
+                        }
+                        currentError.add(line);
+                    } else if (ecsRelatedCheck) {
+                        // the line is not an error, but it's related to EzChestShop, so we add it to the logs
+                        lines.add(line);
+                    }
+
+                    // At the end of the loop set the latestTime to the currentTime if it's not null
+                    if (currentTime != null) {
+                        latestTime = currentTime;
                     }
                 }
                 reader.close();
-                jsonObject.addProperty("logs", sb.toString());
+
+
+                // Collect the results and format them nicely!
+                JsonArray logs = new JsonArray();
+                for (String log : lines) {
+                    if (log.startsWith("[ecserror]") && errors.containsKey(log.substring(10))) {
+                        JsonObject errorObject = new JsonObject();
+                        JsonArray error = new JsonArray();
+                        for (String logLine : errors.get(log.substring(10))) {
+                            error.add(logLine.replace("\\t", "    "));
+                        }
+                        errorObject.add("errorLogs", error);
+                        errorObject.addProperty("count", errorCounter.get(log.substring(10)));
+                        logs.add(errorObject);
+                    } else {
+                        logs.add(log);
+                    }
+                }
+
+                jsonObject.add("logs", logs);
             } catch (IOException e) {
                 e.printStackTrace();
             }
