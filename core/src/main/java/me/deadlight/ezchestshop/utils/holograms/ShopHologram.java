@@ -1,20 +1,17 @@
 package me.deadlight.ezchestshop.utils.holograms;
+
 import me.deadlight.ezchestshop.data.Config;
 import me.deadlight.ezchestshop.data.LanguageManager;
 import me.deadlight.ezchestshop.data.ShopContainer;
-import me.deadlight.ezchestshop.EzChestShop;
-import me.deadlight.ezchestshop.utils.objects.EzShop;
 import me.deadlight.ezchestshop.utils.Utils;
+import me.deadlight.ezchestshop.utils.objects.EzShop;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.block.TileState;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
-import org.bukkit.persistence.PersistentDataType;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -71,9 +68,7 @@ public class ShopHologram {
             List<String> possibleCounts = new ArrayList<>();
             try {
                 possibleCounts = Utils.calculatePossibleAmount(Bukkit.getOfflinePlayer(player.getUniqueId()),
-                        Bukkit.getOfflinePlayer(
-                                UUID.fromString(((TileState) location.getBlock().getState()).getPersistentDataContainer()
-                                        .get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING))),
+                        Bukkit.getOfflinePlayer(shop.getOwnerID()),
                         player.getInventory().getStorageContents(),
                         Utils.getBlockInventory(location.getBlock()).getStorageContents(),
                         shop.getBuyPrice(), shop.getSellPrice(), shop.getShopItem());
@@ -455,8 +450,7 @@ public class ShopHologram {
         if (playerHolo != null) {
             shop = ShopContainer.getShop(location);
             List<String> possibleCounts = Utils.calculatePossibleAmount(Bukkit.getOfflinePlayer(player.getUniqueId()),
-                    Bukkit.getOfflinePlayer(UUID.fromString(((TileState) shop.getLocation().getBlock().getState()).getPersistentDataContainer()
-                            .get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING))), player.getInventory().getStorageContents(),
+                    Bukkit.getOfflinePlayer(shop.getOwnerID()), player.getInventory().getStorageContents(),
                     Utils.getBlockInventory(shop.getLocation().getBlock()).getStorageContents(),
                     shop.getBuyPrice(), shop.getSellPrice(), shop.getShopItem());
             playerHolo.updateTextReplacement("%maxbuy%", possibleCounts.get(0) + "", false, false);

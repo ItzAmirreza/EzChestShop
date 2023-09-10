@@ -148,16 +148,22 @@ public class LanguageManager {
      */
     private String getString(String string) {
         String result = languageConfig.getString(string);
+        // if the result of the defined config in the external file is null, try the internal file.
         if (result == null) {
-            result = YamlConfiguration.loadConfiguration(
-                    new InputStreamReader(EzChestShop.getPlugin().
-                            getResource("translations/" + Config.language + ".yml")))
-                    .getString(string);
+            // Custom translations won't be able to get loaded from the internal file.
+            if (EzChestShop.getPlugin().getResource("translations/" + Config.language + ".yml") != null) {
+                result = YamlConfiguration.loadConfiguration(
+                                new InputStreamReader(EzChestShop.getPlugin().
+                                        getResource("translations/" + Config.language + ".yml")))
+                        .getString(string);
+            }
+            // if the result of the internal file is null, try the external file of Locale_EN.
             if (result == null) {
                 result = YamlConfiguration.loadConfiguration(
                         new File(EzChestShop.getPlugin().getDataFolder(),
                                 "translations/Locale_EN.yml"))
                         .getString(string);
+                // If it's still null, try the internal file of Locale_EN.
                 if (result == null) {
                     result = YamlConfiguration.loadConfiguration(
                             new InputStreamReader(EzChestShop.getPlugin().
