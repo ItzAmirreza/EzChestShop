@@ -32,7 +32,6 @@ public class LanguageManager {
 
     private static FileConfiguration languageConfig;
     private static List<String> supported_locales = Arrays.asList("Locale_EN", "Locale_DE", "Locale_ES", "Locale_CN", "Locale_FA", "Locale_PL", "Locale_TR", "Locale_UA", "Locale_VI", "Locale_SK");
-    private static List<String> found_locales = new ArrayList<>();
 
     public static List<String> getSupportedLanguages() {
         return supported_locales;
@@ -188,7 +187,7 @@ public class LanguageManager {
      * @return a String or one of it's fallbacks.
      */
     private List<String> getList(String string) {
-        List result = languageConfig.getList(string);
+        List<String> result = languageConfig.getStringList(string);
         if (result == null || result.isEmpty()) {
             if (EzChestShop.getPlugin().getResource("translations/" + Config.language + ".yml") != null) {
                 result = YamlConfiguration.loadConfiguration(
@@ -202,14 +201,14 @@ public class LanguageManager {
                                 "translations/Locale_EN.yml"))
                         .getStringList(string);
                 if (result == null || result.isEmpty()) {
-                    result = YamlConfiguration.loadConfiguration(
+                    result = new ArrayList<>(YamlConfiguration.loadConfiguration(
                             new InputStreamReader(EzChestShop.getPlugin().
                                     getResource("translations/Locale_EN.yml")))
-                            .getStringList(string);
+                            .getStringList(string));
                 }
             }
         }
-        return new ArrayList<>(result);
+        return result;
     }
 
 
@@ -750,8 +749,20 @@ public class LanguageManager {
     public String holdSomething() {
         return Utils.colorify(getString("command-messages.holdsomething"));
     }
-    public String notAllowedToCreateOrRemove() {
-        return Utils.colorify(getString("command-messages.notallowdtocreate"));
+    public BaseComponent[] notAllowedToCreateOrRemove(Player player) {
+        ComponentBuilder compb = new ComponentBuilder(Utils.colorify(getString("command-messages.notallowdtocreate")));
+        if (player.isOp() || player.hasPermission("ecs.admin")) {
+            compb.append(" [Hover for Server operator only infos]").color(net.md_5.bungee.api.ChatColor.RED).italic(true)
+                    .event(new ClickEvent(ClickEvent.Action.OPEN_URL, Utils.getDiscordLink()))
+                    .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+                                    new ComponentBuilder("This error indicates that a player is not allowed to break blocks in " +
+                                            "this location, or EzChestShop's World Guard flags prevent it, or a Anti Cheat plugin " +
+                                            "interferes with our break permission check and detects it as \"fast break\" hack.")
+                                            .color(net.md_5.bungee.api.ChatColor.GRAY).create()
+                            )
+                    );
+        }
+        return compb.create();
     }
     public String noChest() {
         return Utils.colorify(getString("command-messages.notchest"));

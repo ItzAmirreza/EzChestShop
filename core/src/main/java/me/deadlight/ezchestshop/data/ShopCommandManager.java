@@ -157,7 +157,6 @@ public class ShopCommandManager {
             EzChestShop.logConsole("&c[&eEzChestShop&c] &eGenerating shopCommands file...");
             customConfigFile.getParentFile().mkdirs();
             EzChestShop.getPlugin().saveResource("shopCommands.yml", false);
-            YamlConfiguration fc = YamlConfiguration.loadConfiguration(customConfigFile);
         }
         YamlConfiguration fc = YamlConfiguration.loadConfiguration(customConfigFile);
         // for all shop types, try loading all actions and check for subkeys (options)

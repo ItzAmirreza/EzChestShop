@@ -298,7 +298,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
 
             if (EzChestShop.worldguard) {
                 if (!WorldGuardUtils.queryStateFlag(FlagRegistry.CREATE_SHOP, player)) {
-                    player.sendMessage(lm.notAllowedToCreateOrRemove());
+                    player.spigot().sendMessage(lm.notAllowedToCreateOrRemove(player));
                     return;
                 }
             }
@@ -311,12 +311,12 @@ public class MainCommands implements CommandExecutor, TabCompleter {
 
                     if (EzChestShop.towny && Config.towny_integration_shops_only_in_shop_plots) {
                         if (!ShopPlotUtil.isShopPlot(target.getLocation())) {
-                            player.sendMessage(lm.notAllowedToCreateOrRemove());
+                            player.spigot().sendMessage(lm.notAllowedToCreateOrRemove(player));
                             return;
                         }
                         if (!(ShopPlotUtil.doesPlayerOwnShopPlot(player, target.getLocation()) ||
                                 ShopPlotUtil.doesPlayerHaveAbilityToEditShopPlot(player, target.getLocation()))) {
-                            player.sendMessage(lm.notAllowedToCreateOrRemove());
+                            player.spigot().sendMessage(lm.notAllowedToCreateOrRemove(player));
                             return;
                         }
                     }
@@ -402,7 +402,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
 
                 }
                     else {
-                        player.sendMessage(lm.notAllowedToCreateOrRemove());
+                        player.spigot().sendMessage(lm.notAllowedToCreateOrRemove(player));
                     }
                 } else {
 
@@ -425,7 +425,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
         if (blockState != null) {
             if (EzChestShop.worldguard) {
                 if (!WorldGuardUtils.queryStateFlag(FlagRegistry.REMOVE_SHOP, player)) {
-                    player.sendMessage(lm.notAllowedToCreateOrRemove());
+                    player.spigot().sendMessage(lm.notAllowedToCreateOrRemove(player));
                     return;
                 }
             }
@@ -1029,7 +1029,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                         }
                     } else if (sendErrors) {
                         if (isCreateOrRemove) {
-                            player.sendMessage(lm.notAllowedToCreateOrRemove());
+                            player.spigot().sendMessage(lm.notAllowedToCreateOrRemove(player));
                         } else {
                             player.sendMessage(lm.notAChestOrChestShop());
                         }

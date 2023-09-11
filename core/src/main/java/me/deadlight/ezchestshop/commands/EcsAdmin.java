@@ -349,12 +349,12 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
                             if (EzChestShop.worldguard) {
                                 if (container.get(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"), PersistentDataType.INTEGER) == 1) {
                                     if (!WorldGuardUtils.queryStateFlag(FlagRegistry.REMOVE_ADMIN_SHOP, player)) {
-                                        player.sendMessage(lm.notAllowedToCreateOrRemove());
+                                        player.spigot().sendMessage(lm.notAllowedToCreateOrRemove(player));
                                         return;
                                     }
                                 } else {
                                     if (!WorldGuardUtils.queryStateFlag(FlagRegistry.REMOVE_SHOP, player)) {
-                                        player.sendMessage(lm.notAllowedToCreateOrRemove());
+                                        player.spigot().sendMessage(lm.notAllowedToCreateOrRemove(player));
                                         return;
                                     }
                                 }
@@ -445,7 +445,7 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
 
             if (EzChestShop.worldguard) {
                 if (!WorldGuardUtils.queryStateFlag(FlagRegistry.CREATE_ADMIN_SHOP, player)) {
-                    player.sendMessage(lm.notAllowedToCreateOrRemove());
+                    player.spigot().sendMessage(lm.notAllowedToCreateOrRemove(player));
                     return;
                 }
             }
@@ -638,7 +638,7 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
                         }
                     } else if (sendErrors) {
                         if (isCreateOrRemove) {
-                            player.sendMessage(lm.notAllowedToCreateOrRemove());
+                            player.spigot().sendMessage(lm.notAllowedToCreateOrRemove(player));
                         } else {
                             player.sendMessage(lm.notAChestOrChestShop());
                         }

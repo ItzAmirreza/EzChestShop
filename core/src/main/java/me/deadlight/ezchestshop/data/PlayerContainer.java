@@ -14,14 +14,12 @@ public class PlayerContainer {
 
     private static HashMap<UUID, PlayerContainer> playerContainerMap = new HashMap<>();
 
-    private OfflinePlayer offlinePlayer;
     private UUID uuid;
     private String suuid;
 
     private HashMap<String, CheckProfitEntry> checkProfits = null;
 
     public PlayerContainer(OfflinePlayer offlinePlayer) {
-        this.offlinePlayer = offlinePlayer;
         this.uuid = offlinePlayer.getUniqueId();
         this.suuid = this.uuid.toString();
     }
