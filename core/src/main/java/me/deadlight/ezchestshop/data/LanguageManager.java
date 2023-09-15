@@ -151,16 +151,22 @@ public class LanguageManager {
      */
     private String getString(String string) {
         String result = languageConfig.getString(string);
+        // if the result of the defined config in the external file is null, try the internal file.
         if (result == null) {
-            result = YamlConfiguration.loadConfiguration(
-                    new InputStreamReader(EzChestShop.getPlugin().
-                            getResource("translations/" + Config.language + ".yml")))
-                    .getString(string);
+            // Custom translations won't be able to get loaded from the internal file.
+            if (EzChestShop.getPlugin().getResource("translations/" + Config.language + ".yml") != null) {
+                result = YamlConfiguration.loadConfiguration(
+                                new InputStreamReader(EzChestShop.getPlugin().
+                                        getResource("translations/" + Config.language + ".yml")))
+                        .getString(string);
+            }
+            // if the result of the internal file is null, try the external file of Locale_EN.
             if (result == null) {
                 result = YamlConfiguration.loadConfiguration(
                         new File(EzChestShop.getPlugin().getDataFolder(),
                                 "translations/Locale_EN.yml"))
                         .getString(string);
+                // If it's still null, try the internal file of Locale_EN.
                 if (result == null) {
                     result = YamlConfiguration.loadConfiguration(
                             new InputStreamReader(EzChestShop.getPlugin().
@@ -185,7 +191,7 @@ public class LanguageManager {
      * @return a String or one of it's fallbacks.
      */
     private List<String> getList(String string) {
-        List result = languageConfig.getList(string);
+        List<String> result = languageConfig.getStringList(string);
         if (result == null || result.isEmpty()) {
             if (EzChestShop.getPlugin().getResource("translations/" + Config.language + ".yml") != null) {
                 result = YamlConfiguration.loadConfiguration(
@@ -199,14 +205,14 @@ public class LanguageManager {
                                 "translations/Locale_EN.yml"))
                         .getStringList(string);
                 if (result == null || result.isEmpty()) {
-                    result = YamlConfiguration.loadConfiguration(
+                    result = new ArrayList<>(YamlConfiguration.loadConfiguration(
                             new InputStreamReader(EzChestShop.getPlugin().
                                     getResource("translations/Locale_EN.yml")))
-                            .getStringList(string);
+                            .getStringList(string));
                 }
             }
         }
-        return new ArrayList<>(result);
+        return result;
     }
 
 
@@ -766,8 +772,27 @@ public class LanguageManager {
     public String holdSomething() {
         return StringUtils.colorify(getString("command-messages.holdsomething"));
     }
-    public String notAllowedToCreateOrRemove() {
-        return StringUtils.colorify(getString("command-messages.notallowdtocreate"));
+    public BaseComponent[] notAllowedToCreateOrRemove(Player player) {
+        ComponentBuilder compb = new ComponentBuilder(StringUtils.colorify(getString("command-messages.notallowdtocreate")));
+        if (player.isOp() || player.hasPermission("ecs.admin")) {
+            compb.append(" [Hover for Server operator only infos]").color(net.md_5.bungee.api.ChatColor.RED).italic(true)
+                    .event(new ClickEvent(ClickEvent.Action.OPEN_URL, Utils.getDiscordLink()))
+                    .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+                                    new ComponentBuilder("If you're unsure where this error originates from, check the following:")
+                                            .color(net.md_5.bungee.api.ChatColor.YELLOW).append(StringUtils.colorify(
+                                            "\n &b> &7Make sure the player can break blocks at this location. WorldGuard, " +
+                                            "Spawn Protection or Region protection plugins like Grief Prevention, etc. my prevent this." +
+                                            "\n &b> &7Make sure ECS's World Guard shop create/remove flags are set to allow (default)." +
+                                            "\n &b> &7If you are using an Anti Cheat plugin it might interfere with our break" +
+                                            " permission check and detects it as \"fast break\" hack. Disable this check if possible." +
+                                            "\n &b> &7If you are using Towny by default shops can only be created in shop plots." +
+                                            "If you want to allow shops to be created in the wilderness, " +
+                                            "you can disable this in the config under the integrations section."))
+                                            .color(net.md_5.bungee.api.ChatColor.GRAY).create()
+                            )
+                    );
+        }
+        return compb.create();
     }
     public String noChest() {
         return StringUtils.colorify(getString("command-messages.notchest"));

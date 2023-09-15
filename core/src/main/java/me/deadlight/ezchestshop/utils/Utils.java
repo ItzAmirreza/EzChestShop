@@ -123,10 +123,24 @@ public class Utils {
      * Then the returned result will be -1
      */
     public static int getMaxPermission(Permissible permissible, String permission) {
+        return getMaxPermission(permissible, permission, 0);
+    }
+
+    /**
+     * Get the max permission level of a permission object (e.g. player)
+     *
+     * @param permissible a object using the Permissible System e.g. a Player.
+     * @param permission  a Permission String to check e.g. ecs.shops.limit.
+     * @param defaultMax  the default max value to return if no permission is found
+     * @return the maximum int found, unless user is an Operator or has the
+     * ecs.admin permission.
+     * Then the returned result will be -1
+     */
+    public static int getMaxPermission(Permissible permissible, String permission, int defaultMax) {
         if (permissible.isOp() || permissible.hasPermission("ecs.admin"))
             return -1;
 
-        final AtomicInteger max = new AtomicInteger();
+        final AtomicInteger max = new AtomicInteger(defaultMax);
 
         permissible.getEffectivePermissions().stream().map(PermissionAttachmentInfo::getPermission)
                 .map(String::toLowerCase).filter(value -> value.startsWith(permission))

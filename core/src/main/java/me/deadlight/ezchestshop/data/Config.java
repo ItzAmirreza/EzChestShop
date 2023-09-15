@@ -75,6 +75,7 @@ public class Config {
     public static boolean notify_overflowing_gui_items;
 
     public static boolean worldguard_integration;
+    public static boolean towny_integration_shops_only_in_shop_plots;
     public static Database database_type;
     public static String databasemysql_ip;
     public static int databasemysql_port;
@@ -185,6 +186,7 @@ public class Config {
         notify_overlapping_gui_items = config.getBoolean("other.notify-op-of-overlapping-gui-items");
         notify_overflowing_gui_items = config.getBoolean("other.notify-op-of-overflowing-gui-items");
         worldguard_integration = config.getBoolean("integration.worldguard");
+        towny_integration_shops_only_in_shop_plots = config.getBoolean("integration.towny.shops-only-in-shop-plots");
         database_type = Database.valueOf(
                 Normalizer.normalize(config.getString("database.type"), Normalizer.Form.NFD)
                         .replaceAll("\\p{M}", "").toUpperCase());
@@ -376,6 +378,12 @@ public class Config {
             fc.set("shops.commands.adminshop.buy.*", Arrays.asList("/tell %player_name% You bought an admin Item!"));
             fc.set("shops.commands.adminshop.sell.*", Arrays.asList("/tell %player_name% You sold an admin Item!"));
             fc.set("shops.commands.adminshop.open", Arrays.asList("/tell %player_name% Opening adminshop!"));
+            fc.save(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml"));
+            Config.loadConfig();
+        }
+
+        if (!fc.isBoolean("integration.towny.shops-only-in-shop-plots")) {
+            fc.set("integration.towny.shops-only-in-shop-plots", true);
             fc.save(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml"));
             Config.loadConfig();
         }

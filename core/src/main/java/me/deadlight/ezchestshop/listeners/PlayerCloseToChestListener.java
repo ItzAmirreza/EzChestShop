@@ -180,12 +180,11 @@ public class PlayerCloseToChestListener implements Listener {
                 if (target == null || !BlockMaterialUtils.isApplicableContainer(target)) {
                     return;
                 }
+                ShopHologram shopHolo = ShopHologram.getHologram(ezShop.getLocation(), player);
                 if (Config.holodistancing_show_item_first) {
-                    ShopHologram shopHolo = ShopHologram.getHologram(ezShop.getLocation(), player);
                     shopHolo.showOnlyItem();
                     shopHolo.showAlwaysVisibleText();
                 } else {
-                    ShopHologram shopHolo = ShopHologram.getHologram(ezShop.getLocation(), player);
                     shopHolo.show();
                 }
 

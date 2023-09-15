@@ -84,12 +84,26 @@ public class MainCommands implements CommandExecutor, TabCompleter {
 
                 // Ensure the shop limit is not reached
                 if (Config.permissions_create_shop_enabled) {
-                    int maxShops = Utils.getMaxPermission(player, "ecs.shops.limit.");
-                    maxShops = maxShops == -1 ? 10000 : maxShops;
-                    int shops = ShopContainer.getShopCount(player);
-                    if (shops >= maxShops) {
-                        player.sendMessage(lm.maxShopLimitReached(maxShops));
-                        return false;
+                    // first check the world, if nothing is found return -2
+                    int maxShopsWorld = Utils.getMaxPermission(player,
+                            "ecs.shops.limit." + player.getWorld().getName() + ".", -2);
+                    if (maxShopsWorld == -2) {
+                        // if nothing is found for the world, check the default permission
+                        int maxShops = Utils.getMaxPermission(player, "ecs.shops.limit.");
+                        maxShops = maxShops == -1 ? 10000 : maxShops;
+                        int shops = ShopContainer.getShopCount(player);
+                        if (shops >= maxShops) {
+                            player.sendMessage(lm.maxShopLimitReached(maxShops));
+                            return false;
+                        }
+                    } else {
+                        // there is a world limit, so check it
+                        maxShopsWorld = maxShopsWorld == -1 ? 10000 : maxShopsWorld;
+                        int shops = ShopContainer.getShopCount(player, player.getWorld());
+                        if (shops >= maxShopsWorld) {
+                            player.sendMessage(lm.maxShopLimitReached(maxShopsWorld));
+                            return false;
+                        }
                     }
                 }
                 // try to create the shop
@@ -177,13 +191,26 @@ public class MainCommands implements CommandExecutor, TabCompleter {
 
     private boolean checkTradeShopPermissionLimit(Player player) {
         if (Config.permissions_create_trade_shop_enabled) {
-            int maxShops = Utils.getMaxPermission(player, "ecs.trade-shops.limit.");
-            maxShops = maxShops == -1 ? 10000 : maxShops;
-            int shops = TradeShopContainer.getShopCount(player);
-            if (shops >= maxShops) {
-                //TODO check if this message needs to be changed
-                player.sendMessage(lm.maxShopLimitReached(maxShops));
-                return true;
+            // first check the world, if nothing is found return -2
+            int maxShopsWorld = Utils.getMaxPermission(player,
+                    "ecs.shops.limit." + player.getWorld().getName() + ".", -2);
+            if (maxShopsWorld == -2) {
+                // if nothing is found for the world, check the default permission
+                int maxShops = Utils.getMaxPermission(player, "ecs.shops.limit.");
+                maxShops = maxShops == -1 ? 10000 : maxShops;
+                int shops = ShopContainer.getShopCount(player);
+                if (shops >= maxShops) {
+                    player.sendMessage(lm.maxShopLimitReached(maxShops));
+                    return true;
+                }
+            } else {
+                // there is a world limit, so check it
+                maxShopsWorld = maxShopsWorld == -1 ? 10000 : maxShopsWorld;
+                int shops = ShopContainer.getShopCount(player, player.getWorld());
+                if (shops >= maxShopsWorld) {
+                    player.sendMessage(lm.maxShopLimitReached(maxShopsWorld));
+                    return true;
+                }
             }
         }
         return false;
@@ -370,19 +397,19 @@ public class MainCommands implements CommandExecutor, TabCompleter {
 
         if (EzChestShop.worldguard) {
             if (!WorldGuardUtils.queryStateFlag(FlagRegistry.CREATE_SHOP, player)) {
-                player.sendMessage(lm.notAllowedToCreateOrRemove());
+                player.spigot().sendMessage(lm.notAllowedToCreateOrRemove(player));
                 return;
             }
         }
 
         if (EzChestShop.towny) {
             if (!ShopPlotUtil.isShopPlot(target.getLocation())) {
-                player.sendMessage(lm.notAllowedToCreateOrRemove());
+                player.spigot().sendMessage(lm.notAllowedToCreateOrRemove(player));
                 return;
             }
             if (!(ShopPlotUtil.doesPlayerOwnShopPlot(player, target.getLocation()) ||
                     ShopPlotUtil.doesPlayerHaveAbilityToEditShopPlot(player, target.getLocation()))) {
-                player.sendMessage(lm.notAllowedToCreateOrRemove());
+                player.spigot().sendMessage(lm.notAllowedToCreateOrRemove(player));
                 return;
             }
         }
@@ -476,19 +503,19 @@ public class MainCommands implements CommandExecutor, TabCompleter {
 
         if (EzChestShop.worldguard) {
             if (!WorldGuardUtils.queryStateFlag(FlagRegistry.CREATE_SHOP, player)) {
-                player.sendMessage(lm.notAllowedToCreateOrRemove());
+                player.spigot().sendMessage(lm.notAllowedToCreateOrRemove(player));
                 return;
             }
         }
 
         if (EzChestShop.towny) {
             if (!ShopPlotUtil.isShopPlot(target.getLocation())) {
-                player.sendMessage(lm.notAllowedToCreateOrRemove());
+                player.spigot().sendMessage(lm.notAllowedToCreateOrRemove(player));
                 return;
             }
             if (!(ShopPlotUtil.doesPlayerOwnShopPlot(player, target.getLocation()) ||
                     ShopPlotUtil.doesPlayerHaveAbilityToEditShopPlot(player, target.getLocation()))) {
-                player.sendMessage(lm.notAllowedToCreateOrRemove());
+                player.spigot().sendMessage(lm.notAllowedToCreateOrRemove(player));
                 return;
             }
         }
@@ -551,7 +578,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
         if (blockState != null) {
             if (EzChestShop.worldguard) {
                 if (!WorldGuardUtils.queryStateFlag(FlagRegistry.REMOVE_SHOP, player)) {
-                    player.sendMessage(lm.notAllowedToCreateOrRemove());
+                    player.spigot().sendMessage(lm.notAllowedToCreateOrRemove(player));
                     return;
                 }
             }
@@ -599,7 +626,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
         if (blockState != null) {
             if (EzChestShop.worldguard) {
                 if (!WorldGuardUtils.queryStateFlag(FlagRegistry.REMOVE_TRADE_SHOP, player)) {
-                    player.sendMessage(lm.notAllowedToCreateOrRemove());
+                    player.spigot().sendMessage(lm.notAllowedToCreateOrRemove(player));
                     return;
                 }
             }

@@ -159,12 +159,12 @@ public class BlockBreakListener implements Listener {
             if (EzChestShop.worldguard) {
                 if (adminshop) {
                     if (!WorldGuardUtils.queryStateFlag(FlagRegistry.REMOVE_ADMIN_SHOP, player)) {
-                        player.sendMessage(lm.notAllowedToCreateOrRemove());
+                        player.spigot().sendMessage(lm.notAllowedToCreateOrRemove(player));
                         event.setCancelled(true);
                     }
                 } else {
                     if (!WorldGuardUtils.queryStateFlag(FlagRegistry.REMOVE_SHOP, player)) {
-                        player.sendMessage(lm.notAllowedToCreateOrRemove());
+                        player.spigot().sendMessage(lm.notAllowedToCreateOrRemove(player));
                         event.setCancelled(true);
                     }
                 }

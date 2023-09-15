@@ -1,4 +1,5 @@
 package me.deadlight.ezchestshop.utils.holograms;
+
 import me.deadlight.ezchestshop.data.Config;
 import me.deadlight.ezchestshop.data.LanguageManager;
 import me.deadlight.ezchestshop.data.ShopContainer;
@@ -8,16 +9,14 @@ import me.deadlight.ezchestshop.utils.InventoryUtils;
 import me.deadlight.ezchestshop.utils.ItemUtils;
 import me.deadlight.ezchestshop.utils.objects.EzShop;
 import me.deadlight.ezchestshop.utils.Utils;
+import me.deadlight.ezchestshop.utils.objects.EzShop;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.block.TileState;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
-import org.bukkit.persistence.PersistentDataType;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -72,9 +71,7 @@ public class ShopHologram {
                 }
             }
             List<String> possibleCounts = InventoryUtils.calculatePossibleAmount(Bukkit.getOfflinePlayer(player.getUniqueId()),
-                    Bukkit.getOfflinePlayer(
-                            UUID.fromString(((TileState) location.getBlock().getState()).getPersistentDataContainer()
-                                    .get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING))),
+                    Bukkit.getOfflinePlayer(shop.getOwnerID()),
                     player.getInventory().getStorageContents(),
                     BlockMaterialUtils.getBlockInventory(location.getBlock()).getStorageContents(),
                     shop.getBuyPrice(), shop.getSellPrice(), shop.getShopItem());
@@ -102,9 +99,15 @@ public class ShopHologram {
                 textReplacements.put("<itemdata" + (i + 1) + "/>", "");
             }
             textReplacements.put("<itemdataRest/>", "");
-            // visible if the shop does not contain at least 1 item.
-            boolean visible = !InventoryUtils.containsAtLeast(shopInventory, shop.getShopItem(), 1);
-            textReplacements.put("<emptyShopInfo/>", visible ? lm.emptyShopHologramInfo() : "");
+            // Emptyshop should only be shown for non-adminshops.
+            // Previous config versions had the placeholder, so this check is needed for backwards compatibility.
+            if (!shop.getSettings().isAdminshop()) {
+                // visible if the shop does not contain at least 1 item.
+                boolean visible = !InventoryUtils.containsAtLeast(shopInventory, shop.getShopItem(), 1);
+                textReplacements.put("<emptyShopInfo/>", visible ? lm.emptyShopHologramInfo() : "");
+            } else {
+                textReplacements.put("<emptyShopInfo/>", "");
+            }
             // the amount of custom message replacements is defined in the config and may wary
             int customLines = structure.stream()
                     .filter(s -> s.startsWith("<custom"))
@@ -358,8 +361,10 @@ public class ShopHologram {
     }
 
     public void updateEmptyShopInfo() {
-        if (shop.getOwnerID().equals(player.getUniqueId()) ||
-                shop.getSettings().getAdmins().contains(player.getUniqueId().toString())) {
+        if (!shop.getSettings().isAdminshop() && (
+                shop.getOwnerID().equals(player.getUniqueId()) ||
+                shop.getSettings().getAdmins().contains(player.getUniqueId().toString())
+            )) {
             PlayerBlockBoundHologram playerHolo = blockHolo.getPlayerHologram(player);
             if (playerHolo != null) {
                 Inventory shopInventory = BlockMaterialUtils.getBlockInventory(location.getBlock());
@@ -442,8 +447,7 @@ public class ShopHologram {
         if (playerHolo != null) {
             shop = ShopContainer.getShop(location);
             List<String> possibleCounts = InventoryUtils.calculatePossibleAmount(Bukkit.getOfflinePlayer(player.getUniqueId()),
-                    Bukkit.getOfflinePlayer(UUID.fromString(((TileState) shop.getLocation().getBlock().getState()).getPersistentDataContainer()
-                            .get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING))), player.getInventory().getStorageContents(),
+                    Bukkit.getOfflinePlayer(shop.getOwnerID()), player.getInventory().getStorageContents(),
                     BlockMaterialUtils.getBlockInventory(shop.getLocation().getBlock()).getStorageContents(),
                     shop.getBuyPrice(), shop.getSellPrice(), shop.getShopItem());
             playerHolo.updateTextReplacement("%maxbuy%", possibleCounts.get(0) + "", false, false);
@@ -452,6 +456,10 @@ public class ShopHologram {
     }
 
     public static void updateInventoryReplacements(Location location) {
+        // Ignore if the shop's Hologram doesn't exist
+        if (!locationBlockHoloMap.containsKey(location)) {
+            return;
+        }
         locationBlockHoloMap.get(location).getViewerHolograms().forEach(playerBlockBoundHologram -> {
             ShopHologram shopHolo = ShopHologram.getHologram(location, playerBlockBoundHologram.getPlayer());
             shopHolo.updateStockAndCapacity();
