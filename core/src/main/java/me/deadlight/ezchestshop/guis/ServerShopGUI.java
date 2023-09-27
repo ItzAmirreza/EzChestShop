@@ -171,7 +171,7 @@ public class ServerShopGUI {
             }
         }
 
-        if (container.hasItem("custome-buy-sell")) {
+        if (container.hasItem("custom-buy-sell")) {
             List<String> possibleCounts = Utils.calculatePossibleAmount(Bukkit.getOfflinePlayer(player.getUniqueId()), null, player.getInventory().getStorageContents(), null, buyPrice, sellPrice, mainitem);
             ContainerGuiItem customBuySellItemStack = container.getItem("custom-buy-sell").setName(lm.customAmountSignTitle())
                     .setLore(lm.customAmountSignLore(possibleCounts.get(0), possibleCounts.get(1)));
