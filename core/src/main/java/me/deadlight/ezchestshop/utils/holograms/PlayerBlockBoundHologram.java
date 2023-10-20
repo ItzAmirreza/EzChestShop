@@ -363,24 +363,17 @@ public class PlayerBlockBoundHologram {
      *     The key is the replacement key and the value is a list of line numbers that need to be replaced
      * </p>
      */
-    private void queryReplacementLines() {
+    private void  queryReplacementLines() {
 
-        Bukkit.getScheduler().runTaskAsynchronously(EzChestShop.getPlugin(),
-                new Runnable() {
-                    @Override
-                    public void run() {
+        queryReplacementLinesIndividual(textReplacements.keySet(), textReplacementLines, "");
 
-                        queryReplacementLinesIndividual(textReplacements.keySet(), textReplacementLines, "");
+        queryReplacementLinesIndividual(itemReplacements.keySet(), itemReplacementLines, "");
 
-                        queryReplacementLinesIndividual(itemReplacements.keySet(), itemReplacementLines, "");
+        // The conditional tags come without the < and >, as they also have a </> equivalent tag.
+        // This is why we need to add them in, to check if the line contains the full tag.
+        queryReplacementLinesIndividual(conditionalTags.keySet()
+                .stream().map(s -> "<" + s + ">").collect(Collectors.toSet()), conditionalTagLines, "<|>");
 
-                        // The conditional tags come without the < and >, as they also have a </> equivalent tag.
-                        // This is why we need to add them in, to check if the line contains the full tag.
-                        queryReplacementLinesIndividual(conditionalTags.keySet()
-                                .stream().map(s -> "<" + s + ">").collect(Collectors.toSet()), conditionalTagLines, "<|>");
-
-                    }
-                });
     }
 
     /**

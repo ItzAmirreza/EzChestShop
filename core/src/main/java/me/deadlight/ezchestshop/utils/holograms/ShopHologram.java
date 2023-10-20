@@ -440,10 +440,28 @@ public class ShopHologram {
             Inventory shopInventory = Utils.getBlockInventory(location.getBlock());
             assert shopInventory != null;
             int availableSlots = shopInventory.getSize();
-            playerHolo.updateTextReplacement("%stock%", Utils.howManyOfItemExists(shopInventory.getStorageContents(),
-                    shop.getShopItem()) + "", true, false);
-            playerHolo.updateTextReplacement("%capacity%", availableSlots * shop.getShopItem().getMaxStackSize() + "",
-                    true, false);
+
+            //check if the hologram text actually contains the %stock% and %capacity% placeholders
+            boolean containsStock = false;
+            boolean containsCapacity = false;
+
+            for (String content : playerHolo.getBlockHologram().getContents()) {
+                if (content.contains("%stock%")) {
+                    containsStock = true;
+                }
+                if (content.contains("%capacity%")) {
+                    containsCapacity = true;
+                }
+            }
+
+            if (containsStock) {
+                playerHolo.updateTextReplacement("%stock%", Utils.howManyOfItemExists(shopInventory.getStorageContents(),
+                        shop.getShopItem()) + "", true, false);
+            }
+            if (containsCapacity) {
+                playerHolo.updateTextReplacement("%capacity%", availableSlots * shop.getShopItem().getMaxStackSize() + "",
+                        true, false);
+            }
         }
     }
 
@@ -455,8 +473,27 @@ public class ShopHologram {
                     Bukkit.getOfflinePlayer(shop.getOwnerID()), player.getInventory().getStorageContents(),
                     Utils.getBlockInventory(shop.getLocation().getBlock()).getStorageContents(),
                     shop.getBuyPrice(), shop.getSellPrice(), shop.getShopItem());
-            playerHolo.updateTextReplacement("%maxbuy%", possibleCounts.get(0) + "", false, false);
-            playerHolo.updateTextReplacement("%maxsell%", possibleCounts.get(1) + "", false, false);
+
+            //check if the hologram text actually contains the %maxbuy% and %maxsell% placeholders
+            boolean containsMaxBuy = false;
+            boolean containsMaxSell = false;
+
+            for (String content : playerHolo.getBlockHologram().getContents()) {
+                if (content.contains("%maxbuy%")) {
+                    containsMaxBuy = true;
+                }
+                if (content.contains("%maxsell%")) {
+                    containsMaxSell = true;
+                }
+            }
+
+            if (containsMaxBuy) {
+                playerHolo.updateTextReplacement("%maxbuy%", possibleCounts.get(0) + "", true, false);
+            }
+
+            if (containsMaxSell) {
+                playerHolo.updateTextReplacement("%maxsell%", possibleCounts.get(1) + "", true, false);
+            }
         }
     }
 
