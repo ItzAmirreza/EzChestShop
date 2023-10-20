@@ -58,6 +58,7 @@ public class ShopHologram {
 
             String itemName = Utils.getFinalItemName(shop.getShopItem());
             Inventory shopInventory = Utils.getBlockInventory(location.getBlock());
+            assert shopInventory != null;
             int availableSlots = shopInventory.getSize();
             for (ItemStack item : shopInventory.getStorageContents()) {
                 // if item is one of the below, then it is a slot that can be used, otherwise subtract from available slots.
@@ -437,6 +438,7 @@ public class ShopHologram {
         if (playerHolo != null) {
             shop = ShopContainer.getShop(location);
             Inventory shopInventory = Utils.getBlockInventory(location.getBlock());
+            assert shopInventory != null;
             int availableSlots = shopInventory.getSize();
             playerHolo.updateTextReplacement("%stock%", Utils.howManyOfItemExists(shopInventory.getStorageContents(),
                     shop.getShopItem()) + "", true, false);
@@ -463,11 +465,12 @@ public class ShopHologram {
         if (!locationBlockHoloMap.containsKey(location)) {
             return;
         }
+        //laggy part
         locationBlockHoloMap.get(location).getViewerHolograms().forEach(playerBlockBoundHologram -> {
             ShopHologram shopHolo = ShopHologram.getHologram(location, playerBlockBoundHologram.getPlayer());
-            shopHolo.updateStockAndCapacity();
+            shopHolo.updateStockAndCapacity(); //second we gonna look into this
             shopHolo.updateEmptyShopInfo();
-            shopHolo.updateMaxBuyAndSell();
+            shopHolo.updateMaxBuyAndSell(); //first we gonna look into this
         });
     }
 

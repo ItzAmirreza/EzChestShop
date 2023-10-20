@@ -1,6 +1,5 @@
 package me.deadlight.ezchestshop.utils;
 
-import me.deadlight.ezchestshop.EzChestShop;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 

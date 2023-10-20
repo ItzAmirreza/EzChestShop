@@ -11,7 +11,8 @@ softdepend:
   - CMI
   - PlaceholderAPI
   - Towny
-authors: [Dead_Light, ElitoGame]
+  - AdvancedRegionMarket
+authors: [ItzAmirreza, ElitoGame]
 description: ${project.description}
 commands:
   ecs:

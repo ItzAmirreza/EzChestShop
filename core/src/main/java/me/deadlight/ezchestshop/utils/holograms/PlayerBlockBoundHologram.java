@@ -1,9 +1,11 @@
 package me.deadlight.ezchestshop.utils.holograms;
 
+import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.data.Config;
 import me.deadlight.ezchestshop.utils.ASHologram;
 import me.deadlight.ezchestshop.utils.FloatingItem;
 import me.deadlight.ezchestshop.utils.Utils;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -363,14 +365,22 @@ public class PlayerBlockBoundHologram {
      */
     private void queryReplacementLines() {
 
-        queryReplacementLinesIndividual(textReplacements.keySet(), textReplacementLines, "");
+        Bukkit.getScheduler().runTaskAsynchronously(EzChestShop.getPlugin(),
+                new Runnable() {
+                    @Override
+                    public void run() {
 
-        queryReplacementLinesIndividual(itemReplacements.keySet(), itemReplacementLines, "");
+                        queryReplacementLinesIndividual(textReplacements.keySet(), textReplacementLines, "");
 
-        // The conditional tags come without the < and >, as they also have a </> equivalent tag.
-        // This is why we need to add them in, to check if the line contains the full tag.
-        queryReplacementLinesIndividual(conditionalTags.keySet()
-                .stream().map(s -> "<" + s + ">").collect(Collectors.toSet()), conditionalTagLines, "<|>");
+                        queryReplacementLinesIndividual(itemReplacements.keySet(), itemReplacementLines, "");
+
+                        // The conditional tags come without the < and >, as they also have a </> equivalent tag.
+                        // This is why we need to add them in, to check if the line contains the full tag.
+                        queryReplacementLinesIndividual(conditionalTags.keySet()
+                                .stream().map(s -> "<" + s + ">").collect(Collectors.toSet()), conditionalTagLines, "<|>");
+
+                    }
+                });
     }
 
     /**

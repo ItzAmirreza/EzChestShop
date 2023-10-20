@@ -592,6 +592,20 @@ public class Utils {
         return String.valueOf(result);
     }
 
+    public static HashMap<OfflinePlayer, Boolean> hasPlayedBefore = new HashMap<>();
+    public static boolean hasPlayedBefore(OfflinePlayer player) {
+        if (player == null) {
+            return false;
+        }
+        if (hasPlayedBefore.containsKey(player)) {
+            return hasPlayedBefore.get(player);
+        } else {
+            boolean result = player.hasPlayedBefore();
+            hasPlayedBefore.put(player, result);
+            return result;
+        }
+    }
+
     public static String calculateSellPossibleAmount(OfflinePlayer offlinePlayer, ItemStack[] playerInventory,
                                                      ItemStack[] storageInventory, double eachSellPrice, ItemStack itemStack) {
 
@@ -600,7 +614,7 @@ public class Utils {
         if (offlinePlayer == null) {
             buyerBalance = Double.MAX_VALUE;
         } else {
-            if (offlinePlayer.hasPlayedBefore()) {
+            if (hasPlayedBefore(offlinePlayer)) {
                 buyerBalance = Config.useXP ?
                             XPEconomy.getXP(offlinePlayer) :
                             EzChestShop.getEconomy().getBalance(offlinePlayer);
