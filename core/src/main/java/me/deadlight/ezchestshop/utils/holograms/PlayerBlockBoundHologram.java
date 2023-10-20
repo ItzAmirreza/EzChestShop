@@ -613,7 +613,7 @@ public class PlayerBlockBoundHologram {
      * Calculate the processed contents of the hologram.
      * <br>
      * The processed contents are the contents of the hologram with all
-     * replacements, colorifications, reversals and conditional tags applied.
+     * replacements, colors, reversals and conditional tags applied.
      *
      * @return The processed contents
      */
@@ -637,6 +637,9 @@ public class PlayerBlockBoundHologram {
 
         // Process the text replacements
         for (String key : textReplacements.keySet()) {
+            if (!textReplacementLines.containsKey(key)) {
+                continue;
+            }
             String replacement = textReplacements.get(key);
             for (int line : textReplacementLines.get(key)) {
                 // replace the placeholder with the replacement text
