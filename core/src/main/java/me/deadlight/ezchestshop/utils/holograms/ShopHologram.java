@@ -105,7 +105,10 @@ public class ShopHologram {
             textReplacements.put("<itemdataRest/>", "");
             // Emptyshop should only be shown for non-adminshops.
             // Previous config versions had the placeholder, so this check is needed for backwards compatibility.
-            if (!shop.getSettings().isAdminshop()) {
+            if (!shop.getSettings().isAdminshop() &&
+                (shop.getOwnerID() == player.getUniqueId() ||
+                    shop.getSettings().getAdmins().contains(player.getUniqueId().toString()))
+            ) {
                 // visible if the shop does not contain at least 1 item.
                 boolean visible = !Utils.containsAtLeast(shopInventory, shop.getShopItem(), 1);
                 textReplacements.put("<emptyShopInfo/>", visible ? lm.emptyShopHologramInfo() : "");

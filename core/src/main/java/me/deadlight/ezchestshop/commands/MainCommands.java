@@ -355,17 +355,20 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                             }
                             //owner, buy, sell, msgtoggle, dbuy, dsell, admins, shareincome, trans, adminshop, rotation
 
+                            int isDbuy = Config.settings_zero_equals_disabled ?
+                                    (buyprice == 0 ? 1 : (Config.settings_defaults_dbuy ? 1 : 0))
+                                    : (Config.settings_defaults_dbuy ? 1 : 0);
+                            int isDSell = Config.settings_zero_equals_disabled ?
+                                    (sellprice == 0 ? 1 : (Config.settings_defaults_dsell ? 1 : 0))
+                                    : (Config.settings_defaults_dsell ? 1 : 0);
+
                             container.set(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING, player.getUniqueId().toString());
                             container.set(new NamespacedKey(EzChestShop.getPlugin(), "buy"), PersistentDataType.DOUBLE, buyprice);
                             container.set(new NamespacedKey(EzChestShop.getPlugin(), "sell"), PersistentDataType.DOUBLE, sellprice);
                             //add new settings data later
                             container.set(new NamespacedKey(EzChestShop.getPlugin(), "msgtoggle"), PersistentDataType.INTEGER, Config.settings_defaults_transactions ? 1 : 0);
-                            container.set(new NamespacedKey(EzChestShop.getPlugin(), "dbuy"), PersistentDataType.INTEGER, Config.settings_zero_equals_disabled ?
-                                            (buyprice == 0 ? 1 : (Config.settings_defaults_dbuy ? 1 : 0))
-                                            : (Config.settings_defaults_dbuy ? 1 : 0));
-                            container.set(new NamespacedKey(EzChestShop.getPlugin(), "dsell"), PersistentDataType.INTEGER, Config.settings_zero_equals_disabled ?
-                                            (sellprice == 0 ? 1 : (Config.settings_defaults_dsell ? 1 : 0))
-                                            : (Config.settings_defaults_dsell ? 1 : 0));
+                            container.set(new NamespacedKey(EzChestShop.getPlugin(), "dbuy"), PersistentDataType.INTEGER, isDbuy);
+                            container.set(new NamespacedKey(EzChestShop.getPlugin(), "dsell"), PersistentDataType.INTEGER, isDSell);
                             container.set(new NamespacedKey(EzChestShop.getPlugin(), "admins"), PersistentDataType.STRING, "none");
                             container.set(new NamespacedKey(EzChestShop.getPlugin(), "shareincome"), PersistentDataType.INTEGER, Config.settings_defaults_shareprofits ? 1 : 0);
                             //container.set(new NamespacedKey(EzChestShop.getPlugin(), "trans"), PersistentDataType.STRING, "none");
@@ -386,7 +389,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                             Utils.storeItem(thatItem, container);
                             state.update();
                             ShopContainer.createShop(target.getLocation(), player, thatItem, buyprice, sellprice, false,
-                                    false, false, "none", true, false, Config.settings_defaults_rotation);
+                                    isDbuy == 1, isDSell == 1, "none", true, false, Config.settings_defaults_rotation);
 
                             player.sendMessage(lm.shopCreated());
 
