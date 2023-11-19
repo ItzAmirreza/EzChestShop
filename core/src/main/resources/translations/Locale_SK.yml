@@ -5,10 +5,10 @@
 shop-gui:
   initialbuyprice: "&aPočiatočná nákupná cena: &e%buyprice% %currency%"
   initialsellprice: "&cPočiatočná predajná cena: &e%sellprice% %currency%"
-  admin-title: "&c%shopowner%ov obchod &4(správcovské zobrazenie)"
+  admin-title: "&c%shopowner%ov obchod &4(správca)"
   nonowner-title: "&c%shopowner%ov obchod"
   owner-title: "&c%shopowner%ov obchod"
-  adminshop-title: "&Obchod správcu"
+  adminshop-title: "&cServerový obchod"
   buttons:
     sellX-title: "&cPredaj %amount%x"
     sellX-lore:
@@ -16,7 +16,7 @@ shop-gui:
     buyX-title: "&aKúp %amount%x"
     buyX-lore:
       - "&7Kúp za &e%price% %currency%"
-    adminview: "&c&lZobrazenie správcu"
+    adminview: "&c&lZobrazenie správcu servera"
     storage: "&e&lSklad"
     settings: "&b&lNastavenia"
     disabled-title: "&cZakázané"
@@ -76,14 +76,14 @@ settings:
       Title: "&eSprávcovia obchodu"
       nobodyStatusAdmins: "&aNikto"
       Lore:
-        - "&7Môžeš pridať, alebo odstrániť správcov "
+        - "&7Môžeš pridať, alebo odstrániť správcov"
         - " &7tvojho obchodu. Správcovia majú "
         - " &7prístup do skladu obchodu a k rôznym"
         - " &7nastaveniam (všetkým, okrem podielu z príjmov "
         - " &7a pridávaniu/odstraňovaniu správcov). "
         - " &aKlikni ľavým tlačidlom myši &7pre pridanie správcu "
         - " &cKlikni pravým tlačidlom myši &7pre odstránenie správcu "
-        - " &7Aktuálny správcovia: %admins%"
+        - " &7Aktuálny správcovia obchodu: %admins%"
     sharedIncome:
       Title: "&ePodiel z príjmov"
       Lore:
@@ -131,9 +131,9 @@ settings:
         - "&7Klikni sem ak chceš upraviť"
         - "&7svoje správy na holograme!"
       LoreEdit:
-        - "&cĽavým kliknutím uprav vlastnú"
-        - "&csprávu pre hologram!"
-        - "&aPravým kliknutím uprav svoje"
+        - "&cĽavým kliknutím nastav"
+        - "&cvlastnú správu na holograme!"
+        - "&aPravým kliknutím uprav"
         - "&aaktuálne správy na holograme!"
         - " &d "
         - "&8Môžeš použiť riadok %lineNumbers%!"
@@ -153,14 +153,14 @@ settings:
       MessageOn: "&7Zakáž predaj: &aZapnuté"
       MessageOff: "&7Zakáž predaj: &cVypnuté"
     shopAdmins:
-      addingAdminWaiting: "&eZadaj prosím meno osoby, ktorú chceš pridať do zoznamu správcov."
-      removingAdminWaiting: "&eZadaj prosím meno osoby, ktorú chceš odstrániť zo zoznamu správcov."
+      addingAdminWaiting: "&eZadaj prosím meno osoby, ktorú chceš pridať do zoznamu správcov obchodu."
+      removingAdminWaiting: "&eZadaj prosím meno osoby, ktorú chceš odstrániť zo zoznamu správcov obchodu."
       selfAdmin: "&cSeba do zoznamu správcov nemôžeš pridať ani sa odstrániť!"
       sucAdminAdded: "&e%player% bol &úspešne pridaný do zoznamu správcov."
       alreadyAdmin: "&cTento hráč už je v zozname správcov!"
       noPlayer: "&cTento hráč neexistuje, alebo tu ešte nehral."
       sucAdminRemoved: "&e%player% bol &aúspešne odstránený zo zoznamu správcov."
-      notInAdminList: "&cTento hráč nie je v zozname správcov!"
+      notInAdminList: "&cTento hráč nie je v zozname správcov obchodu!"
       clearedAdmins: "&cVšetci správcovia boli odstránený z tohto obchodu."
     sharedIncome:
       MessageOn: "&7Podiel z príjmov: &aZapnutý"
@@ -186,8 +186,10 @@ customMessageManager:
   buttons:
     previousPage:
       Title: "&ePredchádzajúca"
+      Lore:
     nextPage:
       Title: "&eĎalšia"
+      Lore:
     shopEntry:
       Title: "&7Obchod &7%shopitem%"
       UnkownTitle: "&cNeznámy obchod"
@@ -270,15 +272,15 @@ command-messages:
     - "&7- &c/ecs emptyshops &7| Zobrazí tvoje prázdne obchody vo tvojej blízkosti."
     - "&7 Jednoduché, však? :)"
   help-admin-view-addition:
-    - "&cPomoc pre správcov: "
+    - "&cPomoc pre správcov servera: "
     - "&7- &c/ecsadmin"
   adminhelp:
-    - "&cPomoc pre správcov: "
+    - "&cPomoc pre správcov servera: "
     - "&7- &c/&eecsadmin remove &7| Zruší obchod na ktorý sa pozeráš (aj keď zrušiť ho môžeš aj rozbitím) "
     - "&7- &c/&eecsadmin reload &7| Znova nahraj konfiguráciu pluginu"
-    - "&7- &c/&eecsadmin create (nákup) (predaj) &7| Vytvor správcovský obchod"
+    - "&7- &c/&eecsadmin create (nákup) (predaj) &7| Vytvor serverový obchod"
     - "&7- &c/&eecsadmin transfer-ownership (player) &7| Prenes vlastníctvo ktoréhokoľvek obchodu na iného hráča."
-    - "&7- &c/&eecsadmin uploadlogs &7| upload ECS related infos to ECS's debug website. For faster help, include this in your bug report on ECS's discord!"
+    - "&7- &c/&eecsadmin uploadlogs &7| nahraj pre ECS relevantné informácie na ladiacu stránku ECS pluginu. Aby si získal pomoc rýchlejšie, pridat toto do scojej správy o chybe naECS discord!"
     - "&7 Ak chceš ďalšiu pomoc, pridaj sa na náš [&bDiscord](%discord_link% Klikni a pridaj sa na Discord pre získanie podpory!)&7!"
   alreadyashop: "&cTento kontajner už je obchod!"
   shopcreated: "&aÚspešne si vytvoril(-a) obchod!"
