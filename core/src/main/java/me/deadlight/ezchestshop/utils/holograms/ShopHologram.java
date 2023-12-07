@@ -86,8 +86,8 @@ public class ShopHologram {
              */
             HashMap<String, String> textReplacements = new HashMap<>();
             textReplacements.put("%item%", itemName);
-            textReplacements.put("%buy%", shop.getBuyPrice() + "");
-            textReplacements.put("%sell%", shop.getSellPrice() + "");
+            textReplacements.put("%buy%", Utils.formatNumber(shop.getBuyPrice(), Utils.FormatType.HOLOGRAM));
+            textReplacements.put("%sell%", Utils.formatNumber(shop.getSellPrice(), Utils.FormatType.HOLOGRAM));
             textReplacements.put("%currency%", Config.currency);
             textReplacements.put("%owner%", Bukkit.getOfflinePlayer(shop.getOwnerID()).getName());
             textReplacements.put("%maxbuy%", possibleCounts.get(0));
@@ -387,7 +387,7 @@ public class ShopHologram {
         PlayerBlockBoundHologram playerHolo = blockHolo.getPlayerHologram(player);
         if (playerHolo != null) {
             shop = ShopContainer.getShop(location);
-            playerHolo.updateTextReplacement("%buy%", shop.getBuyPrice() + "", true, true);
+            playerHolo.updateTextReplacement("%buy%", Utils.formatNumber(shop.getBuyPrice(), Utils.FormatType.HOLOGRAM), true, true);
         }
     }
 
@@ -395,7 +395,7 @@ public class ShopHologram {
         PlayerBlockBoundHologram playerHolo = blockHolo.getPlayerHologram(player);
         if (playerHolo != null) {
             shop = ShopContainer.getShop(location);
-            playerHolo.updateTextReplacement("%sell%", shop.getSellPrice() + "", true, true);
+            playerHolo.updateTextReplacement("%sell%", Utils.formatNumber(shop.getSellPrice(), Utils.FormatType.HOLOGRAM), true, true);
         }
     }
 

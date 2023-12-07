@@ -867,6 +867,7 @@ public class Utils {
                 result = decimalFormat.format(number);
                 break;
         }
+        EzChestShop.logDebug("Formatted number " + number + " to " + result);
         return result;
     }
 

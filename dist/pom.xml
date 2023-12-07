@@ -11,7 +11,7 @@
     <parent>
         <groupId>me.deadlight</groupId>
         <artifactId>EzChestShop-parent</artifactId>
-        <version>1.6.4.5</version>
+        <version>1.6.4.6</version>
     </parent>
 
     <name>EzChestShop</name>
@@ -82,6 +82,11 @@
         <dependency>
             <groupId>me.deadlight</groupId>
             <artifactId>EzChestShop-core</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>me.deadlight</groupId>
+            <artifactId>EzChestShop-craftbukkit_1_20_R3</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>
