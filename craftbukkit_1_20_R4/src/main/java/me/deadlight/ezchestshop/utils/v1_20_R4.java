@@ -34,7 +34,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class v1_20_R3 extends VersionUtils {
+public class v1_20_R4 extends VersionUtils {
 
     private static final Map<SignMenuFactory, UpdateSignListener> listeners = new HashMap<>();
     private static Map<Integer, Entity> entities = new HashMap<>();
@@ -197,7 +197,7 @@ public class v1_20_R3 extends VersionUtils {
 
     @Override
     void openMenu(SignMenuFactory.Menu menu, Player player) {
-        MenuOpener_v1_20_R3.openMenu(menu, player);
+        MenuOpener_v1_20_R4.openMenu(menu, player);
     }
 
     @Override
@@ -206,7 +206,7 @@ public class v1_20_R3 extends VersionUtils {
         Field field = ((CraftPlayer) player).getHandle().connection.getClass().getSuperclass().getDeclaredField("c");
         field.setAccessible(true);
         Connection netManager = (Connection) field.get(((CraftPlayer) player).getHandle().connection);
-        netManager.channel.pipeline().addBefore("packet_handler", "ecs_listener", new ChannelHandler_v1_20_R3(player));
+        netManager.channel.pipeline().addBefore("packet_handler", "ecs_listener", new ChannelHandler_v1_20_R4(player));
     }
 
     @Override

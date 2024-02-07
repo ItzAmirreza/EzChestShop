@@ -93,6 +93,9 @@ public class ShopSettings {
     }
 
     public String getAdmins() {
+        if (admins == null) {
+            admins = "";
+        }
         return admins;
     }
 
