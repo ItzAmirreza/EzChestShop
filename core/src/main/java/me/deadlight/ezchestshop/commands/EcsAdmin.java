@@ -246,6 +246,8 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
     }
 
     private void reload() {
+        //EzChestShop.getPlugin().getDatabase().load();
+        ShopContainer.queryShopsToMemory();
         Config.loadConfig();
         ShopHologram.reloadAll();
         LanguageManager.reloadLanguages();
