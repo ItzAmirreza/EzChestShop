@@ -129,6 +129,9 @@ public class PlayerTransactionListener implements Listener {
         ItemStack item = event.getItem(); // Item shop sells
         PlayerContainer owner = PlayerContainer.get(event.getOwner());
         if (event.isBuy()) {
+            if(Config.taxesBuy > 0){
+                price = price * (100 - Config.taxesBuy) / 100;
+            }
             if (event.isShareIncome()) {
                 int admin_count = event.getAdminsUUID().size();
                 for (UUID uuid : event.getAdminsUUID()) {
@@ -143,6 +146,9 @@ public class PlayerTransactionListener implements Listener {
                 owner.updateProfits(id, item, count, price, event.getBuyPrice(), 0, 0.0, event.getSellPrice());
             }
         } else {
+            if(Config.taxesSell > 0){
+                price = price * (100 - Config.taxesSell) / 100;
+            }
             owner.updateProfits(id, item, 0, 0.0, event.getBuyPrice(), count, price, event.getSellPrice());
         }
             // ItemStack,BuyAmount,BuyPrice,SellAmount,SellPrice

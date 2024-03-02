@@ -269,7 +269,7 @@ public class ShopContainer {
                     //For the transaction event
                     thatItem.setAmount(count);
                     Utils.removeItem(Utils.getBlockInventory(containerBlock), thatItem);
-                    getandgive(Bukkit.getOfflinePlayer(player.getUniqueId()), price, owner, Config.taxesbuy);
+                    getandgive(Bukkit.getOfflinePlayer(player.getUniqueId()), price, owner, Config.taxesBuy);
                     sharedIncomeCheck(data, price);
                     transactionMessage(data, owner, player, price, true, tthatItem, count, containerBlock.getLocation().getBlock());
                     player.sendMessage(lm.messageSuccBuy(price));
@@ -319,7 +319,7 @@ public class ShopContainer {
                     //For the transaction event
                     thatItem.setAmount(count);
                     Utils.removeItem(player.getInventory(), thatItem);
-                    getandgive(owner, price, Bukkit.getOfflinePlayer(player.getUniqueId()), Config.taxessell);
+                    getandgive(owner, price, Bukkit.getOfflinePlayer(player.getUniqueId()), Config.taxesSell);
                     transactionMessage(data, owner, Bukkit.getOfflinePlayer(player.getUniqueId()), price, false, tthatItem, count, containerBlock.getLocation().getBlock());
                     player.sendMessage(lm.messageSuccSell(price));
                     player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 0.5f, 0.5f);
@@ -473,8 +473,8 @@ public class ShopContainer {
         if (isSharedIncome) {
             UUID ownerUUID = UUID.fromString(data.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING));
             List<UUID> adminsList = Utils.getAdminsList(data);
-            if (Config.taxesbuy != 0) {
-                price = price * (100 - Config.taxesbuy) / 100;
+            if (Config.taxesBuy > 0) {
+                price = price * (100 - Config.taxesBuy) / 100;
             }
             double profit = price/(adminsList.size() + 1);
             if (!adminsList.isEmpty()) {

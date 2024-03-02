@@ -99,8 +99,8 @@ public class Config {
 
     public static boolean shopCommandsEnabled;
     public static ShopCommandManager shopCommandManager;
-    public static int taxesbuy;
-    public static int taxessell;
+    public static int taxesBuy;
+    public static int taxesSell;
     public static String leader;
 
 
@@ -111,8 +111,8 @@ public class Config {
         FileConfiguration config = EzChestShop.getPlugin().getConfig();
         currency = config.getString("economy.server-currency");
         useXP = EzChestShop.economyPluginFound ? config.getBoolean("economy.use-xp") : true;
-        taxesbuy = config.getInt("economy.taxes.buy-from-shop-tax-percent");
-        taxessell = config.getInt("economy.taxes.sell-to-shop-tax-percent");
+        taxesBuy = config.getInt("economy.taxes.buy-from-shop-tax-percent");
+        taxesSell = config.getInt("economy.taxes.sell-to-shop-tax-percent");
         leader = config.getString("economy.taxes.collecting-player-name");
 
         showholo = config.getBoolean("shops.hologram.show-holograms");
@@ -379,7 +379,7 @@ public class Config {
             fc.save(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml"));
             Config.loadConfig();
         }
-        
+
         if (!fc.isInt("economy.taxes.sell-to-shop-tax-percent")) {
             fc.set("economy.taxes.sell-to-shop-tax-percent", 0);
             fc.set("economy.taxes.buy-from-shop-tax-percent", 0);
