@@ -379,12 +379,11 @@ public class Config {
             fc.save(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml"));
             Config.loadConfig();
         }
-
-        if (!fc.isBoolean("economy.taxes.taxes-on-adminshops")) {
+        
+        if (!fc.isInt("economy.taxes.sell-to-shop-tax-percent")) {
             fc.set("economy.taxes.sell-to-shop-tax-percent", 0);
             fc.set("economy.taxes.buy-from-shop-tax-percent", 0);
             fc.set("economy.taxes.collecting-player-name", "");
-            fc.set("economy.taxes.taxes-on-adminshops", true);
             fc.save(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml"));
             Config.loadConfig();
         }

@@ -119,7 +119,6 @@ economy:
     sell-to-shop-tax-percent: 0
     buy-from-shop-tax-percent: 0
     collecting-player-name: ""
-    taxes-on-adminshops: true
 commands:
   # Register easier to remember alias on server startup: /shop and /adminshop
   alias:
