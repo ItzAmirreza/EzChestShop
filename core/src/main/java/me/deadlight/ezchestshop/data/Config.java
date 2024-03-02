@@ -99,6 +99,9 @@ public class Config {
 
     public static boolean shopCommandsEnabled;
     public static ShopCommandManager shopCommandManager;
+    public static int taxesbuy;
+    public static int taxessell;
+    public static String leader;
 
 
     public static void loadConfig() {
@@ -108,6 +111,9 @@ public class Config {
         FileConfiguration config = EzChestShop.getPlugin().getConfig();
         currency = config.getString("economy.server-currency");
         useXP = EzChestShop.economyPluginFound ? config.getBoolean("economy.use-xp") : true;
+        taxesbuy = config.getInt("economy.taxes.buy-from-shop-tax-percent");
+        taxessell = config.getInt("economy.taxes.sell-to-shop-tax-percent");
+        leader = config.getString("economy.taxes.collecting-player-name");
 
         showholo = config.getBoolean("shops.hologram.show-holograms");
         holostructure = config.getStringList("shops.hologram.holo-structure");
@@ -197,6 +203,7 @@ public class Config {
 
         shopCommandsEnabled = config.getBoolean("shops.commands.enabled");
         shopCommandManager = new ShopCommandManager();
+
     }
 
 
@@ -369,6 +376,15 @@ public class Config {
 
         if (!fc.isBoolean("integration.towny.shops-only-in-shop-plots")) {
             fc.set("integration.towny.shops-only-in-shop-plots", true);
+            fc.save(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml"));
+            Config.loadConfig();
+        }
+
+        if (!fc.isBoolean("economy.taxes.taxes-on-adminshops")) {
+            fc.set("economy.taxes.sell-to-shop-tax-percent", 0);
+            fc.set("economy.taxes.buy-from-shop-tax-percent", 0);
+            fc.set("economy.taxes.collecting-player-name", "");
+            fc.set("economy.taxes.taxes-on-adminshops", true);
             fc.save(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml"));
             Config.loadConfig();
         }
