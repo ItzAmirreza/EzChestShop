@@ -38,6 +38,27 @@ public class CommandCheckProfits implements CommandExecutor, Listener, TabComple
             List<CheckProfitEntry> checkprofits = pc.getProfits().entrySet().stream().map(x -> x.getValue())
                     .filter(x -> x.getItem() != null).collect(Collectors.toList());
 
+            //if the command is executed on another player
+            Player target = null;
+            int isOther = 0;
+            if(p.hasPermission("ecs.checkprofits.other")){
+                if((args.length == 3 && Bukkit.getPlayerExact(args[2]) != null)){
+                    target = Bukkit.getPlayerExact(args[2]);
+                    isOther = 3;
+                }else if(args.length == 2 && args[0].equals("clear") && Bukkit.getPlayerExact(args[1]) != null){
+                    target = Bukkit.getPlayerExact(args[1]);
+                    isOther = 2;
+                }else if(args.length == 1 && Bukkit.getPlayerExact(args[0]) != null){
+                    target = Bukkit.getPlayerExact(args[0]);
+                    isOther = 1;
+                }
+                if(target != null){
+                    pc = PlayerContainer.get(target);
+                    checkprofits = pc.getProfits().entrySet().stream().map(x -> x.getValue())
+                            .filter(x -> x.getItem() != null).collect(Collectors.toList());
+                }
+            }
+
             ChatColor tc = ChatColor.GRAY;// Text color
             ChatColor hl = ChatColor.GOLD;// Highlight
             ChatColor link = ChatColor.AQUA;
@@ -48,7 +69,7 @@ public class CommandCheckProfits implements CommandExecutor, Listener, TabComple
              * ./checkprofits ./checkprofits p 1 ./checkprofits clear ./checkprofits clear
              * -confirm
              */
-            if (args.length == 0) {
+            if (args.length == 0 || isOther == 1) {
                 Integer buyAmount = 0;
                 Double buyCost = 0.0;
                 Integer sellAmount = 0;
@@ -79,13 +100,17 @@ public class CommandCheckProfits implements CommandExecutor, Listener, TabComple
                             return x.getSellPrice();
                     }));
                 }
-                p.spigot().sendMessage(lm.checkProfitsLandingpage(p, buyCost, buyAmount, sellCost, sellAmount));
-            } else if (args.length == 1) {
-                if (args[0].equals("clear")) {
+                if(isOther == 1){
+                    p.spigot().sendMessage(lm.checkProfitsLandingpage(target, buyCost, buyAmount, sellCost, sellAmount));
+                }else{
+                    p.spigot().sendMessage(lm.checkProfitsLandingpage(p, buyCost, buyAmount, sellCost, sellAmount));
+                }
+            } else if (args.length == 1 || isOther == 2) {
+                if(args[0].equals("clear")){
                     // Send message that asks to confirm
                     p.spigot().sendMessage(lm.confirmProfitClear());
                 }
-            } else if (args.length == 2) {
+            } else if (args.length == 2 || isOther == 3) {
                 if (args[0].equals("clear") && args[1].equals("-confirm")) {
                     // Clear data & send cleared message
                     pc.clearProfits();
@@ -112,7 +137,11 @@ public class CommandCheckProfits implements CommandExecutor, Listener, TabComple
                         p.sendMessage(lm.wrongInput());
                         return false;
                     }
-                    p.spigot().sendMessage(lm.checkProfitsDetailpage(p, checkprofits, page, pages));
+                    if(isOther == 3){
+                        p.spigot().sendMessage(lm.checkProfitsDetailpage(target, checkprofits, page, pages));
+                    }else{
+                        p.spigot().sendMessage(lm.checkProfitsDetailpage(p, checkprofits, page, pages));
+                    }
 
                 }
             }
