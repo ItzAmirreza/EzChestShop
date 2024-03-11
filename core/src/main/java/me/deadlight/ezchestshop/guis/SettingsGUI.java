@@ -318,8 +318,8 @@ public class SettingsGUI {
                                     if (strings[0].equalsIgnoreCase("")) {
                                         return false;
                                     }
-                                    if (Utils.isInteger(strings[0])) {
-                                        int amount = Integer.parseInt(strings[0]);
+                                    if (Utils.isNumeric(strings[0])) {
+                                        double amount = Double.parseDouble(strings[0]);
                                         if (amount < 0) {
                                             player.sendMessage(lm.negativePrice());
                                             return false;
@@ -353,8 +353,8 @@ public class SettingsGUI {
                                     if (strings[0].equalsIgnoreCase("")) {
                                         return false;
                                     }
-                                    if (Utils.isInteger(strings[0])) {
-                                        int amount = Integer.parseInt(strings[0]);
+                                    if (Utils.isNumeric(strings[0])) {
+                                        double amount = Double.parseDouble(strings[0]);
                                         if (amount < 0) {
                                             player.sendMessage(lm.negativePrice());
                                             return false;
