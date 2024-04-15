@@ -62,7 +62,6 @@ public class EzqlDatabase {
         HikariConfig hikariConfig = customHikariSettings.getHikariConfig(credentials);
 
         hikariDataSource = new HikariDataSource(hikariConfig);
-        hikariDataSource.addDataSourceProperty( "autoReconnect" , "true" );
     }
 
     /**
