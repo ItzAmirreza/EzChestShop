@@ -2,6 +2,7 @@ name: EzChestShop
 version: ${project.version}
 main: me.deadlight.ezchestshop.EzChestShop
 api-version: 1.16
+folia-supported: true
 softdepend:
   - Vault
   - WildChests

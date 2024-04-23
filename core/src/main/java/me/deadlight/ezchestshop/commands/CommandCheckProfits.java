@@ -162,7 +162,7 @@ public class CommandCheckProfits implements CommandExecutor, Listener, TabComple
             return;
         else if (checkprofits.get(0).getItem() == null)
             return;
-        Bukkit.getScheduler().runTaskLater(EzChestShop.getPlugin(), () -> p.spigot().sendMessage(lm.joinProfitNotification()), 4l);
+        EzChestShop.getScheduler().runTaskLater(() -> p.spigot().sendMessage(lm.joinProfitNotification()), 4l);
     }
 
     @Override

@@ -46,18 +46,18 @@ public class UpdateChecker implements Listener{
     public void onJoin(PlayerJoinEvent event) {
         if (event.getPlayer().isOp()) {
             if (Config.notify_updates && isSpigotUpdateAvailable) {
-                Bukkit.getScheduler().runTaskLater(EzChestShop.getPlugin(), () -> {
+                EzChestShop.getScheduler().runTaskLater(EzChestShop.getPlugin(), () -> {
                     event.getPlayer().spigot().sendMessage(lm.updateNotification(EzChestShop.getPlugin().getDescription().getVersion(), newVersion));
                 }, 10l);
             }
             if (isGuiUpdateAvailable) {
                 if (Config.notify_overflowing_gui_items && !requiredOverflowRows.isEmpty()) {
-                    Bukkit.getScheduler().runTaskLater(EzChestShop.getPlugin(), () -> {
+                    EzChestShop.getScheduler().runTaskLater(EzChestShop.getPlugin(), () -> {
                         event.getPlayer().spigot().sendMessage(lm.overflowingGuiItemsNotification(requiredOverflowRows));
                     }, 10l);
                 }
                 if (Config.notify_overlapping_gui_items && !overlappingItems.isEmpty()) {
-                    Bukkit.getScheduler().runTaskLater(EzChestShop.getPlugin(), () -> {
+                    EzChestShop.getScheduler().runTaskLater(EzChestShop.getPlugin(), () -> {
                         event.getPlayer().spigot().sendMessage(lm.overlappingItemsNotification(overlappingItems));
                     }, 10l);
                 }

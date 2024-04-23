@@ -3,8 +3,10 @@ package me.deadlight.ezchestshop.listeners;
 import me.deadlight.ezchestshop.data.Config;
 import me.deadlight.ezchestshop.data.DatabaseManager;
 import me.deadlight.ezchestshop.data.LanguageManager;
+import me.deadlight.ezchestshop.data.mysql.MySQL;
 import me.deadlight.ezchestshop.data.sqlite.SQLite;
 import me.deadlight.ezchestshop.EzChestShop;
+import me.deadlight.ezchestshop.enums.Database;
 import me.deadlight.ezchestshop.utils.BlockOutline;
 import me.deadlight.ezchestshop.utils.Utils;
 import org.bukkit.Instrument;
@@ -27,7 +29,8 @@ public class PlayerJoinListener implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent event) throws NoSuchFieldException, IllegalAccessException {
         Player player = event.getPlayer();
-        Utils.versionUtils.injectConnection(player);
+        if(player != null)
+            Utils.versionUtils.injectConnection(player);
         /**
          * Prepare the database player values.
          *
@@ -35,13 +38,24 @@ public class PlayerJoinListener implements Listener {
          */
         DatabaseManager db = EzChestShop.getPlugin().getDatabase();
         UUID uuid = event.getPlayer().getUniqueId();
-        SQLite.playerTables.forEach(t -> {
-            if (db.hasTable(t)) {
-                if (!db.hasPlayer(t, uuid)) {
-                    db.preparePlayerData(t, uuid.toString());
+        if(Config.database_type.equals(Database.MYSQL)) {
+
+            MySQL.playerTables.forEach(t -> {
+                if (db.hasTable(t)) {
+                    if (!db.hasPlayer(t, uuid)) {
+                        db.preparePlayerData(t, uuid.toString());
+                    }
                 }
-            }
-        });
+            });
+        } else if (Config.database_type.equals(Database.SQLITE)) {
+            SQLite.playerTables.forEach(t -> {
+                if (db.hasTable(t)) {
+                    if (!db.hasPlayer(t, uuid)) {
+                        db.preparePlayerData(t, uuid.toString());
+                    }
+                }
+            });
+        }
 
 
         if (Config.emptyShopNotificationOnJoin) {
@@ -60,7 +74,7 @@ public class PlayerJoinListener implements Listener {
             tones.add(Note.Tone.F);
             tones.add(Note.Tone.G);
             AtomicInteger actionBarCounter = new AtomicInteger();
-            EzChestShop.getPlugin().getServer().getScheduler().runTaskLaterAsynchronously(EzChestShop.getPlugin(), () -> {
+            EzChestShop.getScheduler().runTaskLaterAsynchronously(EzChestShop.getPlugin(), () -> {
 
                 //Iterate through each block with an asychronous delay of 5 ticks
                 blocks.forEach(b -> {

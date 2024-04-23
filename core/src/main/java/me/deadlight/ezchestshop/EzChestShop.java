@@ -1,4 +1,6 @@
 package me.deadlight.ezchestshop;
+import com.github.Anon8281.universalScheduler.UniversalScheduler;
+import com.github.Anon8281.universalScheduler.scheduling.schedulers.TaskScheduler;
 import me.deadlight.ezchestshop.commands.CommandCheckProfits;
 import me.deadlight.ezchestshop.commands.EcsAdmin;
 import me.deadlight.ezchestshop.commands.MainCommands;
@@ -36,6 +38,15 @@ public final class EzChestShop extends JavaPlugin {
     public static boolean worldguard = false;
     public static boolean advancedregionmarket = false;
 
+    private static TaskScheduler scheduler;
+
+    /**
+     * Get the scheduler of the plugin
+     */
+    public static TaskScheduler getScheduler() {
+        return scheduler;
+    }
+
     @Override
     public void onLoad() {
         // Adds Custom Flags to WorldGuard!
@@ -49,6 +60,7 @@ public final class EzChestShop extends JavaPlugin {
     public void onEnable() {
 
         plugin = this;
+        scheduler = UniversalScheduler.getScheduler(this);
         logConsole("&c[&eEzChestShop&c] &aEnabling EzChestShop - version " + this.getDescription().getVersion());
         saveDefaultConfig();
 
@@ -73,7 +85,7 @@ public final class EzChestShop extends JavaPlugin {
         if (!(getServer().getVersion().contains("1.19") || getServer().getVersion().contains("1.18")
                 || getServer().getVersion().contains("1.17") || getServer().getVersion().contains("1.16")
                 || getServer().getVersion().contains("1.20"))){
-            logConsole("&c[&eEzChestShop&c] &4This plugin only supports 1.16.x - 1.20!, &cself disabling...");
+            logConsole("&c[&eEzChestShop&c] &4This plugin only supports 1.16.5, 1.17.1, 1.18.2, 1.19.4 and 1.20.4!, &cself disabling...");
             Bukkit.getPluginManager().disablePlugin(this);
             return;
         } else {
@@ -330,7 +342,8 @@ public final class EzChestShop extends JavaPlugin {
     @Override
     public void onDisable() {
         // Plugin shutdown logic
-        getServer().getScheduler().cancelTasks(this);
+        if(scheduler != null)
+            scheduler.cancelTasks();
         logConsole("&c[&eEzChestShop&c] &bSaving remained sql cache...");
         ShopContainer.saveSqlQueueCache();
 

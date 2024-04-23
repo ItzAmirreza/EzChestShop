@@ -1103,13 +1103,13 @@ public class MainCommands implements CommandExecutor, TabCompleter {
             List<Block> blocks = Utils.getNearbyEmptyShopForAdmins(player);
             player.sendMessage(lm.emptyShopHighlightedEnabled(blocks.size()));
             AtomicInteger actionBarCounter = new AtomicInteger();
-            EzChestShop.getPlugin().getServer().getScheduler().runTaskLaterAsynchronously(EzChestShop.getPlugin(), () -> {
+            EzChestShop.getScheduler().runTaskLaterAsynchronously(EzChestShop.getPlugin(), () -> {
 
                 //Iterate through each block with an asychronous delay of 5 ticks
                 blocks.forEach(b -> {
                     BlockOutline outline = new BlockOutline(player, b);
                     int index = blocks.indexOf(b);
-                    EzChestShop.getPlugin().getServer().getScheduler().runTaskLater(EzChestShop.getPlugin(), () -> {
+                    EzChestShop.getScheduler().runTaskLater(EzChestShop.getPlugin(), () -> {
                         outline.showOutline();
                         if (outline.muted) {
                             return;

@@ -318,14 +318,13 @@ public class SettingsGUI {
                                     if (strings[0].equalsIgnoreCase("")) {
                                         return false;
                                     }
-                                    if (Utils.isInteger(strings[0])) {
-                                        int amount = Integer.parseInt(strings[0]);
+                                    if (Utils.isNumeric(strings[0])) {
+                                        double amount = Double.parseDouble(strings[0]);
                                         if (amount < 0) {
                                             player.sendMessage(lm.negativePrice());
                                             return false;
                                         }
-                                        Bukkit.getScheduler().scheduleSyncDelayedTask(EzChestShop.getPlugin(),
-                                                () -> {
+                                        EzChestShop.getScheduler().scheduleSyncDelayedTask(() -> {
                                                     // If these checks complete successfully continue.
                                                     if (changePrice(containerBlock.getState(), false, amount, player, containerBlock)) {
                                                         ShopContainer.changePrice(containerBlock.getState(), amount, false);
@@ -353,14 +352,13 @@ public class SettingsGUI {
                                     if (strings[0].equalsIgnoreCase("")) {
                                         return false;
                                     }
-                                    if (Utils.isInteger(strings[0])) {
-                                        int amount = Integer.parseInt(strings[0]);
+                                    if (Utils.isNumeric(strings[0])) {
+                                        double amount = Double.parseDouble(strings[0]);
                                         if (amount < 0) {
                                             player.sendMessage(lm.negativePrice());
                                             return false;
                                         }
-                                        Bukkit.getScheduler().scheduleSyncDelayedTask(EzChestShop.getPlugin(),
-                                                () -> {
+                                        EzChestShop.getScheduler().scheduleSyncDelayedTask(() -> {
                                                     // If these checks complete successfully continue.
                                                     if (changePrice(containerBlock.getState(), true, amount, player, containerBlock)) {
                                                         ShopContainer.changePrice(containerBlock.getState(), amount, true);
@@ -583,8 +581,7 @@ public class SettingsGUI {
                  .reopenIfFail(false).response((thatplayer, strings) -> {
                      try {
                          // Run checks here if allowed
-                         Bukkit.getScheduler().scheduleSyncDelayedTask(EzChestShop.getPlugin(),
-                                 () -> {
+                         EzChestShop.getScheduler().scheduleSyncDelayedTask(() -> {
                                      int lines = Config.settings_hologram_message_line_count_default;
                                      if (Config.permission_hologram_message_line_count) {
                                          int maxShops = Utils.getMaxPermission(player, "ecs.shops.hologram.messages.lines.");

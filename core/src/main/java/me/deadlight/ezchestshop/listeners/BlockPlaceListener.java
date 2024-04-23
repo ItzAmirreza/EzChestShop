@@ -34,7 +34,7 @@ public class BlockPlaceListener implements Listener {
         if (state instanceof Dispenser) {
             Dispenser dispenser = ((Dispenser) state);
             final Directional directional = (Directional) dispenser.getBlockData();
-            Bukkit.getScheduler().scheduleSyncDelayedTask(EzChestShop.getPlugin(), () -> {
+            EzChestShop.getScheduler().scheduleSyncDelayedTask(() -> {
                 Block block = event.getBlock().getRelative(directional.getFacing());
                 ItemStack item = event.getItem();
                 placeBlock(block, item);

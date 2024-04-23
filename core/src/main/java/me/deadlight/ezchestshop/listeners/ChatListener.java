@@ -60,21 +60,15 @@ public class ChatListener implements Listener {
 
                 if (type.equalsIgnoreCase("add")) {
                     chatmap.remove(player.getUniqueId());
-                    Bukkit.getScheduler().scheduleSyncDelayedTask(EzChestShop.getPlugin(), new Runnable() {
-                        @Override
-                        public void run() {
-                            addThePlayer(event.getMessage(), chest, player);
-                            guiInstance.showGUI(player, chest, false);
-                        }
+                    EzChestShop.getScheduler().scheduleSyncDelayedTask(() -> {
+                        addThePlayer(event.getMessage(), chest, player);
+                        guiInstance.showGUI(player, chest, false);
                     }, 0);
                 } else {
                     chatmap.remove(player.getUniqueId());
-                    Bukkit.getScheduler().scheduleSyncDelayedTask(EzChestShop.getPlugin(), new Runnable() {
-                        @Override
-                        public void run() {
-                            removeThePlayer(event.getMessage(), chest, player);
-                            guiInstance.showGUI(player, chest, false);
-                        }
+                    EzChestShop.getScheduler().scheduleSyncDelayedTask(() -> {
+                        removeThePlayer(event.getMessage(), chest, player);
+                        guiInstance.showGUI(player, chest, false);
                     }, 0);
                 }
 
