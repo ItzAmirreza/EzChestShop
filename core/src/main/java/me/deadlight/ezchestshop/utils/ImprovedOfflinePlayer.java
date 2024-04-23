@@ -15,8 +15,8 @@ public abstract class ImprovedOfflinePlayer {
 
     static {
         try {
-            if(Class.forName("io.papermc.paper.threadedregions.RegionizedServer") != null) {
-                // TODO: Do a better check for Folia, currently will just use 1.20.4 if it's folia
+
+            if (Utils.isFolia()) {
                 improvedOfflinePlayer = (ImprovedOfflinePlayer) Class.forName("me.deadlight.ezchestshop.utils.ImprovedOfflinePlayer_v1_20_R3").newInstance();
             } else {
                 String packageName = Utils.class.getPackage().getName();
