@@ -28,6 +28,9 @@ public class MySQL extends DatabaseManager {
         this.plugin = plugin;
     }
 
+    //TODO Don't forget to change this when adding a new database table that works with Player data!
+    public static List<String> playerTables = Arrays.asList("playerdata");
+
 
     @Override
     public void load() {
