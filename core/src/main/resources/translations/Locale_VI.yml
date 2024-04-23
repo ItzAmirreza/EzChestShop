@@ -299,7 +299,7 @@ command-messages:
     phải là rương."
   lookatchest: "&cXin hãy nhìn vào một cái rương."
   csremoved: "&eCửa hàng rương này đã được gỡ bỏ thành công."
-  notowner: "&aBạn không phải là chủ cửa hàng rương này!"
+  notowner: "&cBạn không phải là chủ cửa hàng rương này!"
   notachestorcs: "&cKhối mà bạn đang xem không phải là rương/hoặc đây không phải
     là cửa hàng bán rương."
   maxShopLimitReached: "&cĐã đạt đến giới hạn cửa hàng tối đa: %shoplimit%!"

@@ -289,7 +289,7 @@ command-messages:
   notchest: "&cEl bloque que está mirando no es un tipo de cofre compatible / no es un cofre."
   lookatchest: "&cPor favor mira un cofre."
   csremoved: "&eLa tienda del cofre fue eliminada con éxito."
-  notowner: "&aNo eres el dueño de esta tienda!"
+  notowner: "&cNo eres el dueño de esta tienda!"
   notachestorcs: "&cEl bloque que estás mirando no es un cofre / o esta no es una tienda.."
   maxShopLimitReached: "&cMaximum shop limit reached: %shoplimit%!"
   slimeFunBlockNotSupported: "&cSorry :(, but you can't execute this command with a slimefun block / please use a normal block as a container"

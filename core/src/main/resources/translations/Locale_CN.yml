@@ -282,7 +282,7 @@ command-messages:
   notchest: "&c您注視的方塊並非一個箱子."
   lookatchest: "&c請注視一個箱子."
   csremoved: "&e此商店已成功關閉."
-  notowner: "&a你並非此商店的主人!"
+  notowner: "&c你並非此商店的主人!"
   notachestorcs: "&c您注視的方塊並非一個箱子."
   maxShopLimitReached: "&cMaximum shop limit reached: %shoplimit%!"
   slimeFunBlockNotSupported: "&cSorry :(, but you can't execute this command with a slimefun block / please use a normal block as a container"

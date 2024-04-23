@@ -466,8 +466,6 @@ public class MainCommands implements CommandExecutor, TabCompleter {
 
             blockState.update();
             player.sendMessage(lm.chestShopRemoved());
-        } else {
-            player.sendMessage(lm.lookAtChest());
         }
     }
 

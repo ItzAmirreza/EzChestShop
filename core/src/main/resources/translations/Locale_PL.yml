@@ -293,7 +293,7 @@ command-messages:
   notchest: '&cBlok na który patrzysz nie jest wspieranym typem skrzyni/nie jest skrzynią.'
   lookatchest: '&cSpójrz się na skrzynię.'
   csremoved: '&eSklep został pomyślnie usunięty.'
-  notowner: '&aNie jesteś właścicielem tego sklepu!'
+  notowner: '&cNie jesteś właścicielem tego sklepu!'
   notachestorcs: '&cBlok na który patrzysz nie jest skrzynką/nie jest sklepem.'
   maxShopLimitReached: '&cOsiągnąłeś maksymalną ilość sklepów: %shoplimit%!'
   slimeFunBlockNotSupported: '&cNie możesz wykonać komendy z blokiem slimefun, użyj normalnego bloku jako pojemnika.'
