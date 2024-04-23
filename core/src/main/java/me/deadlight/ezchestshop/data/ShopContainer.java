@@ -514,7 +514,7 @@ public class ShopContainer {
 
 
     public static void startSqlQueueTask() {
-        Bukkit.getScheduler().runTaskTimer(EzChestShop.getPlugin(), new Runnable() {
+        EzChestShop.getScheduler().runTaskTimer(EzChestShop.getPlugin(), new Runnable() {
             @Override
             public void run() {
 

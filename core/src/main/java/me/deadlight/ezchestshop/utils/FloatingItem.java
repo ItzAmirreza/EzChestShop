@@ -17,9 +17,14 @@ public class FloatingItem {
 
     static {
         try {
-            String packageName = Utils.class.getPackage().getName();
-            String internalsName = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
-            versionUtils = (VersionUtils) Class.forName(packageName + "." + internalsName).newInstance();
+            if(Class.forName("io.papermc.paper.threadedregions.RegionizedServer") != null) {
+                // TODO: Do a better check for Folia, currently will just use 1.20.4 if it's folia
+                versionUtils = (VersionUtils) Class.forName("me.deadlight.ezchestshop.utils.v1_20_R4").newInstance();
+            } else {
+                String packageName = Utils.class.getPackage().getName();
+                String internalsName = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
+                versionUtils = (VersionUtils) Class.forName(packageName + "." + internalsName).newInstance();
+            }
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | ClassCastException exception) {
             Bukkit.getLogger().log(Level.SEVERE, "EzChestShop could not find a valid implementation for this server version.");
         }

@@ -29,7 +29,8 @@ public class PlayerJoinListener implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent event) throws NoSuchFieldException, IllegalAccessException {
         Player player = event.getPlayer();
-        Utils.versionUtils.injectConnection(player);
+        if(player != null)
+            Utils.versionUtils.injectConnection(player);
         /**
          * Prepare the database player values.
          *
@@ -73,7 +74,7 @@ public class PlayerJoinListener implements Listener {
             tones.add(Note.Tone.F);
             tones.add(Note.Tone.G);
             AtomicInteger actionBarCounter = new AtomicInteger();
-            EzChestShop.getPlugin().getServer().getScheduler().runTaskLaterAsynchronously(EzChestShop.getPlugin(), () -> {
+            EzChestShop.getScheduler().runTaskLaterAsynchronously(EzChestShop.getPlugin(), () -> {
 
                 //Iterate through each block with an asychronous delay of 5 ticks
                 blocks.forEach(b -> {
