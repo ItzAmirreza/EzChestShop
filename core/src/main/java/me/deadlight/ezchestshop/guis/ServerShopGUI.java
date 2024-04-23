@@ -199,8 +199,7 @@ public class ServerShopGUI {
                                             player.sendMessage(lm.unsupportedInteger());
                                             return false;
                                         }
-                                        Bukkit.getScheduler().scheduleSyncDelayedTask(EzChestShop.getPlugin(),
-                                                () -> ShopContainer.buyServerItem(containerBlock, buyPrice * amount, amount, thatplayer, mainitem, data));
+                                        EzChestShop.getScheduler().scheduleSyncDelayedTask(() -> ShopContainer.buyServerItem(containerBlock, buyPrice * amount, amount, thatplayer, mainitem, data));
                                     } else {
                                         thatplayer.sendMessage(lm.wrongInput());
                                     }
@@ -235,8 +234,7 @@ public class ServerShopGUI {
                                             player.sendMessage(lm.unsupportedInteger());
                                             return false;
                                         }
-                                        Bukkit.getScheduler().scheduleSyncDelayedTask(EzChestShop.getPlugin(),
-                                                () -> ShopContainer.sellServerItem(containerBlock, sellPrice * amount, amount, mainitem, thatplayer, data));
+                                        EzChestShop.getScheduler().scheduleSyncDelayedTask(() -> ShopContainer.sellServerItem(containerBlock, sellPrice * amount, amount, mainitem, thatplayer, data));
                                     } else {
                                         thatplayer.sendMessage(lm.wrongInput());
                                     }

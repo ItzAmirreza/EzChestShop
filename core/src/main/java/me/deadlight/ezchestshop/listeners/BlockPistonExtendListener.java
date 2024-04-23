@@ -79,7 +79,7 @@ public class BlockPistonExtendListener implements Listener {
                         if (Config.holodistancing) {
                             ShopHologram.hideForAll(event.getBlock().getLocation());
                         }
-                        Bukkit.getScheduler().scheduleSyncDelayedTask(EzChestShop.getPlugin(), () -> {
+                        EzChestShop.getScheduler().scheduleSyncDelayedTask(() -> {
 
                             Collection<Entity> entitiyList = block.getWorld().getNearbyEntities(shulkerLoc, 2, 2, 2);
                             entitiyList.forEach(entity -> {

@@ -136,12 +136,12 @@ public class MySQL extends DatabaseManager {
     public void deleteEntry(String primary_key, String key, String table) {
         EzqlTable ezqlTable = database.getTable(prefix+table);
 
-        Bukkit.getScheduler().runTaskAsynchronously(plugin,()->ezqlTable.removeRows(primary_key, key));
+        EzChestShop.getScheduler().runTaskAsynchronously(plugin,()->ezqlTable.removeRows(primary_key, key));
     }
 
     @Override
     public void insertShop(String sloc, String owner, String item, double buyprice, double sellprice, boolean msgtoggle, boolean dbuy, boolean dsell, String admins, boolean shareincome, boolean adminshop, String rotation, List<String> customMessages) {
-        Bukkit.getScheduler().runTaskAsynchronously(plugin,()->this.shopdata.pushRow(
+        EzChestShop.getScheduler().runTaskAsynchronously(plugin,()->this.shopdata.pushRow(
                 sloc,
                 owner,
                 item,
@@ -169,28 +169,28 @@ public class MySQL extends DatabaseManager {
     public void setString(String primary_key, String key, String column, String table, String data) {
         EzqlTable ezqlTable = database.getTable(prefix+table);
 
-        Bukkit.getScheduler().runTaskAsynchronously(plugin,()->ezqlTable.updateRow(primary_key, key, new EzqlRow(column, data)));
+        EzChestShop.getScheduler().runTaskAsynchronously(plugin,()->ezqlTable.updateRow(primary_key, key, new EzqlRow(column, data)));
     }
 
     @Override
     public void setInt(String primary_key, String key, String column, String table, int data) {
         EzqlTable ezqlTable = database.getTable(prefix+table);
 
-        Bukkit.getScheduler().runTaskAsynchronously(plugin,()->ezqlTable.updateRow(primary_key, key, new EzqlRow(column, data)));
+        EzChestShop.getScheduler().runTaskAsynchronously(plugin,()->ezqlTable.updateRow(primary_key, key, new EzqlRow(column, data)));
     }
 
     @Override
     public void setBool(String primary_key, String key, String column, String table, Boolean data) {
         EzqlTable ezqlTable = database.getTable(prefix+table);
 
-        Bukkit.getScheduler().runTaskAsynchronously(plugin,()->ezqlTable.updateRow(primary_key, key, new EzqlRow(column, data ? 1 : 0)));
+        EzChestShop.getScheduler().runTaskAsynchronously(plugin,()->ezqlTable.updateRow(primary_key, key, new EzqlRow(column, data ? 1 : 0)));
     }
 
     @Override
     public void setDouble(String primary_key, String key, String column, String table, double data) {
         EzqlTable ezqlTable = database.getTable(prefix+table);
 
-        Bukkit.getScheduler().runTaskAsynchronously(plugin,()->ezqlTable.updateRow(primary_key, key, new EzqlRow(column, data)));
+        EzChestShop.getScheduler().runTaskAsynchronously(plugin,()->ezqlTable.updateRow(primary_key, key, new EzqlRow(column, data)));
     }
 
 
@@ -208,6 +208,6 @@ public class MySQL extends DatabaseManager {
 
     @Override
     public void preparePlayerData(String table, String uuid) {
-        Bukkit.getScheduler().runTaskAsynchronously(plugin,()->playerdata.pushRow(uuid,""));
+        EzChestShop.getScheduler().runTaskAsynchronously(plugin,()->playerdata.pushRow(uuid,""));
     }
 }

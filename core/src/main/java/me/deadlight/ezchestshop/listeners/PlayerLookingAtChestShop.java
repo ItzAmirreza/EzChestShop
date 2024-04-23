@@ -243,7 +243,7 @@ public class PlayerLookingAtChestShop implements Listener {
 
 
 
-        Bukkit.getScheduler().scheduleAsyncDelayedTask(EzChestShop.getPlugin(), () -> {
+        EzChestShop.getScheduler().scheduleSyncDelayedTask(() -> {
             for (ASHologram holo : holoTextList) {
                 holo.destroy();
                 Utils.onlinePackets.remove(holo);

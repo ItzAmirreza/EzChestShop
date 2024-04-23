@@ -165,12 +165,12 @@ public class v1_19_R3 extends VersionUtils {
                 boolean success = menu.getResponse().test(player, array);
 
                 if (!success && menu.isReopenIfFail() && !menu.isForceClose()) {
-                    Bukkit.getScheduler().runTaskLater(EzChestShop.getPlugin(), () -> menu.open(player), 2L);
+                    EzChestShop.getScheduler().runTaskLater(EzChestShop.getPlugin(), () -> menu.open(player), 2L);
                 }
 
                 removeSignMenuFactoryListen(signMenuFactory);
 
-                Bukkit.getScheduler().runTask(EzChestShop.getPlugin(), () -> {
+                EzChestShop.getScheduler().runTask(EzChestShop.getPlugin(), () -> {
                     if (player.isOnline()) {
                         Location location = menu.getLocation();
                         player.sendBlockChange(location, location.getBlock().getBlockData());
