@@ -67,7 +67,7 @@
         </dependency>
         <dependency>
             <groupId>me.deadlight</groupId>
-            <artifactId>EzChestShop-craftbukkit_1_20_R4</artifactId>
+            <artifactId>EzChestShop-craftbukkit_1_20_R3</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>

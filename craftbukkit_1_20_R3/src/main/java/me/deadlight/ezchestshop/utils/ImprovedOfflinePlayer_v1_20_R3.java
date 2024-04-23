@@ -11,22 +11,22 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 
-public class ImprovedOfflinePlayer_v1_20_R4 extends ImprovedOfflinePlayer {
+public class ImprovedOfflinePlayer_v1_20_R3 extends ImprovedOfflinePlayer {
 
     private File file;
     private CompoundTag compound;
 
-    public ImprovedOfflinePlayer_v1_20_R4() {
+    public ImprovedOfflinePlayer_v1_20_R3() {
         super();
     }
 
-    public ImprovedOfflinePlayer_v1_20_R4(OfflinePlayer player) {
+    public ImprovedOfflinePlayer_v1_20_R3(OfflinePlayer player) {
         super(player);
     }
 
     @Override
     public ImprovedOfflinePlayer fromOfflinePlayer(OfflinePlayer player) {
-        return new ImprovedOfflinePlayer_v1_20_R4(player);
+        return new ImprovedOfflinePlayer_v1_20_R3(player);
     }
 
     @Override

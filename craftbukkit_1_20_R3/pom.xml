@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>me.deadlight</groupId>
-    <artifactId>EzChestShop-craftbukkit_1_20_R4</artifactId>
+    <artifactId>EzChestShop-craftbukkit_1_20_R3</artifactId>
     <version>${project.parent.version}</version>
     <packaging>jar</packaging>
     <parent>
@@ -14,7 +14,7 @@
         <version>1.6.5</version>
     </parent>
 
-    <name>EzChestShop-craftbukkit_1_20_R4</name>
+    <name>EzChestShop-craftbukkit_1_20_R3</name>
 
     <description>Easy Chest Shop that any server owner wants that for his/her players</description>
     <properties>
