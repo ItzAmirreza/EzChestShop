@@ -289,7 +289,7 @@ command-messages:
   notchest: "&cBlok na ktorý sa pozeráš nie je podporovaným typom truhlice / nie je to truhlica."
   lookatchest: "&cPozeraj sa prosím na truhlicu."
   csremoved: "&eTento obchod bol úspešne odstránený."
-  notowner: "&aNie si vlastníkom tohto obchodu!"
+  notowner: "&cNie si vlastníkom tohto obchodu!"
   notachestorcs: "&cBlok na ktorý sa pozeráš nie je truhlica / alebo toto nie je obchod."
   maxShopLimitReached: "&cBol dosiahnutý maximálny počet obchodov: %shoplimit%!"
   slimeFunBlockNotSupported: "&cPrepáč :(, ale tento príkaz nemôžeš vykonať na slimefun bloku / prosím použi normálny blok ako kontainer"

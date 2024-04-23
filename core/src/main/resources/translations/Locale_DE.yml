@@ -296,7 +296,7 @@ command-messages:
   notchest: "&cDer Block auf den du schaust ist keine unterstützte Kiste/keine Kiste."
   lookatchest: "&cBitte schau auf eine Kiste."
   csremoved: "&eTDieser Shop wurde erfolgreich entfernt!."
-  notowner: "&aDu bist nicht der Besitzer dieses Shops!"
+  notowner: "&cDu bist nicht der Besitzer dieses Shops!"
   notachestorcs: "&cDer Block auf den du schaust ist keine Kiste/kein Kistenshop."
   maxShopLimitReached: "&cMaximale Shop Anzahl erreicht: %shoplimit%!"
   slimeFunBlockNotSupported: "&cLeider sind slimefun kisten nicht unterstützt! Bitte verwende einen anderen Container!"

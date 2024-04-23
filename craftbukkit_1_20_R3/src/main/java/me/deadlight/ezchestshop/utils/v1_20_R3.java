@@ -201,7 +201,6 @@ public class v1_20_R3 extends VersionUtils {
 
     @Override
     public void injectConnection(Player player) throws IllegalAccessException, NoSuchFieldException {
-        //changed from h in 1.20.2 as this is now accessed through inheritance
         Field field = ((CraftPlayer) player).getHandle().connection.getClass().getSuperclass().getDeclaredField("c");
         field.setAccessible(true);
         Connection netManager = (Connection) field.get(((CraftPlayer) player).getHandle().connection);

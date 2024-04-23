@@ -289,7 +289,7 @@ command-messages:
   notchest: "&cThe block that you are looking at is not supported type of chest/is not a chest."
   lookatchest: "&cPlease look at a chest."
   csremoved: "&eThis chest shop has been successfully removed."
-  notowner: "&aYou are not the owner of this chest shop!"
+  notowner: "&cYou are not the owner of this chest shop!"
   notachestorcs: "&cThe block that you are looking at is not a chest/or this is not a chest shop."
   maxShopLimitReached: "&cMaximum shop limit reached: %shoplimit%!"
   slimeFunBlockNotSupported: "&cSorry :(, but you can't execute this command with a slimefun block / please use a normal block as a container"

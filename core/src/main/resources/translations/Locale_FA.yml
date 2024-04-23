@@ -290,7 +290,7 @@ command-messages:
   notchest: "&cIn block yek chest/barrel/shulker nist."
   lookatchest: "&cLotfan be yek chest negah konid."
   csremoved: "&eShop va movafaghiat hazf shod."
-  notowner: "&aShoma ownere in shop nistid."
+  notowner: "&cShoma ownere in shop nistid."
   notachestorcs: "&cBlocki darid negah mikonid yek chest ya yek chest shop nist."
   maxShopLimitReached: "&cShoma az in bishtar nemitavanid shop besazid. Hade aksar: %shoplimit% shop!"
   slimeFunBlockNotSupported: "&cBebakhshid :(, Shoma ghader be estefade az block haye slimefun baraye chest shop nistid, az yek block mamoli estefade konid."
