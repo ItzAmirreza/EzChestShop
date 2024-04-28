@@ -124,6 +124,11 @@ public class LanguageManager {
             changes = true;
         }
 
+        if (!fc.contains("other.no-breaking-while-viewing")) {
+            fc.set("other.no-breaking-while-viewing", "&cYou cannot break a shop while someone is using it!");
+            changes = true;
+        }
+
 
         if (changes) {
             fc.options().copyHeader(true);
@@ -978,6 +983,10 @@ public class LanguageManager {
     }
     public String itemEnchantHologramMore(int amount) {
         return Utils.colorify(getString("hologram.item-enchantment-more")).replace("%amount%", "" + amount);
+    }
+
+    public String noBreakingWhileShopOpen() {
+        return Utils.colorify(getString("other.no-breaking-while-viewing"));
     }
 
 

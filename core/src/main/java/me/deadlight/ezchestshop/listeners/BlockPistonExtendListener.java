@@ -47,10 +47,19 @@ public class BlockPistonExtendListener implements Listener {
                 TileState state = (TileState) blockState;
                 PersistentDataContainer container = state.getPersistentDataContainer();
 
+                //first we check nobody is already in the shulker container (viewing it)
+                ShulkerBox shulkerBox = (ShulkerBox) block.getState();
+                int viewerCount = shulkerBox.getInventory().getViewers().size();
+                if (viewerCount > 0) {
+                    event.setCancelled(true);
+                    return;
+                }
+
                 if (Utils.isShulkerBox(block.getType())) {
                     //it is a shulkerbox, now checking if its a shop
                     Location shulkerLoc = block.getLocation();
                     if (ShopContainer.isShop(shulkerLoc)) {
+
                         boolean adminshop = container.get(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"), PersistentDataType.INTEGER) == 1;
                         if (EzChestShop.worldguard) {
                             if (adminshop) {
