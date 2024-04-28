@@ -2,6 +2,7 @@ package me.deadlight.ezchestshop.guis;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
 import me.deadlight.ezchestshop.data.Config;
+import me.deadlight.ezchestshop.data.PlayerContainer;
 import me.deadlight.ezchestshop.data.gui.ContainerGui;
 import me.deadlight.ezchestshop.data.gui.ContainerGuiItem;
 import me.deadlight.ezchestshop.data.gui.GuiData;
@@ -189,6 +190,8 @@ public class NonOwnerShopGUI {
                                 return true;
                             });
                     menu.open(player);
+                    PlayerContainer pc = PlayerContainer.get(player);
+                    pc.openSignMenu(menu, containerBlock.getLocation());
                     player.sendMessage(lm.enterTheAmount());
 
 
@@ -225,6 +228,8 @@ public class NonOwnerShopGUI {
                                 return true;
                             });
                     menu.open(player);
+                    PlayerContainer pc = PlayerContainer.get(player);
+                    pc.openSignMenu(menu, containerBlock.getLocation());
                     player.sendMessage(lm.enterTheAmount());
 
 
@@ -238,6 +243,8 @@ public class NonOwnerShopGUI {
 
 
         gui.open(player);
+        PlayerContainer pc = PlayerContainer.get(player);
+        pc.openGUI(gui, containerBlock.getLocation());
 
 
 

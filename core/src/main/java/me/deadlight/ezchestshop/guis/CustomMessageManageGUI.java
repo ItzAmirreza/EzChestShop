@@ -2,6 +2,7 @@ package me.deadlight.ezchestshop.guis;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
 import dev.triumphteam.gui.guis.PaginatedGui;
+import me.deadlight.ezchestshop.data.PlayerContainer;
 import me.deadlight.ezchestshop.data.gui.ContainerGui;
 import me.deadlight.ezchestshop.data.gui.ContainerGuiItem;
 import me.deadlight.ezchestshop.data.gui.GuiData;
@@ -124,6 +125,8 @@ public class CustomMessageManageGUI {
         }
 
         paginatedGui.open(player);
+        PlayerContainer pc = PlayerContainer.get(player);
+        pc.openGUI(paginatedGui, containerBlock.getLocation());
 
 
     }
@@ -165,6 +168,8 @@ public class CustomMessageManageGUI {
         gui.setItem(3, 1, backItem);
 
         gui.open(player);
+        PlayerContainer pc = PlayerContainer.get(player);
+        pc.openGUI(gui, containerBlock.getLocation());
 
     }
 

@@ -58,9 +58,8 @@ public class ShopContainer {
                 "shopdata");
         shopMap.remove(loc);
 
-        //This is not workign as intended
-//        InventoryHolder inventoryHolder = (InventoryHolder) loc.getBlock();
-//        inventoryHolder.getInventory().getViewers().forEach(viewer -> viewer.closeInventory());
+        PlayerContainer.closeInventory(loc);
+        PlayerContainer.closeGUI(loc);
 
         for (Player p : Bukkit.getOnlinePlayers()) {
             if (ShopHologram.hasHologram(loc, p))

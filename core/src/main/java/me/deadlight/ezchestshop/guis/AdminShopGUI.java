@@ -3,6 +3,7 @@ package me.deadlight.ezchestshop.guis;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
 import me.deadlight.ezchestshop.data.Config;
+import me.deadlight.ezchestshop.data.PlayerContainer;
 import me.deadlight.ezchestshop.data.gui.ContainerGui;
 import me.deadlight.ezchestshop.data.gui.ContainerGuiItem;
 import me.deadlight.ezchestshop.data.gui.GuiData;
@@ -175,6 +176,8 @@ public class AdminShopGUI {
                 if (player.hasPermission("ecs.admin") || player.hasPermission("ecs.admin.view")) {
                     player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 0.5f, 0.5f);
                     player.openInventory(lastinv);
+                    PlayerContainer pc = PlayerContainer.get(player);
+                    pc.openInventory(lastinv, containerBlock.getLocation());
                 }
             });
 
@@ -244,6 +247,8 @@ public class AdminShopGUI {
                                 return true;
                             });
                     menu.open(player);
+                    PlayerContainer pc = PlayerContainer.get(player);
+                    pc.openSignMenu(menu, containerBlock.getLocation());
                     player.sendMessage(lm.enterTheAmount());
 
 
@@ -279,6 +284,8 @@ public class AdminShopGUI {
                                 return true;
                             });
                     menu.open(player);
+                    PlayerContainer pc = PlayerContainer.get(player);
+                    pc.openSignMenu(menu, containerBlock.getLocation());
                     player.sendMessage(lm.enterTheAmount());
 
 
@@ -294,6 +301,8 @@ public class AdminShopGUI {
 
 
         gui.open(player);
+        PlayerContainer pc = PlayerContainer.get(player);
+        pc.openGUI(gui, containerBlock.getLocation());
 
 
     }

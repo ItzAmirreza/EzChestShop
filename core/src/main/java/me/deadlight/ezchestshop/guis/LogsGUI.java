@@ -1,6 +1,7 @@
 package me.deadlight.ezchestshop.guis;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
+import me.deadlight.ezchestshop.data.PlayerContainer;
 import me.deadlight.ezchestshop.data.gui.ContainerGui;
 import me.deadlight.ezchestshop.data.gui.ContainerGuiItem;
 import me.deadlight.ezchestshop.data.gui.GuiData;
@@ -93,6 +94,8 @@ public class LogsGUI {
         }
 
         gui.open(player);
+        PlayerContainer pc = PlayerContainer.get(player);
+        pc.openGUI(gui, containerBlock.getLocation());
 
     }
 

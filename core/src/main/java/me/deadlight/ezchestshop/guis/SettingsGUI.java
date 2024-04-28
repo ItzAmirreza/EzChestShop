@@ -2,6 +2,7 @@ package me.deadlight.ezchestshop.guis;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
 import me.deadlight.ezchestshop.data.Config;
+import me.deadlight.ezchestshop.data.PlayerContainer;
 import me.deadlight.ezchestshop.data.gui.ContainerGui;
 import me.deadlight.ezchestshop.data.gui.ContainerGuiItem;
 import me.deadlight.ezchestshop.data.gui.GuiData;
@@ -342,6 +343,8 @@ public class SettingsGUI {
                                 return true;
                             });
                     menu.open(player);
+                    PlayerContainer pc = PlayerContainer.get(player);
+                    pc.openSignMenu(menu, containerBlock.getLocation());
                 } else if (event.getClick() == ClickType.RIGHT) {
                     player.closeInventory();
                     player.playSound(player.getLocation(), Sound.ITEM_BOOK_PAGE_TURN, 1.0f, 1.0f);
@@ -376,6 +379,8 @@ public class SettingsGUI {
                                 return true;
                             });
                     menu.open(player);
+                    PlayerContainer pc = PlayerContainer.get(player);
+                    pc.openSignMenu(menu, containerBlock.getLocation());
                 }
             });
             Utils.addItemIfEnoughSlots(gui, priceItemStack.getSlot(), priceItem);
@@ -422,6 +427,8 @@ public class SettingsGUI {
         }
 
         gui.open(player);
+        PlayerContainer pc = PlayerContainer.get(player);
+        pc.openGUI(gui, containerBlock.getLocation());
 
     }
 
@@ -603,6 +610,8 @@ public class SettingsGUI {
                      return true;
                  });
          menu.open(player);
+         PlayerContainer pc = PlayerContainer.get(player);
+         pc.openSignMenu(menu, location);
      }
 
 

@@ -2,6 +2,7 @@ package me.deadlight.ezchestshop.guis;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
 import me.deadlight.ezchestshop.data.Config;
+import me.deadlight.ezchestshop.data.PlayerContainer;
 import me.deadlight.ezchestshop.data.gui.ContainerGui;
 import me.deadlight.ezchestshop.data.gui.ContainerGuiItem;
 import me.deadlight.ezchestshop.data.gui.GuiData;
@@ -173,6 +174,8 @@ public class OwnerShopGUI {
                 }
                 player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 0.5f, 0.5f);
                 player.openInventory(lastinv);
+                PlayerContainer pc = PlayerContainer.get(player);
+                pc.openInventory(lastinv, containerBlock.getLocation());
             });
 
             //containerBlock storage
@@ -220,6 +223,8 @@ public class OwnerShopGUI {
         }
 
         gui.open(player);
+        PlayerContainer pc = PlayerContainer.get(player);
+        pc.openGUI(gui, containerBlock.getLocation());
 
 
 
