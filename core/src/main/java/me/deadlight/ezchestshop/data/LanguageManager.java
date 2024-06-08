@@ -333,11 +333,11 @@ public class LanguageManager {
 
     public String transactionBuyInform(String player, int amount, String item, double price) {
         return Utils.colorify(getString("transactions.player-inform-buy").replace("%player%", player).replace("%amount%",
-                String.valueOf(amount)).replace("%item%", item).replace("%price%", String.valueOf(price)).replace("%currency%", Config.currency));
+                String.valueOf(amount)).replace("%item%", item).replace("%price%", Utils.formatNumber(price, Utils.FormatType.CHAT))).replace("%currency%", Config.currency));
     }
     public String transactionSellInform(String player, int amount, String item, double price) {
         return Utils.colorify(getString("transactions.player-inform-sell").replace("%player%", player).replace("%amount%",
-                        String.valueOf(amount)).replace("%item%", item).replace("%price%", String.valueOf(price)).replace("%currency%", Config.currency));
+                        String.valueOf(amount)).replace("%item%", item).replace("%price%", Utils.formatNumber(price, Utils.FormatType.CHAT)).replace("%currency%", Config.currency));
     }
 
 
