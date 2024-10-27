@@ -1,0 +1,167 @@
+# Plugin používá tento soubor pro zobrazování zpráv v pluginu
+# Pro zprávy hologramů zkontrolujte config.yml
+# POZNÁMKA: V souboru yml NEPOUŽÍVEJTE TAB, může způsobit závažné problémy s výkonem a občas rozbít plugin
+# Nezapomeňte ohodnotit, pokud se vám líbí EzChestShop - Translace do češtiny by Loding
+shop-gui:
+  initialbuyprice: "&aPočáteční nákupní cena: &e%buyprice% %currency%"
+  initialsellprice: "&cPočáteční prodejní cena: &e%sellprice% %currency%"
+  admin-title: "&c%shopowner%'s obchod s truhlami &4(Zobrazení pro admina)"
+  nonowner-title: "&c%shopowner%'s obchod s truhlami"
+  owner-title: "&c%shopowner%'s obchod s truhlami"
+  adminshop-title: "&cAdmin obchod"
+  buttons:
+    sellX-title: "&cProdat %amount%x"
+    sellX-lore:
+      - "&7Prodat za &e%price% %currency%"
+    buyX-title: "&aKoupit %amount%x"
+    buyX-lore:
+      - "&7Koupit za &e%price% %currency%"
+    adminview: "&c&lZobrazení admina"
+    storage: "&e&lSklad"
+    settings: "&b&lNastavení"
+    disabled-title: "&cZakázáno"
+    disabled-lore:
+      - "&7Tato možnost je zakázána "
+      - " &7majitelem obchodu."
+transactions:
+  transactionButtonTitle: "&aZáznamy transakcí"
+  backToSettingsButton: "&eZpět na nastavení"
+  PaperTitleBuy: "&aNákup | %player%"
+  PaperTitleSell: "&cProdej | %player%"
+  PaperLoreBuy:
+    - "&7Celková cena: %price%"
+    - " &7Počet: %count%"
+    - " &7Typ transakce: &aZakoupeno od vás"
+    - " &e%time%"
+  PaperLoreSell:
+    - "&7Celková cena: %price%"
+    - " &7Počet: %count%"
+    - " &7Typ transakce: &cProdáno vám"
+    - " &e%time%"
+  lessthanminute: "&eméně než před minutou"
+  minutesago: "&e%minutes% minut(y) zpět"
+  hoursago: "&e%hours% hodin(y) zpět"
+  daysago: "&e%days% dnů zpět"
+  player-inform-buy: "&7[&aECS&7] &b%player% &7koupil &e%amount%x &7 z &d%item%&7 za cenu &a%price%%currency%"
+  player-inform-sell: "&7[&aECS&7] &b%player% &7prodal &e%amount%x &7 z &d%item%&7 za cenu &a%price%%currency%"
+# Nastavení GUI sekce
+settings:
+  GuiTitle: "&b&lNastavení"
+  statusOn: "&aZapnuto"
+  statusOff: "&cVypnuto"
+  buttons:
+    toggleTransactions:
+      Title: "&ePřepnout zprávy o transakcích"
+      Lore:
+        - "&7Aktuální stav: %status%"
+        - " &7Pokud necháte tuto možnost zapnutou,"
+        - " &7budete dostávat zprávy o transakcích"
+        - " &7v chatu, kdykoli někdo něco"
+        - " &7koupí/prodá z tohoto obchodu"
+    disableBuying:
+      Title: "&eZakázat nákup"
+      Lore:
+        - "&7Aktuální stav: %status%"
+        - " &7Pokud tuto možnost necháte zapnutou,"
+        - " &7obchod nedovolí nikomu nakupovat"
+        - " &7z vaší truhly."
+    disableSelling:
+      Title: "&eZakázat prodej"
+      Lore:
+        - "&7Aktuální stav: %status%"
+        - " &7Pokud tuto možnost necháte zapnutou,"
+        - " &7obchod nedovolí nikomu prodávat"
+        - " &7cokoli do obchodu."
+    shopAdmins:
+      Title: "&eAdmini obchodu"
+      nobodyStatusAdmins: "&aNikdo"
+      Lore:
+        - "&7Můžete přidat/odebrat adminy "
+        - " &7svého obchodu s truhlami. Admini mají přístup"
+        - " &7ke skladu obchodu & k určitým"
+        - " &7nastavením (všechno kromě sdílení zisků"
+        - " &7a přidávání/odebírání adminů)."
+        - " &aLevým klikem &7přidáte admina"
+        - " &cPravým klikem &7odeberete admina"
+        - " &7Aktuální admini: %admins%"
+    sharedIncome:
+      Title: "&eSdílené zisky"
+      Lore:
+        - "&7Aktuální stav: %status%"
+        - " &7Pokud necháte tuto možnost zapnutou,"
+        - " &7zisk z POUZE prodeje bude"
+        - " &7sdílený s adminy."
+    hologramRotation:
+      Title: "&eRotace hologramu"
+      Lore:
+        - "&7Rotace:"
+        - "%rotations%"
+        - " &aLevým&7/&cPravým&7-klikem projdete všechny rotace!"
+    changePrices:
+      Title: "&eCena nákupu/prodeje v obchodě"
+      Lore:
+        - "&7Upravit cenu nákupu nebo prodeje"
+        - " &d"
+        - " &cLevým klikem &aPravým klikem"
+        - " &l  &r&cúprava prodejní  &l   &r &aúprava nákupní ceny"
+      SignPlaceholderBuy:
+        - ""
+        - "&a^^ &7Zadejte &a^^"
+        - " &7novou cenu"
+        - " &anákupu!"
+      SignPlaceholderSell:
+        - ""
+        - "&c^^ &7Zadejte &c^^"
+        - " &7novou cenu"
+        - " &cprodeje!"
+    hologramMessage:
+      Title: "&ePřizpůsobte si hologram"
+      Lore:
+        - "&cLevým klikem přidáte vlastní"
+        - "&cZprávu hologramu!"
+        - "&aPravým klikem upravíte současné"
+        - "&azprávy hologramu!"
+        - " &d"
+        - "&8Můžete použít řádek %lineNumbers%!"
+        - "<ifhasmax>&8Můžete přidat ještě %messagesleft% zpráv(y)!</ifhasmax>"
+      LoreMaxReached:
+        - "&cMůžete mít maximálně"
+        - "&c%maxLines% řádek(y)!"
+        - "&7Klikněte sem pro správu"
+        - "&7svých zpráv hologramu!"
+      LoreEdit:
+        - "&cLevým klikem upravíte vlastní"
+        - "&cZprávu hologramu!"
+        - "&aPravým klikem upravíte současné"
+        - "&azprávy hologramu!"
+        - " &d"
+        - "&8Můžete použít řádek %lineNumbers%!"
+        - "<ifhasmax>&8Můžete přidat ještě %messagesleft% zpráv(y)!</ifhasmax>"
+      SignPlaceholderTexts: "###############"
+    other:
+      backToShopGuiButton: "&eZpět do obchodu"
+      latestTransactionsTitle: "&aPoslední transakce"
+  chat:
+    toggleTransactions:
+      MessageOn: "&7Přepnout zprávy o transakcích: &aZAPNUTO"
+      MessageOff: "&7Přepnout zprávy o transakcích: &cVYPNUTO"
+    disableBuying:
+      MessageOn: "&7Zakázat nákup: &aZAPNUTO"
+      MessageOff: "&7Zakázat nákup: &cVYPNUTO"
+    disableSelling:
+      MessageOn: "&7Zakázat prodej: &aZAPNUTO"
+      MessageOff: "&7Zakázat prodej: &cVYPNUTO"
+    shopAdmins:
+      addingAdminWaiting: "&eZadejte jméno osoby, kterou chcete přidat do seznamu adminů."
+      removingAdminWaiting: "&eZadejte jméno osoby, kterou chcete odebrat ze seznamu adminů."
+      selfAdmin: "&cNemůžete přidat nebo odebrat sami sebe ze seznamu adminů!"
+      sucAdminAdded: "&e%player% &aúspěšně přidán do seznamu adminů."
+      alreadyAdmin: "&cTento hráč už je admin tohoto obchodu!"
+      notAdmin: "&cTento hráč není admin tohoto obchodu!"
+      sucAdminRemoved: "&e%player% &aúspěšně odebrán ze seznamu adminů."
+    sharedIncome:
+      MessageOn: "&7Sdílené zisky: &aZAPNUTO"
+      MessageOff: "&7Sdílené zisky: &cVYPNUTO"
+    hologramMessage:
+      enterMessage: "&aNapište &7novou zprávu hologramu do chatu!"
+      cancelMessage: "&7Pro zrušení použijte příkaz '&c&l!cancel&7'"
