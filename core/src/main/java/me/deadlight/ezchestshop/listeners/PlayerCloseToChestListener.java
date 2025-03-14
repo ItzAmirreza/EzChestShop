@@ -38,50 +38,56 @@ public class PlayerCloseToChestListener implements Listener {
 
     private HashMap<Player, ShopHologram> inspectedShops = new HashMap<>();
 
+    private HashMap<Player, Long> lastProcessed = new HashMap<>();
+    private static final long COOLDOWN_MS = 250;
+
     @EventHandler
     public void onMove(PlayerMoveEvent event) {
-        if (!Config.showholo) {
-            return;
-        }
+        if (!Config.showholo || !hasMovedXYZ(event)) return;
+
         boolean alreadyRenderedHologram = false;
         Player player = event.getPlayer();
+        long currentTime = System.currentTimeMillis();
+        long lastTime = lastProcessed.getOrDefault(player, 0L);
+
+        // Skip processing if cooldown hasn't elapsed
+        if (currentTime - lastTime < COOLDOWN_MS) return;
+        lastProcessed.put(player, currentTime);
+
         if (Config.holodistancing_show_item_first) {
             RayTraceResult result = player.rayTraceBlocks(5);
             boolean isLookingAtSameShop = false;
             // Make sure the player is looking at a shop
-            if (result != null) {
-                Block target = result.getHitBlock();
-                if (Utils.isApplicableContainer(target)) {
-                    Location loc = BlockBoundHologram.getShopChestLocation(target);
-                    if (ShopContainer.isShop(loc)) {
-                        // Create a shop Hologram, so it can be used later
-                        // required to be called here, cause the inspection needs it already.
-                        ShopHologram shopHolo = ShopHologram.getHologram(loc, player);
+            if (result != null && Utils.isApplicableContainer(result.getHitBlock())) {
+                Location loc = BlockBoundHologram.getShopChestLocation(result.getHitBlock());
+                if (ShopContainer.isShop(loc)) {
+                    // Create a shop Hologram, so it can be used later
+                    // required to be called here, cause the inspection needs it already.
+                    ShopHologram shopHolo = ShopHologram.getHologram(loc, player);
 
-                        // if the player is looking directly at a shop, he is inspecting it.
-                        // If he has been inspecting a shop before, then we need to check if he is looking at the same shop
-                        // or a different one.
-                        if (ShopHologram.isPlayerInspectingShop(player)) {
-                            if (ShopHologram.getInspectedShopHologram(player).getLocation().equals(loc)) {
-                                // if the player is looking at the same shop, then don't do anything
-                                isLookingAtSameShop = true;
-                            } else {
-                                // if the player is looking at a different shop, then remove the old one
-                                // and only show the item
-                                ShopHologram inspectedShopHolo = ShopHologram.getInspectedShopHologram(player);
-                                inspectedShopHolo.showOnlyItem();
-                                inspectedShopHolo.showAlwaysVisibleText();
-                                inspectedShopHolo.removeInspectedShop();
-                            }
-                        }
-                        // if the player is looking at a shop, and he is not inspecting it yet, then start inspecting it!
-                        if (ShopHologram.hasHologram(loc, player) && !shopHolo.hasInspector()) {
-                            shopHolo.showTextAfterItem();
-                            shopHolo.setItemDataVisible(player.isSneaking());
-                            shopHolo.setAsInspectedShop();
-                            alreadyRenderedHologram = true;
+                    // if the player is looking directly at a shop, he is inspecting it.
+                    // If he has been inspecting a shop before, then we need to check if he is looking at the same shop
+                    // or a different one.
+                    if (ShopHologram.isPlayerInspectingShop(player)) {
+                        if (ShopHologram.getInspectedShopHologram(player).getLocation().equals(loc)) {
+                            // if the player is looking at the same shop, then don't do anything
                             isLookingAtSameShop = true;
+                        } else {
+                            // if the player is looking at a different shop, then remove the old one
+                            // and only show the item
+                            ShopHologram inspectedShopHolo = ShopHologram.getInspectedShopHologram(player);
+                            inspectedShopHolo.showOnlyItem();
+                            inspectedShopHolo.showAlwaysVisibleText();
+                            inspectedShopHolo.removeInspectedShop();
                         }
+                    }
+                    // if the player is looking at a shop, and he is not inspecting it yet, then start inspecting it!
+                    if (ShopHologram.hasHologram(loc, player) && !shopHolo.hasInspector()) {
+                        shopHolo.showTextAfterItem();
+                        shopHolo.setItemDataVisible(player.isSneaking());
+                        shopHolo.setAsInspectedShop();
+                        alreadyRenderedHologram = true;
+                        isLookingAtSameShop = true;
                     }
                 }
             }
@@ -96,16 +102,11 @@ public class PlayerCloseToChestListener implements Listener {
             }
         }
 
-        if (alreadyRenderedHologram || !hasMovedXYZ(event)) {
-            return;
-        }
+        if (alreadyRenderedHologram) return;
 
         Location loc = player.getLocation();
-        List<EzShop> shops = ShopContainer.getShops().stream()
-                .filter(ezShop -> ezShop.getLocation() != null
-                        && loc.getWorld().equals(ezShop.getLocation().getWorld())
-                        && loc.distance(ezShop.getLocation()) < Config.holodistancing_distance + 5)
-                .collect(Collectors.toList());
+        // Use chunk-based lookup (2-chunk radius ≈ 32 blocks)
+        List<EzShop> shops = ShopContainer.getNearbyShops(loc, 2);
         for (EzShop ezShop : shops) {
             if (EzChestShop.slimefun) {
                 if (BlockStorage.hasBlockInfo(ezShop.getLocation())) {
@@ -116,29 +117,25 @@ public class PlayerCloseToChestListener implements Listener {
             double dist = loc.distance(ezShop.getLocation());
             // Show the Hologram if Player close enough
             if (dist < Config.holodistancing_distance) {
-                if (ShopHologram.hasHologram(ezShop.getLocation(), player))
-                    continue;
+                if (ShopHologram.hasHologram(ezShop.getLocation(), player)) continue;
 
                 Block target = ezShop.getLocation().getWorld().getBlockAt(ezShop.getLocation());
-                if (target == null || !Utils.isApplicableContainer(target)) {
-                    return;
-                }
+                if (target == null || !Utils.isApplicableContainer(target)) return;
+
                 ShopHologram shopHolo = ShopHologram.getHologram(ezShop.getLocation(), player);
                 if (Config.holodistancing_show_item_first) {
                     shopHolo.showOnlyItem();
                     shopHolo.showAlwaysVisibleText();
-                } else {
-                    shopHolo.show();
-                }
+                } else shopHolo.show();
+
 
             }
             // Hide the Hologram that is too far away from the player
             else if (dist > Config.holodistancing_distance + 1
                     && dist < Config.holodistancing_distance + 3) {
                 // Hide the Hologram
-                if (ShopHologram.hasHologram(ezShop.getLocation(), player)) {
+                if (ShopHologram.hasHologram(ezShop.getLocation(), player))
                     ShopHologram.getHologram(ezShop.getLocation(), player).hide();
-                }
             }
         }
     }
