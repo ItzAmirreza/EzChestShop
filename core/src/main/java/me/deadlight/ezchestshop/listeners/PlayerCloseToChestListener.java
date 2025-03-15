@@ -144,6 +144,7 @@ public class PlayerCloseToChestListener implements Listener {
     public void onPlayerLogout(PlayerQuitEvent event) {
         Player player = event.getPlayer();
         ShopHologram.hideAll(player);
+        inspectedShops.remove(player);
     }
 
     @EventHandler
@@ -157,16 +158,20 @@ public class PlayerCloseToChestListener implements Listener {
         Player player = event.getPlayer();
         if (ShopHologram.isPlayerInspectingShop(player)) {
             ShopHologram shopHolo = ShopHologram.getInspectedShopHologram(player);
-            if (event.isSneaking()) {
-                shopHolo.setItemDataVisible(true);
+            if (shopHolo != null && ShopContainer.isShop(shopHolo.getLocation())) {
+                shopHolo.setItemDataVisible(event.isSneaking());
             } else {
-                shopHolo.setItemDataVisible(false);
+                if (shopHolo != null) shopHolo.removeInspectedShop();
+                inspectedShops.remove(player);
             }
         } else if (!Config.holodistancing_show_item_first) {
             // When holodistancing_show_item_first is off, the shop needs to be queried separately.
             // It's less reactive but it works.
             if (!event.isSneaking() && inspectedShops.containsKey(player)) {
-                inspectedShops.get(player).setItemDataVisible(false);
+                ShopHologram shopHolo = inspectedShops.get(player);
+                if (shopHolo != null && ShopContainer.isShop(shopHolo.getLocation()))
+                    shopHolo.setItemDataVisible(false);
+                else inspectedShops.remove(player);
             }
             RayTraceResult result = player.rayTraceBlocks(5);
             if (result == null)

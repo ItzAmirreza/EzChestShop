@@ -84,6 +84,7 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
                         List<EzShop> shops = ShopContainer.getShops();
                         int i = 0;
                         for (EzShop ezShop : shops){
+                            if(Utils.getBlockInventory(ezShop.getLocation().getBlock()) == null) continue;
                             if(Utils.getBlockInventory(ezShop.getLocation().getBlock()).isEmpty()) {
                                 BlockState blockState = ezShop.getLocation().getBlock().getState();
                                 if (blockState != null){
