@@ -80,6 +80,40 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
                         reload();
                         player.sendMessage(Utils.colorify("&aEzChestShop successfully reloaded!"));
 
+                    } else if (firstarg.equalsIgnoreCase("remove-emptyshops") && (player.hasPermission("ecs.admin.clear") || player.hasPermission("ecs.admin"))) {
+                        List<EzShop> shops = ShopContainer.getShops();
+                        int i = 0;
+                        for (EzShop ezShop : shops){
+                            if(Utils.getBlockInventory(ezShop.getLocation().getBlock()) == null) continue;
+                            if(Utils.getBlockInventory(ezShop.getLocation().getBlock()).isEmpty()) {
+                                BlockState blockState = ezShop.getLocation().getBlock().getState();
+                                if (blockState != null){
+                                    PersistentDataContainer container = ((TileState) blockState).getPersistentDataContainer();
+                                    container.remove(new NamespacedKey(EzChestShop.getPlugin(), "owner"));
+                                    container.remove(new NamespacedKey(EzChestShop.getPlugin(), "buy"));
+                                    container.remove(new NamespacedKey(EzChestShop.getPlugin(), "sell"));
+                                    container.remove(new NamespacedKey(EzChestShop.getPlugin(), "item"));
+
+                                    try {
+                                        container.remove(new NamespacedKey(EzChestShop.getPlugin(), "msgtoggle"));
+                                        container.remove(new NamespacedKey(EzChestShop.getPlugin(), "dbuy"));
+                                        container.remove(new NamespacedKey(EzChestShop.getPlugin(), "dsell"));
+                                        container.remove(new NamespacedKey(EzChestShop.getPlugin(), "admins"));
+                                        container.remove(new NamespacedKey(EzChestShop.getPlugin(), "shareincome"));
+                                        container.remove(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"));
+                                        container.remove(new NamespacedKey(EzChestShop.getPlugin(), "rotation"));
+                                    } catch (Exception ignored) {}
+
+                                    ShopContainer.deleteShop(blockState.getLocation());
+                                    ShopHologram.hideForAll(blockState.getLocation());
+
+                                    blockState.update();
+                                    i++;
+                                }
+                            }
+                        }
+                        player.sendMessage(Utils.colorify("&aEzChestShop successfully cleaned "+i+" empty shops!"));
+
                     } else if (firstarg.equalsIgnoreCase("create") && (player.hasPermission("ecs.admin.create") || player.hasPermission("ecs.admin"))) {
                         Block target = getCorrectBlock(player.getTargetBlockExact(6));
                         if (target != null) {
@@ -255,7 +289,7 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
         List<String> fList = new ArrayList<>();
-        List<String> list_firstarg = Arrays.asList("create", "reload", "remove", "help", "transfer-ownership", "configure-guis", "shop-commands", "debug");
+        List<String> list_firstarg = Arrays.asList("create", "reload", "remove", "help", "transfer-ownership", "configure-guis", "shop-commands", "debug", "remove-emptyshops");
         List<String> list_create_1 = Arrays.asList("[BuyPrice]");
         List<String> list_create_2 = Arrays.asList("[SellPrice]");
         List<String> list_transfer_2 = Arrays.asList("-confirm");

@@ -1,7 +1,6 @@
 package me.deadlight.ezchestshop.utils;
 
 import org.bukkit.OfflinePlayer;
-import scala.Int;
 
 public class XPEconomy {
 
@@ -103,7 +102,7 @@ public class XPEconomy {
             // add points
             // repeat until points is 0
             while (points > 0) {
-                if (currentLevel == Int.MaxValue() && currentPoints == 0) {
+                if (currentLevel == Integer.MAX_VALUE && currentPoints == 0) {
                     // if the player is at max level, he can't receive any more points
                     break;
                 }

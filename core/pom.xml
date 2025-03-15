@@ -136,7 +136,7 @@
         <dependency>
             <groupId>com.github.Slimefun</groupId>
             <artifactId>Slimefun4</artifactId>
-            <version>RC-27</version>
+            <version>RC-37</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -171,13 +171,13 @@
         <dependency>
             <groupId>com.palmergames.bukkit.towny</groupId>
             <artifactId>towny</artifactId>
-            <version>0.99.5.0</version>
+            <version>0.101.1.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>net.alex9849.advancedregionmarket</groupId>
             <artifactId>advancedregionmarket</artifactId>
-            <version>3.5.3</version>
+            <version>3.5.5</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

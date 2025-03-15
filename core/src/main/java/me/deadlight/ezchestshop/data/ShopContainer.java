@@ -20,10 +20,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -35,8 +32,15 @@ public class ShopContainer {
 
     private static Economy econ = EzChestShop.getEconomy();
     private static HashMap<Location, EzShop> shopMap = new HashMap<>();
+    private static HashMap<String, List<EzShop>> shopsByChunk = new HashMap<>();
 
     static DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
+
+    private static String getChunkKey(Location loc) {
+        int chunkX = loc.getBlockX() >> 4;
+        int chunkZ = loc.getBlockZ() >> 4;
+        return loc.getWorld().getName() + "," + chunkX + "," + chunkZ;
+    }
 
     /**
      * Save all shops from the Database into memory,
@@ -45,6 +49,11 @@ public class ShopContainer {
     public static void queryShopsToMemory() {
         DatabaseManager db = EzChestShop.getPlugin().getDatabase();
         shopMap = db.queryShops();
+        shopsByChunk.clear();
+        for (EzShop shop : shopMap.values()) {
+            String chunkKey = getChunkKey(shop.getLocation());
+            shopsByChunk.computeIfAbsent(chunkKey, k -> new ArrayList<>()).add(shop);
+        }
     }
 
     /**
@@ -56,11 +65,11 @@ public class ShopContainer {
         DatabaseManager db = EzChestShop.getPlugin().getDatabase();
         db.deleteEntry("location", Utils.LocationtoString(loc),
                 "shopdata");
-        shopMap.remove(loc);
-
-        //This is not workign as intended
-//        InventoryHolder inventoryHolder = (InventoryHolder) loc.getBlock();
-//        inventoryHolder.getInventory().getViewers().forEach(viewer -> viewer.closeInventory());
+        EzShop shop = shopMap.remove(loc);
+        if (shop != null) {
+            List<EzShop> chunkShops = shopsByChunk.get(getChunkKey(loc));
+            if (chunkShops != null) chunkShops.remove(shop);
+        }
 
         for (Player p : Bukkit.getOnlinePlayers()) {
             if (ShopHologram.hasHologram(loc, p))
@@ -76,7 +85,7 @@ public class ShopContainer {
      */
     public static void createShop(Location loc, Player p, ItemStack item, double buyprice, double sellprice, boolean msgtoggle,
                                   boolean dbuy, boolean dsell, String admins, boolean shareincome,
-                                   boolean adminshop, String rotation) {
+                                  boolean adminshop, String rotation) {
         DatabaseManager db = EzChestShop.getPlugin().getDatabase();
         String sloc = Utils.LocationtoString(loc);
         String encodedItem = Utils.encodeItem(item);
@@ -84,30 +93,24 @@ public class ShopContainer {
         ShopSettings settings = new ShopSettings(sloc, msgtoggle, dbuy, dsell, admins, shareincome, adminshop, rotation, new ArrayList<>());
         EzShop shop = new EzShop(loc, p, item, buyprice, sellprice, settings);
         shopMap.put(loc, shop);
+        shopsByChunk.computeIfAbsent(getChunkKey(loc), k -> new ArrayList<>()).add(shop);
         EzChestShop.getPlugin().getServer().getScheduler().runTaskAsynchronously(
                 EzChestShop.getPlugin(), () -> {
-
                     try {
                         WebhookSender.sendDiscordNewShopAlert(
                                 p.getName(),
-                                //Show buying price in string if dbuy is false, otherwise show "Disabled"
                                 dbuy ? "Disabled" : String.valueOf(buyprice),
                                 dsell ? "Disabled" : String.valueOf(sellprice),
-                                //Show Item name if it has custom name, otherwise show localized name
                                 item.getItemMeta().hasDisplayName() ? item.getItemMeta().getDisplayName() : item.getType().name(),
                                 item.getType().name(),
-                                //Display Current Time Like This: 2023/5/1 | 23:10:23
                                 formatter.format(java.time.LocalDateTime.now()).replace("T", " | "),
-                                //Display shop location as this: world, x, y, z
                                 loc.getWorld().getName() + ", " + loc.getBlockX() + ", " + loc.getBlockY() + ", " + loc.getBlockZ()
                         );
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-
                 }
         );
-
     }
 
     public static void loadShop(Location loc, PersistentDataContainer dataContainer) {
@@ -126,10 +129,10 @@ public class ShopContainer {
         String rotation = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "rotation"), PersistentDataType.STRING);
         rotation = rotation == null ? "top" : rotation;
         db.insertShop(sloc, owner, encodedItem == null ? "Error" : encodedItem, buyprice, sellprice, msgtoggle, dbuy, dsell, admins, shareincome, adminshop, rotation, new ArrayList<>());
-
         ShopSettings settings = new ShopSettings(sloc, msgtoggle, dbuy, dsell, admins, shareincome, adminshop, rotation, new ArrayList<>());
         EzShop shop = new EzShop(loc, owner, Utils.decodeItem(encodedItem), buyprice, sellprice, settings);
-        shopMap.put(loc, shop);;
+        shopMap.put(loc, shop);
+        shopsByChunk.computeIfAbsent(getChunkKey(loc), k -> new ArrayList<>()).add(shop);
     }
 
     public static PersistentDataContainer copyContainerData(PersistentDataContainer oldContainer, PersistentDataContainer newContainer) {
@@ -222,6 +225,23 @@ public class ShopContainer {
         return null;
     }
 
+    public static List<EzShop> getNearbyShops(Location loc, int radiusInChunks) {
+        List<EzShop> nearby = new ArrayList<>();
+        String[] parts = getChunkKey(loc).split(",");
+        String worldName = parts[0];
+        int chunkX = Integer.parseInt(parts[1]);
+        int chunkZ = Integer.parseInt(parts[2]);
+
+        for (int dx = -radiusInChunks; dx <= radiusInChunks; dx++) {
+            for (int dz = -radiusInChunks; dz <= radiusInChunks; dz++) {
+                String key = worldName + "," + (chunkX + dx) + "," + (chunkZ + dz);
+                List<EzShop> chunkShops = shopsByChunk.getOrDefault(key, Collections.emptyList());
+                nearby.addAll(chunkShops);
+            }
+        }
+        return nearby;
+    }
+
     public static ShopSettings getShopSettings(Location loc) {
         if (shopMap.containsKey(loc)) {
             return shopMap.get(loc).getSettings();
@@ -236,7 +256,6 @@ public class ShopContainer {
             String admins = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "admins"), PersistentDataType.STRING);
             boolean shareincome = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "shareincome"), PersistentDataType.INTEGER) == 1;
             boolean adminshop = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"), PersistentDataType.INTEGER) == 1;
-
             String owner = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING);
             String encodedItem = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "item"), PersistentDataType.STRING);
             double buyprice = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "buy"), PersistentDataType.DOUBLE);
@@ -246,6 +265,7 @@ public class ShopContainer {
             ShopSettings settings = new ShopSettings(sloc, msgtoggle, dbuy, dsell, admins, shareincome, adminshop, rotation, new ArrayList<>());
             EzShop shop = new EzShop(loc, owner, Utils.decodeItem(encodedItem), buyprice, sellprice, settings);
             shopMap.put(loc, shop);
+            shopsByChunk.computeIfAbsent(getChunkKey(loc), k -> new ArrayList<>()).add(shop);
             return settings;
         }
     }
