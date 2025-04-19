@@ -86,34 +86,7 @@ public class BlockBreakListener implements Listener {
                     }
                 }
 
-                // Additional safety check - force close any GUI that might reference this shop
-                // This helps prevent client-side exploits like "close without packet"
-                for (Player p : Bukkit.getOnlinePlayers()) {
-                    if (p.getOpenInventory() != null && p.getOpenInventory().getTopInventory() != null) {
-                        // If player has any GUI open, we force close it to be safe
-                        // This prevents the saved GUI exploit
-                        if (p.getOpenInventory().getTitle().contains(lm.guiOwnerTitle("")) ||
-                                p.getOpenInventory().getTitle().contains(lm.guiAdminTitle("")) ||
-                                p.getOpenInventory().getTitle().contains(lm.guiNonOwnerTitle("")) ||
-                                p.getOpenInventory().getTitle().contains(lm.adminshopguititle())) {
-                            p.closeInventory();
-                        }
-                    }
-                }
-
                 if (Utils.isShulkerBox(event.getBlock())) {
-                    // first we check nobody is already in the shulker container (viewing it) ->
-                    // This specific check is now redundant and handled above.
-                    /*
-                     * ShulkerBox shulkerBox = (ShulkerBox) event.getBlock().getState();
-                     * int viewerCount = shulkerBox.getInventory().getViewers().size();
-                     * if (viewerCount > 0) {
-                     * event.setCancelled(true);
-                     * event.getPlayer().sendMessage(lm.noBreakingWhileShopOpen());
-                     * return;
-                     * }
-                     */
-
                     if (event.isDropItems()) {
                         event.setDropItems(false);
                         ItemStack shulker = event.getBlock().getDrops().stream().findFirst().get();

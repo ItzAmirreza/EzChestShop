@@ -60,8 +60,7 @@ public class ShopContainer {
                 "shopdata");
 
         // Force close inventories for any players who might be viewing this shop's
-        // inventory
-        // This prevents various client-side exploits
+        // inventory directly
         if (loc.getBlock().getState() instanceof InventoryHolder) {
             InventoryHolder holder = (InventoryHolder) loc.getBlock().getState();
             if (holder.getInventory() != null) {
@@ -69,20 +68,6 @@ public class ShopContainer {
                 List<HumanEntity> viewers = new ArrayList<>(holder.getInventory().getViewers());
                 for (HumanEntity viewer : viewers) {
                     viewer.closeInventory();
-                }
-            }
-        }
-
-        // Force close GUIs for any players that might be referencing this shop
-        for (Player p : Bukkit.getOnlinePlayers()) {
-            if (p.getOpenInventory() != null && p.getOpenInventory().getTopInventory() != null) {
-                // Titles contain shop identifiers, close these if found
-                LanguageManager lm = new LanguageManager();
-                if (p.getOpenInventory().getTitle().contains(lm.guiOwnerTitle("")) ||
-                        p.getOpenInventory().getTitle().contains(lm.guiAdminTitle("")) ||
-                        p.getOpenInventory().getTitle().contains(lm.guiNonOwnerTitle("")) ||
-                        p.getOpenInventory().getTitle().contains(lm.adminshopguititle())) {
-                    p.closeInventory();
                 }
             }
         }
