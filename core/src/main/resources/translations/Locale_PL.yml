@@ -20,8 +20,8 @@ shop-gui:
     adminview: '&c&lPodgląd właściciela'
     storage: '&e&lPrzedmioty'
     settings: '&b&lUstawienia'
-    disabled-title: '&cWyłączony'
-    disabled-lore:
+    disabledButtonTitle: '&cWyłączony'
+    disabledButtonLore:
       - '&7Ta opcja została wyłączona przez '
       - ' &7właściciela sklepu.'
 transactions:

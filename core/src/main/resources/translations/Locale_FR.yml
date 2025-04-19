@@ -19,8 +19,8 @@ shop-gui:
     adminview: "&c&lVue Admin"
     storage: "&e&lCapacitée"
     settings: "&b&lParamétres"
-    disabled-title: "&cDesactiver"
-    disabled-lore:
+    disabledButtonTitle: "&cDesactiver"
+    disabledButtonLore:
       - "&7Cette option est desactivée par "
       - " &7Le propriétaire."
 transactions:

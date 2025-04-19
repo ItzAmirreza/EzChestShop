@@ -19,8 +19,8 @@ shop-gui:
     adminview: "&c&lПросмотр администратора"
     storage: "&e&lХранение"
     settings: "&b&lНастройка"
-    disabled-title: "&cВыключено"
-    disabled-lore:
+    disabledButtonTitle: "&cВыключено"
+    disabledButtonLore:
       - "&7Этот параметр выключен "
       - " &7владельцем магазина."
 transactions:

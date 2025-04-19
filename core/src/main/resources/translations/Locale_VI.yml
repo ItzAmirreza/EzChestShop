@@ -19,8 +19,8 @@ shop-gui:
     adminview: "&cTrang xem của admin"
     storage: "&eKho Chứa"
     settings: "&bCài đặt"
-    disabled-title: "&cĐã tắt"
-    disabled-lore:
+    disabledButtonTitle: "&cĐã tắt"
+    disabledButtonLore:
       - "&7Lựa chọn này đã bị tắt"
       - " &7bởi chủ shop."
 transactions:

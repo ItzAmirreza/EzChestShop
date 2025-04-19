@@ -19,8 +19,8 @@ shop-gui:
     adminview: "&c&lZobrazenie správcu servera"
     storage: "&e&lSklad"
     settings: "&b&lNastavenia"
-    disabled-title: "&cZakázané"
-    disabled-lore:
+    disabledButtonTitle: "&cZakázané"
+    disabledButtonLore:
       - "&7Táto funkcia je zakázaná"
       - " &7najiteľom obchodu."
 transactions:

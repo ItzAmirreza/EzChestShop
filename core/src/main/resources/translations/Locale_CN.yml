@@ -19,8 +19,8 @@ shop-gui:
     adminview: "&c&l管理庫存"
     storage: "&e&l庫存"
     settings: "&b&l設定"
-    disabled-title: "&c關閉"
-    disabled-lore: 
+    disabledButtonTitle: "&c關閉"
+    disabledButtonLore: 
       - "&7此選項已被商店主人關閉."
 transactions:
   transactionButtonTitle: "&a交易紀錄"
