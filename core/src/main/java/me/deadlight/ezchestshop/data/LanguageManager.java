@@ -285,10 +285,10 @@ public class LanguageManager {
         return Utils.colorify(getString("shop-gui.buttons.settings"));
     }
     public String disabledButtonTitle() {
-        return Utils.colorify(getString("shop-gui.buttons.disabled-title"));
+        return Utils.colorify(getString("shop-gui.buttons.disabledButtonTitle"));
     }
     public List<String> disabledButtonLore() {
-        return getList("shop-gui.buttons.disabled-lore").stream().map(s -> Utils.colorify(s)).collect(Collectors.toList());
+        return getList("shop-gui.buttons.disabledButtonLore").stream().map(s -> Utils.colorify(s)).collect(Collectors.toList());
     }
 
 

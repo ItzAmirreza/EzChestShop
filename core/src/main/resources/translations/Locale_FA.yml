@@ -19,9 +19,9 @@ shop-gui:
     adminview: "&c&lAdmin View"
     storage: "&e&lAnbar"
     settings: "&b&lTanzimat"
-    disabled-title: "&cGheyre fa'al"
+    disabledButtonTitle: "&cGheyre fa'al"
     #Baraye Line Badi Az "\n" Estefade Konid. (remember to include color code in every line)
-    disabled-lore:
+    disabledButtonLore:
       - "&7In ghabeliat tavasot owner in shop "
       - " &7gheyre fa'al shode ast."
 transactions:

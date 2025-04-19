@@ -22,9 +22,9 @@ shop-gui:
     adminview: "&c&lAdmin Sicht"
     storage: "&e&lLager"
     settings: "&b&lEinstellungen"
-    disabled-title: "&cDeaktiviert"
+    disabledButtonTitle: "&cDeaktiviert"
     # Verwende \n für eine neue Lorezeile (Bedenke neue Farben für jede Zeile zu verwenden)
-    disabled-lore:
+    disabledButtonLore:
       - "&7Diese Option ist vom "
       - " &7Shopbesitzer deaktiviert."
 transactions:

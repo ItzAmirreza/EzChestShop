@@ -20,8 +20,8 @@ shop-gui:
     adminview: "&cStok Takibi"
     storage: "&6Depo"
     settings: "&bAyarlar"
-    disabled-title: "&cMarkete ürün satamazsın!"
-    disabled-lore:
+    disabledButtonTitle: "&cMarkete ürün satamazsın!"
+    disabledButtonLore:
       - ""
       - "&7Bu seçenek market sahibi"
       - "&7tarafından devre dışı bırakıldı!"

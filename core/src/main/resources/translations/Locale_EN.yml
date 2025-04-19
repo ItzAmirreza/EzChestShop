@@ -19,8 +19,8 @@ shop-gui:
     adminview: "&c&lAdmin View"
     storage: "&e&lStorage"
     settings: "&b&lSettings"
-    disabled-title: "&cDisabled"
-    disabled-lore:
+    disabledButtonTitle: "&cDisabled"
+    disabledButtonLore:
       - "&7This option is disabled by "
       - " &7the shop owner."
 transactions:
