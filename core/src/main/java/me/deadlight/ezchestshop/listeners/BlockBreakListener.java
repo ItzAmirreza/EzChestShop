@@ -40,11 +40,13 @@ public class BlockBreakListener implements Listener {
     public void onBlockBreak(BlockBreakEvent event) {
 
         if (Utils.blockBreakMap.containsKey(event.getPlayer().getName())) {
-            Collection<Entity> entityList = event.getBlock().getLocation().getWorld().getNearbyEntities(event.getBlock().getLocation(), 2, 2 ,2);
+            Collection<Entity> entityList = event.getBlock().getLocation().getWorld()
+                    .getNearbyEntities(event.getBlock().getLocation(), 2, 2, 2);
             for (Entity en : entityList) {
                 if (en instanceof Item) {
                     Item item = (Item) en;
-                    if (item.getItemStack().getType() == Material.CHEST || item.getItemStack().getType() == Material.TRAPPED_CHEST) {
+                    if (item.getItemStack().getType() == Material.CHEST
+                            || item.getItemStack().getType() == Material.TRAPPED_CHEST) {
                         en.remove();
                     }
                 }
@@ -61,7 +63,6 @@ public class BlockBreakListener implements Listener {
             }
         }
 
-
         if (!event.isCancelled()) {
             preventShopBreak(event);
             if (event.isCancelled()) {
@@ -74,24 +75,54 @@ public class BlockBreakListener implements Listener {
                 loc = Utils.isPartOfTheChestShop(event.getBlock().getLocation()).getLocation();
             }
             if (ShopContainer.isShop(loc) || isPartOfShop) {
-                if (Utils.isShulkerBox(event.getBlock())) {
-
-                    //first we check nobody is already in the shulker container (viewing it)
-                    ShulkerBox shulkerBox = (ShulkerBox) event.getBlock().getState();
-                    int viewerCount = shulkerBox.getInventory().getViewers().size();
-                    if (viewerCount > 0) {
+                // Check if anyone is viewing the shop container's inventory directly
+                if (event.getBlock().getState() instanceof org.bukkit.inventory.InventoryHolder) {
+                    org.bukkit.inventory.InventoryHolder containerState = (org.bukkit.inventory.InventoryHolder) event
+                            .getBlock().getState();
+                    if (containerState.getInventory().getViewers().size() > 0) {
                         event.setCancelled(true);
                         event.getPlayer().sendMessage(lm.noBreakingWhileShopOpen());
                         return;
                     }
+                }
+
+                // Additional safety check - force close any GUI that might reference this shop
+                // This helps prevent client-side exploits like "close without packet"
+                for (Player p : Bukkit.getOnlinePlayers()) {
+                    if (p.getOpenInventory() != null && p.getOpenInventory().getTopInventory() != null) {
+                        // If player has any GUI open, we force close it to be safe
+                        // This prevents the saved GUI exploit
+                        if (p.getOpenInventory().getTitle().contains(lm.guiOwnerTitle("")) ||
+                                p.getOpenInventory().getTitle().contains(lm.guiAdminTitle("")) ||
+                                p.getOpenInventory().getTitle().contains(lm.guiNonOwnerTitle("")) ||
+                                p.getOpenInventory().getTitle().contains(lm.adminshopguititle())) {
+                            p.closeInventory();
+                        }
+                    }
+                }
+
+                if (Utils.isShulkerBox(event.getBlock())) {
+                    // first we check nobody is already in the shulker container (viewing it) ->
+                    // This specific check is now redundant and handled above.
+                    /*
+                     * ShulkerBox shulkerBox = (ShulkerBox) event.getBlock().getState();
+                     * int viewerCount = shulkerBox.getInventory().getViewers().size();
+                     * if (viewerCount > 0) {
+                     * event.setCancelled(true);
+                     * event.getPlayer().sendMessage(lm.noBreakingWhileShopOpen());
+                     * return;
+                     * }
+                     */
 
                     if (event.isDropItems()) {
                         event.setDropItems(false);
                         ItemStack shulker = event.getBlock().getDrops().stream().findFirst().get();
                         ItemMeta meta = shulker.getItemMeta();
                         PersistentDataContainer container = meta.getPersistentDataContainer();
-                        PersistentDataContainer bcontainer = ((TileState) event.getBlock().getState()).getPersistentDataContainer();
-                        if (bcontainer.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING) != null) {
+                        PersistentDataContainer bcontainer = ((TileState) event.getBlock().getState())
+                                .getPersistentDataContainer();
+                        if (bcontainer.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"),
+                                PersistentDataType.STRING) != null) {
                             container = ShopContainer.copyContainerData(bcontainer, container);
                             meta = addLore(meta, container);
                             shulker.setItemMeta(meta);
@@ -105,13 +136,13 @@ public class BlockBreakListener implements Listener {
                 ShopContainer.deleteShop(loc);
             }
 
-
         }
     }
 
     private ItemMeta addLore(ItemMeta meta, PersistentDataContainer container) {
         if (Config.settings_add_shulkershop_lore) {
-            List<String> nlore = lm.shulkerboxLore(Bukkit.getOfflinePlayer(UUID.fromString(getContainerString(container, "owner"))).getName(),
+            List<String> nlore = lm.shulkerboxLore(
+                    Bukkit.getOfflinePlayer(UUID.fromString(getContainerString(container, "owner"))).getName(),
                     Utils.getFinalItemName(Utils.decodeItem(getContainerString(container, "item"))),
                     getContainerDouble(container, "buy"),
                     getContainerDouble(container, "sell"));
@@ -152,11 +183,11 @@ public class BlockBreakListener implements Listener {
                 }
             }
 
-            //shop protection section
+            // shop protection section
             if (Config.shopProtection) {
 
                 if (!event.getPlayer().hasPermission("ecs.admin")) {
-                    //check if player is owner of shop
+                    // check if player is owner of shop
                     EzShop shop = ShopContainer.getShop(loc);
                     if (!shop.getOwnerID().equals(event.getPlayer().getUniqueId())) {
                         event.setCancelled(true);

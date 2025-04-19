@@ -1,4 +1,5 @@
 package me.deadlight.ezchestshop.utils;
+
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
 import dev.triumphteam.gui.guis.PaginatedGui;
@@ -52,7 +53,9 @@ public class Utils {
     public static List<String> rotations = Arrays.asList("up", "north", "east", "south", "west", "down");
 
     public static HashMap<String, Block> blockBreakMap = new HashMap<>();
-    public static ConcurrentHashMap<Integer, BlockOutline> activeOutlines = new ConcurrentHashMap<>(); //player uuid, list of outlines
+    public static ConcurrentHashMap<Integer, BlockOutline> activeOutlines = new ConcurrentHashMap<>(); // player uuid,
+                                                                                                       // list of
+                                                                                                       // outlines
     public static List<UUID> enabledOutlines = new ArrayList<>();
     private static LanguageManager lm = new LanguageManager();
 
@@ -70,13 +73,12 @@ public class Utils {
                 String internalsName = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
                 versionUtils = (VersionUtils) Class.forName(packageName + "." + internalsName).newInstance();
             }
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | ClassCastException exception) {
-            Bukkit.getLogger().log(Level.SEVERE, "EzChestShop could not find a valid implementation for this server version.");
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+                | ClassCastException exception) {
+            Bukkit.getLogger().log(Level.SEVERE,
+                    "EzChestShop could not find a valid implementation for this server version.");
         }
     }
-
-
-
 
     static boolean isFolia() {
         try {
@@ -177,6 +179,13 @@ public class Utils {
      * @return
      */
     public static Inventory getBlockInventory(Block block) {
+        // First check if this location is a valid shop to prevent accessing
+        // non-existent shops
+        // This prevents the client-side "save GUI" exploit
+        if (block == null || !ShopContainer.isShop(block.getLocation())) {
+            return null;
+        }
+
         if (block.getType() == Material.CHEST || block.getType() == Material.TRAPPED_CHEST) {
             return ((Chest) block.getState()).getInventory();
         } else if (block.getType() == Material.BARREL) {
@@ -252,7 +261,6 @@ public class Utils {
         }
     }
 
-
     public static List<TransactionLogObject> getListOfTransactions(Location containerBlock) {
         return null;
     }
@@ -266,7 +274,7 @@ public class Utils {
                     && ((EnchantmentStorageMeta) item.getItemMeta()).getStoredEnchants().size() == 1) {
                 EnchantmentStorageMeta emeta = (EnchantmentStorageMeta) item.getItemMeta();
 
-                Map.Entry<Enchantment,Integer> entry = emeta.getStoredEnchants().entrySet().iterator().next();
+                Map.Entry<Enchantment, Integer> entry = emeta.getStoredEnchants().entrySet().iterator().next();
                 itemname = lm.itemEnchantHologram(entry.getKey(), entry.getValue());
             } else if (item.getItemMeta().hasLocalizedName()) {
                 itemname = item.getItemMeta().getLocalizedName();
@@ -392,8 +400,8 @@ public class Utils {
      * @param permissible a object using the Permissible System e.g. a Player.
      * @param permission  a Permission String to check e.g. ecs.shops.limit.
      * @return the maximum int found, unless user is an Operator or has the
-     * ecs.admin permission.
-     * Then the returned result will be -1
+     *         ecs.admin permission.
+     *         Then the returned result will be -1
      */
     public static int getMaxPermission(Permissible permissible, String permission) {
         return getMaxPermission(permissible, permission, 0);
@@ -406,8 +414,8 @@ public class Utils {
      * @param permission  a Permission String to check e.g. ecs.shops.limit.
      * @param defaultMax  the default max value to return if no permission is found
      * @return the maximum int found, unless user is an Operator or has the
-     * ecs.admin permission.
-     * Then the returned result will be -1
+     *         ecs.admin permission.
+     *         Then the returned result will be -1
      */
     public static int getMaxPermission(Permissible permissible, String permission, int defaultMax) {
         if (permissible.isOp() || permissible.hasPermission("ecs.admin"))
@@ -564,8 +572,8 @@ public class Utils {
     }
 
     public static List<String> calculatePossibleAmount(OfflinePlayer offlineCustomer, OfflinePlayer offlineSeller,
-                                                       ItemStack[] playerInventory, ItemStack[] storageInventory, double eachBuyPrice, double eachSellPrice,
-                                                       ItemStack itemStack) {
+            ItemStack[] playerInventory, ItemStack[] storageInventory, double eachBuyPrice, double eachSellPrice,
+            ItemStack itemStack) {
 
         List<String> results = new ArrayList<>();
 
@@ -580,11 +588,11 @@ public class Utils {
     }
 
     public static String calculateBuyPossibleAmount(OfflinePlayer offlinePlayer, ItemStack[] playerInventory,
-                                                    ItemStack[] storageInventory, double eachBuyPrice, ItemStack itemStack) {
+            ItemStack[] storageInventory, double eachBuyPrice, ItemStack itemStack) {
         // I was going to run this in async but maybe later...
         int possibleCount = 0;
-        double buyerBalance =
-                Config.useXP ? XPEconomy.getXP(offlinePlayer) : EzChestShop.getEconomy().getBalance(offlinePlayer);
+        double buyerBalance = Config.useXP ? XPEconomy.getXP(offlinePlayer)
+                : EzChestShop.getEconomy().getBalance(offlinePlayer);
         int emptyCount = playerEmptyCount(playerInventory, itemStack);
         int howManyExists = howManyOfItemExists(storageInventory, itemStack);
 
@@ -607,6 +615,7 @@ public class Utils {
     }
 
     public static HashMap<OfflinePlayer, Boolean> hasPlayedBefore = new HashMap<>();
+
     public static boolean hasPlayedBefore(OfflinePlayer player) {
         if (player == null) {
             return false;
@@ -621,7 +630,7 @@ public class Utils {
     }
 
     public static String calculateSellPossibleAmount(OfflinePlayer offlinePlayer, ItemStack[] playerInventory,
-                                                     ItemStack[] storageInventory, double eachSellPrice, ItemStack itemStack) {
+            ItemStack[] storageInventory, double eachSellPrice, ItemStack itemStack) {
 
         int possibleCount = 0;
         double buyerBalance;
@@ -629,9 +638,8 @@ public class Utils {
             buyerBalance = Double.MAX_VALUE;
         } else {
             if (hasPlayedBefore(offlinePlayer)) {
-                buyerBalance = Config.useXP ?
-                            XPEconomy.getXP(offlinePlayer) :
-                            EzChestShop.getEconomy().getBalance(offlinePlayer);
+                buyerBalance = Config.useXP ? XPEconomy.getXP(offlinePlayer)
+                        : EzChestShop.getEconomy().getBalance(offlinePlayer);
             } else {
                 buyerBalance = 0;
             }
@@ -675,13 +683,18 @@ public class Utils {
     }
 
     /*
-    Removes the given ItemStacks from the inventory.
-
-    It will try to remove 'as much as possible' from the types and amounts you give as arguments.
-
-    The returned HashMap contains what it couldn't remove, where the key is the index of the parameter, and the value is the ItemStack at that index of the varargs parameter. If all the given ItemStacks are removed, it will return an empty HashMap.
-
-    It is known that in some implementations this method will also set the inputted argument amount to the number of that item not removed from slots.
+     * Removes the given ItemStacks from the inventory.
+     * 
+     * It will try to remove 'as much as possible' from the types and amounts you
+     * give as arguments.
+     * 
+     * The returned HashMap contains what it couldn't remove, where the key is the
+     * index of the parameter, and the value is the ItemStack at that index of the
+     * varargs parameter. If all the given ItemStacks are removed, it will return an
+     * empty HashMap.
+     * 
+     * It is known that in some implementations this method will also set the
+     * inputted argument amount to the number of that item not removed from slots.
      */
     public static HashMap<Integer, ItemStack> removeItem(@NotNull Inventory inventory, @NotNull ItemStack... stacks) {
         HashMap<Integer, ItemStack> leftover = new HashMap<>();
@@ -959,29 +972,29 @@ public class Utils {
     public static void recognizeDatabase() {
         if (Config.database_type == Database.SQLITE) {
             EzChestShop.logConsole("&c[&eEzChestShop&c] &eInitializing SQLite database...");
-            //initialize SQLite
+            // initialize SQLite
             databaseManager = new SQLite(EzChestShop.getPlugin());
             databaseManager.load();
             EzChestShop.logConsole("&c[&eEzChestShop&c] &aSQLite &7database initialized!");
 
         } else if (Config.database_type == Database.MYSQL) {
             EzChestShop.logConsole("&c[&eEzChestShop&c] &eInitializing MySQL database...");
-            //initialize MySQL
+            // initialize MySQL
             databaseManager = new MySQL(EzChestShop.getPlugin());
             databaseManager.load();
             EzChestShop.logConsole("&c[&eEzChestShop&c] &aMySQL &7database initialized!");
         } else {
-            //shouldn't happen technically
+            // shouldn't happen technically
         }
     }
 
-    public static void addItemIfEnoughSlots (Gui gui,int slot, GuiItem item){
+    public static void addItemIfEnoughSlots(Gui gui, int slot, GuiItem item) {
         if ((gui.getRows() * 9) > slot) {
             gui.setItem(slot, item);
         }
     }
 
-    public static void addItemIfEnoughSlots (PaginatedGui gui,int slot, GuiItem item){
+    public static void addItemIfEnoughSlots(PaginatedGui gui, int slot, GuiItem item) {
         if ((gui.getRows() * 9) > slot) {
             gui.setItem(slot, item);
         }
@@ -996,9 +1009,9 @@ public class Utils {
                 DoubleChest doubleChest = (DoubleChest) chest.getInventory().getHolder();
                 Chest left = (Chest) doubleChest.getLeftSide();
                 Chest right = (Chest) doubleChest.getRightSide();
-                //check if either of the chests is a shop
+                // check if either of the chests is a shop
                 if (ShopContainer.isShop(left.getLocation()) || ShopContainer.isShop(right.getLocation())) {
-                    //return the part that is a shop
+                    // return the part that is a shop
                     if (ShopContainer.isShop(left.getLocation())) {
                         return ShopContainer.getShop(left.getLocation());
                     } else {
@@ -1012,7 +1025,6 @@ public class Utils {
         return null;
     }
 
-
     public static List<UUID> getAdminsForShop(EzShop shop) {
         List<UUID> admins = new ArrayList<>();
         admins.add(shop.getOwnerID());
@@ -1022,8 +1034,9 @@ public class Utils {
         }
         String[] adminList = adminsString.split("@");
         for (String admin : adminList) {
-            if (!admin.equalsIgnoreCase("") && !admin.equalsIgnoreCase(" ") && !admin.equalsIgnoreCase("null") && !admin.equalsIgnoreCase("NULL")) {
-                //check if its a valid uuid
+            if (!admin.equalsIgnoreCase("") && !admin.equalsIgnoreCase(" ") && !admin.equalsIgnoreCase("null")
+                    && !admin.equalsIgnoreCase("NULL")) {
+                // check if its a valid uuid
                 boolean isValid = true;
                 try {
                     UUID.fromString(admin);
@@ -1041,26 +1054,29 @@ public class Utils {
 
     public static List<Block> getNearbyEmptyShopForAdmins(Player player) {
         List<Block> emptyShops = new ArrayList<>();
-        //We gonna check the area the maximum of 5 chunks away from the player
-        //We gonna check if the shop is for the owner or its admins
-        //We gonna check if the shop is empty
-        //We gonna check if the shop inventory has at least 1 item required for the shop
-        //We gonna check if the buy is enabled for the shop (Basically if shop owner is selling)
+        // We gonna check the area the maximum of 5 chunks away from the player
+        // We gonna check if the shop is for the owner or its admins
+        // We gonna check if the shop is empty
+        // We gonna check if the shop inventory has at least 1 item required for the
+        // shop
+        // We gonna check if the buy is enabled for the shop (Basically if shop owner is
+        // selling)
 
-        //first we get the shops
+        // first we get the shops
         List<EzShop> shops = ShopContainer.getShops();
-        //then we check if the shop is for the owner or its admins
+        // then we check if the shop is for the owner or its admins
         for (EzShop shop : shops) {
             if (shop.getSettings().isDbuy()) {
                 continue;
             }
-            //new check for admin shops
+            // new check for admin shops
             if (shop.getSettings().isAdminshop()) {
                 continue;
             }
 
-            if (shop.getOwnerID().equals(player.getUniqueId()) || getAdminsForShop(shop).contains(player.getUniqueId())) {
-                //then we check if the shop is empty
+            if (shop.getOwnerID().equals(player.getUniqueId())
+                    || getAdminsForShop(shop).contains(player.getUniqueId())) {
+                // then we check if the shop is empty
 
                 if (shop.getLocation() == null || shop.getLocation().getWorld() == null) {
                     continue;
@@ -1076,21 +1092,21 @@ public class Utils {
 
                 if (Utils.getBlockInventory(shop.getLocation().getBlock()).isEmpty()) {
 
-                    //then we check if the shop is in the area
+                    // then we check if the shop is in the area
                     if (shop.getLocation().getWorld().equals(player.getWorld())) {
                         if (shop.getLocation().distance(player.getLocation()) <= 80) {
                             emptyShops.add(shop.getLocation().getBlock());
                         }
                     }
                 } else {
-                    //then we check if the shop inventory has at least 1 item required for the shop
+                    // then we check if the shop inventory has at least 1 item required for the shop
                     ItemStack shopItem = shop.getShopItem().clone();
                     Inventory inventory = Utils.getBlockInventory(shop.getLocation().getBlock());
                     if (containsAtLeast(inventory, shopItem, 1)) {
                         continue;
                     }
 
-                    //then we check if the shop is in the area
+                    // then we check if the shop is in the area
                     if (shop.getLocation().getWorld().equals(player.getWorld())) {
                         if (shop.getLocation().distance(player.getLocation()) <= 80) {
                             emptyShops.add(shop.getLocation().getBlock());
@@ -1113,33 +1129,41 @@ public class Utils {
 
         EzShop shop = ShopContainer.getShop(containerLocation);
         if (shop == null) {
-            return false; //false means the shop doesn't even exist in the database, so we don't need to do anything and send the message
+            return false; // false means the shop doesn't even exist in the database, so we don't need to
+                          // do anything and send the message
         }
 
-        container.set(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING, shop.getOwnerID().toString());
+        container.set(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING,
+                shop.getOwnerID().toString());
         container.set(new NamespacedKey(EzChestShop.getPlugin(), "buy"), PersistentDataType.DOUBLE, shop.getBuyPrice());
-        container.set(new NamespacedKey(EzChestShop.getPlugin(), "sell"), PersistentDataType.DOUBLE, shop.getSellPrice());
-        //add new settings data later
-        container.set(new NamespacedKey(EzChestShop.getPlugin(), "msgtoggle"), PersistentDataType.INTEGER, shop.getSettings().isMsgtoggle() ? 1 : 0);
-        container.set(new NamespacedKey(EzChestShop.getPlugin(), "dbuy"), PersistentDataType.INTEGER, shop.getSettings().isDbuy() ?
-                (shop.getBuyPrice() == 0 ? 1 : (Config.settings_defaults_dbuy ? 1 : 0))
-                : (Config.settings_defaults_dbuy ? 1 : 0));
-        container.set(new NamespacedKey(EzChestShop.getPlugin(), "dsell"), PersistentDataType.INTEGER, shop.getSettings().isDsell() ?
-                (shop.getSellPrice() == 0 ? 1 : (Config.settings_defaults_dsell ? 1 : 0))
-                : (Config.settings_defaults_dsell ? 1 : 0));
-        container.set(new NamespacedKey(EzChestShop.getPlugin(), "admins"), PersistentDataType.STRING, shop.getSettings().getAdmins());
-        container.set(new NamespacedKey(EzChestShop.getPlugin(), "shareincome"), PersistentDataType.INTEGER, shop.getSettings().isShareincome() ? 1 : 0);
-        //container.set(new NamespacedKey(EzChestShop.getPlugin(), "trans"), PersistentDataType.STRING, "none");
-        container.set(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"), PersistentDataType.INTEGER, shop.getSettings().isAdminshop() ? 1 : 0);
-        container.set(new NamespacedKey(EzChestShop.getPlugin(), "rotation"), PersistentDataType.STRING, shop.getSettings().getRotation());
+        container.set(new NamespacedKey(EzChestShop.getPlugin(), "sell"), PersistentDataType.DOUBLE,
+                shop.getSellPrice());
+        // add new settings data later
+        container.set(new NamespacedKey(EzChestShop.getPlugin(), "msgtoggle"), PersistentDataType.INTEGER,
+                shop.getSettings().isMsgtoggle() ? 1 : 0);
+        container.set(new NamespacedKey(EzChestShop.getPlugin(), "dbuy"), PersistentDataType.INTEGER,
+                shop.getSettings().isDbuy() ? (shop.getBuyPrice() == 0 ? 1 : (Config.settings_defaults_dbuy ? 1 : 0))
+                        : (Config.settings_defaults_dbuy ? 1 : 0));
+        container.set(new NamespacedKey(EzChestShop.getPlugin(), "dsell"), PersistentDataType.INTEGER,
+                shop.getSettings().isDsell() ? (shop.getSellPrice() == 0 ? 1 : (Config.settings_defaults_dsell ? 1 : 0))
+                        : (Config.settings_defaults_dsell ? 1 : 0));
+        container.set(new NamespacedKey(EzChestShop.getPlugin(), "admins"), PersistentDataType.STRING,
+                shop.getSettings().getAdmins());
+        container.set(new NamespacedKey(EzChestShop.getPlugin(), "shareincome"), PersistentDataType.INTEGER,
+                shop.getSettings().isShareincome() ? 1 : 0);
+        // container.set(new NamespacedKey(EzChestShop.getPlugin(), "trans"),
+        // PersistentDataType.STRING, "none");
+        container.set(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"), PersistentDataType.INTEGER,
+                shop.getSettings().isAdminshop() ? 1 : 0);
+        container.set(new NamespacedKey(EzChestShop.getPlugin(), "rotation"), PersistentDataType.STRING,
+                shop.getSettings().getRotation());
 
         return true;
 
     }
 
-
-//    public static Object getRequestedData(Contain) {
-//
-//    }
+    // public static Object getRequestedData(Contain) {
+    //
+    // }
 
 }
