@@ -35,14 +35,16 @@ import java.util.UUID;
 
 public class ChestOpeningListener implements Listener {
 
-    private NonOwnerShopGUI nonOwnerShopGUI= new NonOwnerShopGUI();
+    private NonOwnerShopGUI nonOwnerShopGUI = new NonOwnerShopGUI();
     private OwnerShopGUI ownerShopGUI = new OwnerShopGUI();
     private AdminShopGUI adminShopGUI = new AdminShopGUI();
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onChestOpening(PlayerInteractEvent event) {
-        if (event.getClickedBlock() == null) return;
-        if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
+        if (event.getClickedBlock() == null)
+            return;
+        if (event.getAction() != Action.RIGHT_CLICK_BLOCK)
+            return;
         Material clickedType = event.getClickedBlock().getType();
         if (Utils.isApplicableContainer(clickedType)) {
 
@@ -64,15 +66,21 @@ public class ChestOpeningListener implements Listener {
                     Chest chestleft = (Chest) doubleChest.getLeftSide();
                     Chest chestright = (Chest) doubleChest.getRightSide();
 
+                    NamespacedKey ownerKey = new NamespacedKey(EzChestShop.getPlugin(), "owner");
+                    PersistentDataContainer leftData = chestleft.getPersistentDataContainer();
+                    PersistentDataContainer rightData = chestright.getPersistentDataContainer();
 
-                    if (!chestleft.getPersistentDataContainer().isEmpty()) {
-                        dataContainer = chestleft.getPersistentDataContainer();
+                    if (leftData.has(ownerKey, PersistentDataType.STRING)) {
+                        dataContainer = leftData;
                         chestblock = chestleft.getBlock();
-                    } else {
-                        dataContainer = chestright.getPersistentDataContainer();
+                    } else if (rightData.has(ownerKey, PersistentDataType.STRING)) {
+                        dataContainer = rightData;
                         chestblock = chestright.getBlock();
+                    } else { // neither side is an EzChestShop – fall-back
+                        dataContainer = leftData;
+                        chestblock = chestleft.getBlock();
                     }
-                    loc  = chestblock.getLocation();
+                    loc = chestblock.getLocation();
                 } else {
                     dataContainer = state.getPersistentDataContainer();
                 }
@@ -81,7 +89,6 @@ public class ChestOpeningListener implements Listener {
             } else if (Utils.isShulkerBox(clickedType)) {
                 dataContainer = state.getPersistentDataContainer();
             }
-
 
             if (dataContainer.has(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING)) {
                 event.setCancelled(true);
@@ -92,7 +99,8 @@ public class ChestOpeningListener implements Listener {
 
                 List<BlockOutline> playerOutlinedShops = new ArrayList<>(Utils.activeOutlines.values());
                 for (BlockOutline outline : playerOutlinedShops) {
-                    if (outline == null) continue;
+                    if (outline == null)
+                        continue;
                     if (outline.player.getUniqueId().equals(event.getPlayer().getUniqueId())) {
                         if (outline.block.getLocation().equals(loc)) {
                             outline.hideOutline();
@@ -100,34 +108,40 @@ public class ChestOpeningListener implements Listener {
                     }
                 }
 
-
-
-                //String owner = Bukkit.getOfflinePlayer(UUID.fromString(rightone.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING))).getName();
-                String owneruuid = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING);
-                boolean isAdminShop = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"), PersistentDataType.INTEGER) == 1;
+                // String owner = Bukkit.getOfflinePlayer(UUID.fromString(rightone.get(new
+                // NamespacedKey(EzChestShop.getPlugin(), "owner"),
+                // PersistentDataType.STRING))).getName();
+                String owneruuid = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"),
+                        PersistentDataType.STRING);
+                boolean isAdminShop = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"),
+                        PersistentDataType.INTEGER) == 1;
 
                 Player player = event.getPlayer();
-                
+
                 if (isAdminShop) {
                     if (EzChestShop.worldguard) {
                         if (!WorldGuardUtils.queryStateFlag(FlagRegistry.USE_ADMIN_SHOP, player) && !player.isOp()) {
                             return;
                         }
                     }
-                    Config.shopCommandManager.executeCommands(player, loc, ShopCommandManager.ShopType.ADMINSHOP, ShopCommandManager.ShopAction.OPEN, null);
+                    Config.shopCommandManager.executeCommands(player, loc, ShopCommandManager.ShopType.ADMINSHOP,
+                            ShopCommandManager.ShopAction.OPEN, null);
                     ServerShopGUI serverShopGUI = new ServerShopGUI();
                     serverShopGUI.showGUI(player, dataContainer, chestblock);
                     return;
                 }
                 boolean isAdmin = isAdmin(dataContainer, player.getUniqueId().toString());
-                
+
                 if (EzChestShop.worldguard) {
-                    if (!WorldGuardUtils.queryStateFlag(FlagRegistry.USE_SHOP, player) && !player.isOp() && !(isAdmin || player.getUniqueId().toString().equalsIgnoreCase(owneruuid))) {
+                    if (!WorldGuardUtils.queryStateFlag(FlagRegistry.USE_SHOP, player) && !player.isOp()
+                            && !(isAdmin || player.getUniqueId().toString().equalsIgnoreCase(owneruuid))) {
                         return;
                     }
                 }
-                // At this point it is clear that some shop will open, so run opening commands here.
-                Config.shopCommandManager.executeCommands(player, loc, ShopCommandManager.ShopType.SHOP, ShopCommandManager.ShopAction.OPEN, null);
+                // At this point it is clear that some shop will open, so run opening commands
+                // here.
+                Config.shopCommandManager.executeCommands(player, loc, ShopCommandManager.ShopType.SHOP,
+                        ShopCommandManager.ShopAction.OPEN, null);
                 if (player.hasPermission("ecs.admin") || player.hasPermission("ecs.admin.view")) {
                     adminShopGUI.showGUI(player, dataContainer, chestblock);
                     return;
@@ -139,7 +153,7 @@ public class ChestOpeningListener implements Listener {
 
                 } else {
 
-                    //not owner show default
+                    // not owner show default
                     nonOwnerShopGUI.showGUI(player, dataContainer, chestblock);
 
                 }
@@ -150,8 +164,6 @@ public class ChestOpeningListener implements Listener {
 
     }
 
-
-
     private boolean isAdmin(PersistentDataContainer data, String uuid) {
         UUID owneruuid = UUID.fromString(uuid);
         List<UUID> adminsUUID = Utils.getAdminsList(data);
@@ -161,8 +173,5 @@ public class ChestOpeningListener implements Listener {
             return false;
         }
     }
-
-
-
 
 }
