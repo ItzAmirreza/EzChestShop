@@ -70,7 +70,22 @@ public class Utils {
                 versionUtils = (VersionUtils) Class.forName("me.deadlight.ezchestshop.utils.v1_20_R3").newInstance();
             } else {
                 String packageName = Utils.class.getPackage().getName();
-                String internalsName = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
+                String internalsName = "";
+                
+                int dataVersion = Bukkit.getUnsafe().getDataVersion();
+                
+                if (dataVersion >= 3454) {
+                  internalsName = "v1_20_R3"
+                } else if (dataVersion >= 3098) {
+                  internalsName = "v1_19_R3"
+                } else if (dataVersion >= 2847) {
+                  internalsName = "v1_18_R2"
+                } else if (dataVersion >= 2716) {
+                  internalsName = "v1_17_R1"
+                } else if (dataVersion >= 2556) {
+                  internalsName = "v1_16_R3"
+                }
+                
                 versionUtils = (VersionUtils) Class.forName(packageName + "." + internalsName).newInstance();
             }
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException
