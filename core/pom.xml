@@ -90,7 +90,7 @@
         </repository>
         <repository>
             <id>repo</id>
-            <url>https://repo.mattstudios.me/artifactory/public/</url>
+            <url>https://minevolt.net/repo/</url>
         </repository>
         <repository>
             <id>minebench-repo</id>
