@@ -90,15 +90,11 @@
         </repository>
         <repository>
             <id>repo</id>
-            <url>https://repo.mattstudios.me/artifactory/public/</url>
+            <url>https://minevolt.net/repo/</url>
         </repository>
         <repository>
             <id>minebench-repo</id>
             <url>https://repo.minebench.de/</url>
-        </repository>
-        <repository>
-            <id>sk89q-repo</id>
-            <url>https://maven.enginehub.org/repo/</url>
         </repository>
         <repository>
             <id>placeholderapi</id>
@@ -136,7 +132,7 @@
         <dependency>
             <groupId>com.github.Slimefun</groupId>
             <artifactId>Slimefun4</artifactId>
-            <version>RC-27</version>
+            <version>RC-29</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -146,7 +142,13 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.sk89q.worldguard</groupId>
+            <groupId>com.github.EngineHub.WorldGuard</groupId>
+            <artifactId>worldguard-core</artifactId>
+            <version>7.0.5</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.EngineHub.WorldGuard</groupId>
             <artifactId>worldguard-bukkit</artifactId>
             <version>7.0.5</version>
             <scope>provided</scope>
@@ -185,6 +187,11 @@
             <artifactId>UniversalScheduler</artifactId>
             <version>0.1.6</version>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-library</artifactId>
+            <version>2.13.16</version>
         </dependency>
     </dependencies>
 </project>
