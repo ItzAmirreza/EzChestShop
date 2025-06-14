@@ -75,15 +75,15 @@ public class Utils {
                 int dataVersion = Bukkit.getUnsafe().getDataVersion();
                 
                 if (dataVersion >= 3454) {
-                  internalsName = "v1_20_R3"
+                  internalsName = "v1_20_R3";
                 } else if (dataVersion >= 3098) {
-                  internalsName = "v1_19_R3"
+                  internalsName = "v1_19_R3";
                 } else if (dataVersion >= 2847) {
-                  internalsName = "v1_18_R2"
+                  internalsName = "v1_18_R2";
                 } else if (dataVersion >= 2716) {
-                  internalsName = "v1_17_R1"
+                  internalsName = "v1_17_R1";
                 } else if (dataVersion >= 2556) {
-                  internalsName = "v1_16_R3"
+                  internalsName = "v1_16_R3";
                 }
                 
                 versionUtils = (VersionUtils) Class.forName(packageName + "." + internalsName).newInstance();
