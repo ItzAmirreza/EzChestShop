@@ -85,8 +85,6 @@ public class Utils {
                 } else if (dataVersion >= 2556) {
                   internalsName = "v1_16_R3"
                 }
-            }
-
                 
                 versionUtils = (VersionUtils) Class.forName(packageName + "." + internalsName).newInstance();
             }
